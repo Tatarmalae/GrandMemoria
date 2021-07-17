@@ -10,8 +10,8 @@
     <?php $APPLICATION->ShowHead(); ?>
 </head>
 <body>
+<?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/scripts_after_body.php", [], ["SHOW_BORDER" => false]); ?>
+<div id="panel"><?php $APPLICATION->ShowPanel(); ?></div>
 <div class="main-wrapper">
-    <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/scripts_after_body.php", [], ["SHOW_BORDER" => false]); ?>
-    <div id="panel"><?php $APPLICATION->ShowPanel(); ?></div>
     <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/header.php", [], ["SHOW_BORDER" => false]); ?>
     <div class="container">

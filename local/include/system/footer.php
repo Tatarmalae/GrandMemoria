@@ -183,7 +183,7 @@
                         <div class="creator-text">Разработка сайта «<a href="#" target="_blank">k.pashukov</a>»</div>
                     </div>
                 </div>
-                <div class="footer__column"><a class="footer__link" href="#">Политика конфиденциальности</a>
+                <div class="footer__column"><a class="footer__link" href="/politika-konfidentsialnosti/">Политика конфиденциальности</a>
                 </div>
             </div>
         </div>

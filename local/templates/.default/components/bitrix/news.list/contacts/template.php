@@ -1,4 +1,7 @@
 <?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
+
+use Bitrix\Main\Config\Option;
+
 /** @var array $arParams */
 /** @var array $arResult */
 /** @global CMain $APPLICATION */
@@ -23,8 +26,8 @@ $arAddress = [];
                     </div>
                     <div class="contacts-info__content">
                         <span>Единый номер для связи</span>
-                        <a href="tel:+<?= preg_replace('~\D+~', '', \Bitrix\Main\Config\Option::get("askaron.settings", "UF_PHONE")) ?>">
-                            <?= \Bitrix\Main\Config\Option::get("askaron.settings", "UF_PHONE"); ?>
+                        <a href="tel:+<?= preg_replace('~\D+~', '', Option::get("askaron.settings", "UF_PHONE")) ?>">
+                            <?= Option::get("askaron.settings", "UF_PHONE"); ?>
                         </a>
                     </div>
                 </div>
@@ -36,8 +39,8 @@ $arAddress = [];
                     </div>
                     <div class="contacts-info__content">
                         <span>Почтовый ящик для писем</span>
-                        <a href="mailto:<?= \Bitrix\Main\Config\Option::get("askaron.settings", "UF_EMAIL"); ?>">
-                            <?= \Bitrix\Main\Config\Option::get("askaron.settings", "UF_EMAIL"); ?>
+                        <a href="mailto:<?= Option::get("askaron.settings", "UF_EMAIL"); ?>">
+                            <?= Option::get("askaron.settings", "UF_EMAIL"); ?>
                         </a>
                     </div>
                 </div>
@@ -115,6 +118,7 @@ $arAddress = [];
         </div>
     </div>
 </section>
+<?php $this->SetViewTarget('contacts_detail'); ?>
 <section class="section_padding section_black-haze address">
     <div class="content">
         <div class="heading">
@@ -122,10 +126,11 @@ $arAddress = [];
                 <h2>Адреса на карте</h2>
             </div>
         </div>
-        <div class="map">
-            <div class="map__inner">
-                <div id="map" data-coord="<?= json_encode($arAddress) ?>"></div>
-            </div>
-        </div>
+        <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/map.php", ['ADDRESS' => $arAddress], ["SHOW_BORDER" => true]); ?>
     </div>
 </section>
+<div class="banner">
+    <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/callback_banner.php", [], ["SHOW_BORDER" => true]); ?>
+</div>
+<?php $this->EndViewTarget(); ?>
+<?php unset($arAddress) ?>
