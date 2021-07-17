@@ -4,7 +4,7 @@
             <div class="logo-link">
                 <div class="logo-wrap">
                     <a class="logo" href="<?= SITE_DIR ?>">
-                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt=""/>
+                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
                     </a>
                     <div class="logo-text">
                         <?= \Bitrix\Main\Config\Option::get("askaron.settings", "UF_LOGO_TEXT"); ?>

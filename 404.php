@@ -6,16 +6,39 @@ include_once($_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/main/include/urlrewrit
 CHTTP::SetStatus("404 Not Found");
 @define("ERROR_404", "Y");
 @define("404", true);
-require($_SERVER["DOCUMENT_ROOT"] . "/local/templates/404/header.php");
+require($_SERVER["DOCUMENT_ROOT"] . "/local/templates/index/header.php");
 $APPLICATION->SetTitle("Ошибка 404");
 ?>
-    <span class="label c-telegray">Ошибка 404</span>
-    <h1 class="nfp__title">Ой! Похоже страница, которую вы ищете,
-        <span>не найдена</span>
-    </h1>
-    <p class="nfp__text">У нас ещё много интересных страниц, попробуйте начать с главной</p>
-    <a class="btn btn_md btn_default" href="<?= (CMain::IsHTTPS()) ? "https://" : "http://" ?><?= SITE_SERVER_NAME ?>" data-hover="на главную">
-        <span>на главную</span>
-    </a>
-<?php require($_SERVER["DOCUMENT_ROOT"] . "/local/templates/404/footer.php"); ?>
+    <section class="not-found">
+        <div class="content">
+            <div class="not-found__wrapper items">
+                <div class="not-found__content item">
+                    <article>
+                        <a class="logo-link" href="index.html">
+                            <div class="logo">
+                                <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>">
+                            </div>
+                        </a>
+                        <h2>Что-то пошло не так</h2>
+                        <p>
+                            Извините, запрашиваемая Вами страница не найдена. Возможно, введен некорректный адрес, или страница была удалена
+                        </p>
+                        <div class="more-btn">
+                            <a class="btn btn-blue big" href="<?= SITE_DIR ?>">
+                                <span class="btn__text">
+                                    <span data-text="Вернуться на главную">Вернуться на главную</span>
+                                </span>
+                            </a>
+                        </div>
+                    </article>
+                </div>
+                <div class="not-found__img item">
+                    <div class="not-found__bg">
+                        <img src="<?= SITE_STYLE_PATH ?>/img/content/not-found/bg.svg" alt="<?= SITE_SERVER_NAME ?>">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+<?php require($_SERVER["DOCUMENT_ROOT"] . "/local/templates/index/footer.php"); ?>
 <?php die(); ?>
