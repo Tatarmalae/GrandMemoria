@@ -82,7 +82,7 @@ $this->setFrameMode(true);
                                                 <h4><?= $arItem['NAME'] ?></h4>
                                                 <?php if (!empty($arItem['PROPERTIES']['PRODUCT']['VALUE'])): ?>
                                                     <div class="more-btn">
-                                                        <a class="btn btn-blue big" href="<?= $arItem['PROPERTIES']['PRODUCT']['VALUE'] ?>">
+                                                        <a class="btn btn-blue big" href="<?= $arItem['PROPERTIES']['PRODUCT']['VALUE']//TODO: куда переход и откуда ссылку брать ?>">
                                                         <span class="btn__text">
                                                             <span data-text="Перейти к товару">Перейти к товару</span>
                                                         </span>

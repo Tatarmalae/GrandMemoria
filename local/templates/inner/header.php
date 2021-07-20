@@ -34,4 +34,5 @@
             </div>
         </div>
         <section>
+            <?php $APPLICATION->ShowViewContent('categories');?>
             <div class="content">
