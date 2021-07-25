@@ -203,6 +203,9 @@ class Catalog
             $query = new Query(
                 IblockTable::getEntity()
             );
+            $query->setOrder([
+                'SORT' => 'ASC',
+            ]);
             $query->setFilter([
                 'IBLOCK_TYPE_ID' => $typeID,
             ]);
