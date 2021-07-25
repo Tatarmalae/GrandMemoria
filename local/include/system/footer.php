@@ -18,7 +18,7 @@
                     </div>
                 </div>
                 <div class="footer__column">
-                    <div class="footer__list"><span class="footer__list-title" href="#">Адреса:</span>
+                    <div class="footer__list"><span class="footer__list-title">Адреса:</span>
                         <div class="footer__contacts footer__contacts_address">
                             <div class="footer__contacts-item"><a class="footer__contacts-link" href="#"><span>
             <svg class="icon__address" width="28" height="28">
@@ -54,7 +54,7 @@
                     </div>
                 </div>
                 <div class="footer__column footer__column_contacts">
-                    <div class="footer__list"><span class="footer__list-title" href="#">Способы связи:</span>
+                    <div class="footer__list"><span class="footer__list-title">Способы связи:</span>
                         <div class="footer__contacts">
                             <div class="footer__contacts-item"><a class="footer__contacts-link" href="tel:8 (843) 558-00-82"><span>
             <svg class="icon__phone" width="28" height="28">
@@ -70,7 +70,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="footer__list"><span class="footer__list-title" href="#">Соц. сети:</span>
+                    <div class="footer__list"><span class="footer__list-title">Соц. сети:</span>
                         <div class="footer__contacts">
                             <div class="footer__contacts-item"><a class="footer__contacts-link" href="#"><span>
             <svg class="icon__vk" width="26" height="26">
@@ -92,7 +92,7 @@
         <div class="footer-center">
             <div class="footer__row">
                 <div class="footer__column">
-                    <div class="footer__list"><span class="footer__list-title" href="#">Каталог товаров</span>
+                    <div class="footer__list"><a class="footer__list-title" href="#">Каталог товаров</a>
                         <ul class="footer__sublist">
                             <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Памятники</a>
                             </li>
@@ -120,7 +120,7 @@
                     </div>
                 </div>
                 <div class="footer__column">
-                    <div class="footer__list"><span class="footer__list-title" href="#">Ритуальные услуги</span>
+                    <div class="footer__list"><a class="footer__list-title" href="#">Ритуальные услуги</a>
                         <ul class="footer__sublist">
                             <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Организация похорон</a>
                             </li>
@@ -148,7 +148,7 @@
                     </div>
                 </div>
                 <div class="footer__column">
-                    <div class="footer__list"><span class="footer__list-title" href="#">Полезная информация</span>
+                    <div class="footer__list"><a class="footer__list-title" href="#">Полезная информация</a>
                         <ul class="footer__sublist">
                             <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Наши работы</a>
                             </li>
@@ -183,7 +183,7 @@
                         <div class="creator-text">Разработка сайта «<a href="#" target="_blank">k.pashukov</a>»</div>
                     </div>
                 </div>
-                <div class="footer__column"><a class="footer__link" href="/politika-konfidentsialnosti/">Политика конфиденциальности</a>
+                <div class="footer__column"><a class="footer__link" href="#">Политика конфиденциальности</a>
                 </div>
             </div>
         </div>

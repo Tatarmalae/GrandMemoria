@@ -6,7 +6,7 @@
                     <h3>Мы открыты для общения</h3>
                     <p>Директор лично читает все письма и принимает решения по ним</p>
                     <div class="more-btn">
-                        <a class="btn btn-blue big" href="#" data-toggle="modal" data-target="#modalCall">
+                        <a class="btn btn-blue big" href="#" data-toggle="modal" data-target="#modalCommunication">
                             <span class="btn__text">
                                 <span data-text="Напишите нам">Напишите нам</span>
                             </span>

@@ -60,7 +60,7 @@ $arAddress = [];
                                         <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#address"></use>
                                     </svg>
                                     <span class="contacts-address__label">Адрес:</span>
-                                    <span class="contacts-address__desc"><?= $arItem['NAME'] ?></span>
+                                    <a class="contacts-address__desc" href="#target-address"><?= $arItem['NAME'] ?></a>
                                 </div>
                                 <?php if (!empty($arItem['PROPERTIES']['SCHEDULES']['VALUE'])): ?>
                                     <div class="contacts-address">
@@ -89,11 +89,12 @@ $arAddress = [];
                                 <div class="contacts-photo">
                                     <?php foreach ($arItem['PROPERTIES']['PHOTO']['VALUE'] as $key => $photo): ?>
                                         <div class="contacts-photo__item">
-                                            <div class="contacts-photo__item-img img img-1by1">
+                                            <? //TODO: fancybox неправильно работает. Показывает все фото подряд?>
+                                            <a class="contacts-photo__item-img img img-1by1" href="javascript:void(0);" data-fancybox="gallery" data-options="{&quot;src&quot;:&quot;<?= CFile::GetPath($photo) ?>&quot;}">
                                                 <div class="img__inner object-fit">
                                                     <img class="lazy" src="" data-src="<?= CFile::GetPath($photo) ?>" alt="<?= $arItem['PROPERTIES']['PHOTO']['DESCRIPTION'][$key] ?>">
                                                 </div>
-                                            </div>
+                                            </a>
                                         </div>
                                     <?php endforeach; ?>
                                 </div>
@@ -119,7 +120,7 @@ $arAddress = [];
     </div>
 </section>
 <?php $this->SetViewTarget('contacts_detail'); ?>
-<section class="section_padding section_black-haze address">
+<section class="section_padding section_black-haze address" id="target-address">
     <div class="content">
         <div class="heading">
             <div class="heading__content">
