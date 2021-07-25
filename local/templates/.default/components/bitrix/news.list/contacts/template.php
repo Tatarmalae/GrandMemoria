@@ -89,7 +89,7 @@ $arAddress = [];
                                 <div class="contacts-photo">
                                     <?php foreach ($arItem['PROPERTIES']['PHOTO']['VALUE'] as $key => $photo): ?>
                                         <div class="contacts-photo__item">
-                                            <? //TODO: fancybox неправильно работает. Показывает все фото подряд?>
+                                            <?php //TODO: fancybox неправильно работает. Показывает все фото подряд ?>
                                             <a class="contacts-photo__item-img img img-1by1" href="javascript:void(0);" data-fancybox="gallery" data-options="{&quot;src&quot;:&quot;<?= CFile::GetPath($photo) ?>&quot;}">
                                                 <div class="img__inner object-fit">
                                                     <img class="lazy" src="" data-src="<?= CFile::GetPath($photo) ?>" alt="<?= $arItem['PROPERTIES']['PHOTO']['DESCRIPTION'][$key] ?>">
@@ -127,6 +127,7 @@ $arAddress = [];
                 <h2>Адреса на карте</h2>
             </div>
         </div>
+        <?php //TODO: изменить логику подгрузки карты ?>
         <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/map.php", ['ADDRESS' => $arAddress], ["SHOW_BORDER" => true]); ?>
     </div>
 </section>

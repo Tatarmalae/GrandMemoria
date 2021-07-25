@@ -60,7 +60,7 @@ $APPLICATION->SetTitle("Цены на комплекты");
         "FILTER_NAME" => "",
         "HIDE_LINK_WHEN_NO_DETAIL" => "N",
         "IBLOCK_ID" => "5",
-        "IBLOCK_TYPE" => "content",
+        "IBLOCK_TYPE" => "info",
         "INCLUDE_IBLOCK_INTO_CHAIN" => "N",
         "INCLUDE_SUBSECTIONS" => "N",
         "MESSAGE_404" => "",

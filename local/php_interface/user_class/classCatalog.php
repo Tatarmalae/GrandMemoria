@@ -3,9 +3,12 @@
 namespace Dev;
 
 use Bitrix\Iblock\ElementTable;
+use Bitrix\Iblock\IblockTable;
 use Bitrix\Iblock\SectionTable;
 use Bitrix\Main\ArgumentException;
 use Bitrix\Main\Entity\Query;
+use Bitrix\Main\Loader;
+use Bitrix\Main\LoaderException;
 use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Main\SystemException;
 
@@ -184,5 +187,46 @@ class Catalog
     public static function getSectionByID($sectionID)
     {
         return SectionTable::GetByID($sectionID)->Fetch();
+    }
+
+
+    /**
+     * Получает список инфоблоков по типу
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
+     * @throws LoaderException
+     */
+    public static function getIBlockListByTypeID($typeID)
+    {
+        if (Loader::includeModule("asd.iblock")) {
+            $query = new Query(
+                IblockTable::getEntity()
+            );
+            $query->setFilter([
+                'IBLOCK_TYPE_ID' => $typeID,
+            ]);
+            $query->setSelect([
+                'ID',
+                'NAME',
+                'CODE',
+                'DESCRIPTION',
+                'LIST_PAGE_URL',
+                'UF_ICO',
+                'ICO' => 'UF_ICO.UF_ICO',
+            ]);
+            $query->registerRuntimeField(
+                'UF_ICO',
+                [
+                    'data_type' => AsdIblockTable::class,
+                    'reference' => [
+                        '=this.ID' => 'ref.VALUE_ID',
+                    ],
+                ]
+            );
+            return $query->exec()->fetchAll();
+        } else {
+            return 'Модуль asd.iblock не установлен';
+        }
     }
 }

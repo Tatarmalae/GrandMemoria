@@ -15,6 +15,7 @@ try {
         '\Dev\Catalog' => SITE_USER_CLASS_PATH . '/classCatalog.php',
         '\Dev\Settings' => SITE_USER_CLASS_PATH . '/classSettings.php',
         '\Dev\Utilities' => SITE_USER_CLASS_PATH . '/classUtilities.php',
+        '\Dev\AsdIblockTable' => SITE_USER_CLASS_PATH . '/classAsdIblockTable.php',
     ]);
 } catch (LoaderException $e) {
     die($e->getMessage());

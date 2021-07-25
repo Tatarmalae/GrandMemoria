@@ -9,7 +9,7 @@ $APPLICATION->SetTitle("Наши работы");
     "gallery",
     [
         "COMPONENT_TEMPLATE" => "gallery",
-        "IBLOCK_TYPE" => "content",
+        "IBLOCK_TYPE" => "info",
         "IBLOCK_ID" => "4",
         "NEWS_COUNT" => "12",
         "SORT_BY1" => "SORT",
