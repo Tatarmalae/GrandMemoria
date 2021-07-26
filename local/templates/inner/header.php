@@ -15,7 +15,7 @@
 <div class="main-wrapper">
     <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/header.php", [], ["SHOW_BORDER" => false]); ?>
     <div class="container">
-        <div class="title">
+        <div class="title<?php $APPLICATION->ShowViewContent('no_bg'); ?>">
             <div class="title-bg">
                 <div class="content">
                     <img class="lazy" src="" data-src="<?= SITE_STYLE_PATH ?>/img/content/title/bg.svg" alt="<?= SITE_SERVER_NAME ?>">
@@ -34,5 +34,5 @@
             </div>
         </div>
         <section>
-            <?php $APPLICATION->ShowViewContent('categories');?>
+            <?php $APPLICATION->ShowViewContent('categories'); ?>
             <div class="content">
