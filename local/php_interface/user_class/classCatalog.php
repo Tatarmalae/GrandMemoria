@@ -189,7 +189,6 @@ class Catalog
         return SectionTable::GetByID($sectionID)->Fetch();
     }
 
-
     /**
      * Получает список инфоблоков по типу
      * @throws ArgumentException
