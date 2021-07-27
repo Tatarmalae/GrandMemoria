@@ -119,7 +119,7 @@ $arAddress = [];
         </div>
     </div>
 </section>
-<?php $this->SetViewTarget('contacts_detail'); ?>
+<?php $this->SetViewTarget('after_parent_sect'); ?>
 <section class="section_padding section_black-haze address" id="target-address">
     <div class="content">
         <div class="heading">

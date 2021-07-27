@@ -13,7 +13,7 @@
 $this->setFrameMode(true);
 ?>
 <?php if (!empty($arResult['TAGS'])): ?>
-    <?php $this->SetViewTarget('categories');// TODO: какой сценарий? Аякс? Табы? ?>
+    <?php $this->SetViewTarget('before_parent_sect');// TODO: какой сценарий? Аякс? Табы? ?>
     <div class="categories">
         <div class="content">
             <div class="categories-items">

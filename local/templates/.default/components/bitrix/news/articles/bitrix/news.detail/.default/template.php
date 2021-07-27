@@ -15,7 +15,7 @@ $this->SetViewTarget('no_bg');
 echo ' title_not-bg';
 $this->EndViewTarget();
 ?>
-<?php $this->SetViewTarget('categories') ?>
+<?php $this->SetViewTarget('before_parent_sect') ?>
 <div class="article-bg">
     <div class="img">
         <div class="img__inner object-fit">

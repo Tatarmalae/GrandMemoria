@@ -5,7 +5,7 @@
 ?>
 </div>
 </section>
-<?php $APPLICATION->ShowViewContent('contacts_detail');?>
+<?php $APPLICATION->ShowViewContent('after_parent_sect');?>
 </div>
 <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/footer.php", [], ["SHOW_BORDER" => false]); ?>
 </div>

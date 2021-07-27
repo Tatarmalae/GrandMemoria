@@ -68,11 +68,11 @@ $this->setFrameMode(true);
     ],
     $component
 ); ?>
-<?php $this->SetViewTarget('contacts_detail') ?>
+<?php $this->SetViewTarget('after_parent_sect') ?>
 <?php
 $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/feedback_form.php", [], ["SHOW_BORDER" => true]);
 
-global $arrFilterNews;//TODO: уточнить фильтр
+global $arrFilterNews;
 $arrFilterNews = [
     '!ID' => $ElementID,
 ];

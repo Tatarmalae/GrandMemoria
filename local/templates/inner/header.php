@@ -34,5 +34,5 @@
             </div>
         </div>
         <section>
-            <?php $APPLICATION->ShowViewContent('categories'); ?>
+            <?php $APPLICATION->ShowViewContent('before_parent_sect'); ?>
             <div class="content">
