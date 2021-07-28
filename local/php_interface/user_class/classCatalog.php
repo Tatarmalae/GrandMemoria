@@ -2,6 +2,7 @@
 
 namespace Dev;
 
+use Bitrix\Highloadblock\HighloadBlockTable;
 use Bitrix\Iblock\ElementTable;
 use Bitrix\Iblock\IblockTable;
 use Bitrix\Iblock\SectionTable;
@@ -230,5 +231,50 @@ class Catalog
         } else {
             return 'Модуль asd.iblock не установлен';
         }
+    }
+
+    /**
+     * Получает элементы HighLoad-блока по названию таблицы
+     * @param $name
+     * @param $xml
+     * @return array
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
+     */
+    public static function getHLBlockByTableName($name, $xml): array
+    {
+        $hlbl = self::getHLBlockID($name);
+        $hlblock = HighloadBlockTable::getById($hlbl)->fetch();
+
+        $entity = HighloadBlockTable::compileEntity($hlblock);
+        $entityClass = $entity->getDataClass();
+
+        $filter = [];
+        if (!empty($xml)) {
+            $filter = ['UF_XML_ID' => $xml];
+        }
+
+        return $entityClass::getList([
+            'select' => ['*'],
+            'order' => ['UF_SORT' => 'ASC'],
+            'filter' => $filter,
+        ])->fetchAll();
+    }
+
+    /**
+     * Получает ID HighLoad-блока по названию таблицы
+     * @param $name
+     * @return mixed
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
+     */
+    public static function getHLBlockID($name)
+    {
+        return HighloadBlockTable::getList([
+            'limit' => 1,
+            'filter' => ['TABLE_NAME' => $name],
+        ])->fetch()['ID'];
     }
 }

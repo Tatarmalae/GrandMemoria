@@ -688,58 +688,7 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="modalReviewsItem" tabindex="-1" role="dialog" aria-labelledby="modalReviewsItemLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <button class="modal-close" type="button" data-dismiss="modal" aria-label="Close">
-                <svg class="icon__close-modal" width="48" height="48">
-                    <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
-                </svg>
 
-            </button>
-            <div class="modal-body">
-                <a class="logo-link" href="#">
-                    <div class="logo">
-                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt=""/>
-                    </div>
-                </a>
-                <div class="modal-scroll">
-                    <div class="modal-scroll__inner">
-                        <div class="modal-review">
-                            <div class="modal-reviews__item">
-                                <div class="reviews-item reviews-item_interior">
-                                    <div class="reviews-item__img img img-1by1">
-                                        <div class="img__inner object-fit">
-                                            <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/modals/reviews/1.jpg" alt=""/>
-                                        </div>
-                                    </div>
-                                    <div class="reviews-item__top">
-                                        <div class="reviews-item__top-info">
-                                            <h4>Зиля</h4>
-                                            <time datetime="07.01.2021">07.01.2021</time>
-                                        </div>
-                                        <span class="label label_small label_marengo">Памятники</span>
-                                    </div>
-                                    <div class="reviews-item__content">
-                                        <p>Огромная благодарность вашей команде, Роману Евгеньевичу и Рамису. Оперативно организовали в день обращения междугороднюю перевозку, помогли проводить в последний путь любимую нашу бабушку.</p>
-                                    </div>
-                                    <div class="reviews-item__bottom">
-                                        <span class="reviews-item__bottom-label">Площадка размещения:</span>
-                                        <a class="logo-link" href="#">
-                                            <div class="logo">
-                                                <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt=""/>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 <div class="modal fade" id="modalStock" tabindex="-1" role="dialog" aria-labelledby="modalStockLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
