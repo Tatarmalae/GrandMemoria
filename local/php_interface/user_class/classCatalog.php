@@ -74,56 +74,6 @@ class Catalog
         while ($row = $result->fetch()) {
             \Dev\Utilities::DB($row);
         }
-        /*
-        $arResult = ElementTable::getList([
-            'order' => ['SORT' => 'ASC'],
-            'filter' => [
-                '=IBLOCK_ID' => $IBlockID,
-                '=PROPERTY_CODE' => $props,
-            ],
-            'select' => [
-                'ID',
-                'NAME',
-                'PROPERTY_CODE' => 'PROPERTY_PROP.CODE',
-                'PROPERTY_VALUE' => 'PROPERTY.VALUE',
-                'PROPERTY_TYPE' => 'PROPERTY_PROP.PROPERTY_TYPE',
-                'PROPERTY_ENUM_VALUE' => 'PROPERTY_ENUM.VALUE',
-                'PROPERTY_ENUM_XML_ID' => 'PROPERTY_ENUM.XML_ID',
-                'PROPERTY',
-                'PROPERTY_PROP',
-                'PROPERTY_ENUM',
-            ],
-            'group' => [
-                'ID',
-                'PROPERTY_ENUM_VALUE',
-            ],
-            'runtime' => [
-                new \Bitrix\Main\Entity\ReferenceField(
-                    'PROPERTY',
-                    \Bitrix\Iblock\ElementPropertyTable::class,
-                    [
-                        '=this.ID' => 'ref.IBLOCK_ELEMENT_ID',
-                    ],
-                ),
-                new \Bitrix\Main\Entity\ReferenceField(
-                    'PROPERTY_PROP',
-                    \Bitrix\Iblock\PropertyTable::class,
-                    [
-                        '=this.PROPERTY.IBLOCK_PROPERTY_ID' => 'ref.ID',
-                    ],
-                ),
-                new \Bitrix\Main\Entity\ReferenceField(
-                    'PROPERTY_ENUM',
-                    \Bitrix\Iblock\PropertyEnumerationTable::class,
-                    [
-                        '=this.PROPERTY.IBLOCK_PROPERTY_ID' => 'ref.PROPERTY_ID',
-                    ],
-                ),
-            ],
-        ])->fetchAll();
-        \Dev\Utilities::DB($arResult);
-        */
-
     }
 
     /**
