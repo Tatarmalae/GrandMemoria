@@ -127,7 +127,9 @@ $arAddress = [];
                 <h2>Адреса на карте</h2>
             </div>
         </div>
-        <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/map.php", ['ADDRESS' => $arAddress], ["SHOW_BORDER" => true]); ?>
+        <div class="map-wrap">
+            <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/map.php", ['ID' => 'mapAddresses', 'ADDRESS' => $arAddress], ["SHOW_BORDER" => true]); ?>
+        </div>
     </div>
 </section>
 <div class="banner">
