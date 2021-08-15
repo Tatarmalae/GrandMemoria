@@ -16,7 +16,7 @@
                 <div class="modal-start">
                     <div class="modal-scroll">
                         <div class="modal-scroll__inner">
-                            <h2>Заказать звонок</h2>
+                            <h2 class="static">Заказать звонок</h2>
                             <p>Оставьте свои данные, и мы свяжемся с вами в ближайшее время.</p>
                             <div class="modal-form">
                                 <form class="default-form" id="formCall" action="" method="post" enctype="multipart/form-data">
@@ -85,7 +85,7 @@
                 <div class="modal-start">
                     <div class="modal-scroll">
                         <div class="modal-scroll__inner">
-                            <h2>Получить консультацию</h2>
+                            <h2 class="static">Получить консультацию</h2>
                             <p>Оставьте свои данные, и мы свяжемся с вами в ближайшее время.</p>
                             <div class="modal-form">
                                 <form class="default-form" id="formConsultation" action="" method="post" enctype="multipart/form-data">
@@ -152,7 +152,7 @@
                     </div>
                 </a>
                 <div class="modal-success">
-                    <h2>Расчет похорон отправлен</h2>
+                    <h2 class="static">Расчет похорон отправлен</h2>
                     <p>Спасибо! Мы свяжемся с вами в ближайшее время.</p>
                     <div class="more-btn">
                         <button class="btn btn-blue big" type="button" data-dismiss="modal">
@@ -182,7 +182,7 @@
                 <div class="modal-start">
                     <div class="modal-scroll">
                         <div class="modal-scroll__inner">
-                            <h2>Задать вопрос</h2>
+                            <h2 class="static">Задать вопрос</h2>
                             <p>Напишите нам, мы с удовольствием вам поможем.</p>
                             <div class="modal-form">
                                 <form class="default-form" id="formQuestion" action="" method="post" enctype="multipart/form-data">
@@ -280,7 +280,7 @@
                 <div class="modal-scroll">
                     <div class="modal-scroll__inner">
                         <div class="modal-basket">
-                            <h2>Товар успешно добавлен в корзину</h2>
+                            <h2 class="static">Товар успешно добавлен в корзину</h2>
                             <div class="modal-basket__product">
                                 <div class="catalog-item catalog-item_line">
                                     <div class="catalog-item__img img">
@@ -336,7 +336,7 @@
                 <div class="modal-start">
                     <div class="modal-scroll">
                         <div class="modal-scroll__inner">
-                            <h2>Оформить заказ</h2>
+                            <h2 class="static">Оформить заказ</h2>
                             <p>Оставьте свои данные, и мы свяжемся с вами в ближайшее время.</p>
                             <div class="modal-form">
                                 <form class="default-form" id="formCheckout" action="" method="post" enctype="multipart/form-data">
@@ -405,7 +405,7 @@
                 <div class="modal-start">
                     <div class="modal-scroll">
                         <div class="modal-scroll__inner">
-                            <h2>Написать нам</h2>
+                            <h2 class="static">Написать нам</h2>
                             <p>Директор лично читает письма и принимает решения.</p>
                             <div class="modal-form">
                                 <form class="default-form" id="formCommunication" action="" method="post" enctype="multipart/form-data">
@@ -539,7 +539,7 @@
                 <div class="modal-start">
                     <div class="modal-scroll">
                         <div class="modal-scroll__inner">
-                            <h2>Расчет рассрочки на памятник</h2>
+                            <h2 class="static">Расчет рассрочки на памятник</h2>
                             <p>Оставьте свои данные, и мы свяжемся с вами в ближайшее время.</p>
                             <div class="modal-form">
                                 <form class="default-form" id="formInstallmentPlan" action="" method="post" enctype="multipart/form-data">
@@ -608,7 +608,7 @@
                 <div class="modal-start">
                     <div class="modal-scroll">
                         <div class="modal-scroll__inner">
-                            <h2>Оставить отзыв</h2>
+                            <h2 class="static">Оставить отзыв</h2>
                             <p>Поделитесь отзывам о нашей работе</p>
                             <div class="modal-form">
                                 <form class="default-form" id="formReviews" action="" method="post" enctype="multipart/form-data">
@@ -707,7 +707,7 @@
                 <div class="modal-start">
                     <div class="modal-scroll">
                         <div class="modal-scroll__inner">
-                            <h2>Получить акционное предложение</h2>
+                            <h2 class="static">Получить акционное предложение</h2>
                             <p>Оставьте свои данные, и мы свяжемся с вами в ближайшее время.</p>
                             <div class="modal-form">
                                 <form class="default-form" id="formStock" action="" method="post" enctype="multipart/form-data">
