@@ -1,17 +1,21 @@
 <?php
-
-use Bitrix\Main\Diag\Debug;
-use Dev\Catalog;
-
-try {
-    $arMenu = Catalog::getIBlockListByTypeID('info');
-} catch (Throwable $e) {
-    Debug::dumpToFile($e->getMessage());
-}
+if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
+/** @var array $arParams */
+/** @var array $arResult */
+/** @global CMain $APPLICATION */
+/** @global CUser $USER */
+/** @global CDatabase $DB */
+/** @var CBitrixComponentTemplate $this */
+/** @var string $templateName */
+/** @var string $templateFile */
+/** @var string $templateFolder */
+/** @var string $componentPath */
+/** @var CBitrixComponent $component */
+$this->setFrameMode(true);
 ?>
-<?php if (!empty($arMenu)): ?>
+<?php if (!empty($arResult)): ?>
     <div class="information-items information-items_btn items">
-        <?php foreach ($arMenu as $item): ?>
+        <?php foreach ($arResult as $item): ?>
             <a class="information-item item link-item" href="<?= \CIBlock::ReplaceDetailUrl($item['LIST_PAGE_URL'], [], true, 'S') ?>">
                 <div class="box">
                     <?php if (!empty($item['ICO'])): ?>
