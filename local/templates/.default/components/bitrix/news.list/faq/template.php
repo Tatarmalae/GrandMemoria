@@ -45,14 +45,29 @@ $this->setFrameMode(true);
                         <svg class="icon__slider-next" width="24" height="24">
                             <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#slider-next"></use>
                         </svg>
+                         <svg class="icon__close-modal" width="24" height="24">
+                             <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
+                         </svg>
                     </span>
                 </div>
                 <?php if (!empty($arItem['PREVIEW_TEXT']) || !empty($arItem['PROPERTIES']['LINKS']['VALUE'])): ?>
                     <div class="accordion-content">
                         <div class="accordion-article">
                             <?= $arItem['~PREVIEW_TEXT'] ?>
-                            <?php if (!empty($arItem['PROPERTIES']['LINKS']['VALUE'])): //TODO: в каком виде ссылки??? ?>
+                            <?php if (!empty($arItem['PROPERTIES']['LINKS']['VALUE'])): ?>
                                 <h5>Ссылки по теме:</h5>
+                                <div class="article-links">
+                                    <?php foreach ($arItem['PROPERTIES']['LINKS']['VALUE'] as $key => $link): ?>
+                                        <div class="article-links__item">
+                                            <a class="article-link" href="<?= $link ?>">
+                                                <svg class="icon__link-next" width="24" height="24">
+                                                    <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#link-next"></use>
+                                                </svg>
+                                                <span><?= $arItem['PROPERTIES']['LINKS']['DESCRIPTION'][$key] ?></span>
+                                            </a>
+                                        </div>
+                                    <?php endforeach ?>
+                                </div>
                             <?php endif ?>
                         </div>
                     </div>
