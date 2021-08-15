@@ -13,16 +13,32 @@
 $this->setFrameMode(true);
 ?>
 <?php if (!empty($arResult['TAGS'])): //TODO: ajax-подгрузка. Проверить в пагинации ?>
-    <div class="tags-wrap">
-        <div class="tags">
-            <a class="tags-item tags-item_active" data-section="" href="javascript:void(0);">
-                <span>Все</span>
-            </a>
-            <?php foreach ($arResult['TAGS'] as $tag): ?>
-                <a class="tags-item" data-section="<?= $tag['ID'] ?>" href="javascript:void(0);">
-                    <span><?= $tag['NAME'] ?></span>
+    <div class="tags-slider__wrapper">
+        <div class="tags-wrap swiper-container tags-slider">
+            <div class="tags swiper-wrapper">
+                <a class="tags-item swiper-slide tags-item_active" data-section="" href="javascript:void(0);">
+                    <span>Все</span>
                 </a>
-            <?php endforeach ?>
+                <?php foreach ($arResult['TAGS'] as $tag): ?>
+                    <a class="tags-item swiper-slide" data-section="<?= $tag['ID'] ?>" href="javascript:void(0);">
+                        <span><?= $tag['NAME'] ?></span>
+                    </a>
+                <?php endforeach ?>
+            </div>
+        </div>
+        <div class="slider-arrows slider-arrows_prev">
+            <div class="slider-btn slider-btn_prev slider-btn_light">
+                <svg class="icon__slider-prev" width="32" height="32">
+                    <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#slider-prev"></use>
+                </svg>
+            </div>
+        </div>
+        <div class="slider-arrows slider-arrows_next">
+            <div class="slider-btn slider-btn_next slider-btn_light">
+                <svg class="icon__slider-next" width="32" height="32">
+                    <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#slider-next"></use>
+                </svg>
+            </div>
         </div>
     </div>
 <?php endif ?>
@@ -46,6 +62,14 @@ $this->setFrameMode(true);
                                 <?= $arItem['DATE_ACTIVE_FROM'] ?>
                             </time>
                         <?php endif ?>
+                        <?php if (!empty($arItem['PROPERTIES']['FILE']['VALUE'])): ?>
+                            <span class="reviews-photo">
+                                 <svg class="icon__photo" width="24" height="24">
+                                     <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#photo"></use>
+                                 </svg>
+                                1
+                            </span>
+                        <?php endif ?>
                     </div>
                     <?php if (!empty($arItem['IBLOCK_SECTION']['NAME'])): ?>
                         <span class="label label_small label_marengo">
@@ -55,7 +79,7 @@ $this->setFrameMode(true);
                 </div>
                 <div class="reviews-item__content">
                     <p>
-                        <?= $arItem['PREVIEW_TEXT'] //TODO: реализовать обрезание текста на стороне js      ?>
+                        <?= $arItem['PREVIEW_TEXT'] //TODO: реализовать обрезание текста на стороне js         ?>
                     </p>
                 </div>
                 <div class="reviews-item__bottom">
@@ -110,6 +134,14 @@ $this->setFrameMode(true);
                                                         <time datetime="<?= $arItem['DATE_ACTIVE_FROM'] ?>">
                                                             <?= $arItem['DATE_ACTIVE_FROM'] ?>
                                                         </time>
+                                                    <?php endif ?>
+                                                    <?php if (!empty($arItem['PROPERTIES']['FILE']['VALUE'])): ?>
+                                                        <span class="reviews-photo">
+                                                             <svg class="icon__photo" width="24" height="24">
+                                                                 <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#photo"></use>
+                                                             </svg>
+                                                            1
+                                                        </span>
                                                     <?php endif ?>
                                                 </div>
                                                 <?php if (!empty($arItem['IBLOCK_SECTION']['NAME'])): ?>
