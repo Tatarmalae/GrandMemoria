@@ -132,4 +132,3 @@ $APPLICATION->IncludeComponent(
 unset($arrFilterNews);
 ?>
 <?php $this->EndViewTarget() ?>
-

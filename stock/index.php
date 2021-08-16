@@ -138,7 +138,7 @@ $APPLICATION->SetTitle("Акции и скидки");
         "SHOW_404" => "Y",
         "MESSAGE_404" => "",
         "SEF_FOLDER" => "/stock/",
-        "SHARE_HIDE" => "N",
+        "SHARE_HIDE" => "Y",
         "SHARE_TEMPLATE" => "share",
         "SHARE_HANDLERS" => [
             0 => "ok",

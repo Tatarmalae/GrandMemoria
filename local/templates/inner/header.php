@@ -31,6 +31,7 @@
                     ]
                 ); ?>
                 <h1><?php $APPLICATION->ShowTitle() ?></h1>
+                <?php $APPLICATION->ShowViewContent('after_title'); ?>
             </div>
         </div>
         <section>

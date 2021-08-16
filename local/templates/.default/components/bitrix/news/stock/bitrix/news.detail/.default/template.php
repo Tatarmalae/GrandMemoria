@@ -15,39 +15,27 @@ $this->SetViewTarget('no_bg');
 echo ' title_not-bg';
 $this->EndViewTarget();
 ?>
+
+<?php $this->SetViewTarget('after_title') ?>
+<span class="label label_small label_marengo">
+        <?= $arResult['IBLOCK_SECTION']['NAME'] ?>
+    </span>
+<?php $this->EndViewTarget() ?>
+
 <?php $this->SetViewTarget('before_parent_sect') ?>
 <div class="article-bg">
     <div class="img">
         <div class="img__inner object-fit">
-            <img src="" class="lazy" data-src="<?= CFile::GetPath($arResult['PREVIEW_PICTURE']['ID']) ?>" alt="<?= $arResult['NAME'] ?>">
+            <picture>
+                <source media="(max-width:1279px)" data-srcset="<?= CFile::GetPath($arResult['PREVIEW_PICTURE']['ID']) ?>" srcset="">
+                <img class="lazy" data-src="<?= CFile::GetPath($arResult['PREVIEW_PICTURE']['ID']) ?>" alt="<?= $arResult['NAME'] ?>" src="">
+            </picture>
         </div>
     </div>
 </div>
 <?php $this->EndViewTarget() ?>
+
 <article>
     <?= $arResult['DETAIL_TEXT'] ?>
+    <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/stock_banner.php", [], ["SHOW_BORDER" => true]); ?>
 </article>
-<?php if ($arParams["USE_SHARE"] == "Y"): ?>
-    <div class="article-socials">
-        <h4>Поделиться в соц. сетях:</h4>
-        <noindex>
-            <div class="socials socials_big">
-                <?php
-                $APPLICATION->IncludeComponent(
-                    "bitrix:main.share",
-                    $arParams["SHARE_TEMPLATE"],
-                    [
-                        "HANDLERS" => $arParams["SHARE_HANDLERS"],
-                        "PAGE_URL" => $arResult["~DETAIL_PAGE_URL"],
-                        "PAGE_TITLE" => $arResult["~NAME"],
-                        "SHORTEN_URL_LOGIN" => $arParams["SHARE_SHORTEN_URL_LOGIN"],
-                        "SHORTEN_URL_KEY" => $arParams["SHARE_SHORTEN_URL_KEY"],
-                        "HIDE" => $arParams["SHARE_HIDE"],
-                    ],
-                    $component,
-                    ["HIDE_ICONS" => "Y"]
-                ); ?>
-            </div>
-        </noindex>
-    </div>
-<?php endif ?>
