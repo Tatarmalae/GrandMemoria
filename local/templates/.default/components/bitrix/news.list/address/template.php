@@ -20,7 +20,7 @@ $arAddress = [];
             <ul class="nav nav-tabs categories-items" id="mapTab" role="tablist">
                 <?php foreach ($arResult['TAGS'] as $key => $tag): ?>
                     <li class="nav-item categories-li">
-                        <a class="nav-link categories-item<?= $key == 0 ? ' active' : '' ?>" id="tab-<?= $key + 1 ?>" href="#tab<?= $key + 1 ?>" data-toggle="tab" role="tab" aria-controls="tab<?= $key + 1 ?>" aria-selected="<?= $key == 0 ? true : false ?>">
+                        <a class="nav-link categories-item<?= $key == 0 ? ' active' : '' ?>" id="tab-<?= $key + 1 ?>" href="#tab<?= $key + 1 ?>" data-toggle="tab" role="tab" aria-controls="tab<?= $key + 1 ?>" aria-selected="<?= $key == 0 ? 'true' : 'false' ?>">
                             <span><?= $tag['NAME'] ?></span>
                         </a>
                     </li>
