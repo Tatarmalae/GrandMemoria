@@ -15,25 +15,47 @@
 <div class="main-wrapper">
     <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/header.php", [], ["SHOW_BORDER" => false]); ?>
     <div class="container">
-        <div class="title<?php $APPLICATION->ShowViewContent('no_bg'); ?>">
-            <div class="title-bg">
+        <?php if($_SERVER['REAL_FILE_PATH'] !== '/services/index.php'):?>
+            <div class="title<?php $APPLICATION->ShowViewContent('no_bg'); ?>">
+                <div class="title-bg">
+                    <div class="content">
+                        <img class="lazy" src="" data-src="<?= SITE_STYLE_PATH ?>/img/content/title/bg.svg" alt="<?= SITE_SERVER_NAME ?>">
+                    </div>
+                </div>
                 <div class="content">
-                    <img class="lazy" src="" data-src="<?= SITE_STYLE_PATH ?>/img/content/title/bg.svg" alt="<?= SITE_SERVER_NAME ?>">
+                    <?php $APPLICATION->IncludeComponent(
+                        "bitrix:breadcrumb",
+                        "breadcrumbs", [
+                            "START_FROM" => "0",
+                            "PATH" => "",
+                            "SITE_ID" => "s1",
+                        ]
+                    ); ?>
+                    <h1><?php $APPLICATION->ShowTitle() ?></h1>
+                    <?php $APPLICATION->ShowViewContent('after_title'); ?>
                 </div>
             </div>
-            <div class="content">
-                <?php $APPLICATION->IncludeComponent(
-                    "bitrix:breadcrumb",
-                    "breadcrumbs", [
-                        "START_FROM" => "0",
-                        "PATH" => "",
-                        "SITE_ID" => "s1",
-                    ]
-                ); ?>
-                <h1><?php $APPLICATION->ShowTitle() ?></h1>
-                <?php $APPLICATION->ShowViewContent('after_title'); ?>
+        <?php else: ?>
+            <div class="cover">
+                <?php $APPLICATION->ShowViewContent('cover__bg'); ?>
+                <div class="cover-wrap">
+                    <div class="cover-inner">
+                        <div class="cover-content">
+                            <?php $APPLICATION->IncludeComponent(
+                                "bitrix:breadcrumb",
+                                "breadcrumbs_white", [
+                                    "START_FROM" => "0",
+                                    "PATH" => "",
+                                    "SITE_ID" => "s1",
+                                ]
+                            ); ?>
+                            <h1><?php $APPLICATION->ShowTitle() ?></h1>
+                            <?php $APPLICATION->ShowViewContent('cover__anons'); ?>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        <?php endif ?>
         <section>
             <?php $APPLICATION->ShowViewContent('before_parent_sect'); ?>
             <div class="content">
