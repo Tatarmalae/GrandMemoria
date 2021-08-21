@@ -38,7 +38,6 @@ $this->setFrameMode(true);
                             <svg class="icon__slider-next" width="32" height="32">
                                 <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#slider-next"></use>
                             </svg>
-
                         </button>
                     </div>
                 </div>
