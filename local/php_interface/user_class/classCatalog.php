@@ -3,8 +3,11 @@
 namespace Dev;
 
 use Bitrix\Highloadblock\HighloadBlockTable;
+use Bitrix\Iblock\ElementPropertyTable;
 use Bitrix\Iblock\ElementTable;
 use Bitrix\Iblock\IblockTable;
+use Bitrix\Iblock\PropertyEnumerationTable;
+use Bitrix\Iblock\PropertyTable;
 use Bitrix\Iblock\SectionTable;
 use Bitrix\Main\ArgumentException;
 use Bitrix\Main\Entity\Query;
@@ -28,7 +31,7 @@ class Catalog
      * @throws ObjectPropertyException
      * @throws SystemException
      */
-    public function getElementProps($IBlockID, $props): array
+    public static function getElementProps($IBlockID, $props): array
     {
         $query = new Query(
             ElementTable::getEntity()
@@ -51,29 +54,26 @@ class Catalog
         $query->registerRuntimeField(
             'PROPERTY',
             [
-                'data_type' => \Bitrix\Iblock\ElementPropertyTable::class,
+                'data_type' => ElementPropertyTable::class,
                 'reference' => ['=this.ID' => 'ref.IBLOCK_ELEMENT_ID'],
             ]
         );
         $query->registerRuntimeField(
             'PROPERTY_PROP',
             [
-                'data_type' => \Bitrix\Iblock\PropertyTable::class,
+                'data_type' => PropertyTable::class,
                 'reference' => ['=this.PROPERTY.IBLOCK_PROPERTY_ID' => 'ref.ID',],
             ]
         );
         $query->registerRuntimeField(
             'PROPERTY_ENUM',
             [
-                'data_type' => \Bitrix\Iblock\PropertyEnumerationTable::class,
+                'data_type' => PropertyEnumerationTable::class,
                 'reference' => ['=this.PROPERTY.IBLOCK_PROPERTY_ID' => 'ref.PROPERTY_ID'],
             ]
         );
-        \Dev\Utilities::DB($query->getQuery());
         $result = $query->exec();
-        while ($row = $result->fetch()) {
-            \Dev\Utilities::DB($row);
-        }
+        return $result->fetch();
     }
 
     /**
