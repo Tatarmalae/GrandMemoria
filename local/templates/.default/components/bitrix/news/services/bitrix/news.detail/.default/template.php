@@ -15,6 +15,7 @@ $this->setFrameMode(true);
 <?php $this->SetViewTarget('cover__bg') ?>
 <div class="cover__bg" style="background-image: url(<?= $arResult['DETAIL_PICTURE']['SRC'] ?>)"></div>
 <?php $this->EndViewTarget() ?>
+
 <?php $this->SetViewTarget('cover__anons') ?>
 <p><?= $arResult['PREVIEW_TEXT'] ?></p>
 <div class="more-btn">
@@ -26,6 +27,7 @@ $this->setFrameMode(true);
     </a>
 </div>
 <?php $this->EndViewTarget() ?>
+
 <article>
     <?= $arResult['DETAIL_TEXT'] ?>
     <?php if (!empty($arResult['PROPERTIES']['PRICE_LIST']['VALUE'])): ?>
