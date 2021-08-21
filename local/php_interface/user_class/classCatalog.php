@@ -24,6 +24,7 @@ use Bitrix\Main\SystemException;
 class Catalog
 {
     /**
+     * Возвращает значение свойства ИНФОБЛОКА
      * @param $IBlockID
      * @param $props
      * @return array
@@ -77,7 +78,69 @@ class Catalog
     }
 
     /**
-     * Получает активные разделы инфоблока с элементами > 0
+     * Возвращает элементы ИНФОБЛОКА. Может учитывать раздел
+     * @param $IBlockID
+     * @param string $sectionID
+     * @return array
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
+     */
+    public static function getElementList($IBlockID, string $sectionID = ''): array
+    {
+        $query = new Query(
+            ElementTable::getEntity()
+        );
+        $query->setGroup([
+            'ID',
+            'PROPERTY_ENUM_VALUE',
+        ]);
+        $query->setFilter([
+            '=IBLOCK_ID' => $IBlockID,
+        ]);
+        if (!empty($sectionID)) {
+            $query->setFilter([
+                '=IBLOCK_ID' => $IBlockID,
+                '=IBLOCK_SECTION_ID' => $sectionID,
+            ]);
+        }
+        $query->setSelect([
+            'ID',
+            'NAME',
+            'PREVIEW_TEXT',
+            'DETAIL_TEXT',
+            'PROPERTY_CODE' => 'PROPERTY_PROP.CODE',
+            'PROPERTY_VALUE' => 'PROPERTY.VALUE',
+            'PROPERTY_DESCRIPTION' => 'PROPERTY.DESCRIPTION',
+            'PROPERTY_ENUM_VALUE' => 'PROPERTY_ENUM.VALUE',
+        ]);
+        $query->registerRuntimeField(
+            'PROPERTY',
+            [
+                'data_type' => ElementPropertyTable::class,
+                'reference' => ['=this.ID' => 'ref.IBLOCK_ELEMENT_ID'],
+            ]
+        );
+        $query->registerRuntimeField(
+            'PROPERTY_PROP',
+            [
+                'data_type' => PropertyTable::class,
+                'reference' => ['=this.PROPERTY.IBLOCK_PROPERTY_ID' => 'ref.ID',],
+            ]
+        );
+        $query->registerRuntimeField(
+            'PROPERTY_ENUM',
+            [
+                'data_type' => PropertyEnumerationTable::class,
+                'reference' => ['=this.PROPERTY.IBLOCK_PROPERTY_ID' => 'ref.PROPERTY_ID'],
+            ]
+        );
+        $result = $query->exec();
+        return $result->fetchAll();
+    }
+
+    /**
+     * Получает активные разделы ИНФОБЛОКА с элементами > 0
      * @param $IBlockID
      * @return array
      * @throws ArgumentException
@@ -101,6 +164,8 @@ class Catalog
         $query->setSelect([
             'ID',
             'NAME',
+            'LEFT_MARGIN',
+            'RIGHT_MARGIN',
             'ELEMENT_COUNT',
         ]);
         $query->registerRuntimeField(
@@ -128,6 +193,22 @@ class Catalog
     }
 
     /**
+     * @param $IBlockID
+     * @return array
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
+     */
+    public static function getIBlockElementsGroupBySection($IBlockID): array
+    {
+        $sections = self::getIBlockSections($IBlockID);
+        foreach ($sections as $key => $section) {
+            $sections[$key]['ELEMENTS'] = self::getElementList($IBlockID, $section['ID']);
+        }
+        return $sections;
+    }
+
+    /**
      * Получает информацию о разделе по ID
      * @param $sectionID
      * @return array|false
@@ -141,7 +222,7 @@ class Catalog
     }
 
     /**
-     * Получает список инфоблоков по типу
+     * Получает список ИНФОБЛОКОВ по типу
      * @throws ArgumentException
      * @throws ObjectPropertyException
      * @throws SystemException
