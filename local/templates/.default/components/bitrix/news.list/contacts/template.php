@@ -128,7 +128,7 @@ $arAddress = [];
             </div>
         </div>
         <div class="map-wrap">
-            <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/map.php", ['ID' => 'mapAddresses', 'ADDRESS' => $arAddress], ["SHOW_BORDER" => true]); ?>
+            <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/map.php", ['ID' => 'map', 'ADDRESS' => $arAddress], ["SHOW_BORDER" => true]); ?>
         </div>
     </div>
 </section>

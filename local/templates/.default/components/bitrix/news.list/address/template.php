@@ -17,7 +17,7 @@ $arAddress = [];
     <?php $this->SetViewTarget('before_parent_sect'); ?>
     <div class="categories">
         <div class="content">
-            <ul class="nav nav-tabs categories-items" id="mapTab" role="tablist">
+            <ul class="nav nav-tabs categories-items" id="addressesTab" role="tablist">
                 <?php foreach ($arResult['TAGS'] as $key => $tag): ?>
                     <li class="nav-item categories-li">
                         <a class="nav-link categories-item<?= $key == 0 ? ' active' : '' ?>" id="tab-<?= $key + 1 ?>" href="#tab<?= $key + 1 ?>" data-toggle="tab" role="tab" aria-controls="tab<?= $key + 1 ?>" aria-selected="<?= $key == 0 ? 'true' : 'false' ?>">
@@ -31,7 +31,7 @@ $arAddress = [];
     <?php $this->EndViewTarget(); ?>
 <?php endif ?>
 <div class="content">
-    <div class="tab-content" id="mapTabContent">
+    <div class="tab-content" id="addressesTabContent">
         <?php foreach ($arResult['TAGS'] as $key => $tag): ?>
             <div class="tab-pane fade<?= $key == 0 ? ' show active' : '' ?>" id="tab<?= $key + 1 ?>" role="tabpanel" aria-labelledby="tab-<?= $key + 1 ?>">
                 <div class="map-wrap">
@@ -96,9 +96,8 @@ $arAddress = [];
                             </div>
                         </div>
                     </div>
-                    <?php //TODO переделать что бы отвязаться от ID ?>
                     <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/map.php", [
-                        'ID' => ($key == 0 ? 'mapMorgues' : 'mapCemeteries'),
+                        'ID' => 'map1' . ($key + 1),
                         'ADDRESS' => $arAddress,
                     ], ["SHOW_BORDER" => true]); ?>
                 </div>
