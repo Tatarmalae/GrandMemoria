@@ -239,7 +239,7 @@ $arrFilterNews = [
 ];
 $APPLICATION->IncludeComponent(
     "bitrix:news.list",
-    "list",
+    "stock_list",
     [
         "IBLOCK_TYPE" => $arParams["IBLOCK_TYPE"],
         "IBLOCK_ID" => $arParams["IBLOCK_ID"],
@@ -287,8 +287,9 @@ $APPLICATION->IncludeComponent(
         "FILTER_NAME" => "arrFilterNews",
         "HIDE_LINK_WHEN_NO_DETAIL" => $arParams["HIDE_LINK_WHEN_NO_DETAIL"],
         "CHECK_DATES" => $arParams["CHECK_DATES"],
+        "TITLE" => "Другие акции",
     ],
-    $component
+    false
 );
 unset($arrFilterNews);
 ?>

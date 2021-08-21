@@ -1,6 +1,7 @@
 <?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 /**
  * @var $arResult
+ * @var $arParams
  */
 ?>
 <?php if (count($arResult["ITEMS"]) > 0): ?>
@@ -8,7 +9,7 @@
         <div class="content">
             <div class="heading">
                 <div class="heading__content">
-                    <h2>Другие акции</h2>
+                    <h2><?= $arParams['TITLE'] ?></h2>
                 </div>
             </div>
             <div class="stock-items items" data-type="slider">
