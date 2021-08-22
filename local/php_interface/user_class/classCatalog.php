@@ -91,10 +91,6 @@ class Catalog
         $query = new Query(
             ElementTable::getEntity()
         );
-        $query->setGroup([
-            'ID',
-            'PROPERTY_ENUM_VALUE',
-        ]);
         $query->setFilter([
             '=IBLOCK_ID' => $IBlockID,
         ]);
@@ -109,34 +105,22 @@ class Catalog
             'NAME',
             'PREVIEW_TEXT',
             'DETAIL_TEXT',
-            'PROPERTY_CODE' => 'PROPERTY_PROP.CODE',
-            'PROPERTY_VALUE' => 'PROPERTY.VALUE',
-            'PROPERTY_DESCRIPTION' => 'PROPERTY.DESCRIPTION',
-            'PROPERTY_ENUM_VALUE' => 'PROPERTY_ENUM.VALUE',
         ]);
-        $query->registerRuntimeField(
-            'PROPERTY',
-            [
-                'data_type' => ElementPropertyTable::class,
-                'reference' => ['=this.ID' => 'ref.IBLOCK_ELEMENT_ID'],
-            ]
-        );
-        $query->registerRuntimeField(
-            'PROPERTY_PROP',
-            [
-                'data_type' => PropertyTable::class,
-                'reference' => ['=this.PROPERTY.IBLOCK_PROPERTY_ID' => 'ref.ID',],
-            ]
-        );
-        $query->registerRuntimeField(
-            'PROPERTY_ENUM',
-            [
-                'data_type' => PropertyEnumerationTable::class,
-                'reference' => ['=this.PROPERTY.IBLOCK_PROPERTY_ID' => 'ref.PROPERTY_ID'],
-            ]
-        );
         $result = $query->exec();
-        return $result->fetchAll();
+        $arItems = [];
+        while ($arItem = $result->Fetch()) {
+            $dbProperty = \CIBlockElement::getProperty($IBlockID, $arItem['ID'], [
+                "sort",
+                "asc",
+            ], []);
+            while ($arProperty = $dbProperty->Fetch()) {
+                if ($arProperty['VALUE'] !== '') {
+                    $arItem['PROPERTIES'][$arProperty['CODE']] = $arProperty;
+                }
+            }
+            $arItems[] = $arItem;
+        }
+        return $arItems;
     }
 
     /**
