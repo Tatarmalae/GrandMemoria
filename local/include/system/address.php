@@ -7,6 +7,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
 /**
  * @var $arResult
+ * @var $arParams
  * @var $APPLICATION
  */
 
@@ -23,7 +24,7 @@ try {
         <div class="content">
             <div class="heading">
                 <div class="heading__content">
-                    <h2>Оформить из офиса</h2>
+                    <h2><?= $arParams['TITLE'] ?></h2>
                 </div>
             </div>
             <div class="map-wrap">
