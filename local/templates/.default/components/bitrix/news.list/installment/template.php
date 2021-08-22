@@ -15,96 +15,49 @@
 $this->setFrameMode(true);
 ?>
 
-<?php if ($arResult[0]['ID'] === '27'): ?>
-    <?php if (!empty($arResult[0]['ELEMENTS'])): ?>
-        <div class="installment-items items">
-            <?php foreach ($arResult[0]['ELEMENTS'] as $element): ?>
-                <div class="installment-item item">
-                    <?php if ($element['PROPERTIES']['VALUE']['VALUE'] !== ''): ?>
-                        <span class="installment-item__count">
-                            <big><?= $element['PROPERTIES']['VALUE']['VALUE'] ?></big> <?= $element['PROPERTIES']['VALUE']['DESCRIPTION'] ?>
-                        </span>
-                    <?php endif ?>
-                    <h4><?= $element['NAME'] ?></h4>
-                    <p><?= $element['DETAIL_TEXT'] ?></p>
-                </div>
-            <?php endforeach ?>
-        </div>
-    <?php endif ?>
-<?php elseif ($arResult[0]['ID'] === '28'): ?>
-    <?php if (!empty($arResult[0]['ELEMENTS'])): ?>
-        <section class="section_padding section_black-haze information">
-            <div class="content">
-                <div class="heading">
-                    <div class="heading__content">
-                        <h2><?= $arResult[0]['NAME'] ?></h2>
-                    </div>
-                </div>
-                <div class="information-items items">
-                    <?php foreach ($arResult[0]['ELEMENTS'] as $element): ?>
-                        <div class="information-item item">
-                            <div class="box">
-                                <?php if (!empty($element['PROPERTIES']['ICO']['VALUE'])): ?>
-                                    <div class="information-item__icon">
-                                        <img src="<?= CFile::GetPath($element['PROPERTIES']['ICO']['VALUE']) ?>" alt="ico">
-                                    </div>
-                                <?php endif ?>
-                                <h4><?= $element['NAME'] ?></h4>
-                                <p><?= $element['PREVIEW_TEXT'] ?></p>
-                            </div>
-                        </div>
-                    <?php endforeach ?>
-                </div>
+<?php if (!empty($arResult[0]['ELEMENTS'])): ?>
+    <div class="installment-items items">
+        <?php foreach ($arResult[0]['ELEMENTS'] as $element): ?>
+            <div class="installment-item item">
+                <?php if ($element['PROPERTIES']['VALUE']['VALUE'] !== ''): ?>
+                    <span class="installment-item__count">
+                        <big><?= $element['PROPERTIES']['VALUE']['VALUE'] ?></big> <?= $element['PROPERTIES']['VALUE']['DESCRIPTION'] ?>
+                    </span>
+                <?php endif ?>
+                <h4><?= $element['NAME'] ?></h4>
+                <p><?= $element['DETAIL_TEXT'] ?></p>
             </div>
-        </section>
-    <?php endif ?>
+        <?php endforeach ?>
+    </div>
 <?php endif ?>
 
 <?php $this->SetViewTarget('after_parent_sect'); ?>
 
-<?php if ($arResult[1]['ID'] === '27'): ?>
-    <?php if (!empty($arResult[1]['ELEMENTS'])): ?>
-        <div class="installment-items items">
-            <?php foreach ($arResult[1]['ELEMENTS'] as $element): ?>
-                <div class="installment-item item">
-                    <?php if ($element['PROPERTIES']['VALUE']['VALUE'] !== ''): ?>
-                        <span class="installment-item__count">
-                            <big><?= $element['PROPERTIES']['VALUE']['VALUE'] ?></big> <?= $element['PROPERTIES']['VALUE']['DESCRIPTION'] ?>
-                        </span>
-                    <?php endif ?>
-                    <h4><?= $element['NAME'] ?></h4>
-                    <p><?= $element['DETAIL_TEXT'] ?></p>
-                </div>
-            <?php endforeach ?>
-        </div>
-    <?php endif ?>
-<?php elseif ($arResult[1]['ID'] === '28'): ?>
-    <?php if (!empty($arResult[1]['ELEMENTS'])): ?>
-        <section class="section_padding section_black-haze information">
-            <div class="content">
-                <div class="heading">
-                    <div class="heading__content">
-                        <h2><?= $arResult[1]['NAME'] ?></h2>
-                    </div>
-                </div>
-                <div class="information-items items">
-                    <?php foreach ($arResult[1]['ELEMENTS'] as $element): ?>
-                        <div class="information-item item">
-                            <div class="box">
-                                <?php if (!empty($element['PROPERTIES']['ICO']['VALUE'])): ?>
-                                    <div class="information-item__icon">
-                                        <img src="<?= CFile::GetPath($element['PROPERTIES']['ICO']['VALUE']) ?>" alt="ico">
-                                    </div>
-                                <?php endif ?>
-                                <h4><?= $element['NAME'] ?></h4>
-                                <p><?= $element['PREVIEW_TEXT'] ?></p>
-                            </div>
-                        </div>
-                    <?php endforeach ?>
+<?php if (!empty($arResult[1]['ELEMENTS'])): ?>
+    <section class="section_padding section_black-haze information">
+        <div class="content">
+            <div class="heading">
+                <div class="heading__content">
+                    <h2><?= $arResult[1]['NAME'] ?></h2>
                 </div>
             </div>
-        </section>
-    <?php endif ?>
+            <div class="information-items items">
+                <?php foreach ($arResult[1]['ELEMENTS'] as $element): ?>
+                    <div class="information-item item">
+                        <div class="box">
+                            <?php if (!empty($element['PROPERTIES']['ICO']['VALUE'])): ?>
+                                <div class="information-item__icon">
+                                    <img src="<?= CFile::GetPath($element['PROPERTIES']['ICO']['VALUE']) ?>" alt="ico">
+                                </div>
+                            <?php endif ?>
+                            <h4><?= $element['NAME'] ?></h4>
+                            <p><?= $element['PREVIEW_TEXT'] ?></p>
+                        </div>
+                    </div>
+                <?php endforeach ?>
+            </div>
+        </div>
+    </section>
 <?php endif ?>
 
 <div class="banner">
@@ -133,7 +86,7 @@ $this->setFrameMode(true);
 
 <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/calculator_installment.php", [], ["SHOW_BORDER" => true]); ?>
 
-<?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/address.php", [], ["SHOW_BORDER" => true]); ?>
+<?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/address.php", ['TITLE' => 'Оформить из офиса'], ["SHOW_BORDER" => true]); ?>
 
 <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/feedback_form.php", [], ["SHOW_BORDER" => true]); ?>
 
