@@ -37,7 +37,7 @@ $this->setFrameMode(true);
             <div class="content">
                 <div class="heading">
                     <div class="heading__content">
-                        <h2>Условия рассрочки</h2>
+                        <h2><?= $arResult[0]['NAME'] ?></h2>
                     </div>
                 </div>
                 <div class="information-items items">
@@ -84,7 +84,7 @@ $this->setFrameMode(true);
             <div class="content">
                 <div class="heading">
                     <div class="heading__content">
-                        <h2>Условия рассрочки</h2>
+                        <h2><?= $arResult[1]['NAME'] ?></h2>
                     </div>
                 </div>
                 <div class="information-items items">
