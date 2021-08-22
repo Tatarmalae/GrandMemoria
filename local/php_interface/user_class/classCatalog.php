@@ -102,13 +102,17 @@ class Catalog
         }
         $query->setSelect([
             'ID',
+            'CODE',
             'NAME',
             'PREVIEW_TEXT',
             'DETAIL_TEXT',
+            'DETAIL_PAGE_URL' => 'IBLOCK.DETAIL_PAGE_URL',
         ]);
         $result = $query->exec();
         $arItems = [];
         while ($arItem = $result->Fetch()) {
+            $arItem['DETAIL_PAGE_URL'] = \CIBlock::ReplaceDetailUrl($arItem['DETAIL_PAGE_URL'], $arItem, false, 'E');
+
             $dbProperty = \CIBlockElement::getProperty($IBlockID, $arItem['ID'], [
                 "sort",
                 "asc",
