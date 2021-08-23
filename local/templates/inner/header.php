@@ -43,14 +43,16 @@
                     </div>
                 </div>
                 <div class="content">
-                    <?php $APPLICATION->IncludeComponent(
-                        "bitrix:breadcrumb",
-                        "breadcrumbs", [
-                            "START_FROM" => "0",
-                            "PATH" => "",
-                            "SITE_ID" => "s1",
-                        ]
-                    ); ?>
+                    <?php if(!CSite::InDir('/search/')): ?>
+                        <?php $APPLICATION->IncludeComponent(
+                            "bitrix:breadcrumb",
+                            "breadcrumbs", [
+                                "START_FROM" => "0",
+                                "PATH" => "",
+                                "SITE_ID" => "s1",
+                            ]
+                        ); ?>
+                    <?php endif ?>
                     <h1><?php $APPLICATION->ShowTitle() ?></h1>
                     <?php $APPLICATION->ShowViewContent('after_title'); ?>
                 </div>
