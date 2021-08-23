@@ -68,7 +68,5 @@ $this->setFrameMode(true);
     <?php endforeach; ?>
 </div>
 <?php if ($arParams["DISPLAY_BOTTOM_PAGER"]): ?>
-    <div class="filter-bottom">
-        <?= $arResult["NAV_STRING"] ?>
-    </div>
+    <?= $arResult["NAV_STRING"] ?>
 <?php endif; ?>

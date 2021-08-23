@@ -9,32 +9,32 @@ if (!$arResult["NavShowAlways"]) {
     if ($arResult["NavRecordCount"] == 0 || ($arResult["NavPageCount"] == 1 && $arResult["NavShowAll"] == false)) return;
 }
 ?>
+<div class="filter-bottom">
+    <?php
+    $strNavQueryString = ($arResult["NavQueryString"] != "" ? $arResult["NavQueryString"] . "&amp;" : "");
+    $strNavQueryStringFull = ($arResult["NavQueryString"] != "" ? "?" . $arResult["NavQueryString"] : "");
+    $arResult["nStartPage"] = 1;
+    $arResult["nEndPage"] = $arResult["NavPageCount"];
 
-<?php
-$strNavQueryString = ($arResult["NavQueryString"] != "" ? $arResult["NavQueryString"] . "&amp;" : "");
-$strNavQueryStringFull = ($arResult["NavQueryString"] != "" ? "?" . $arResult["NavQueryString"] : "");
-$arResult["nStartPage"] = 1;
-$arResult["nEndPage"] = $arResult["NavPageCount"];
-
-$sPrevHref = '';
-if ($arResult["NavPageNomer"] > 1) {
-    $bPrevDisabled = false;
-    if ($arResult["bSavePage"] || $arResult["NavPageNomer"] > 2) {
-        $sPrevHref = $arResult["sUrlPath"] . '?' . $strNavQueryString . 'PAGEN_' . $arResult["NavNum"] . '=' . ($arResult["NavPageNomer"] - 1);
+    $sPrevHref = '';
+    if ($arResult["NavPageNomer"] > 1) {
+        $bPrevDisabled = false;
+        if ($arResult["bSavePage"] || $arResult["NavPageNomer"] > 2) {
+            $sPrevHref = $arResult["sUrlPath"] . '?' . $strNavQueryString . 'PAGEN_' . $arResult["NavNum"] . '=' . ($arResult["NavPageNomer"] - 1);
+        } else {
+            $sPrevHref = $arResult["sUrlPath"] . $strNavQueryStringFull;
+        }
     } else {
-        $sPrevHref = $arResult["sUrlPath"] . $strNavQueryStringFull;
+        $bPrevDisabled = true;
     }
-} else {
-    $bPrevDisabled = true;
-}
-$sNextHref = '';
-if ($arResult["NavPageNomer"] < $arResult["NavPageCount"]) {
-    $bNextDisabled = false;
-    $sNextHref = $arResult["sUrlPath"] . '?' . $strNavQueryString . 'PAGEN_' . $arResult["NavNum"] . '=' . ($arResult["NavPageNomer"] + 1);
-} else {
-    $bNextDisabled = true;
-}
-?>
+    $sNextHref = '';
+    if ($arResult["NavPageNomer"] < $arResult["NavPageCount"]) {
+        $bNextDisabled = false;
+        $sNextHref = $arResult["sUrlPath"] . '?' . $strNavQueryString . 'PAGEN_' . $arResult["NavNum"] . '=' . ($arResult["NavPageNomer"] + 1);
+    } else {
+        $bNextDisabled = true;
+    }
+    ?>
     <nav class="pagination-wrapper" aria-label="navigation">
         <ul class="pagination">
             <?php if (!$bPrevDisabled): ?>
@@ -91,10 +91,11 @@ if ($arResult["NavPageNomer"] < $arResult["NavPageCount"]) {
             <?php endif; ?>
         </ul>
     </nav>
-<?php if (!$bNextDisabled): ?>
-    <button class="btn btn-blue-light big" type="button" onclick="location.href='<?= $sNextHref; ?>';" id="<?= $clientID ?>_next_page">
-        <span class="btn__text">
-            <span data-text="Показать еще">Показать еще</span>
-        </span>
-    </button>
-<?php endif; ?>
+    <?php if (!$bNextDisabled): ?>
+        <button class="btn btn-blue-light big" type="button" onclick="location.href='<?= $sNextHref; ?>';" id="<?= $clientID ?>_next_page">
+            <span class="btn__text">
+                <span data-text="Показать еще">Показать еще</span>
+            </span>
+        </button>
+    <?php endif; ?>
+</div>

@@ -177,9 +177,7 @@ $this->setFrameMode(true);
     <?php endforeach ?>
 </div>
 <?php if ($arParams["DISPLAY_BOTTOM_PAGER"]): ?>
-    <div class="filter-bottom">
-        <?= $arResult["NAV_STRING"] ?>
-    </div>
+    <?= $arResult["NAV_STRING"] ?>
 <?php endif; ?>
 <?php $this->SetViewTarget('after_parent_sect'); ?>
 <div class="banner">
