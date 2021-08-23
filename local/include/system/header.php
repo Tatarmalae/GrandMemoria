@@ -96,21 +96,25 @@ use Bitrix\Main\Config\Option;
                 ); ?>
             </div>
             <div class="search">
-                <div class="search__inner">
-                    <div class="search__text">
-                        <input type="search" placeholder="Поиск"/>
+                <form action="/search/" method="get">
+                    <div class="search__inner">
+                        <div class="search__text">
+                            <label>
+                                <input type="text" name="q" placeholder="Поиск"/>
+                            </label>
+                        </div>
+                        <div class="search__icon">
+                            <svg class="icon__search" width="20" height="20">
+                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#search"></use>
+                            </svg>
+                        </div>
+                        <div class="search__close">
+                            <svg class="icon__close-modal" width="24" height="24">
+                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
+                            </svg>
+                        </div>
                     </div>
-                    <div class="search__icon">
-                        <svg class="icon__search" width="20" height="20">
-                            <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#search"></use>
-                        </svg>
-                    </div>
-                    <div class="search__close">
-                        <svg class="icon__close-modal" width="24" height="24">
-                            <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
-                        </svg>
-                    </div>
-                </div>
+                </form>
             </div>
             <div class="burger">
                 <div class="burger__line"></div>
