@@ -297,4 +297,20 @@ class Catalog
             'filter' => ['TABLE_NAME' => $name],
         ])->fetch()['ID'];
     }
+
+    /**
+     * Получает информацию об Инфоблоке
+     * @param $id
+     * @return array|false
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
+     */
+    public static function getIBlock($id)
+    {
+        return IblockTable::getList([
+            'limit' => 1,
+            'filter' => ['ID' => $id],
+        ])->fetch();
+    }
 }

@@ -12,11 +12,11 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
  */
 
 try {
-    $arResult['CONTRACTS'] = Catalog::getElementList(1);
+    $arResult['ITEMS'] = Catalog::getElementList(1);
 } catch (Throwable $e) {
     Debug::dumpToFile($e->getMessage());
 }
-if (count($arResult['CONTRACTS']) == 0) return false;
+if (count($arResult['ITEMS']) == 0) return false;
 ?>
 
 <?php $arAddress = [] ?>
@@ -31,7 +31,7 @@ if (count($arResult['CONTRACTS']) == 0) return false;
             <div class="map-items items">
                 <div class="swiper-container base-slider" data-count="4">
                     <div class="slider-wrap swiper-wrapper">
-                        <?php foreach ($arResult['CONTRACTS'] as $key => $arItem): ?>
+                        <?php foreach ($arResult['ITEMS'] as $key => $arItem): ?>
                             <?php $arAddress[][] = $arItem['PROPERTIES']['ADDRESS']['VALUE']; ?>
                             <div class="slider-slide swiper-slide">
                                 <div class="map-item item">
