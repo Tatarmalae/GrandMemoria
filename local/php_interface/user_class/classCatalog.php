@@ -107,6 +107,7 @@ class Catalog
             'NAME',
             'PREVIEW_TEXT',
             'DETAIL_TEXT',
+            'PREVIEW_PICTURE',
             'DETAIL_PAGE_URL' => 'IBLOCK.DETAIL_PAGE_URL',
         ]);
         $result = $query->exec();
