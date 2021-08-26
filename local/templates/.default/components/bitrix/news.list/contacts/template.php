@@ -132,8 +132,6 @@ $arAddress = [];
         </div>
     </div>
 </section>
-<div class="banner">
-    <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/callback_banner.php", [], ["SHOW_BORDER" => true]); ?>
-</div>
+<?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/callback_banner.php", [], ["SHOW_BORDER" => true]); ?>
 <?php $this->EndViewTarget(); ?>
 <?php unset($arAddress) ?>
