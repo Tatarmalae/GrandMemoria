@@ -81,16 +81,23 @@ class Catalog
      * Возвращает элементы ИНФОБЛОКА. Может учитывать раздел
      * @param $IBlockID
      * @param string $sectionID
+     * @param array|null $order
      * @return array
      * @throws ArgumentException
      * @throws ObjectPropertyException
      * @throws SystemException
      */
-    public static function getElementList($IBlockID, string $sectionID = ''): array
+    public static function getElementList($IBlockID, string $sectionID = '', ?array $order = []): array
     {
         $query = new Query(
             ElementTable::getEntity()
         );
+        $query->setOrder([
+            'SORT' => 'ASC',
+        ]);
+        if ($order) {
+            $query->setOrder($order);
+        }
         $query->setFilter([
             'ACTIVE' => 'Y',
             '=IBLOCK_ID' => $IBlockID,
@@ -108,6 +115,7 @@ class Catalog
             'PREVIEW_TEXT',
             'DETAIL_TEXT',
             'PREVIEW_PICTURE',
+            'ACTIVE_FROM',
             'DETAIL_PAGE_URL' => 'IBLOCK.DETAIL_PAGE_URL',
         ]);
         $result = $query->exec();
@@ -184,16 +192,17 @@ class Catalog
 
     /**
      * @param $IBlockID
+     * @param array|null $elemOrder
      * @return array
      * @throws ArgumentException
      * @throws ObjectPropertyException
      * @throws SystemException
      */
-    public static function getIBlockElementsGroupBySection($IBlockID): array
+    public static function getIBlockElementsGroupBySection($IBlockID, ?array $elemOrder = []): array
     {
         $sections = self::getIBlockSections($IBlockID);
         foreach ($sections as $key => $section) {
-            $sections[$key]['ELEMENTS'] = self::getElementList($IBlockID, $section['ID']);
+            $sections[$key]['ELEMENTS'] = self::getElementList($IBlockID, $section['ID'], $elemOrder);
         }
         return $sections;
     }
