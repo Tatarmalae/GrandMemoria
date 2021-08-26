@@ -92,6 +92,7 @@ class Catalog
             ElementTable::getEntity()
         );
         $query->setFilter([
+            'ACTIVE' => 'Y',
             '=IBLOCK_ID' => $IBlockID,
         ]);
         if (!empty($sectionID)) {
