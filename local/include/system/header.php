@@ -30,7 +30,7 @@ use Bitrix\Main\Config\Option;
                         <span>
                             <?= Option::get("askaron.settings", "UF_ADDRESS_HEADER"); ?>
                         </span>
-                        <a href="/contacts/">
+                        <a href="<?php // TODO: куда ссылка ?>">
                             <strong>Все наши адреса</strong>
                         </a>
                     </div>
@@ -64,7 +64,7 @@ use Bitrix\Main\Config\Option;
                     </a>
                 </div>
                 <div class="header__column header__column_btn header__column_calculation">
-                    <a class="btn btn-blue small" href="/calc/">
+                    <a class="btn btn-blue small" href="<?php // TODO: куда ссылка ?>">
                         <span class="btn__text">
                             <span data-text="Расчет похорон">Расчет похорон</span>
                         </span>
