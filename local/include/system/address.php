@@ -16,7 +16,7 @@ try {
 } catch (Throwable $e) {
     Debug::dumpToFile($e->getMessage());
 }
-if (count($arResult['ITEMS']) == 0) return false;
+if (count($arResult['ITEMS']) == 0) return;
 ?>
 
 <?php $arAddress = [] ?>
