@@ -52,17 +52,9 @@ class Utilities
      */
     public static function getWord($number, $suffix)
     {
-        $keys = [
-            2,
-            0,
-            1,
-            1,
-            1,
-            2,
-        ];
-        $mod = $number % 100;
-        $suffix_key = ($mod > 7 && $mod < 20) ? 2 : $keys[min($mod % 10, 5)];
-        return $suffix[$suffix_key];
+        $abs = abs($number);
+        $cases = array (2, 0, 1, 1, 1, 2);
+        return $number." ".$suffix[ ($abs%100 > 4 && $abs %100 < 20) ? 2 : $cases[min($abs%10, 5)] ];
     }
 
     /**
