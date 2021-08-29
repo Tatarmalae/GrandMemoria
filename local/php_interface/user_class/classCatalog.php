@@ -221,6 +221,34 @@ class Catalog
     }
 
     /**
+     * Получает информацию о разделе по CODE
+     * @param $IBlockID
+     * @param $sectionCode
+     * @return array|false
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
+     */
+    public static function getSectionByCode($IBlockID, $sectionCode)
+    {
+        $rsSection = SectionTable::getList([
+            'filter' => [
+                'IBLOCK_ID' => $IBlockID,
+                'CODE' => $sectionCode,
+                'ACTIVE' => 'Y',
+                'GLOBAL_ACTIVE' => 'Y',
+            ],
+            'limit' => 1,
+            'select' => [
+                'ID',
+                'NAME',
+                'IBLOCK_SECTION_ID',
+            ],
+        ]);
+        return current($rsSection->fetchAll());
+    }
+
+    /**
      * Получает список ИНФОБЛОКОВ по типу
      * @throws ArgumentException
      * @throws ObjectPropertyException
