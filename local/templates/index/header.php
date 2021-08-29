@@ -451,8 +451,7 @@ use Bitrix\Main\Config\Option;
             ]
         ); ?>
 
-        <?php
-        $APPLICATION->IncludeComponent(
+        <?php $APPLICATION->IncludeComponent(
             "bitrix:news.list",
             "stock_list",
             [
