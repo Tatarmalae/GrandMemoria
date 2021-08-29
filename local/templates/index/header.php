@@ -1,7 +1,11 @@
 <?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
+
 /**
  * @var $APPLICATION
  */
+
+use Bitrix\Main\Config\Option;
+
 ?>
 <!DOCTYPE html>
 <html lang="<?= LANGUAGE_ID ?>">
@@ -220,31 +224,35 @@
                     <div class="heading__content">
                         <h2>Комплекты ритуальных услуг</h2>
                         <p>Позвоните по телефону
-                            <a href="tel:8 (843) 558-00-82"><b>8 (843) 558-00-82</b></a>
+                            <a href="tel:+<?= preg_replace('~\D+~', '', Option::get("askaron.settings", "UF_PHONE")) ?>">
+                                <b><?= Option::get("askaron.settings", "UF_PHONE"); ?></b>
+                            </a>
                             и ритуальный агент <b>БЕСПЛАТНО</b> приедет.
                         </p>
                     </div>
-                    <a class="btn btn-blue big" href="#">
+                    <a class="btn btn-blue big" href="<?php //TODO: куда ссылка ?>">
                         <span class="btn__text">
                             <span data-text="Расчет похорон">Расчет похорон</span>
                         </span>
                     </a>
                 </div>
-                <a class="phone phone_xs" href="#">
+                <a class="phone phone_xs" href="tel:+<?= preg_replace('~\D+~', '', Option::get("askaron.settings", "UF_PHONE")) ?>">
                     <div class="content">
                         <div class="phone-inner">
                             <svg class="icon__phone" width="40" height="40">
                                 <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#phone"></use>
                             </svg>
-
                             <div class="phone-content">
-                                <span class="phone__number">8 (843) 558-00-82</span>
+                                <span class="phone__number">
+                                    <?= Option::get("askaron.settings", "UF_PHONE"); ?>
+                                </span>
                                 <strong>Ритуальные услуги</strong>
                             </div>
                         </div>
                     </div>
                 </a>
                 <div class="types-list">
+                    <?php //TODO: в ТЗ не описан данный блок ?>
                     <div class="types-items items">
                         <div class="types-item item">
                             <div class="box">
@@ -299,7 +307,7 @@
             </div>
         </section>
 
-        <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/adv.php", [], ["SHOW_BORDER" => true]); ?>
+        <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/components/adv.php", [], ["SHOW_BORDER" => true]); ?>
 
         <?php $APPLICATION->IncludeComponent(
             "bitrix:news.list",
@@ -392,7 +400,10 @@
             false
         ); ?>
 
-        <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/rating.php", ["TITLE" => "Рейтинг отзывов", "SHOW_MORE" => "Y"], ["SHOW_BORDER" => true]); ?>
+        <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/rating.php", [
+            "TITLE" => "Рейтинг отзывов",
+            "SHOW_MORE" => "Y",
+        ], ["SHOW_BORDER" => true]); ?>
 
         <?php $APPLICATION->IncludeComponent(
             "bitrix:catalog.section.list",

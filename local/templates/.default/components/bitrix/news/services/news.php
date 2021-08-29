@@ -66,5 +66,5 @@ $this->setFrameMode(true);
     $component
 ); ?>
 <?php $this->SetViewTarget('after_parent_sect') ?>
-<?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/adv.php", [], ["SHOW_BORDER" => true]); ?>
+<?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/components/adv.php", [], ["SHOW_BORDER" => true]); ?>
 <?php $this->EndViewTarget() ?>
