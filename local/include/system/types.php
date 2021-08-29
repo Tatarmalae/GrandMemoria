@@ -53,5 +53,24 @@
                 </div>
             </div>
         </div>
+        <?php if (empty($arParams['TITLE'])): ?>
+            <div class="banner-box banner-box_center bg_glitter">
+                <div class="banner-inner">
+                    <div class="banner-content">
+                        <h3>
+                            <a href="/info/articles/chto-delat-esli-umer-blizkiy-chelovek-poryadok-deystviy-v-ekstrennyy-situatsii/">Что делать, если умер близкий человек?</a>
+                        </h3>
+                        <p>Порядок действий в экстренных ситуациях</p>
+                    </div>
+                    <div class="banner-arrow">
+                        <a class="slider-btn slider-btn_next" href="/info/articles/chto-delat-esli-umer-blizkiy-chelovek-poryadok-deystviy-v-ekstrennyy-situatsii/">
+                            <svg class="icon__slider-next" width="32" height="32">
+                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#slider-next"></use>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        <?php endif ?>
     </div>
 </section>
