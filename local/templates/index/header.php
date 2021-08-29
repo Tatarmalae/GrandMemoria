@@ -112,191 +112,106 @@
 
         <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/components/article_index.php", [], ["SHOW_BORDER" => true]); ?>
 
-        <section class="catalog">
-            <div class="content">
-                <div class="heading heading_more">
-                    <div class="heading__content">
-                        <h2>Хиты продаж памятников</h2>
-                    </div>
-                    <div class="more">
-                        <a class="more__link" href="#">
-                            <span>Все памятники</span>
-                            <svg class="icon__arrow-right" width="24" height="24">
-                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-                <a class="phone" href="#">
-                    <div class="content">
-                        <div class="phone-inner">
-                            <svg class="icon__phone" width="40" height="40">
-                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#phone"></use>
-                            </svg>
-                            <div class="phone-content">
-                                <span class="phone__number">8 (843) 558-00-82</span>
-                                <strong>Заказать памятники</strong>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-                <div class="catalog-items items" data-type="column">
-                    <div class="swiper-container base-slider" data-count="4">
-                        <div class="slider-wrap swiper-wrapper">
-                            <div class="slider-slide swiper-slide">
-                                <a class="catalog-item item link-item" href="#">
-                                    <div class="catalog-item__img img">
-                                        <div class="img__inner object-fit">
-                                            <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/catalog/1.jpg" alt="">
-                                        </div>
-                                        <div class="catalog-item__labels label-wrap">
-                                            <span class="label label_small label_bg label_fiery-rose">Новинки</span>
-                                            <span class="label label_small label_bg label_fiery-rose">-15%</span>
-                                        </div>
-                                    </div>
-                                    <div class="catalog-item__content">
-                                        <span class="label label_small label_fiery-rose">В наличие</span>
-                                        <h4>Гранитный БК-1</h4>
-                                        <div class="price price_small">
-                                            <span class="price-now">от 4 000 ₽</span>
-                                            <s class="price-old">от 5 200 ₽</s>
-                                        </div>
-                                        <div class="more-btn">
-                                            <button class="btn btn-blue small" type="button">
-                                                <span class="btn__text">
-                                                    <span data-text="В корзину">В корзину</span>
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="slider-slide swiper-slide">
-                                <a class="catalog-item item link-item" href="#">
-                                    <div class="catalog-item__img img">
-                                        <div class="img__inner object-fit">
-                                            <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/catalog/2.jpg" alt="">
-                                        </div>
-                                        <div class="catalog-item__labels label-wrap">
-                                            <span class="label label_small label_bg label_fiery-rose">Новинки</span>
-                                        </div>
-                                    </div>
-                                    <div class="catalog-item__content">
-                                        <span class="label label_small label_fiery-rose">В наличие</span>
-                                        <h4>Гранитный БР-1</h4>
-                                        <div class="price price_small">
-                                            <span class="price-now">от 5 000 ₽</span>
-                                        </div>
-                                        <div class="more-btn">
-                                            <button class="btn btn-blue small" type="button">
-                                                <span class="btn__text">
-                                                    <span data-text="В корзину">В корзину</span>
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="slider-slide swiper-slide">
-                                <a class="catalog-item item link-item" href="#">
-                                    <div class="catalog-item__img img">
-                                        <div class="img__inner object-fit">
-                                            <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/catalog/3.jpg" alt="">
-                                        </div>
-                                    </div>
-                                    <div class="catalog-item__content">
-                                        <span class="label label_small label_fiery-rose">В наличие</span>
-                                        <h4>Гранитный ВП-1</h4>
-                                        <div class="price price_small">
-                                            <span class="price-now">от 7 000 ₽</span>
-                                        </div>
-                                        <div class="more-btn">
-                                            <button class="btn btn-blue small" type="button">
-                                                <span class="btn__text">
-                                                    <span data-text="В корзину">В корзину</span>
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="slider-slide swiper-slide">
-                                <a class="catalog-item item link-item" href="#">
-                                    <div class="catalog-item__img img">
-                                        <div class="img__inner object-fit">
-                                            <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/catalog/4.jpg" alt="">
-                                        </div>
-                                        <div class="catalog-item__labels label-wrap">
-                                            <span class="label label_small label_bg label_fiery-rose">Новинки</span>
-                                            <span class="label label_small label_bg label_fiery-rose">-21%</span>
-                                        </div>
-                                    </div>
-                                    <div class="catalog-item__content">
-                                        <span class="label label_small label_fiery-rose">В наличие</span>
-                                        <h4>Гранитный ДС-1</h4>
-                                        <div class="price price_small">
-                                            <span class="price-now">от 5 000 ₽</span>
-                                            <s class="price-old">от 6 200 ₽</s>
-                                        </div>
-                                        <div class="more-btn">
-                                            <button class="btn btn-blue small" type="button">
-                                                <span class="btn__text">
-                                                    <span data-text="В корзину">В корзину</span>
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="slider-slide swiper-slide">
-                                <a class="catalog-item item link-item" href="#">
-                                    <div class="catalog-item__img img">
-                                        <div class="img__inner object-fit">
-                                            <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/catalog/1.jpg" alt="">
-                                        </div>
-                                        <div class="catalog-item__labels label-wrap">
-                                            <span class="label label_small label_bg label_fiery-rose">Новинки</span>
-                                            <span class="label label_small label_bg label_fiery-rose">-15%</span>
-                                        </div>
-                                    </div>
-                                    <div class="catalog-item__content">
-                                        <span class="label label_small label_fiery-rose">В наличие</span>
-                                        <h4>Гранитный БК-1</h4>
-                                        <div class="price price_small">
-                                            <span class="price-now">от 4 000 ₽</span>
-                                            <s class="price-old">от 5 200 ₽</s>
-                                        </div>
-                                        <div class="more-btn">
-                                            <button class="btn btn-blue small" type="button">
-                                                <span class="btn__text">
-                                                    <span data-text="В корзину">В корзину</span>
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="slider-arrows slider-arrows_prev">
-                            <div class="slider-btn slider-btn_prev">
-                                <svg class="icon__slider-prev" width="32" height="32">
-                                    <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#slider-prev"></use>
-                                </svg>
-
-                            </div>
-                        </div>
-                        <div class="slider-arrows slider-arrows_next">
-                            <div class="slider-btn slider-btn_next">
-                                <svg class="icon__slider-next" width="32" height="32">
-                                    <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#slider-next"></use>
-                                </svg>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <?php
+        global $arrFilterHit;
+        $arrFilterHit = [
+            'PROPERTY_HIT' => '1',
+        ];
+        $APPLICATION->IncludeComponent(
+            "bitrix:news.list",
+            "hits_list",
+            [
+                "COMPONENT_TEMPLATE" => "product",
+                "IBLOCK_TYPE" => "catalog",
+                "IBLOCK_ID" => "12",
+                "NEWS_COUNT" => "10",
+                "SORT_BY1" => "",
+                "SORT_ORDER1" => "ASC",
+                "SORT_BY2" => "SORT",
+                "SORT_ORDER2" => "ASC",
+                "FILTER_NAME" => "arrFilterHit",
+                "FIELD_CODE" => [
+                    0 => "ID",
+                    1 => "CODE",
+                    2 => "XML_ID",
+                    3 => "NAME",
+                    4 => "TAGS",
+                    5 => "SORT",
+                    6 => "PREVIEW_TEXT",
+                    7 => "PREVIEW_PICTURE",
+                    8 => "DETAIL_TEXT",
+                    9 => "DETAIL_PICTURE",
+                    10 => "DATE_ACTIVE_FROM",
+                    11 => "ACTIVE_FROM",
+                    12 => "DATE_ACTIVE_TO",
+                    13 => "ACTIVE_TO",
+                    14 => "SHOW_COUNTER",
+                    15 => "SHOW_COUNTER_START",
+                    16 => "IBLOCK_TYPE_ID",
+                    17 => "IBLOCK_ID",
+                    18 => "IBLOCK_CODE",
+                    19 => "IBLOCK_NAME",
+                    20 => "IBLOCK_EXTERNAL_ID",
+                    21 => "DATE_CREATE",
+                    22 => "CREATED_BY",
+                    23 => "CREATED_USER_NAME",
+                    24 => "TIMESTAMP_X",
+                    25 => "MODIFIED_BY",
+                    26 => "USER_NAME",
+                    27 => "",
+                ],
+                "PROPERTY_CODE" => [
+                    0 => "PRICE",
+                    1 => "OLD_PRICE",
+                    2 => "NEW",
+                ],
+                "CHECK_DATES" => "Y",
+                "DETAIL_URL" => "",
+                "AJAX_MODE" => "N",
+                "AJAX_OPTION_JUMP" => "N",
+                "AJAX_OPTION_STYLE" => "N",
+                "AJAX_OPTION_HISTORY" => "N",
+                "AJAX_OPTION_ADDITIONAL" => "",
+                "CACHE_TYPE" => "A",
+                "CACHE_TIME" => "36000000",
+                "CACHE_FILTER" => "N",
+                "CACHE_GROUPS" => "Y",
+                "PREVIEW_TRUNCATE_LEN" => "",
+                "ACTIVE_DATE_FORMAT" => "",
+                "SET_TITLE" => "N",
+                "SET_BROWSER_TITLE" => "N",
+                "SET_META_KEYWORDS" => "N",
+                "SET_META_DESCRIPTION" => "N",
+                "SET_LAST_MODIFIED" => "N",
+                "INCLUDE_IBLOCK_INTO_CHAIN" => "N",
+                "ADD_SECTIONS_CHAIN" => "N",
+                "HIDE_LINK_WHEN_NO_DETAIL" => "N",
+                "PARENT_SECTION" => "15",
+                "PARENT_SECTION_CODE" => "",
+                "INCLUDE_SUBSECTIONS" => "Y",
+                "STRICT_SECTION_CHECK" => "N",
+                "PAGER_TEMPLATE" => "pager",
+                "DISPLAY_TOP_PAGER" => "N",
+                "DISPLAY_BOTTOM_PAGER" => "N",
+                "PAGER_TITLE" => "",
+                "PAGER_SHOW_ALWAYS" => "N",
+                "PAGER_DESC_NUMBERING" => "N",
+                "PAGER_DESC_NUMBERING_CACHE_TIME" => "36000",
+                "PAGER_SHOW_ALL" => "N",
+                "PAGER_BASE_LINK_ENABLE" => "N",
+                "SET_STATUS_404" => "N",
+                "SHOW_404" => "N",
+                "FILE_404" => "",
+                "TITLE" => "Хиты продаж памятников",
+                "DISPLAY_DATE" => "Y",
+                "DISPLAY_NAME" => "Y",
+                "DISPLAY_PICTURE" => "Y",
+                "DISPLAY_PREVIEW_TEXT" => "Y",
+                "MESSAGE_404" => "",
+            ],
+            false
+        );
+        ?>
 
         <section class="section_padding bg_glitter types">
             <div class="content">
