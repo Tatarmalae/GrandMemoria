@@ -16,7 +16,7 @@ $this->setFrameMode(true);
     <div class="content">
         <div class="heading heading_more">
             <div class="heading__content">
-                <h2>Вопросы и ответы по услугам</h2>
+                <h2><?= $arParams['TITLE'] ?></h2>
             </div>
             <div class="more">
                 <a class="more__link" href="<?= current($arResult['ITEMS'])['LIST_PAGE_URL'] ?>">

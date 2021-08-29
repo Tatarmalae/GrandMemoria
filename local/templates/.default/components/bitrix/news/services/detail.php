@@ -524,7 +524,7 @@ $APPLICATION->IncludeComponent(
         "SET_STATUS_404" => "N",
         "SHOW_404" => "N",
         "FILE_404" => "",
-        "TITLE" => "Акции",
+        "TITLE" => "Вопросы и ответы по услугам",
         "DISPLAY_DATE" => "Y",
         "DISPLAY_NAME" => "Y",
         "DISPLAY_PICTURE" => "Y",

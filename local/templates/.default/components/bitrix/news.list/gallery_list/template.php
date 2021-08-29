@@ -12,15 +12,15 @@
 /** @var CBitrixComponent $component */
 $this->setFrameMode(true);
 ?>
-<section class="gallery">
+<section class="gallery<?= !empty($arParams['CLASS']) ? $arParams['CLASS'] : '' ?>">
     <div class="content">
         <div class="heading">
             <div class="heading__content">
                 <h2>Наши работы</h2>
             </div>
         </div>
-        <div class="gallery-items items">
-            <div class="swiper-container base-slider" data-count="2">
+        <div class="gallery-items items<?= !empty($arParams['DATA_COUNT']) ? ' gallery-items_size-' . $arParams['DATA_COUNT'] : '' ?>">
+            <div class="swiper-container base-slider" data-count="<?= !empty($arParams['DATA_COUNT']) ? $arParams['DATA_COUNT'] : '2' ?>">
                 <div class="slider-wrap swiper-wrapper">
                     <?php foreach ($arResult["ITEMS"] as $key => $arItem): ?>
                         <?php
@@ -29,7 +29,7 @@ $this->setFrameMode(true);
                         ?>
                         <div id="<?= $this->GetEditAreaId($arItem['ID']); ?>" class="slider-slide swiper-slide">
                             <a class="gallery-item item" href="#" data-fancybox="gallery" data-options="{&quot;src&quot; : &quot;<?= CFile::GetPath($arItem['PREVIEW_PICTURE']['ID']) ?>&quot;}">
-                                <div class="gallery-item__img img img-16by9">
+                                <div class="gallery-item__img img img-<?= !empty($arParams['DATA_COUNT']) ? '1by1' : '16by9' ?>">
                                     <div class="gallery__zoom">
                                         <div class="gallery__zoom-inner">
                                             <svg class="icon__search" width="14" height="14">
