@@ -394,234 +394,51 @@
 
         <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/rating.php", ["TITLE" => "Рейтинг отзывов", "SHOW_MORE" => "Y"], ["SHOW_BORDER" => true]); ?>
 
-        <section class="catalog">
-            <div class="content">
-                <div class="heading heading_more">
-                    <div class="heading__content">
-                        <h2>Каталог товаров</h2>
-                    </div>
-                    <div class="more">
-                        <a class="more__link" href="#">
-                            <span>Все товары</span>
-                            <svg class="icon__arrow-right" width="24" height="24">
-                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-                <a class="phone phone_xs" href="#">
-                    <div class="content">
-                        <div class="phone-inner">
-                            <svg class="icon__phone" width="40" height="40">
-                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#phone"></use>
-                            </svg>
-                            <div class="phone-content">
-                                <span class="phone__number">8 (843) 558-00-82</span>
-                                <strong>Ритуальные товары</strong>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-                <div class="catalog-items items" data-type="column">
-                    <div class="catalog-item item link-item">
-                        <a class="catalog-item__img img" href="#">
-                            <div class="img__inner object-fit">
-                                <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/catalog/5.jpg" alt="">
-                            </div>
-                        </a>
-                        <div class="catalog-item__content">
-                            <h4>
-                                <a href="#">Памятники</a>
-                            </h4>
-                            <ul>
-                                <li>
-                                    <a href="#">Гранитные</a>
-                                </li>
-                                <li>
-                                    <a href="#">Мраморные</a>
-                                </li>
-                                <li>
-                                    <a href="#">Эксклюзивные</a>
-                                </li>
-                            </ul>
-                            <div class="price price_small">
-                                <span class="price-now">от 17 000 ₽</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="catalog-item item link-item">
-                        <a class="catalog-item__img img" href="#">
-                            <div class="img__inner object-fit">
-                                <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/catalog/6.jpg" alt="">
-                            </div>
-                        </a>
-                        <div class="catalog-item__content">
-                            <h4>
-                                <a href="#">Ограды</a>
-                            </h4>
-                            <ul>
-                                <li>
-                                    <a href="#">Сварные</a>
-                                </li>
-                                <li>
-                                    <a href="#">Кованые</a>
-                                </li>
-                            </ul>
-                            <div class="price price_small">
-                                <span class="price-now">от 12 000 ₽</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="catalog-item item link-item">
-                        <a class="catalog-item__img img" href="#">
-                            <div class="img__inner object-fit">
-                                <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/catalog/7.jpg" alt="">
-                            </div>
-                        </a>
-                        <div class="catalog-item__content">
-                            <h4>
-                                <a href="#">Гробы</a>
-                            </h4>
-                            <ul>
-                                <li>
-                                    <a href="#">Стандартные</a>
-                                </li>
-                                <li>
-                                    <a href="#">Эксклюзивные</a>
-                                </li>
-                            </ul>
-                            <div class="price price_small">
-                                <span class="price-now">от 10 000 ₽</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="catalog-item item link-item">
-                        <a class="catalog-item__img img" href="#">
-                            <div class="img__inner object-fit">
-                                <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/catalog/8.jpg" alt="">
-                            </div>
-                        </a>
-                        <div class="catalog-item__content">
-                            <h4>
-                                <a href="#">Кресты</a>
-                            </h4>
-                            <ul>
-                                <li>
-                                    <a href="#">Сосновые</a>
-                                </li>
-                                <li>
-                                    <a href="#">Дубовые</a>
-                                </li>
-                                <li>
-                                    <a href="#">Металлические</a>
-                                </li>
-                            </ul>
-                            <div class="price price_small">
-                                <span class="price-now">от 8 000 ₽</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="catalog-item item link-item">
-                        <a class="catalog-item__img img" href="#">
-                            <div class="img__inner object-fit">
-                                <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/catalog/9.jpg" alt="">
-                            </div>
-                        </a>
-                        <div class="catalog-item__content">
-                            <h4>
-                                <a href="#">Венки и корзины</a>
-                            </h4>
-                            <ul>
-                                <li>
-                                    <a href="#">Живые цветы</a>
-                                </li>
-                                <li>
-                                    <a href="#">Искусственные цветы</a>
-                                </li>
-                            </ul>
-                            <div class="price price_small">
-                                <span class="price-now">от 5 000 ₽</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="catalog-item item link-item">
-                        <a class="catalog-item__img img" href="#">
-                            <div class="img__inner object-fit">
-                                <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/catalog/10.jpg" alt="">
-                            </div>
-                        </a>
-                        <div class="catalog-item__content">
-                            <h4>
-                                <a href="#">Таблички</a>
-                            </h4>
-                            <ul>
-                                <li>
-                                    <a href="#">Металлические</a>
-                                </li>
-                                <li>
-                                    <a href="#">Металлокерамика ч/б</a>
-                                </li>
-                                <li>
-                                    <a href="#">Пластик</a>
-                                </li>
-                            </ul>
-                            <div class="price price_small">
-                                <span class="price-now">от 3 000 ₽</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="catalog-item item link-item">
-                        <a class="catalog-item__img img" href="#">
-                            <div class="img__inner object-fit">
-                                <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/catalog/11.jpg" alt="">
-                            </div>
-                        </a>
-                        <div class="catalog-item__content">
-                            <h4>
-                                <a href="#">Одежда</a>
-                            </h4>
-                            <ul>
-                                <li>
-                                    <a href="#">Мужская</a>
-                                </li>
-                                <li>
-                                    <a href="#">Женская</a>
-                                </li>
-                            </ul>
-                            <div class="price price_small">
-                                <span class="price-now">от 4 000 ₽</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="catalog-item item link-item">
-                        <a class="catalog-item__img img" href="#">
-                            <div class="img__inner object-fit">
-                                <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/catalog/12.jpg" alt="">
-                            </div>
-                        </a>
-                        <div class="catalog-item__content">
-                            <h4>
-                                <a href="#">Мусульманские при…</a>
-                            </h4>
-                            <ul>
-                                <li>
-                                    <a href="#">Ткани</a>
-                                </li>
-                                <li>
-                                    <a href="#">Доски обелиск</a>
-                                </li>
-                                <li>
-                                    <a href="#">Покровы</a>
-                                </li>
-                            </ul>
-                            <div class="price price_small">
-                                <span class="price-now">от 2 000 ₽</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <?php $APPLICATION->IncludeComponent(
+            "bitrix:catalog.section.list",
+            "index",
+            [
+                "ADD_SECTIONS_CHAIN" => "N",
+                "CACHE_FILTER" => "N",
+                "CACHE_GROUPS" => "Y",
+                "CACHE_TIME" => "36000000",
+                "CACHE_TYPE" => "A",
+                "COUNT_ELEMENTS" => "N",
+                "COUNT_ELEMENTS_FILTER" => "CNT_ACTIVE",
+                "FILTER_NAME" => "sectionsFilter",
+                "IBLOCK_ID" => "12",
+                "IBLOCK_TYPE" => "catalog",
+                "SECTION_CODE" => "",
+                "SECTION_FIELDS" => [
+                    "ID",
+                    "CODE",
+                    "XML_ID",
+                    "NAME",
+                    "SORT",
+                    "DESCRIPTION",
+                    "PICTURE",
+                    "DETAIL_PICTURE",
+                    "IBLOCK_TYPE_ID",
+                    "IBLOCK_ID",
+                    "IBLOCK_CODE",
+                    "IBLOCK_EXTERNAL_ID",
+                    "DATE_CREATE",
+                    "CREATED_BY",
+                    "TIMESTAMP_X",
+                    "MODIFIED_BY",
+                    "",
+                ],
+                "SECTION_ID" => $_REQUEST["SECTION_ID"],
+                "SECTION_URL" => "",
+                "SECTION_USER_FIELDS" => [
+                    "",
+                    "",
+                ],
+                "SHOW_PARENT_NAME" => "Y",
+                "TOP_DEPTH" => "2",
+                "VIEW_MODE" => "LINE",
+            ]
+        ); ?>
 
         <?php
         $APPLICATION->IncludeComponent(
