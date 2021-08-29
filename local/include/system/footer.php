@@ -1,189 +1,110 @@
+<?php
+/**
+ * @var $APPLICATION
+ */
+
+use Bitrix\Main\Config\Option;
+
+?>
 <footer class="footer">
     <div class="footer__wrap">
         <div class="footer-top">
             <div class="footer__row">
                 <div class="footer__column">
-                    <a class="logo-link" href="index.html">
+                    <a class="logo-link" href="<?= SITE_DIR ?>">
                         <div class="logo">
-                            <img src="<?= SITE_STYLE_PATH ?>/img/general/logo-white.svg" alt="" />
+                            <img src="<?= SITE_STYLE_PATH ?>/img/general/logo-white.svg" alt="<?= SITE_SERVER_NAME ?>"/>
                         </div>
                     </a>
-                    <div class="footer__links">
-                        <div class="footer__links-item"><a class="footer__links-link" href="#">Акции и скидки</a>
-                        </div>
-                        <div class="footer__links-item"><a class="footer__links-link" href="#">Отзывы</a>
-                        </div>
-                        <div class="footer__links-item"><a class="footer__links-link" href="#">Контакты</a>
-                        </div>
-                    </div>
+                    <?php $APPLICATION->IncludeComponent(
+                        "bitrix:menu",
+                        "bottom_one",
+                        [
+                            "ROOT_MENU_TYPE" => "bottom_one",
+                            "MAX_LEVEL" => "2",
+                            "CHILD_MENU_TYPE" => "left",
+                            "USE_EXT" => "Y",
+                            "DELAY" => "N",
+                            "ALLOW_MULTI_SELECT" => "N",
+                            "MENU_CACHE_TYPE" => "A",
+                            "MENU_CACHE_TIME" => "3600",
+                            "MENU_CACHE_USE_GROUPS" => "Y",
+                            "MENU_CACHE_GET_VARS" => [],
+                            "COMPONENT_TEMPLATE" => "bottom_one",
+                        ],
+                        false
+                    ); ?>
                 </div>
                 <div class="footer__column">
-                    <div class="footer__list"><span class="footer__list-title">Адреса:</span>
-                        <div class="footer__contacts footer__contacts_address">
-                            <div class="footer__contacts-item"><a class="footer__contacts-link" href="#"><span>
-            <svg class="icon__address" width="28" height="28">
-                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#address"></use>
-            </svg>
-        </span>ул.Фучика, д.106</a>
-                            </div>
-                            <div class="footer__contacts-item"><a class="footer__contacts-link" href="#"><span>
-            <svg class="icon__address" width="28" height="28">
-                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#address"></use>
-            </svg>
-        </span>ул.Родина, д.33А, к.5 (рынок)</a>
-                            </div>
-                            <div class="footer__contacts-item"><a class="footer__contacts-link" href="#"><span>
-            <svg class="icon__address" width="28" height="28">
-                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#address"></use>
-            </svg>
-        </span>п.Новая Сосновка, ул.Набережная, д.4</a>
-                            </div>
-                            <div class="footer__contacts-item"><a class="footer__contacts-link" href="#"><span>
-            <svg class="icon__address" width="28" height="28">
-                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#address"></use>
-            </svg>
-        </span>ул.Журналистов, д.97, п.1-4</a>
-                            </div>
-                            <div class="footer__contacts-item"><a class="footer__contacts-link" href="#"><span>
-            <svg class="icon__address" width="28" height="28">
-                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#address"></use>
-            </svg>
-        </span>п.Дербышки, ул.Липатова, д.4, к.1 (ж/д переезд)</a>
-                            </div>
-                        </div>
-                    </div>
+                    <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/components/address_footer.php", [], ["SHOW_BORDER" => true]); ?>
                 </div>
                 <div class="footer__column footer__column_contacts">
-                    <div class="footer__list"><span class="footer__list-title">Способы связи:</span>
+                    <div class="footer__list">
+                        <span class="footer__list-title">Способы связи:</span>
                         <div class="footer__contacts">
-                            <div class="footer__contacts-item"><a class="footer__contacts-link" href="tel:8 (843) 558-00-82"><span>
-            <svg class="icon__phone" width="28" height="28">
-                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#phone"></use>
-            </svg>
-        </span>8 (843) 558-00-82</a>
+                            <div class="footer__contacts-item">
+                                <a class="footer__contacts-link" href="tel:+<?= preg_replace('~\D+~', '', Option::get("askaron.settings", "UF_PHONE")) ?>">
+                                    <span>
+                                        <svg class="icon__phone" width="28" height="28">
+                                            <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#phone"></use>
+                                        </svg>
+                                    </span>
+                                    <?= Option::get("askaron.settings", "UF_PHONE"); ?>
+                                </a>
                             </div>
-                            <div class="footer__contacts-item"><a class="footer__contacts-link" href="mailto:info@grandmemoria.com"><span>
-            <svg class="icon__email" width="24" height="24">
-                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#email"></use>
-            </svg>
-        </span>info@grandmemoria.com</a>
+                            <div class="footer__contacts-item">
+                                <a class="footer__contacts-link" href="mailto:<?= Option::get("askaron.settings", "UF_EMAIL"); ?>">
+                                    <span>
+                                        <svg class="icon__email" width="24" height="24">
+                                            <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#email"></use>
+                                        </svg>
+                                    </span>
+                                    <?= Option::get("askaron.settings", "UF_EMAIL"); ?>
+                                </a>
                             </div>
                         </div>
                     </div>
-                    <div class="footer__list"><span class="footer__list-title">Соц. сети:</span>
-                        <div class="footer__contacts">
-                            <div class="footer__contacts-item"><a class="footer__contacts-link" href="#"><span>
-            <svg class="icon__vk" width="26" height="26">
-                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#vk"></use>
-            </svg>
-        </span>Вконтакте</a>
-                            </div>
-                            <div class="footer__contacts-item"><a class="footer__contacts-link" href="#"><span>
-            <svg class="icon__instagram" width="24" height="24">
-                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#instagram"></use>
-            </svg>
-        </span>Инстаграм</a>
-                            </div>
-                        </div>
-                    </div>
+                    <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/components/social_footer.php", [], ["SHOW_BORDER" => true]); ?>
                 </div>
             </div>
         </div>
         <div class="footer-center">
             <div class="footer__row">
-                <div class="footer__column">
-                    <div class="footer__list"><a class="footer__list-title" href="#">Каталог товаров</a>
-                        <ul class="footer__sublist">
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Памятники</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Благоустройство</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Аксессуары</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Ограды</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Гробы</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Кресты</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Венки и корзины</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Таблички</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Одежда</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Траурные ленты</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Мусульманские принадлежности</a>
-                            </li>
-                        </ul><span class="footer__sublist-label">+ Еще</span>
-                    </div>
-                </div>
-                <div class="footer__column">
-                    <div class="footer__list"><a class="footer__list-title" href="#">Ритуальные услуги</a>
-                        <ul class="footer__sublist">
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Организация похорон</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Кремация тела умершего</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Перевозка тела умершего</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Оформление бумаг о смерти</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Омовение тела умершего</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Услуги священнослужителя</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Погребение умершего</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Установка памятников</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Гравировка памятников</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Похороны ветеранов ВОВ</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Груз 200</a>
-                            </li>
-                        </ul><span class="footer__sublist-label">+ Еще</span>
-                    </div>
-                </div>
-                <div class="footer__column">
-                    <div class="footer__list"><a class="footer__list-title" href="#">Полезная информация</a>
-                        <ul class="footer__sublist">
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Наши работы</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Цены на комплекты</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Оптовая продажа гранита и мрамора</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Рассрочка на памятники</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Оплата и доставка</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">О компании</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Вопрос–ответ</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Морги и кладбища</a>
-                            </li>
-                            <li class="footer__sublist-item"><a class="footer__sublist-link" href="#">Статьи</a>
-                            </li>
-                        </ul><span class="footer__sublist-label">+ Еще</span>
-                    </div>
-                </div>
+                <?php $APPLICATION->IncludeComponent(
+                    "bitrix:menu",
+                    "bottom",
+                    [
+                        "ROOT_MENU_TYPE" => "bottom",
+                        "MAX_LEVEL" => "2",
+                        "CHILD_MENU_TYPE" => "left",
+                        "USE_EXT" => "Y",
+                        "DELAY" => "N",
+                        "ALLOW_MULTI_SELECT" => "N",
+                        "MENU_CACHE_TYPE" => "A",
+                        "MENU_CACHE_TIME" => "3600",
+                        "MENU_CACHE_USE_GROUPS" => "Y",
+                        "MENU_CACHE_GET_VARS" => [],
+                        "COMPONENT_TEMPLATE" => "bottom",
+                    ],
+                    false
+                ); ?>
             </div>
         </div>
         <div class="footer-bottom">
             <div class="footer__row">
                 <div class="footer__column">
-                    <div class="footer__copyright">© 2021 Гранд Мемориа Ритуал</div>
+                    <div class="footer__copyright">© <?= date('Y') ?> Гранд Мемориа Ритуал</div>
                 </div>
                 <div class="footer__column">
                     <div class="creator">
-                        <div class="creator-text">Разработка сайта «<a href="#" target="_blank">k.pashukov</a>»</div>
+                        <div class="creator-text">Разработка сайта «
+                            <a href="<?php //TODO: ссылка ?>" target="_blank">k.pashukov</a>
+                            »
+                        </div>
                     </div>
                 </div>
-                <div class="footer__column"><a class="footer__link" href="#">Политика конфиденциальности</a>
+                <div class="footer__column">
+                    <a class="footer__link" href="/privacy/">Политика конфиденциальности</a>
                 </div>
             </div>
         </div>
