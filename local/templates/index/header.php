@@ -211,6 +211,7 @@
             ],
             false
         );
+        unset($arrFilterHit);
         ?>
 
         <section class="section_padding bg_glitter types">
@@ -300,387 +301,98 @@
 
         <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/adv.php", [], ["SHOW_BORDER" => true]); ?>
 
-        <section class="section_padding bg_black-haze services">
-            <div class="content">
-                <div class="heading heading_more">
-                    <div class="heading__content">
-                        <h2>Ритуальные услуги</h2>
-                    </div>
-                    <div class="more">
-                        <a class="more__link" href="#">
-                            <span>Все услуги</span>
-                            <svg class="icon__arrow-right" width="24" height="24">
-                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-                <a class="phone phone_xs" href="#">
-                    <div class="content">
-                        <div class="phone-inner">
-                            <svg class="icon__phone" width="40" height="40">
-                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#phone"></use>
-                            </svg>
-                            <div class="phone-content">
-                                <span class="phone__number">8 (843) 558-00-82</span>
-                                <strong>Ритуальные услуги</strong>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-                <div class="services-items items" data-type="column">
-                    <a class="services-item item link-item" href="#">
-                        <div class="services-item__img img">
-                            <div class="img__inner object-fit">
-                                <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/services/1.jpg" alt="">
-                            </div>
-                        </div>
-                        <div class="services-item__content">
-                            <h4>Организация похорон</h4>
-                            <div class="price price_small">
-                                <span class="price-now">от 4 000 ₽</span>
-                            </div>
-                        </div>
-                    </a>
-                    <a class="services-item item link-item" href="#">
-                        <div class="services-item__img img">
-                            <div class="img__inner object-fit">
-                                <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/services/2.jpg" alt="">
-                            </div>
-                        </div>
-                        <div class="services-item__content">
-                            <h4>Кремация тела умершего</h4>
-                            <div class="price price_small">
-                                <span class="price-now">от 5 000 ₽</span>
-                            </div>
-                        </div>
-                    </a>
-                    <a class="services-item item link-item" href="#">
-                        <div class="services-item__img img">
-                            <div class="img__inner object-fit">
-                                <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/services/3.jpg" alt="">
-                            </div>
-                        </div>
-                        <div class="services-item__content">
-                            <h4>Перевозка тела умершего</h4>
-                            <div class="price price_small">
-                                <span class="price-now">от 1 000 ₽</span>
-                            </div>
-                        </div>
-                    </a>
-                    <a class="services-item item link-item" href="#">
-                        <div class="services-item__img img">
-                            <div class="img__inner object-fit">
-                                <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/services/4.jpg" alt="">
-                            </div>
-                        </div>
-                        <div class="services-item__content">
-                            <h4>Омовение тела умерешего</h4>
-                            <div class="price price_small">
-                                <span class="price-now">от 2 500 ₽</span>
-                            </div>
-                        </div>
-                    </a>
-                    <a class="services-item item link-item" href="#">
-                        <div class="services-item__img img">
-                            <div class="img__inner object-fit">
-                                <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/services/5.jpg" alt="">
-                            </div>
-                        </div>
-                        <div class="services-item__content">
-                            <h4>Оформление бумаг о смерти</h4>
-                            <div class="price price_small">
-                                <span class="price-now">от 1 500 ₽</span>
-                            </div>
-                        </div>
-                    </a>
-                    <a class="services-item item link-item" href="#">
-                        <div class="services-item__img img">
-                            <div class="img__inner object-fit">
-                                <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/services/6.jpg" alt="">
-                            </div>
-                        </div>
-                        <div class="services-item__content">
-                            <h4>Установка памятников</h4>
-                            <div class="price price_small">
-                                <span class="price-now">от 3 000 ₽</span>
-                            </div>
-                        </div>
-                    </a>
-                    <a class="services-item item link-item" href="#">
-                        <div class="services-item__img img">
-                            <div class="img__inner object-fit">
-                                <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/services/7.jpg" alt="">
-                            </div>
-                        </div>
-                        <div class="services-item__content">
-                            <h4>Услуги священнослужителя</h4>
-                            <div class="price price_small">
-                                <span class="price-now">от 1 000 ₽</span>
-                            </div>
-                        </div>
-                    </a>
-                    <a class="services-item item link-item" href="#">
-                        <div class="services-item__img img">
-                            <div class="img__inner object-fit">
-                                <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/services/8.jpg" alt="">
-                            </div>
-                        </div>
-                        <div class="services-item__content">
-                            <h4>Похороны Ветеранов ВОВ</h4>
-                            <div class="price price_small">
-                                <span class="price-now">от 4 000 ₽</span>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </section>
+        <?php $APPLICATION->IncludeComponent(
+            "bitrix:news.list",
+            "services_index",
+            [
+                "ACTIVE_DATE_FORMAT" => "",
+                "ADD_SECTIONS_CHAIN" => "N",
+                "AJAX_MODE" => "N",
+                "AJAX_OPTION_ADDITIONAL" => "",
+                "AJAX_OPTION_HISTORY" => "N",
+                "AJAX_OPTION_JUMP" => "N",
+                "AJAX_OPTION_STYLE" => "N",
+                "CACHE_FILTER" => "N",
+                "CACHE_GROUPS" => "Y",
+                "CACHE_TIME" => "36000000",
+                "CACHE_TYPE" => "A",
+                "CHECK_DATES" => "Y",
+                "DETAIL_URL" => "",
+                "DISPLAY_BOTTOM_PAGER" => "N",
+                "DISPLAY_DATE" => "Y",
+                "DISPLAY_NAME" => "Y",
+                "DISPLAY_PICTURE" => "Y",
+                "DISPLAY_PREVIEW_TEXT" => "Y",
+                "DISPLAY_TOP_PAGER" => "N",
+                "FIELD_CODE" => [
+                    0 => "CODE",
+                    1 => "XML_ID",
+                    2 => "NAME",
+                    3 => "TAGS",
+                    4 => "SORT",
+                    5 => "PREVIEW_TEXT",
+                    6 => "PREVIEW_PICTURE",
+                    7 => "DETAIL_TEXT",
+                    8 => "DETAIL_PICTURE",
+                    9 => "DATE_ACTIVE_FROM",
+                    10 => "ACTIVE_FROM",
+                    11 => "DATE_ACTIVE_TO",
+                    12 => "ACTIVE_TO",
+                    13 => "SHOW_COUNTER",
+                    14 => "SHOW_COUNTER_START",
+                    15 => "IBLOCK_TYPE_ID",
+                    16 => "IBLOCK_ID",
+                    17 => "IBLOCK_CODE",
+                    18 => "IBLOCK_NAME",
+                    19 => "IBLOCK_EXTERNAL_ID",
+                    20 => "DATE_CREATE",
+                    21 => "CREATED_BY",
+                    22 => "CREATED_USER_NAME",
+                    23 => "TIMESTAMP_X",
+                    24 => "MODIFIED_BY",
+                    25 => "USER_NAME",
+                    26 => "",
+                ],
+                "FILTER_NAME" => "",
+                "HIDE_LINK_WHEN_NO_DETAIL" => "N",
+                "IBLOCK_ID" => "15",
+                "IBLOCK_TYPE" => "content",
+                "INCLUDE_IBLOCK_INTO_CHAIN" => "N",
+                "INCLUDE_SUBSECTIONS" => "Y",
+                "MESSAGE_404" => "",
+                "NEWS_COUNT" => "8",
+                "PAGER_BASE_LINK_ENABLE" => "N",
+                "PAGER_DESC_NUMBERING" => "N",
+                "PAGER_DESC_NUMBERING_CACHE_TIME" => "36000",
+                "PAGER_SHOW_ALL" => "N",
+                "PAGER_SHOW_ALWAYS" => "N",
+                "PAGER_TEMPLATE" => "",
+                "PAGER_TITLE" => "",
+                "PARENT_SECTION" => "",
+                "PARENT_SECTION_CODE" => "",
+                "PREVIEW_TRUNCATE_LEN" => "",
+                "PROPERTY_CODE" => [
+                    0 => "PRICE",
+                    1 => "",
+                ],
+                "SET_BROWSER_TITLE" => "N",
+                "SET_LAST_MODIFIED" => "N",
+                "SET_META_DESCRIPTION" => "N",
+                "SET_META_KEYWORDS" => "N",
+                "SET_STATUS_404" => "N",
+                "SET_TITLE" => "N",
+                "SHOW_404" => "N",
+                "SORT_BY1" => "SORT",
+                "SORT_BY2" => "SORT",
+                "SORT_ORDER1" => "ASC",
+                "SORT_ORDER2" => "ASC",
+                "STRICT_SECTION_CHECK" => "N",
+                "COMPONENT_TEMPLATE" => "services_index",
+            ],
+            false
+        ); ?>
 
-        <section class="rating">
-            <div class="content">
-                <div class="heading">
-                    <div class="heading__content">
-                        <h2>Рейтинг отзывов</h2>
-                    </div>
-                </div>
-                <div class="rating-items items">
-                    <div class="rating-item item">
-                        <div class="rating-wrap">
-                            <div class="rating-item__icon">
-                                <img src="<?= SITE_STYLE_PATH ?>/img/content/rating/google.svg" alt="">
-                            </div>
-                            <div class="rating-info">
-                                <span class="rating-info__count">5.0</span>
-                                <div class="rating-info__stars">
-                                    <div class="stars">
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    <div class="rating-info__sum">Отзывов: 23</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="rating-item item">
-                        <div class="rating-wrap">
-                            <div class="rating-item__icon">
-                                <img src="<?= SITE_STYLE_PATH ?>/img/content/rating/yandex.svg" alt="">
-                            </div>
-                            <div class="rating-info">
-                                <span class="rating-info__count">4.9</span>
-                                <div class="rating-info__stars">
-                                    <div class="stars">
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                    </div>
-                                    <div class="rating-info__sum">Отзывов: 56</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="rating-item item">
-                        <div class="rating-wrap">
-                            <div class="rating-item__icon">
-                                <img src="<?= SITE_STYLE_PATH ?>/img/content/rating/2gis.svg" alt="">
-                            </div>
-                            <div class="rating-info">
-                                <span class="rating-info__count">4.7</span>
-                                <div class="rating-info__stars">
-                                    <div class="stars">
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                    </div>
-                                    <div class="rating-info__sum">Отзывов: 73</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="rating-item item">
-                        <div class="rating-wrap">
-                            <div class="rating-item__icon">
-                                <img src="<?= SITE_STYLE_PATH ?>/img/content/rating/vk.svg" alt="">
-                            </div>
-                            <div class="rating-info">
-                                <span class="rating-info__count">5.0</span>
-                                <div class="rating-info__stars">
-                                    <div class="stars">
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                    </div>
-                                    <div class="rating-info__sum">Отзывов: 141</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="rating-item item">
-                        <div class="rating-wrap">
-                            <div class="rating-item__icon">
-                                <img src="<?= SITE_STYLE_PATH ?>/img/content/rating/gm.svg" alt="">
-                            </div>
-                            <div class="rating-info">
-                                <span class="rating-info__count">5.0</span>
-                                <div class="rating-info__stars">
-                                    <div class="stars">
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                        <div class="star">
-                                            <svg class="icon__star" width="28" height="28">
-                                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#star"></use>
-                                            </svg>
-
-                                        </div>
-                                    </div>
-                                    <div class="rating-info__sum">Отзывов: 23</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="rating-item item">
-                        <a class="rating-more" href="#">
-                            <div class="rating-more__content">
-                                <h5>Смотреть отзывы</h5>
-                                <div class="slider-btn slider-btn_white slider-btn_next">
-                                    <svg class="icon__slider-next" width="32" height="32">
-                                        <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#slider-next"></use>
-                                    </svg>
-
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/rating.php", ["TITLE" => "Рейтинг отзывов", "SHOW_MORE" => "Y"], ["SHOW_BORDER" => true]); ?>
 
         <section class="catalog">
             <div class="content">

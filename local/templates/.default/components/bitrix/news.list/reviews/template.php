@@ -202,5 +202,5 @@ $this->setFrameMode(true);
         </div>
     </div>
 </div>
-<?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/rating.php", [], ["SHOW_BORDER" => true]); ?>
+<?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/rating.php", ["TITLE" => "Рейтинг отзывов на площадка"], ["SHOW_BORDER" => true]); ?>
 <?php $this->EndViewTarget(); ?>
