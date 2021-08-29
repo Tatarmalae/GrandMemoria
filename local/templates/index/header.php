@@ -110,6 +110,8 @@
 
         <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/types.php", [], ["SHOW_BORDER" => true]); ?>
 
+        <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/components/article_index.php", [], ["SHOW_BORDER" => true]); ?>
+
         <section class="catalog">
             <div class="content">
                 <div class="heading heading_more">
@@ -1087,7 +1089,7 @@
 
         <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/calculation.php", [], ["SHOW_BORDER" => true]); ?>
 
-        <section class="calculation" style="margin-top: -31px;">
+        <section style="margin-top: -31px;">
             <div class="content">
                 <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/components/about.php", [], ["SHOW_BORDER" => true]); ?>
             </div>
