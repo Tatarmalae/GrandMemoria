@@ -166,10 +166,10 @@ $APPLICATION->SetTitle("Каталог товаров");
         "COMPONENT_TEMPLATE" => "catalog",
         "SEF_URL_TEMPLATES" => [
             "sections" => "",
-            "section" => "#SECTION_CODE_PATH#/",
-            "element" => "#SECTION_CODE_PATH#/#ELEMENT_CODE#/",
+            "section" => "#SECTION_CODE#/",
+            "element" => "#SECTION_CODE#/#ELEMENT_CODE#/",
             "compare" => "compare.php?action=#ACTION_CODE#",
-            "smart_filter" => "#SECTION_CODE_PATH#/filter/#SMART_FILTER_PATH#/apply/",
+            "smart_filter" => "#SECTION_CODE#/filter/#SMART_FILTER_PATH#/apply/",
         ],
         "VARIABLE_ALIASES" => [
             "compare" => [

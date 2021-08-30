@@ -20,15 +20,8 @@ if (empty($arResult)) return;
                 <ul class="nav nav-tabs categories-items swiper-wrapper" id="catalogTab" role="tablist">
                     <?php foreach ($arResult['SECTIONS'] as $key => $sections): ?>
                         <li class="nav-item categories-li swiper-slide">
-                            <a class="nav-link categories-item<?= $key == 0 ? ' active' : '' ?>"
-                               id="tab-<?= $key + 1 ?>"
-                               href="#tab<?= $key + 1 ?>"
-                               data-url="<?= $sections['SECTION_PAGE_URL'] ?>"
-                               data-toggle="tab"
-                               role="tab"
-                               aria-controls="tab<?= $key + 1 ?>"
-                               aria-selected="true"
-                            >
+                            <a class="nav-link categories-item<?= $arParams['ID'] === $sections['ID'] ? ' active' : '' ?>"
+                               href="<?= $sections['SECTION_PAGE_URL'] ?>">
                                 <span><?= $sections['NAME'] ?></span>
                             </a>
                         </li>

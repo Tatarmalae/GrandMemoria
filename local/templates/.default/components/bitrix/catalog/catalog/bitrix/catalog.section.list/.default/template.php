@@ -19,7 +19,7 @@ if (empty($arResult)) return;
             <div class="box">
                 <a class="catalog-item__img img" href="<?= $sections['SECTION_PAGE_URL'] ?>">
                     <div class="img__inner object-fit">
-                        <img class="lazy" data-src="<?= CFile::GetPath($sections['PICTURE']['ID']) ?>" alt="" src="<?= $sections['NAME'] ?>">
+                        <img class="lazy" data-src="<?= CFile::GetPath($sections['PICTURE']['ID']) ?>" alt="<?= $sections['NAME'] ?>" src="">
                     </div>
                 </a>
                 <div class="catalog-item__content">
