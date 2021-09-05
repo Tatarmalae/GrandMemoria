@@ -15,19 +15,19 @@
                             <span class="calculator-count"><span class="calc-sum">0</span> руб.</span>
                         </div>
                         <div class="calculator-toggle">
-                            <input type="range" min="0" max="40000" step="1" value="10000" id="rangeSum">
+                            <input type="range" min="10000" max="100000" step="1" value="10000" id="rangeSum">
                         </div>
                         <div class="calculator-slider__line">
-                            <span class="calculator-slider__line-label">40 000 руб.</span>
+                            <span class="calculator-slider__line-label">100 000 руб.</span>
                         </div>
                     </div>
                     <div class="calculator-slider">
                         <div class="calculator-slider__line">
-                            <span class="calculator-slider__line-label">Первоначальный взнос ( от 10% до 60%)</span>
+                            <span class="calculator-slider__line-label">Первоначальный взнос ( от 30% до 60%)</span>
                             <span class="calculator-count"><span class="calc-contribution">0</span> %</span>
                         </div>
                         <div class="calculator-toggle">
-                            <input type="range" min="0" max="60" step="1" value="30" id="rangeContribution">
+                            <input type="range" min="30" max="60" step="1" value="30" id="rangeContribution">
                         </div>
                         <div class="calculator-slider__line">
                             <span class="calculator-slider__line-label">60%</span>
@@ -39,7 +39,7 @@
                             <span class="calculator-count"><span class="calc-time">0</span> мес.</span>
                         </div>
                         <div class="calculator-toggle">
-                            <input type="range" min="0" max="12" step="1" value="6" id="rangeTime">
+                            <input type="range" min="6" max="12" step="1" value="6" id="rangeTime">
                         </div>
                         <div class="calculator-slider__line">
                             <span class="calculator-slider__line-label">12 мес.</span>
