@@ -5,12 +5,11 @@
                 <svg class="icon__close-modal" width="48" height="48">
                     <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
                 </svg>
-
             </button>
             <div class="modal-body">
-                <a class="logo-link" href="#">
+                <a class="logo-link" href="<?= SITE_DIR ?>">
                     <div class="logo">
-                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt=""/>
+                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
                     </div>
                 </a>
                 <div class="modal-start">
@@ -46,7 +45,9 @@
                                     </div>
                                     <div class="form-btn">
                                         <button class="btn btn-blue big">
-                                            <span class="btn__text"><span>Отправить</span></span>
+                                            <span class="btn__text">
+                                                <span>Отправить</span>
+                                            </span>
                                         </button>
                                     </div>
                                 </form>
@@ -59,7 +60,9 @@
                     <p>Спасибо! Мы свяжемся с вами в ближайшее время.</p>
                     <div class="more-btn">
                         <button class="btn btn-blue big" type="button" data-dismiss="modal">
-                            <span class="btn__text"><span>Вернуться к просмотру</span></span>
+                            <span class="btn__text">
+                                <span>Вернуться к просмотру</span>
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -74,12 +77,11 @@
                 <svg class="icon__close-modal" width="48" height="48">
                     <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
                 </svg>
-
             </button>
             <div class="modal-body">
-                <a class="logo-link" href="#">
+                <a class="logo-link" href="<?= SITE_DIR ?>">
                     <div class="logo">
-                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt=""/>
+                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
                     </div>
                 </a>
                 <div class="modal-start">
@@ -115,7 +117,9 @@
                                     </div>
                                     <div class="form-btn">
                                         <button class="btn btn-blue big">
-                                            <span class="btn__text"><span>Отправить</span></span>
+                                            <span class="btn__text">
+                                                <span>Отправить</span>
+                                            </span>
                                         </button>
                                     </div>
                                 </form>
@@ -128,7 +132,9 @@
                     <p>Спасибо! Мы свяжемся с вами в ближайшее время.</p>
                     <div class="more-btn">
                         <button class="btn btn-blue big" type="button" data-dismiss="modal">
-                            <span class="btn__text"><span>Вернуться к просмотру</span></span>
+                            <span class="btn__text">
+                                <span>Вернуться к просмотру</span>
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -143,12 +149,11 @@
                 <svg class="icon__close-modal" width="48" height="48">
                     <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
                 </svg>
-
             </button>
             <div class="modal-body">
-                <a class="logo-link" href="#">
+                <a class="logo-link" href="<?= SITE_DIR ?>">
                     <div class="logo">
-                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt=""/>
+                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
                     </div>
                 </a>
                 <div class="modal-success">
@@ -156,7 +161,9 @@
                     <p>Спасибо! Мы свяжемся с вами в ближайшее время.</p>
                     <div class="more-btn">
                         <button class="btn btn-blue big" type="button" data-dismiss="modal">
-                            <span class="btn__text"><span>Вернуться к просмотру</span></span>
+                            <span class="btn__text">
+                                <span>Вернуться к просмотру</span>
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -171,12 +178,11 @@
                 <svg class="icon__close-modal" width="48" height="48">
                     <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
                 </svg>
-
             </button>
             <div class="modal-body">
-                <a class="logo-link" href="#">
+                <a class="logo-link" href="<?= SITE_DIR ?>">
                     <div class="logo">
-                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt=""/>
+                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
                     </div>
                 </a>
                 <div class="modal-start">
@@ -241,7 +247,9 @@
                                     </div>
                                     <div class="form-btn">
                                         <button class="btn btn-blue big">
-                                            <span class="btn__text"><span>Отправить</span></span>
+                                            <span class="btn__text">
+                                                <span>Отправить</span>
+                                            </span>
                                         </button>
                                     </div>
                                 </form>
@@ -254,7 +262,9 @@
                     <p>Спасибо! Мы обработаем вопрос и свяжемся с вами в ближайшее время.</p>
                     <div class="more-btn">
                         <button class="btn btn-blue big" type="button" data-dismiss="modal">
-                            <span class="btn__text"><span>Вернуться к просмотру</span></span>
+                            <span class="btn__text">
+                                <span>Вернуться к просмотру</span>
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -269,12 +279,11 @@
                 <svg class="icon__close-modal" width="48" height="48">
                     <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
                 </svg>
-
             </button>
             <div class="modal-body">
-                <a class="logo-link" href="#">
+                <a class="logo-link" href="<?= SITE_DIR ?>">
                     <div class="logo">
-                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt=""/>
+                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
                     </div>
                 </a>
                 <div class="modal-scroll">
@@ -304,11 +313,15 @@
                             </div>
                             <p>В корзине 1 товар на сумму от 4 000 ₽</p>
                             <div class="more-btn">
-                                <a class="btn btn-blue big" href="#">
-                                    <span class="btn__text"><span>Перейти в корзину</span></span>
+                                <a class="btn btn-blue big" href="/basket/">
+                                    <span class="btn__text">
+                                        <span>Перейти в корзину</span>
+                                    </span>
                                 </a>
                                 <button class="btn btn-blue-light big" type="button" data-dismiss="modal">
-                                    <span class="btn__text"><span>Вернуться к просмотру</span></span>
+                                    <span class="btn__text">
+                                        <span>Вернуться к просмотру</span>
+                                    </span>
                                 </button>
                             </div>
                         </div>
@@ -325,12 +338,11 @@
                 <svg class="icon__close-modal" width="48" height="48">
                     <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
                 </svg>
-
             </button>
             <div class="modal-body">
-                <a class="logo-link" href="#">
+                <a class="logo-link" href="<?= SITE_DIR ?>">
                     <div class="logo">
-                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt=""/>
+                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
                     </div>
                 </a>
                 <div class="modal-start">
@@ -366,7 +378,9 @@
                                     </div>
                                     <div class="form-btn">
                                         <button class="btn btn-blue big">
-                                            <span class="btn__text"><span>Отправить</span></span>
+                                            <span class="btn__text">
+                                                <span>Отправить</span>
+                                            </span>
                                         </button>
                                     </div>
                                 </form>
@@ -379,7 +393,9 @@
                     <p>Спасибо! Мы свяжемся с вами в ближайшее время.</p>
                     <div class="more-btn">
                         <button class="btn btn-blue big" type="button" data-dismiss="modal">
-                            <span class="btn__text"><span>Вернуться к просмотру</span></span>
+                            <span class="btn__text">
+                                <span>Вернуться к просмотру</span>
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -394,12 +410,11 @@
                 <svg class="icon__close-modal" width="48" height="48">
                     <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
                 </svg>
-
             </button>
             <div class="modal-body">
-                <a class="logo-link" href="#">
+                <a class="logo-link" href="<?= SITE_DIR ?>">
                     <div class="logo">
-                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt=""/>
+                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
                     </div>
                 </a>
                 <div class="modal-start">
@@ -464,7 +479,9 @@
                                     </div>
                                     <div class="form-btn">
                                         <button class="btn btn-blue big">
-                                            <span class="btn__text"><span>Отправить</span></span>
+                                            <span class="btn__text">
+                                                <span>Отправить</span>
+                                            </span>
                                         </button>
                                     </div>
                                 </form>
@@ -477,7 +494,9 @@
                     <p>Спасибо! Мы обработаем обращение и свяжемся с вами в ближайшее время.</p>
                     <div class="more-btn">
                         <button class="btn btn-blue big" type="button" data-dismiss="modal">
-                            <span class="btn__text"><span>Вернуться к просмотру</span></span>
+                            <span class="btn__text">
+                                <span>Вернуться к просмотру</span>
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -485,7 +504,6 @@
         </div>
     </div>
 </div>
-
 <div class="modal fade" id="modalGallery" tabindex="-1" role="dialog" aria-labelledby="modalGalleryLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -493,12 +511,11 @@
                 <svg class="icon__close-modal" width="48" height="48">
                     <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
                 </svg>
-
             </button>
             <div class="modal-body">
-                <a class="logo-link" href="#">
+                <a class="logo-link" href="<?= SITE_DIR ?>">
                     <div class="logo">
-                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt=""/>
+                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
                     </div>
                 </a>
                 <div class="modal-scroll">
@@ -520,7 +537,6 @@
         </div>
     </div>
 </div>
-
 <div class="modal fade" id="modalInstallmentPlan" tabindex="-1" role="dialog" aria-labelledby="modalInstallmentPlanLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -528,12 +544,11 @@
                 <svg class="icon__close-modal" width="48" height="48">
                     <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
                 </svg>
-
             </button>
             <div class="modal-body">
-                <a class="logo-link" href="#">
+                <a class="logo-link" href="<?= SITE_DIR ?>">
                     <div class="logo">
-                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt=""/>
+                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
                     </div>
                 </a>
                 <div class="modal-start">
@@ -569,7 +584,9 @@
                                     </div>
                                     <div class="form-btn">
                                         <button class="btn btn-blue big">
-                                            <span class="btn__text"><span>Отправить</span></span>
+                                            <span class="btn__text">
+                                                <span>Отправить</span>
+                                            </span>
                                         </button>
                                     </div>
                                 </form>
@@ -582,7 +599,9 @@
                     <p>Спасибо! Мы свяжемся с вами в ближайшее время.</p>
                     <div class="more-btn">
                         <button class="btn btn-blue big" type="button" data-dismiss="modal">
-                            <span class="btn__text"><span>Вернуться к просмотру</span></span>
+                            <span class="btn__text">
+                                <span>Вернуться к просмотру</span>
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -667,7 +686,9 @@
                                     </div>
                                     <div class="form-btn">
                                         <button class="btn btn-blue big">
-                                            <span class="btn__text"><span>Отправить</span></span>
+                                            <span class="btn__text">
+                                                <span>Отправить</span>
+                                            </span>
                                         </button>
                                     </div>
                                 </form>
@@ -680,7 +701,9 @@
                     <p>Спасибо! Мы обработаем вопрос и свяжемся с вами в ближайшее время.</p>
                     <div class="more-btn">
                         <button class="btn btn-blue big" type="button" data-dismiss="modal">
-                            <span class="btn__text"><span>Вернуться к просмотру</span></span>
+                            <span class="btn__text">
+                                <span>Вернуться к просмотру</span>
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -688,7 +711,6 @@
         </div>
     </div>
 </div>
-
 <div class="modal fade" id="modalStock" tabindex="-1" role="dialog" aria-labelledby="modalStockLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -696,12 +718,11 @@
                 <svg class="icon__close-modal" width="48" height="48">
                     <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
                 </svg>
-
             </button>
             <div class="modal-body">
-                <a class="logo-link" href="#">
+                <a class="logo-link" href="<?= SITE_DIR ?>">
                     <div class="logo">
-                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt=""/>
+                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
                     </div>
                 </a>
                 <div class="modal-start">
@@ -737,7 +758,9 @@
                                     </div>
                                     <div class="form-btn">
                                         <button class="btn btn-blue big">
-                                            <span class="btn__text"><span>Отправить</span></span>
+                                            <span class="btn__text">
+                                                <span>Отправить</span>
+                                            </span>
                                         </button>
                                     </div>
                                 </form>
@@ -750,7 +773,9 @@
                     <p>Спасибо! Мы свяжемся с вами в ближайшее время.</p>
                     <div class="more-btn">
                         <button class="btn btn-blue big" type="button" data-dismiss="modal">
-                            <span class="btn__text"><span>Вернуться к просмотру</span></span>
+                            <span class="btn__text">
+                                <span>Вернуться к просмотру</span>
+                            </span>
                         </button>
                     </div>
                 </div>
