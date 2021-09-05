@@ -8,6 +8,7 @@ use Bitrix\Iblock\ElementTable;
 use Bitrix\Iblock\IblockTable;
 use Bitrix\Iblock\PropertyEnumerationTable;
 use Bitrix\Iblock\PropertyTable;
+use Bitrix\Iblock\SectionElementTable;
 use Bitrix\Iblock\SectionTable;
 use Bitrix\Main\ArgumentException;
 use Bitrix\Main\Entity\Query;
@@ -105,7 +106,8 @@ class Catalog
         if (!empty($sectionID)) {
             $query->setFilter([
                 '=IBLOCK_ID' => $IBlockID,
-                '=IBLOCK_SECTION_ID' => $sectionID,
+                '=ROOT.ID' => $sectionID,
+                '==LINK.ADDITIONAL_PROPERTY_ID' => NULL
             ]);
         }
         $query->setSelect([
@@ -118,6 +120,34 @@ class Catalog
             'ACTIVE_FROM',
             'DETAIL_PAGE_URL' => 'IBLOCK.DETAIL_PAGE_URL',
         ]);
+        $query->registerRuntimeField(
+            'LINK',
+            [
+                'data_type' => SectionElementTable::class,
+                'reference' => ['=this.ID' => 'ref.IBLOCK_ELEMENT_ID'],
+                ['join_type' => 'INNER'],
+            ]
+        );
+        $query->registerRuntimeField(
+            'PARENT',
+            [
+                'data_type' => SectionTable::class,
+                'reference' => ['=this.LINK.IBLOCK_SECTION_ID' => 'ref.ID'],
+                ['join_type' => 'INNER'],
+            ]
+        );
+        $query->registerRuntimeField(
+            'ROOT',
+            [
+                'data_type' => SectionTable::class,
+                'reference' => [
+                    '=this.PARENT.IBLOCK_ID' => 'ref.IBLOCK_ID',
+                    '<=ref.LEFT_MARGIN' => 'this.PARENT.LEFT_MARGIN',
+                    '>=ref.RIGHT_MARGIN' => 'this.PARENT.RIGHT_MARGIN',
+                ],
+                ['join_type' => 'INNER'],
+            ]
+        );
         $result = $query->exec();
         $arItems = [];
         while ($arItem = $result->Fetch()) {
