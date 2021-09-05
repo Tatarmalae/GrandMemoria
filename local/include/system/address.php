@@ -36,16 +36,13 @@ if (count($arResult['ITEMS']) == 0) return;
                             <div class="slider-slide swiper-slide">
                                 <div class="map-item item">
                                     <div class="box">
-                                        <?php // TODO: не учли что выводится из контактов и там нет названия Офис №1, телефона ниже и адрес с индексом и длиннее ?>
                                         <h5>Офис №<?= $key + 1 ?></h5>
                                         <div class="map-addresses">
                                             <div class="map-address">
-                                                <div class="map-address">
-                                                    <svg class="icon__address" width="14" height="14">
-                                                        <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#address"></use>
-                                                    </svg>
-                                                    <span class="map-address__desc"><?= $arItem['NAME'] ?></span>
-                                                </div>
+                                                <svg class="icon__address" width="14" height="14">
+                                                    <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#address"></use>
+                                                </svg>
+                                                <span class="map-address__desc"><?= $arItem['PROPERTIES']['SHORT_NAME']['VALUE'] ?></span>
                                             </div>
                                             <?php if (!empty($arItem['PROPERTIES']['PHONE']['VALUE'])): ?>
                                                 <a class="map-address" href="tel:<?= preg_replace('~\D+~', '', $arItem['PROPERTIES']['PHONE']['VALUE']) ?>">

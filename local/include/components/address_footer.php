@@ -32,7 +32,7 @@ if (count($arResult['ITEMS']) == 0) return;
                             <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#address"></use>
                         </svg>
                     </span>
-                    <?= $item['NAME'] ?>
+                    <?= $item['PROPERTIES']['SHORT_NAME']['VALUE'] ?>
                 </a>
             </div>
         <?php endforeach ?>
