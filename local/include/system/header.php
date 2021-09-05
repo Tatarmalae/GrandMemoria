@@ -64,7 +64,7 @@ use Bitrix\Main\Config\Option;
                     </a>
                 </div>
                 <div class="header__column header__column_btn header__column_calculation">
-                    <a class="btn btn-blue small" href="<?php // TODO: куда ссылка ?>">
+                    <a class="btn btn-blue small" href="/calculation/">
                         <span class="btn__text">
                             <span data-text="Расчет похорон">Расчет похорон</span>
                         </span>

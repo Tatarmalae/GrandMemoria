@@ -230,7 +230,7 @@ use Bitrix\Main\Config\Option;
                             и ритуальный агент <b>БЕСПЛАТНО</b> приедет.
                         </p>
                     </div>
-                    <a class="btn btn-blue big" href="<?php //TODO: куда ссылка ?>">
+                    <a class="btn btn-blue big" href="/calculation/">
                         <span class="btn__text">
                             <span data-text="Расчет похорон">Расчет похорон</span>
                         </span>
