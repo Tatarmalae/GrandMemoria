@@ -31,7 +31,7 @@ if (count($arResult['ITEMS']) == 0) return;
                 <div class="slider-wrap swiper-wrapper">
                     <?php foreach ($arResult['ITEMS'] as $item): ?>
                         <div class="slider-slide swiper-slide">
-                            <a class="team-item item link-item" href="<?php // TODO: куда ссылка ?>">
+                            <a class="team-item item link-item" href="javascript:void(0);">
                                 <div class="team-item__img img img-1by1">
                                     <div class="img__inner object-fit">
                                         <img class="lazy" data-src="<?= CFile::GetPath($item['PREVIEW_PICTURE']) ?>" alt="<?= $item['NAME'] ?>" src="">
