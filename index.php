@@ -5,7 +5,11 @@
 $APPLICATION->SetTitle("1С-Битрикс: Управление сайтом");
 ?>
 
-<?php //TODO: сколько выводить и из какого раздела
+<?php
+global $arrFilterFaq;
+$arrFilterFaq = [
+    'SECTION_ID' => 6,
+];
 $APPLICATION->IncludeComponent(
     "bitrix:news.list",
     "faq_list",
@@ -18,7 +22,7 @@ $APPLICATION->IncludeComponent(
         "SORT_ORDER1" => "ASC",
         "SORT_BY2" => "SORT",
         "SORT_ORDER2" => "ASC",
-        "FILTER_NAME" => "",
+        "FILTER_NAME" => "arrFilterFaq",
         "FIELD_CODE" => [
             0 => "ID",
             1 => "CODE",
@@ -104,5 +108,5 @@ $APPLICATION->IncludeComponent(
     false
 );
 ?>
-
+<?php unset($arrFilterFaq) ?>
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>
