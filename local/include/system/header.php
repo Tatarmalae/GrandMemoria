@@ -4,6 +4,8 @@
  */
 
 use Bitrix\Main\Config\Option;
+use Dev\Basket;
+
 ?>
 <header class="header">
     <div class="header__info">
@@ -57,7 +59,7 @@ use Bitrix\Main\Config\Option;
                         </span>
                         <span class="btn__text">
                             <span data-text="Корзина">Корзина
-                                <span class="btn-basket__count">0</span>
+                                <span class="btn-basket__count"><?= Basket::getCount() ?></span>
                             </span>
                         </span>
                         <span class="btn-basket__add">2</span>
