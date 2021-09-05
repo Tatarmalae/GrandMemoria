@@ -30,7 +30,7 @@ use Bitrix\Main\Config\Option;
                         <span>
                             <?= Option::get("askaron.settings", "UF_ADDRESS_HEADER"); ?>
                         </span>
-                        <a href="<?php // TODO: куда ссылка ?>">
+                        <a href="/contacts/">
                             <strong>Все наши адреса</strong>
                         </a>
                     </div>
