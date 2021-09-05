@@ -29,14 +29,14 @@ if (count($arResult['ITEMS']) == 0) return;
                 <?php foreach ($arResult['ITEMS'] as $arItem): ?>
                     <div class="adv-item item">
                         <div class="adv-item__icon">
-                            <img src="<?= SITE_STYLE_PATH ?>/img/content/adv/icon.svg" alt="">
+                            <img src="<?= SITE_STYLE_PATH ?>/img/content/adv/icon.svg" alt="<?= $arItem['NAME'] ?>">
                         </div>
                         <p><?= $arItem['NAME'] ?></p>
                     </div>
                 <?php endforeach ?>
             </div>
             <div class="more-btn">
-                <a class="btn btn-red big" href="<?php //TODO: Куда ссылка ?>">
+                <a  href="#" class="btn btn-red big" data-toggle="modal" data-target="#modalCall">
                     <span class="btn__text">
                         <span data-text="Позвонить">Позвонить</span>
                     </span>
