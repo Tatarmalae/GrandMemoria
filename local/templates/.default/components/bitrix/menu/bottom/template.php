@@ -8,7 +8,7 @@
             <?php if ($arItem["DEPTH_LEVEL"] == 1): ?>
                 <div class="footer__column">
                     <div class="footer__list">
-                        <a class="footer__list-title<?= $arItem["SELECTED"] ? ' selected' : '' ?>" href="<?= $arItem["LINK"] //TODO: добавить класс на верстке ?>">
+                        <a class="footer__list-title<?= $arItem["SELECTED"] ? ' selected' : '' ?>" href="<?= $arItem["LINK"] ?>">
                             <?= $arItem["TEXT"] ?>
                         </a>
                         <ul class="footer__sublist">

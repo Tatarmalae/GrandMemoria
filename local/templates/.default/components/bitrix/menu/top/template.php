@@ -8,7 +8,7 @@
             <?php if ($arItem["IS_PARENT"]): ?>
                 <?php if ($arItem["DEPTH_LEVEL"] == 1): ?>
                     <div class="nav-menu__item nav-menu__item_drop">
-                        <a class="nav-menu__link<?= $arItem["SELECTED"] ? ' selected' : '' ?>" href="<?= $arItem["LINK"] //TODO: добавить класс на верстке ?>">
+                        <a class="nav-menu__link<?= $arItem["SELECTED"] ? ' selected' : '' ?>" href="<?= $arItem["LINK"] ?>">
                             <span><?= $arItem["TEXT"] ?></span>
                         </a>
                         <div class="megamenu">
