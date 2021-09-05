@@ -1,1 +1,504 @@
-<? $GLOBALS['_____1676170401']= array(base64_decode('SW5jbH'.'Vk'.'ZU1vZH'.'VsZ'.'Uxh'.'bmdGa'.'Wx'.'l'),base64_decode('SW'.'5jbHV'.'k'.'ZU1vZHVsZUxh'.'bm'.'d'.'G'.'aWxl'),base64_decode('V3Jp'.'dG'.'VGaW5hbE1'.'l'.'c3NhZ2U='),base64_decode(''.'R'.'2V0TW9'.'kdWx'.'lRXZl'.'bnR'.'z'),base64_decode('R'.'XhlY3V0ZU1vZHV'.'sZUV2ZW'.'5'.'0R'.'Xg='),base64_decode('R2'.'V0'.'TW9'.'kdWx'.'lRXZlbnR'.'z'),base64_decode('R'.'XhlY3V0ZU1'.'v'.'ZH'.'V'.'sZU'.'V2ZW50R'.'Xg='));$GLOBALS['____1217667195']= array(base64_decode(''.'ZG'.'Vm'.'aW5lZ'.'A='.'='),base64_decode('ZGV'.'ma'.'W5'.'l'),base64_decode('ZGV'.'maW5lZA=='),base64_decode('ZGVma'.'W'.'5lZ'.'A=='),base64_decode('ZGV'.'maW5l'),base64_decode('ZGVma'.'W5l'.'ZA=='),base64_decode('ZGVmaW5l'),base64_decode('Z'.'GVmaW5l'),base64_decode(''.'ZGVmaW5l'),base64_decode('ZGVmaW5l'),base64_decode('Z'.'G'.'V'.'maW5l'),base64_decode('Z'.'GVmaW5l'),base64_decode('ZG'.'VmaW5'.'l'),base64_decode('ZGVmaW5l'),base64_decode(''.'ZGVmaW5l'),base64_decode('ZGVmaW5'.'l'),base64_decode('ZGVm'.'aW5lZA=='),base64_decode(''.'ZGVmaW5l'),base64_decode(''.'ZXJyb3Jfcm'.'Vwb3J0aW'.'5n'),base64_decode('ZGV'.'maW5lZA=='),base64_decode(''.'ZGVm'.'aW5l'),base64_decode('ZGVmaW'.'5l'),base64_decode('ZGVmaW5l'),base64_decode('c3RycmV'.'2'),base64_decode('c'.'3R'.'ydG91'.'cHBlcg'.'=='),base64_decode('c3ByaW50Zg=='),base64_decode('c'.'3ByaW50Zg=='),base64_decode('c3Vic3R'.'y'),base64_decode('c'.'3Ry'.'cmV2'),base64_decode('YmFzZ'.'T'.'Y0X'.'2'.'R'.'l'.'Y29k'.'ZQ='.'='),base64_decode(''.'c3Vic3R'.'y'),base64_decode('c3'.'Ryb'.'GVu'),base64_decode('c3RybGVu'),base64_decode('Y2hy'),base64_decode('b3Jk'),base64_decode(''.'b3Jk'),base64_decode('bWt0a'.'W1l'),base64_decode('aW5'.'0dmF'.'s'),base64_decode('aW50dmFs'),base64_decode('a'.'W50dm'.'Fs'),base64_decode('a3NvcnQ='),base64_decode('c3Vic'.'3Ry'),base64_decode('aW1wbG9kZQ'.'=='),base64_decode('ZG'.'VmaW5lZ'.'A=='),base64_decode('Ym'.'F'.'zZTY0X2RlY29k'.'ZQ=='),base64_decode('Y2'.'9uc3RhbnQ='),base64_decode('c3Ryc'.'m'.'V2'),base64_decode('c3ByaW'.'50Z'.'g=='),base64_decode('c'.'3'.'RybGVu'),base64_decode('c'.'3RybG'.'Vu'),base64_decode('Y2'.'hy'),base64_decode(''.'b3Jk'),base64_decode(''.'b3Jk'),base64_decode('bWt0aW1'.'l'),base64_decode('aW5'.'0dmFs'),base64_decode('aW50dmFs'),base64_decode('aW50d'.'mF'.'s'),base64_decode('c3Vic'.'3'.'Ry'),base64_decode('c3Vic'.'3'.'Ry'),base64_decode('ZGVmaW'.'5'.'lZA=='),base64_decode(''.'c3ByaW50Zg'.'='.'='),base64_decode('Zm'.'lsZV9l'.'eGlzdHM='),base64_decode('aW50dm'.'Fs'),base64_decode('dGltZQ=='),base64_decode('b'.'Wt0aW1l'),base64_decode('bWt0aW1l'),base64_decode('ZGF'.'0ZQ=='),base64_decode('ZGF0ZQ=='),base64_decode('ZGVmaW5l'),base64_decode(''.'Z'.'GV'.'maW5l'),base64_decode('Z'.'mlsZ'.'V'.'9leGlzd'.'HM='),base64_decode('ZmlsZV9leGlz'.'d'.'HM='),base64_decode('ZGVmaW'.'5l'.'ZA=='),base64_decode('ZG'.'V'.'m'.'aW'.'5l'),base64_decode('ZGVm'.'aW5lZ'.'A=='),base64_decode('Z'.'GVmaW'.'5l'),base64_decode('Z'.'GVm'.'aW5l'.'ZA'.'=='),base64_decode('bWJf'.'c3V'.'ic3'.'Ry'),base64_decode('bWJfc3RybGVu'),base64_decode('aGVhZGVy'),base64_decode(''.'aGVhZGV'.'y'),base64_decode('aG'.'V'.'hZGVy'),base64_decode('b'.'WQ1'),base64_decode(''.'aGVhZGVy'),base64_decode(''.'ZG'.'VmaW5l'),base64_decode(''.'ZGVmaW5lZ'.'A=='),base64_decode('d'.'Gl'.'tZQ=='),base64_decode('a'.'XAy'.'bG9uZw=='),base64_decode('aXAyb'.'G9uZw'.'=='),base64_decode(''.'a'.'XAybG9'.'uZ'.'w=='),base64_decode(''.'aXAybG9uZw=='),base64_decode('bW'.'Q'.'1'),base64_decode('dW5'.'pcWl'.'k'),base64_decode('cm'.'FuZA=='),base64_decode('ZGV'.'maW5lZA=='),base64_decode('ZGVmaW5'.'l'),base64_decode('ZGVmaW5'.'l'),base64_decode('ZG'.'V'.'maW5l'.'ZA=='),base64_decode('c'.'3Ry'.'dG9'.'sb3dlcg='.'='),base64_decode('ZGVm'.'aW5lZA=='),base64_decode(''.'ZGVmaW5'.'lZA'.'=='),base64_decode('Z'.'GVm'.'aW5lZA'.'=='),base64_decode('Z'.'GVm'.'a'.'W5lZA=='),base64_decode('ZG'.'VmaW5l'.'ZA=='),base64_decode('aX'.'N'.'fc3Rya'.'W'.'5n'),base64_decode(''.'ZGVmaW5'.'l'),base64_decode('ZGVmaW5l'),base64_decode('ZGVmaW'.'5l'),base64_decode('ZG'.'V'.'maW5lZA'.'=='),base64_decode(''.'Z'.'GV'.'maW5lZA=='),base64_decode('ZG'.'V'.'ma'.'W5l'.'Z'.'A=='),base64_decode('ZGVmaW5l'.'ZA'.'=='),base64_decode('ZGVma'.'W5lZ'.'A'.'=='),base64_decode('anNvbl'.'9lbm'.'Nv'.'ZGU='),base64_decode('ZGVmaW5lZA'.'=='),base64_decode(''.'c3R'.'ybGVu'));if(!function_exists(__NAMESPACE__.'\\___2022811534')){function ___2022811534($_214968040){static $_191852511= false; if($_191852511 == false) $_191852511=array('L'.'2J'.'4X3Jvb3QucGhw','L'.'3N0'.'YXJ0L'.'nB'.'ocA==','Z2V0','cG'.'9zd'.'A='.'=','ZmlsZXM=','Y'.'2'.'9'.'va2'.'ll','c2VydmVy','ZW52','Q'.'V'.'B'.'Q'.'TEl'.'D'.'Q'.'VRJT0'.'4=','U0lURV9J'.'RA==',''.'TEFORw'.'==','TEFO'.'Rw==',''.'QURN'.'S'.'U5fU0VDVElPT'.'g==','SW'.'5jb'.'3Jy'.'ZWN0I'.'HNpdG'.'U6'.'I'.'A='.'=','Lg==','QVBQT'.'ElD'.'QVRJ'.'T04=',''.'TEFORw==','TE'.'lE','Q1'.'V'.'M'.'VFVSRV9JRA==','','Q'.'3VsdHVyZS'.'Bub'.'3Q'.'gZm9'.'1b'.'mQsIG9'.'yIH'.'RoZXJlIGFyZ'.'SB'.'u'.'byBh'.'Y'.'3'.'Rp'.'d'.'mU'.'gc2l0ZX'.'M'.'gb3'.'IgbG'.'Fu'.'Z3V'.'hZ'.'2V'.'zLg==',''.'TElE','U0lURV'.'9JRA==','U0lURV9J'.'RA==','TEl'.'E','U0'.'l'.'UR'.'V9ESVI'.'=','RElS','U0lUR'.'V'.'9'.'T'.'R'.'VJWRV'.'JfTkFN'.'RQ==','U0VSVkVSX05BTUU=',''.'U'.'0'.'lU'.'RV9D'.'SEFS'.'U0VU',''.'Q0hBUlN'.'FV'.'A==',''.'Rk9STUFU'.'X0RBVEU'.'=',''.'Rk9'.'STUFUX0RB'.'VEU=',''.'Rk9S'.'TU'.'F'.'UX0'.'RBVEVUSU1F','Rk'.'9ST'.'UF'.'U'.'X0RB'.'V'.'EVU'.'SU1F','TEFOR1'.'9E'.'SV'.'I=','RElS','TE'.'FOR19D'.'SEFSU'.'0V'.'U','Q0hBUlNFVA'.'==','TEFOR'.'19'.'BRE1JTl9MSUQ=',''.'T'.'EF'.'OR1VBR0V'.'fSUQ=','T'.'EFOR1'.'V'.'BR0Vf'.'S'.'UQ=','TEFOR1VBR0Vf'.'SUQ=','Q1'.'VMVF'.'V'.'S'.'RV9JR'.'A='.'=','Y2'.'Fj'.'a'.'GU'.'=',''.'dHR'.'s','Q'.'VBQ'.'TElDQVRJT04=','U'.'E9TVF'.'9'.'G'.'T1J'.'NX0F'.'DVElPTl9VU'.'kk=','UE9'.'TV'.'F9'.'GT1JNX0FDV'.'ElPTl9'.'V'.'Ukk=',''.'TUVTUw'.'==','QUxMX0xB'.'T'.'kdfRk'.'lMR'.'V'.'M=','L3R'.'vb2'.'xzL'.'nBoc'.'A==','bWF'.'pbg==','ZXJ'.'yb3JfcmV'.'wb3J'.'0a'.'W5'.'n','QlhfQ09NUF9NQU'.'5BR0'.'VEX0NB'.'Q0h'.'F','bWFpbg==','Y29tcG'.'9'.'uZW50X'.'2'.'1hb'.'mFn'.'ZWRfY2FjaGVfb24=','WQ==','Tg==','Qlhf'.'Q09NUF9NQU5BR0VEX0NBQ0hF','L'.'2ZpbHRlcl'.'90b29scy5w'.'aHA=','QlhfQ'.'UpBWF9QQVJB'.'TV9JRA==',''.'YnhhamF4a'.'WQ=','ZXh'.'waXJ'.'lX21lc3M'.'y','b21'.'lZA==','WQ'.'==','Z'.'H'.'Jpbl9wZ'.'XJ'.'nb2tj','JTAx'.'MH'.'MK','RUVYUEl'.'S','bWFp'.'b'.'g==','JXM'.'lc'.'w==','YWRt','a'.'GRy'.'b'.'3dzc2E=',''.'YWR'.'taW4=','b'.'W9k'.'dWxlcw==','Z'.'GVma'.'W'.'5'.'lLnBocA==','bWFp'.'bg==','Yml0cml4','Uk'.'hTSVRFRV'.'g=',''.'SD'.'R'.'1NjdmaHc4N'.'1Z'.'oeX'.'Rv'.'cw==','','dGhS','N0h5cjEySHd5'.'MH'.'JG'.'cg'.'==',''.'VF9TV'.'E'.'VBTA==',''.'aHR0c'.'DovL2J'.'pd'.'H'.'Jp'.'eHNv'.'Zn'.'Qu'.'Y29tL2J'.'pdHJpeC9icy5'.'waHA=','T0'.'x'.'E',''.'UElSRURB'.'VEV'.'T',''.'RE9DVU1FT'.'l'.'RfUk9P'.'VA==','L'.'w='.'=',''.'Lw'.'='.'=','V'.'EVN'.'UE9'.'SQV'.'JZX0NBQ0hF','VEVNU'.'E9SQ'.'VJ'.'ZX0NBQ0hF','','T05fT0Q'.'=','JXMlcw'.'==','X'.'0'.'9VUl9CVV'.'M=','U0lU',''.'RU'.'RBV'.'E'.'VNQ'.'VBFU'.'g==',''.'JWMlYyVjJWM=','R'.'E9DVU1FTlR'.'fUk'.'9'.'PVA'.'==','L'.'2Jp'.'dHJpe'.'C8uY29u'.'Zm'.'lnLnBocA==','R'.'E9DVU'.'1FTlRfUk9PV'.'A==','L2'.'Jp'.'dHJpeC8uY29'.'uZml'.'nLnBocA='.'=','c'.'2Fhcw'.'==','Z'.'G'.'F5c1'.'9'.'hZnRlcl'.'90cm'.'lhbA'.'==','c2Fhcw==','ZGF5c19hZnRlcl'.'90cml'.'hbA==',''.'c2'.'Fhcw='.'=','dHJp'.'YWxf'.'c'.'3RvcHB'.'lZA='.'=','','c'.'2Fhcw==','d'.'HJpYWxfc3RvcHB'.'lZA==','bQ==','ZA==',''.'W'.'Q==','U'.'2'.'l0ZUV4cGly'.'Z'.'URhd'.'GU=','YXJDd'.'XN0'.'b21UZ'.'W1wbGF0ZU'.'Vu'.'Z2l'.'uZXM=','L2F1dG9sb2Fk'.'L'.'nBocA==',''.'L2NsYXNzZXMvZ2V'.'uZXJhb'.'C9'.'tZW51LnBocA==',''.'L2Ns'.'Y'.'XN'.'zZXMvbX'.'lzc'.'Ww'.'vd'.'X'.'NlcnR5c'.'GUucGhw','L2'.'N'.'sYXNzZXMv'.'Z2'.'VuZXJhbC91cGRhdG'.'VfZGJfdXBkYXRlci5w'.'aHA=','R'.'E9DVU1F'.'TlRfUk9P'.'VA='.'=','L'.'2JpdHJ'.'peC9pbm'.'l0'.'LnBocA==','cGhwX2ludGVyZmFjZ'.'S9pb'.'ml'.'0'.'L'.'n'.'Bo'.'cA==','RE9DVU1'.'F'.'Tl'.'RfUk9P'.'VA==','c'.'Gh'.'wX2lud'.'GVyZmFjZS8=','L'.'2'.'luaX'.'QucGhw','R'.'E9'.'DV'.'U'.'1F'.'Tl'.'Rf'.'U'.'k'.'9PVA==','Q'.'lhf'.'RklMRV9Q'.'RVJNSVNTSU'.'9OUw'.'==','Ql'.'hfRkl'.'MRV9QRVJNSVNTSU9OUw==','Q'.'l'.'h'.'f'.'RElSX'.'1B'.'FUk1JU'.'1NJ'.'T0'.'5T','QlhfREl'.'S'.'X1BFUk'.'1J'.'U'.'1NJT05T','c0RvY'.'1B'.'hdGg'.'=','Q'.'VBQT'.'ElDQ'.'VRJT04'.'=',''.'U1RB'.'VElT'.'VEl'.'DX09O'.'TF'.'k=','Q'.'VBQT'.'ElDQVRJT'.'04'.'=','L2F'.'kbWlu'.'Lw'.'='.'=',''.'L2Fkb'.'WluLw==',''.'b'.'WFpbg==','aW5jbHVkZV9jaGFyc2V0','WQ==','WQ==','','Q29udGVudC1'.'U'.'eXB'.'lOi'.'B0ZX'.'h0L2h0b'.'Ww7IGNoYX'.'JzZXQ9',''.'bWFpb'.'g==','c'.'2'.'V0X3AzcF9oZ'.'W'.'F'.'kZXI=','WQ==',''.'WQ'.'==','UDNQOiBwb2xpY3lyZWY'.'9'.'Ii9'.'iaXRy'.'aXgvcDNwLnhtbCI'.'sIENQPSJOT04gRFNQ'.'IENP'.'UiBDVVIgQURNI'.'ER'.'F'.'Vi'.'BQU0EgUFNE'.'IE9V'.'UiBVT'.'l'.'Ig'.'QlVTIFVOSSBDT00'.'gTkFWIElOV'.'CBE'.'R'.'U'.'0gU1RB'.'I'.'g==','WC'.'1'.'Qb'.'3'.'d'.'lcmV'.'kLUN'.'NUzog'.'Qml0cml4I'.'FNpdGUgTWFuY'.'Wd'.'lci'.'Ao','REVNTw'.'==','REVNT'.'w==',''.'QklUUklY','TE'.'lDRU'.'5DR'.'Q==','K'.'Q==',''.'bWF'.'pbg==','dX'.'BkYX'.'RlX2RldnNydg==','',''.'WQ==','W'.'C1E'.'ZXZTcn'.'YtQ0'.'1TOiBCaX'.'RyaXg=','QlhfQ1J'.'PTlRBQl9TVV'.'BQT'.'1JU','QlhfQ1'.'J'.'PTl'.'RBQg==','b'.'WFpbg==','Y2hl'.'Y2tfYWdlbnRz','WQ='.'=','W'.'Q==','Q'.'0FnZ'.'W50','Q2'.'hlY2tBZ'.'2'.'V'.'udHM=','bWF'.'pbg==','Y2hlY2tfZXZ'.'lbn'.'Rz','WQ='.'=','Tg==',''.'XEJ'.'pdHJ'.'peFxN'.'YWluX'.'E1'.'haWx'.'cRXZlbnRNYW5'.'hZ2Vy',''.'Y'.'2hlY'.'2tFdmVudHM=','bWFpbg==',''.'T25QYWd'.'lU3R'.'hcn'.'Q=','VVNFUg==','VVNFUg==',''.'U'.'0VTU19'.'JUA==','U0VT'.'U0lPTl9JUF9'.'NQV'.'NL','',''.'U0VTU0lPTl9JUF'.'9NQVNL','U0VT'.'U19JU'.'A==',''.'U0'.'VT'.'U'.'0lPTl9JU'.'F9NQVNL','U'.'k'.'VNT'.'1'.'RFX0'.'FER'.'FI=','U0VTU0lPTl9'.'USU1FT1VU','U'.'0VTU19USU1F','U0VTU0lPTl9U'.'S'.'U1FT1VU','U'.'0VTU19USU1F','QlhfU0VTU0lP'.'Tl9T'.'SUdO','Ql'.'hfU0VTU0l'.'PTl9'.'TS'.'UdO','VVN'.'FUg==','U'.'0VT'.'U19'.'JUA==',''.'U'.'kV'.'N'.'T1'.'RFX'.'0FERFI=','U0VTU'.'19USU1F','U0V'.'TU1'.'9U'.'S'.'U1'.'F',''.'U0VTU19US'.'U1'.'F','U0'.'VT'.'U19USU1F','QlhfU'.'0V'.'TU0lP'.'Tl'.'9TSUdO','QlhfU'.'0VTU0lPTl9TSUd'.'O','bWFpbg==','d'.'XNl'.'X3Nlc3Npb2'.'5faWRfdHR'.'s','Tg==','WQ==','bWFpb'.'g==',''.'c2'.'Vzc2l'.'vbl9pZF9'.'0'.'dG'.'w=','Qlh'.'fU0VTU0'.'lPT'.'l'.'9JRF9'.'DSEFOR'.'0U=','U'.'0V'.'TU19JRF9USU'.'1F',''.'U0V'.'TU19JRF9U'.'SU1'.'F','U'.'0'.'VTU19JR'.'F9USU1F','b'.'WFp'.'bg==','c2V'.'zc2lvbl9pZF'.'90'.'dGw'.'=','U0'.'VTU19USU1F','U0VTU'.'19J'.'RF9U'.'S'.'U1F','Qlh'.'fU'.'1'.'RB'.'UlRFRA'.'==','Qlh'.'fQ'.'U'.'R'.'N'.'S'.'U5fTE9BRF9BVVRI','QURNSU5fU0VDVElPT'.'l'.'9M'.'T'.'0FEX0FVVEg=','Q'.'lhfQURNS'.'U5fTE9BRF9'.'B'.'V'.'V'.'RI','T'.'k9UX0'.'N'.'IRUNLX1B'.'FUk1JU1'.'NJT05T','bG9n'.'b3V0','b'.'G9n'.'b3V0','eWV'.'z','V'.'VN'.'FU'.'g==','bW'.'Fpbg==','c2VjdXJlX2xvZ2'.'9'.'1d'.'A==','Tg==',''.'WQ==','V'.'V'.'NF'.'Ug='.'=','QVB'.'QTE'.'lDQVRJT'.'04=','',''.'bG9n'.'b3'.'V0','c'.'2V'.'z'.'c2lk','V'.'V'.'NFUg==','VVNFUg==',''.'VVN'.'F'.'Ug==','QVBQTEl'.'D'.'Q'.'V'.'RJT04=','QVVUSF'.'9'.'GT1'.'JN',''.'QVVU'.'S'.'F'.'9GT1JN','','b'.'WFpbg='.'=','dXNlX2VuY3J5cHRl'.'ZF'.'9hdXRo','Tg==','WQ==','VVNF'.'Ul9QQVN'.'TV'.'09'.'SR'.'A'.'==','VVN'.'FUl9D'.'T05GSVJNX1B'.'BU1NXT1JE','VVN'.'FUl9DV'.'VJS'.'RU'.'5'.'UX1'.'BBU1N'.'XT1JE','TUVTU0FH'.'RQ==','bWFpbl'.'9pbmN'.'s'.'dWRl'.'X'.'2RlY29'.'kZV9'.'wY'.'XNzX3Nlc3M'.'=','VFlQRQ==','RV'.'J'.'ST1I'.'=','TUVTU0FHRQ==','bWF'.'pb'.'l9pbmNsdWRlX2RlY29k'.'ZV'.'9wYXNzX2V'.'ycg==','I0VSUkNPREUj','VFlQRQ==',''.'RVJST1I=','QU'.'RNS'.'U5fU'.'0V'.'D'.'VE'.'lPTg='.'=','VF'.'lQRQ==','QVVUSA==','V'.'V'.'NFUg'.'='.'=','VV'.'NFUl9MT0dJTg='.'=','VV'.'NF'.'U'.'l9QQVNTV09S'.'RA==',''.'VVNFUl9SRU1FTU'.'JFUg==','VFl'.'QRQ==','T1RQ','VVNFUg='.'=','VVNF'.'U'.'l9'.'PVF'.'A'.'=',''.'T1RQ'.'X1'.'JFTUVNQkVS','Y'.'2F'.'wd'.'GNoYV93b3Jk','Y2Fw'.'dGNoY'.'V9zaWQ=','VFlQRQ==','U'.'0VORF'.'9QV0Q=','VVNFUl9MT0dJTg==','V'.'VNFUl9FTUFJTA='.'=','Y'.'2FwdGNoYV93b3Jk',''.'Y'.'2F'.'wdGNoY'.'V9za'.'WQ'.'=','VV'.'NFUl9QSE9O'.'RV9O'.'VU1CRVI=','V'.'FlQRQ==','Q0hBTkdF'.'X'.'1BXRA==','V'.'VNF'.'Ug'.'='.'=','VVNFUl9MT0dJTg==','VVNFUl9DS'.'EV'.'DS1dP'.'U'.'kQ=','VVNF'.'Ul'.'9QQ'.'V'.'N'.'TV0'.'9SRA==','V'.'VNFUl9DT05G'.'SVJNX1BBU1NXT1JE','Y2Fw'.'dGNo'.'YV93b3'.'Jk','Y2FwdGN'.'oYV9zaWQ=','VV'.'NFU'.'l9QSE'.'9'.'O'.'RV9OVU1C'.'RVI=','VVNFU'.'l9DVVJSRU5'.'UX1'.'BBU1NXT1JE','bW'.'F'.'pbg==','bm'.'V'.'3X'.'3VzZXJfcmVn'.'aXN0cmF'.'0'.'aW9u',''.'T'.'g==','WQ==','VFlQR'.'Q'.'==','UkVHSVNUUk'.'FUSU9'.'O','QUR'.'NSU5fU0VDVElPTg==','VV'.'NFUg==','VVNFUl9MT'.'0'.'dJ'.'T'.'g==','VV'.'NFUl'.'9OQU1F','V'.'VNFUl'.'9'.'MQ'.'VN'.'U'.'X05'.'BTUU=','V'.'VN'.'F'.'Ul9QQ'.'VN'.'T'.'V0'.'9SR'.'A==','V'.'VNFUl'.'9DT05'.'GSV'.'JNX1BB'.'U1N'.'XT1JE','VVN'.'FUl'.'9FTUFJTA==','Y2Fwd'.'GNoYV93b3'.'Jk','Y2Fw'.'d'.'GN'.'o'.'YV'.'9zaWQ=','VVNFU'.'l9QS'.'E9ORV9OVU'.'1CRVI=',''.'VFlQRQ==','QVVUS'.'A==',''.'VFlQ'.'RQ==','T1R'.'Q','QU'.'RNSU5f'.'U'.'0VD'.'VElPTg'.'==','Q'.'VBQTElDQVRJT04=','QlhfQURNS'.'U5fTE9B'.'R'.'F9BVVRI','PHNj'.'c'.'mlwdCB'.'0'.'eXBlPSJ'.'0ZXh0'.'L2phdmFzY3Jpc'.'HQiPndpbmR'.'vdy'.'5vb'.'mx'.'vYWQ9'.'Zn'.'VuY3'.'R'.'pb24'.'oK'.'Xsod2luZG93Lk'.'JYIHx'.'8I'.'HdpbmRvdy5wYXJl'.'bn'.'QuQl'.'g'.'p'.'LkFVVEhBR0VOVC'.'5zZXR'.'BdXRo'.'U'.'mVz'.'dW'.'x0K'.'GZhbHNlKT'.'t'.'9'.'O'.'zwvc2NyaXB0'.'Pg==','QVB'.'QTElDQV'.'R'.'JT'.'04=',''.'VVNFUg==','VVNFUg==','VVNFUg==','Qlhf'.'Q0'.'hFQ0tfU0hPU'.'lRfV'.'V'.'JJ','VVNFU'.'g==','QVB'.'Q'.'TElD'.'QVRJT0'.'5fSUQ'.'=','b'.'WFpb'.'g'.'==','b25B'.'cHBs'.'aWNh'.'dGlv'.'blNjb3Bl'.'RXJyb3I=','QVBQTE'.'lDQVRJT05fS'.'UQ'.'=','NDAzIE'.'Zvcm'.'JpZ'.'G'.'Rlbg==','QURNSU5fU'.'0VDVElPTg==','','Yml0'.'c'.'ml4X'.'3ByZXZpZXdfc2l0Z'.'V90ZW'.'1wbGF0ZQ==','Y'.'ml0'.'cm'.'l4'.'X3ByZXZpZXdfc2l0ZV90ZW1w'.'bGF0ZQ'.'==','','V'.'V'.'NF'.'Ug==','dmlld1'.'9vd'.'Ghlc'.'l'.'9'.'zZXR0a'.'W5ncw==','Y'.'ml0cml4X3'.'ByZXZpZ'.'Xdfc2'.'l0'.'Z'.'V90ZW1'.'wbG'.'F0ZQ==','d'.'G'.'Vtc'.'G'.'xhdGVfc'.'HJl'.'dmll'.'dw==','SUQ=','Ynhf'.'dGVtcGxhdG'.'VfcHJld'.'m'.'lld'.'1'.'9tb2Rl','Yn'.'hf'.'d'.'GVtcGx'.'hd'.'GVfcHJ'.'ldmlld19tb2Rl','W'.'Q'.'==','VVNFUg==',''.'ZWRpdF9v'.'dGhlcl'.'9zZXR0aW5nc'.'w==','U'.'0lURV9'.'U'.'R'.'U1'.'QT'.'EF'.'URV'.'9Q'.'UkVW'.'SUVX'.'X'.'0'.'1PR'.'EU=','','U'.'0lUR'.'V9URU1QT'.'EF'.'URV9JRA==','U0lU'.'R'.'V9U'.'RU'.'1QTEFU'.'R'.'V9QQVRI','dGVtcGxhdG'.'V'.'zLw==','c2hvd19wYWdlX2V'.'4Z'.'WNf'.'dGltZQ'.'==','c2hvd19wYW'.'dlX2V4ZW'.'NfdGltZQ==','WQ==','c2hv'.'d1'.'9w'.'YWdlX2V4'.'ZWNf'.'dGltZQ='.'=',''.'T'.'g'.'==','U0VTU'.'1'.'9TSE9XX'.'1RJT'.'UV'.'fR'.'V'.'hFQw'.'==','c2h'.'vd1'.'9'.'wYWdlX'.'2V'.'4ZWNf'.'dG'.'ltZQ==','c2'.'hvd1'.'9pbmNsdWR'.'lX2V4ZWNfdGltZ'.'Q==','c2h'.'vd1'.'9p'.'bmNsdWRlX2V4ZWNfdG'.'ltZ'.'Q'.'='.'=','WQ'.'==','c2hvd19pbmNs'.'dW'.'RlX'.'2V4Z'.'WNfdGltZQ'.'='.'=',''.'Tg==','U0VTU19TSE9X'.'X0lO'.'Q0'.'xVR'.'EV'.'fVElNRV9FWEVD','c2hvd19pbmNsd'.'W'.'R'.'lX2'.'V4ZWNfdGltZQ==',''.'Yml0c'.'ml4X2'.'lu'.'Y2x1ZGV'.'fYXJlYXM=','Ym'.'l0'.'cml4X2luY2x'.'1ZG'.'VfYXJlYXM=','','QVBQTEl'.'DQVR'.'JT0'.'4=','Yml0cml4X2luY2x1ZGVfYXJlYXM=','W'.'Q==','VVNFUg==','b'.'WFpb'.'g='.'=','Y29va2ll'.'X'.'2'.'5'.'hbWU=','Q'.'klUUklYX1'.'NN','X1NPV'.'U5E'.'X0'.'xPR0lOX'.'1BMQV'.'l'.'FRA==','QVBQTElDQV'.'RJT04=','U09VTkRfTE'.'9'.'HSU5f'.'UExBWUV'.'E',''.'WQ==',''.'bW'.'F'.'p'.'b'.'g==','T25CZWZvcm'.'VQcm9sb2'.'c'.'=','Tk9'.'UX0'.'N'.'I'.'RUNLX1BFUk1J'.'U1N'.'J'.'T05T','Tk'.'9UX0'.'NI'.'R'.'UNL'.'X0ZJT'.'EVfUEVSTUlTU0l'.'PTl'.'M=','VVNF'.'Ug='.'=','Z'.'m1fdmll'.'d19'.'maWxl','TkVFR'.'F'.'9BVV'.'RI',''.'V'.'VNFUg==','VVNF'.'U'.'g==','T'.'UVTU'.'0'.'FH'.'RQ='.'=','','TUVTU0F'.'HRQ==','QU'.'NDR'.'VNTX0RFTklF'.'RA==','IA'.'==',''.'QUNDRVNT'.'X0'.'R'.'FTklFR'.'F9GS'.'UxF',''.'I0ZJ'.'T'.'EUj','V'.'FlQRQ='.'=','RVJS'.'T1I=','bWFp'.'b'.'g==','Z'.'XZ'.'lb'.'nRfbG9nX3Blcm1p'.'c3Npb25zX2Zh'.'aWw'.'=','Tg==','WQ==','U0'.'VDV'.'VJJV'.'Fk=','VVNF'.'U'.'l9QRVJNSVNTSU9OU19GQUlM','b'.'WFpbg==','V'.'VN'.'F'.'Ug==','QUR'.'N'.'SU5fU0VDV'.'El'.'PTg==','bW9kZQ'.'==',''.'bG'.'lzd'.'A'.'==','bW9k'.'ZQ='.'=','c2V'.'0d'.'GluZ'.'3M'.'=','P'.'HNjcmlwd'.'D50b3'.'Aub'.'G9j'.'YX'.'R'.'pb24'.'9Jw='.'=','QVB'.'QT'.'ElD'.'QVRJT0'.'4=',''.'Pw'.'==',''.'bW9kZ'.'Q==',''.'Jzs8L'.'3Njc'.'mlwd'.'D4=',''.'bW9'.'kZ'.'Q'.'='.'=','ZnJh'.'bWU=','PHNj'.'c'.'mlwdCB0'.'eXBlPS'.'J0ZXh0L2phdmFz'.'Y3J'.'pcHQiPgoJ'.'C'.'Qk'.'JC'.'XZh'.'ciB3ID'.'0'.'g'.'KG9wZW5l'.'cj8gb3'.'Blb'.'mVyLndpbmRvdzpwYXJlb'.'nQud2luZG93K'.'TsKCQkJCQl3Lm'.'xvY2F0aW9uLmh'.'yZWY9'.'Jw==','Q'.'VBQTElDQVRJT04=',''.'Pw==',''.'bW9kZQ==','JzsKCQkJC'.'Twvc2NyaXB0'.'P'.'g==','TU'.'9'.'CSUxF'.'X'.'0FQUF9'.'BRE1J'.'Tg==','c3RhdH'.'Vz','ZmFpbGVk','QV'.'B'.'QTElD'.'QVRJ'.'T'.'04=',''.'T0xEU0l'.'URU'.'VYUElS'.'RUR'.'B'.'V'.'E'.'U=',''.'Z'.'XhwaXJ'.'lX'.'21'.'lc'.'3M'.'y');return base64_decode($_191852511[$_214968040]);}};  use Bitrix\Main\Session\Legacy\HealerEarlySessionStart; require_once(__DIR__.___2022811534(0)); require_once(__DIR__.___2022811534(1)); $_1948308999= \Bitrix\Main\Application::getInstance(); $_1948308999->initializeExtendedKernel(array( ___2022811534(2) => $_GET, ___2022811534(3) => $_POST, ___2022811534(4) => $_FILES, ___2022811534(5) => $_COOKIE, ___2022811534(6) => $_SERVER, ___2022811534(7) => $_ENV)); $GLOBALS[___2022811534(8)]= new CMain; if($GLOBALS['____1217667195'][0](___2022811534(9))) $GLOBALS['____1217667195'][1](___2022811534(10), SITE_ID); if($GLOBALS['____1217667195'][2](___2022811534(11))){ if($GLOBALS['____1217667195'][3](___2022811534(12)) && ADMIN_SECTION===true) $_1906236589= CLangAdmin::GetByID(LANG); else $_1906236589= CLang::GetByID(LANG); $_1187343167= $_1906236589->Fetch(); if(!$_1187343167){ throw new \Bitrix\Main\SystemException(___2022811534(13).LANG.___2022811534(14));}} else{ $_1187343167= $GLOBALS[___2022811534(15)]->GetLang(); $GLOBALS['____1217667195'][4](___2022811534(16), $_1187343167[___2022811534(17)]);} if($_1187343167[___2022811534(18)] == ___2022811534(19)){ throw new \Bitrix\Main\SystemException(___2022811534(20));} $_1943667081= $_1187343167[___2022811534(21)]; if(!$GLOBALS['____1217667195'][5](___2022811534(22))) $GLOBALS['____1217667195'][6](___2022811534(23), $_1187343167[___2022811534(24)]); $GLOBALS['____1217667195'][7](___2022811534(25), $_1187343167[___2022811534(26)]); $GLOBALS['____1217667195'][8](___2022811534(27), $_1187343167[___2022811534(28)]); $GLOBALS['____1217667195'][9](___2022811534(29), $_1187343167[___2022811534(30)]); $GLOBALS['____1217667195'][10](___2022811534(31), $_1187343167[___2022811534(32)]); $GLOBALS['____1217667195'][11](___2022811534(33), $_1187343167[___2022811534(34)]); $GLOBALS['____1217667195'][12](___2022811534(35), $_1187343167[___2022811534(36)]); $GLOBALS['____1217667195'][13](___2022811534(37), $_1187343167[___2022811534(38)]); $GLOBALS['____1217667195'][14](___2022811534(39), $_1187343167[___2022811534(40)]); $GLOBALS['____1217667195'][15](___2022811534(41), $_1187343167[___2022811534(42)]); $_1795831289= \Bitrix\Main\Localization\CultureTable::getByPrimary($_1187343167[___2022811534(43)],[___2022811534(44) =>[___2022811534(45) => CACHED_b_lang]])->fetchObject(); $_1862842182= $_1948308999->getContext(); $_1862842182->setLanguage(LANGUAGE_ID); $_1862842182->setCulture($_1795831289); $_2094156319= $_1862842182->getRequest(); if(!$_2094156319->isAdminSection()){ $_1862842182->setSite(SITE_ID);} $_1948308999->start(); $GLOBALS[___2022811534(46)]->reinitPath(); if(!$GLOBALS['____1217667195'][16](___2022811534(47))){ $GLOBALS['____1217667195'][17](___2022811534(48), htmlspecialcharsbx(GetRequestUri()));} $GLOBALS[___2022811534(49)]=[]; $GLOBALS[___2022811534(50)]=[];$GLOBALS['_____1676170401'][0](__DIR__.___2022811534(51)); $GLOBALS['_____1676170401'][1](__FILE__); $GLOBALS['____1217667195'][18](COption::GetOptionInt(___2022811534(52), ___2022811534(53), E_COMPILE_ERROR|E_ERROR|E_CORE_ERROR|E_PARSE)&~E_STRICT&~E_DEPRECATED); if(!$GLOBALS['____1217667195'][19](___2022811534(54)) && COption::GetOptionString(___2022811534(55), ___2022811534(56), ___2022811534(57)) <> ___2022811534(58)){ $GLOBALS['____1217667195'][20](___2022811534(59), true);} require_once(__DIR__.___2022811534(60)); $GLOBALS['____1217667195'][21](___2022811534(61), ___2022811534(62)); class CBXFeatures{ public static function IsFeatureEnabled($_1771543257){ return true;} public static function IsFeatureEditable($_1771543257){ return true;} public static function SetFeatureEnabled($_1771543257, $_1113400078= true){} public static function SaveFeaturesSettings($_333307845, $_1777804561){} public static function GetFeaturesList(){ return array();} public static function InitiateEditionsSettings($_994430017){} public static function ModifyFeaturesSettings($_994430017, $_94278415){} public static function IsFeatureInstalled($_1771543257){ return true;}} $_2145815850= GetMessage(___2022811534(63));$_1148769974= round(0+2.8+2.8+2.8+2.8+2.8);$GLOBALS['____1217667195'][22]($GLOBALS['____1217667195'][23]($GLOBALS['____1217667195'][24](___2022811534(64))), ___2022811534(65));$_1580678891= round(0+0.2+0.2+0.2+0.2+0.2); $_14569688= ___2022811534(66); unset($_158147374); $_630892625= $GLOBALS['____1217667195'][25](___2022811534(67), ___2022811534(68)); $_158147374= \COption::GetOptionString(___2022811534(69), $GLOBALS['____1217667195'][26](___2022811534(70),___2022811534(71),$GLOBALS['____1217667195'][27]($_14569688, round(0+0.66666666666667+0.66666666666667+0.66666666666667), round(0+4))).$GLOBALS['____1217667195'][28](___2022811534(72))); $_2068950442= array(round(0+5.6666666666667+5.6666666666667+5.6666666666667) => ___2022811534(73), round(0+2.3333333333333+2.3333333333333+2.3333333333333) => ___2022811534(74), round(0+5.5+5.5+5.5+5.5) => ___2022811534(75), round(0+12) => ___2022811534(76), round(0+1.5+1.5) => ___2022811534(77)); $_1223079664= ___2022811534(78); while($_158147374){ $_420064073= ___2022811534(79); $_1886506182= $GLOBALS['____1217667195'][29]($_158147374); $_438517044= ___2022811534(80); $_420064073= $GLOBALS['____1217667195'][30](___2022811534(81).$_420064073, min(236,0,78.666666666667),-round(0+5)).___2022811534(82); $_558297309= $GLOBALS['____1217667195'][31]($_420064073); $_1637415508= min(186,0,62); for($_1503619083= min(50,0,16.666666666667); $_1503619083<$GLOBALS['____1217667195'][32]($_1886506182); $_1503619083++){ $_438517044 .= $GLOBALS['____1217667195'][33]($GLOBALS['____1217667195'][34]($_1886506182[$_1503619083])^ $GLOBALS['____1217667195'][35]($_420064073[$_1637415508])); if($_1637415508==$_558297309-round(0+0.25+0.25+0.25+0.25)) $_1637415508=(922-2*461); else $_1637415508= $_1637415508+ round(0+0.5+0.5);} $_1580678891= $GLOBALS['____1217667195'][36](min(204,0,68),(1064/2-532),(137*2-274), $GLOBALS['____1217667195'][37]($_438517044[round(0+1.2+1.2+1.2+1.2+1.2)].$_438517044[round(0+0.6+0.6+0.6+0.6+0.6)]), $GLOBALS['____1217667195'][38]($_438517044[round(0+0.2+0.2+0.2+0.2+0.2)].$_438517044[round(0+3.5+3.5+3.5+3.5)]), $GLOBALS['____1217667195'][39]($_438517044[round(0+2.5+2.5+2.5+2.5)].$_438517044[round(0+4.5+4.5+4.5+4.5)].$_438517044[round(0+2.3333333333333+2.3333333333333+2.3333333333333)].$_438517044[round(0+3+3+3+3)])); unset($_420064073); break;} $_677916895= ___2022811534(83); $GLOBALS['____1217667195'][40]($_2068950442); $_215110223= ___2022811534(84); $_1223079664= ___2022811534(85).$GLOBALS['____1217667195'][41]($_1223079664.___2022811534(86), round(0+2),-round(0+0.5+0.5));@include($_SERVER[___2022811534(87)].___2022811534(88).$GLOBALS['____1217667195'][42](___2022811534(89), $_2068950442)); $_1532206104= round(0+0.66666666666667+0.66666666666667+0.66666666666667); while($GLOBALS['____1217667195'][43](___2022811534(90))){ $_2130636215= $GLOBALS['____1217667195'][44]($GLOBALS['____1217667195'][45](___2022811534(91))); $_1982307801= ___2022811534(92); $_677916895= $GLOBALS['____1217667195'][46](___2022811534(93)).$GLOBALS['____1217667195'][47](___2022811534(94),$_677916895,___2022811534(95)); $_1183990201= $GLOBALS['____1217667195'][48]($_677916895); $_1637415508=(143*2-286); for($_1503619083=(1128/2-564); $_1503619083<$GLOBALS['____1217667195'][49]($_2130636215); $_1503619083++){ $_1982307801 .= $GLOBALS['____1217667195'][50]($GLOBALS['____1217667195'][51]($_2130636215[$_1503619083])^ $GLOBALS['____1217667195'][52]($_677916895[$_1637415508])); if($_1637415508==$_1183990201-round(0+0.5+0.5)) $_1637415508= min(172,0,57.333333333333); else $_1637415508= $_1637415508+ round(0+0.25+0.25+0.25+0.25);} $_1532206104= $GLOBALS['____1217667195'][53]((1196/2-598),(964-2*482),(1484/2-742), $GLOBALS['____1217667195'][54]($_1982307801[round(0+2+2+2)].$_1982307801[round(0+3.2+3.2+3.2+3.2+3.2)]), $GLOBALS['____1217667195'][55]($_1982307801[round(0+1.8+1.8+1.8+1.8+1.8)].$_1982307801[round(0+0.66666666666667+0.66666666666667+0.66666666666667)]), $GLOBALS['____1217667195'][56]($_1982307801[round(0+3+3+3+3)].$_1982307801[round(0+3.5+3.5)].$_1982307801[round(0+3.5+3.5+3.5+3.5)].$_1982307801[round(0+0.75+0.75+0.75+0.75)])); unset($_677916895); break;} $_630892625= ___2022811534(96).$GLOBALS['____1217667195'][57]($GLOBALS['____1217667195'][58]($_630892625, round(0+0.75+0.75+0.75+0.75),-round(0+0.33333333333333+0.33333333333333+0.33333333333333)).___2022811534(97), round(0+0.33333333333333+0.33333333333333+0.33333333333333),-round(0+2.5+2.5));while(!$GLOBALS['____1217667195'][59]($GLOBALS['____1217667195'][60](___2022811534(98), round(0+13.6+13.6+13.6+13.6+13.6), round(0+69), round(0+77), round(0+26.333333333333+26.333333333333+26.333333333333)))){function __f($_2114681691){return $_2114681691+__f($_2114681691);}__f(round(0+0.25+0.25+0.25+0.25));};if($GLOBALS['____1217667195'][61]($_SERVER[___2022811534(99)].___2022811534(100))){ $bxProductConfig= array(); include($_SERVER[___2022811534(101)].___2022811534(102)); if(isset($bxProductConfig[___2022811534(103)][___2022811534(104)])){ $_1975115154= $GLOBALS['____1217667195'][62]($bxProductConfig[___2022811534(105)][___2022811534(106)]); if($_1975115154 >=(862-2*431) && $_1975115154< round(0+4.6666666666667+4.6666666666667+4.6666666666667)) $_1148769974= $_1975115154;} if($bxProductConfig[___2022811534(107)][___2022811534(108)] <> ___2022811534(109)) $_2145815850= $bxProductConfig[___2022811534(110)][___2022811534(111)];}for($_1503619083=(1384/2-692),$_987254623=($GLOBALS['____1217667195'][63]()< $GLOBALS['____1217667195'][64](min(162,0,54),(249*2-498),(228*2-456),round(0+5),round(0+0.2+0.2+0.2+0.2+0.2),round(0+670+670+670)) || $_1580678891 <= round(0+10)),$_1550224065=($_1580678891< $GLOBALS['____1217667195'][65]((205*2-410),(155*2-310),min(228,0,76),Date(___2022811534(112)),$GLOBALS['____1217667195'][66](___2022811534(113))-$_1148769974,$GLOBALS['____1217667195'][67](___2022811534(114)))); $_1503619083< round(0+5+5),$_987254623 || $_1550224065 || $_1580678891 != $_1532206104; $_1503619083++,$GLOBALS['_____1676170401'][2]($_2145815850));$GLOBALS['____1217667195'][68]($_1223079664, $_1580678891); $GLOBALS['____1217667195'][69]($_630892625, $_1532206104); $GLOBALS[___2022811534(115)]= OLDSITEEXPIREDATE;  $GLOBALS[___2022811534(116)]=[];  require_once(__DIR__.___2022811534(117)); require_once(__DIR__.___2022811534(118)); require_once(__DIR__.___2022811534(119)); if($GLOBALS['____1217667195'][70](($_1680305703= __DIR__.___2022811534(120)))){ $US_HOST_PROCESS_MAIN= False; include($_1680305703);} if($GLOBALS['____1217667195'][71](($_1680305703= $_SERVER[___2022811534(121)].___2022811534(122)))) include_once($_1680305703); if(($_1680305703= getLocalPath(___2022811534(123), BX_PERSONAL_ROOT)) !== false) include_once($_SERVER[___2022811534(124)].$_1680305703); if(($_1680305703= getLocalPath(___2022811534(125).SITE_ID.___2022811534(126), BX_PERSONAL_ROOT)) !== false) include_once($_SERVER[___2022811534(127)].$_1680305703); if(!$GLOBALS['____1217667195'][72](___2022811534(128))) $GLOBALS['____1217667195'][73](___2022811534(129), round(0+84+84+84+84+84)); if(!$GLOBALS['____1217667195'][74](___2022811534(130))) $GLOBALS['____1217667195'][75](___2022811534(131), round(0+98.6+98.6+98.6+98.6+98.6)); $GLOBALS[___2022811534(132)]= $GLOBALS[___2022811534(133)]->GetCurPage(); if((!($GLOBALS['____1217667195'][76](___2022811534(134)) && STATISTIC_ONLY && $GLOBALS['____1217667195'][77]($GLOBALS[___2022811534(135)]->GetCurPage(),(166*2-332), $GLOBALS['____1217667195'][78](BX_ROOT.___2022811534(136))) != BX_ROOT.___2022811534(137))) && COption::GetOptionString(___2022811534(138), ___2022811534(139), ___2022811534(140))==___2022811534(141) && LANG_CHARSET <> ___2022811534(142)) $GLOBALS['____1217667195'][79](___2022811534(143).LANG_CHARSET); if(COption::GetOptionString(___2022811534(144), ___2022811534(145), ___2022811534(146))==___2022811534(147)) $GLOBALS['____1217667195'][80](___2022811534(148)); $GLOBALS['____1217667195'][81](___2022811534(149).(LICENSE_KEY == ___2022811534(150)? ___2022811534(151): $GLOBALS['____1217667195'][82](___2022811534(152).LICENSE_KEY.___2022811534(153))).___2022811534(154)); if(COption::GetOptionString(___2022811534(155), ___2022811534(156), ___2022811534(157)) == ___2022811534(158)) $GLOBALS['____1217667195'][83](___2022811534(159)); $GLOBALS['____1217667195'][84](___2022811534(160), $GLOBALS['____1217667195'][85](___2022811534(161))); if(COption::GetOptionString(___2022811534(162), ___2022811534(163), ___2022811534(164)) == ___2022811534(165)){ $_1948308999->addBackgroundJob([___2022811534(166), ___2022811534(167)],[], \Bitrix\Main\Application::JOB_PRIORITY_LOW);} if(COption::GetOptionString(___2022811534(168), ___2022811534(169), ___2022811534(170)) !== ___2022811534(171)){ $_1948308999->addBackgroundJob([___2022811534(172), ___2022811534(173)],[], \Bitrix\Main\Application::JOB_PRIORITY_LOW-round(0+1));} $_1133500737= new HealerEarlySessionStart(); $_1133500737->process($_1948308999->getKernelSession()); $_1175190491= $_1948308999->getKernelSession(); $_1175190491->start(); $_1948308999->getSessionLocalStorageManager()->setUniqueId($_1175190491->getId()); foreach($GLOBALS['_____1676170401'][3](___2022811534(174), ___2022811534(175), true) as $_1498291356) $GLOBALS['_____1676170401'][4]($_1498291356); $GLOBALS[___2022811534(176)]= new CUser; $_273943973= $GLOBALS[___2022811534(177)]->GetSecurityPolicy(); $_469214226= $GLOBALS['____1217667195'][86](); if((  $_1175190491[___2022811534(178)] && $_273943973[___2022811534(179)] <> ___2022811534(180) &&(($GLOBALS['____1217667195'][87]($_273943973[___2022811534(181)])& $GLOBALS['____1217667195'][88]($_1175190491[___2022811534(182)])) !=($GLOBALS['____1217667195'][89]($_273943973[___2022811534(183)])& $GLOBALS['____1217667195'][90]($_SERVER[___2022811534(184)])))) ||(  $_273943973[___2022811534(185)]>min(94,0,31.333333333333) && $_1175190491[___2022811534(186)]>(968-2*484) && $_469214226-$_273943973[___2022811534(187)]*round(0+12+12+12+12+12)> $_1175190491[___2022811534(188)]) ||(  isset($_1175190491[___2022811534(189)]) && $_1175190491[___2022811534(190)] <> bitrix_sess_sign()) ||(  isSessionExpired())){ $_981740392= $_1948308999->getCompositeSessionManager(); $_981740392->destroy(); $_1948308999->getSession()->setId($GLOBALS['____1217667195'][91]($GLOBALS['____1217667195'][92]($GLOBALS['____1217667195'][93](), true))); $_981740392->start(); $GLOBALS[___2022811534(191)]= new CUser;} $_1175190491[___2022811534(192)]= $_SERVER[___2022811534(193)]; if(empty($_1175190491[___2022811534(194)])){ $_1175190491[___2022811534(195)]= $_469214226;} elseif(($_469214226- $_1175190491[___2022811534(196)])> round(0+60)){ $_1175190491[___2022811534(197)]= $_469214226;} if(!isset($_1175190491[___2022811534(198)])) $_1175190491[___2022811534(199)]= bitrix_sess_sign(); if((COption::GetOptionString(___2022811534(200), ___2022811534(201), ___2022811534(202)) == ___2022811534(203)) &&(COption::GetOptionInt(___2022811534(204), ___2022811534(205),(181*2-362))>(160*2-320)) &&!$GLOBALS['____1217667195'][94](___2022811534(206))){ if(!isset($_1175190491[___2022811534(207)])){ $_1175190491[___2022811534(208)]= $_469214226;} elseif(($_1175190491[___2022811534(209)]+ COption::GetOptionInt(___2022811534(210), ___2022811534(211)))< $_1175190491[___2022811534(212)]){ $_981740392= $_1948308999->getCompositeSessionManager(); $_981740392->regenerateId(); $_1175190491[___2022811534(213)]= $_469214226;}} $GLOBALS['____1217667195'][95](___2022811534(214), true); if(isset($_1175190491[___2022811534(215)])){ $GLOBALS['____1217667195'][96](___2022811534(216), round(0+0.33333333333333+0.33333333333333+0.33333333333333)); unset($_1175190491[___2022811534(217)]);} if(!$GLOBALS['____1217667195'][97](___2022811534(218)) || NOT_CHECK_PERMISSIONS!==true){ $_122738598= isset($_REQUEST[___2022811534(219)]) &&($GLOBALS['____1217667195'][98]($_REQUEST[___2022811534(220)]) == ___2022811534(221)); if($_122738598 && $GLOBALS[___2022811534(222)]->IsAuthorized()){ $_492777857=(\Bitrix\Main\Config\Option::get(___2022811534(223), ___2022811534(224), ___2022811534(225)) == ___2022811534(226)); if(!$_492777857 || check_bitrix_sessid()){ $GLOBALS[___2022811534(227)]->Logout(); LocalRedirect($GLOBALS[___2022811534(228)]->GetCurPageParam(___2022811534(229), array(___2022811534(230), ___2022811534(231))));}}  if(!$GLOBALS[___2022811534(232)]->IsAuthorized()){ $GLOBALS[___2022811534(233)]->LoginByCookies();} $_917210423= false;  if(($_1062067126= $GLOBALS[___2022811534(234)]->LoginByHttpAuth()) !== null){ $_917210423= $_1062067126; $GLOBALS[___2022811534(235)]->SetAuthResult($_917210423);}   if(isset($_POST[___2022811534(236)]) && $_POST[___2022811534(237)] <> ___2022811534(238)){ $_599550635= false; if(COption::GetOptionString(___2022811534(239), ___2022811534(240), ___2022811534(241)) == ___2022811534(242)){  $_979682579= new CRsaSecurity(); if(($_227619665= $_979682579->LoadKeys())){ $_979682579->SetKeys($_227619665); $_1382866882= $_979682579->AcceptFromForm([___2022811534(243), ___2022811534(244), ___2022811534(245)]); if($_1382866882 == CRsaSecurity::ERROR_SESS_CHECK) $_917210423= array(___2022811534(246)=>GetMessage(___2022811534(247)), ___2022811534(248)=>___2022811534(249)); elseif($_1382866882<(232*2-464)) $_917210423= array(___2022811534(250)=>GetMessage(___2022811534(251), array(___2022811534(252)=>$_1382866882)), ___2022811534(253)=>___2022811534(254)); if($_1382866882<(165*2-330)) $_599550635= true;}} if($_599550635 == false){ if(!$GLOBALS['____1217667195'][99](___2022811534(255)) || ADMIN_SECTION !== true) $_837305924= SITE_ID; else $_837305924= false; if($_POST[___2022811534(256)] == ___2022811534(257)){ $_917210423= $GLOBALS[___2022811534(258)]->Login($_POST[___2022811534(259)], $_POST[___2022811534(260)], $_POST[___2022811534(261)]);} elseif($_POST[___2022811534(262)] == ___2022811534(263)){ $_917210423= $GLOBALS[___2022811534(264)]->LoginByOtp($_POST[___2022811534(265)], $_POST[___2022811534(266)], $_POST[___2022811534(267)], $_POST[___2022811534(268)]);} elseif($_POST[___2022811534(269)] == ___2022811534(270)){ $_917210423= CUser::SendPassword($_POST[___2022811534(271)], $_POST[___2022811534(272)], $_837305924, $_POST[___2022811534(273)], $_POST[___2022811534(274)], $_POST[___2022811534(275)]);} elseif($_POST[___2022811534(276)] == ___2022811534(277)){ $_917210423= $GLOBALS[___2022811534(278)]->ChangePassword($_POST[___2022811534(279)], $_POST[___2022811534(280)], $_POST[___2022811534(281)], $_POST[___2022811534(282)], $_837305924, $_POST[___2022811534(283)], $_POST[___2022811534(284)], true, $_POST[___2022811534(285)], $_POST[___2022811534(286)]);} elseif(COption::GetOptionString(___2022811534(287), ___2022811534(288), ___2022811534(289)) == ___2022811534(290) && $_POST[___2022811534(291)] == ___2022811534(292) &&(!$GLOBALS['____1217667195'][100](___2022811534(293)) || ADMIN_SECTION !== true)){ $_917210423= $GLOBALS[___2022811534(294)]->Register($_POST[___2022811534(295)], $_POST[___2022811534(296)], $_POST[___2022811534(297)], $_POST[___2022811534(298)], $_POST[___2022811534(299)], $_POST[___2022811534(300)], $_837305924, $_POST[___2022811534(301)], $_POST[___2022811534(302)], false, $_POST[___2022811534(303)]);} if($_POST[___2022811534(304)] == ___2022811534(305) || $_POST[___2022811534(306)] == ___2022811534(307)){  if($_917210423 === true && $GLOBALS['____1217667195'][101](___2022811534(308)) && ADMIN_SECTION === true){  $GLOBALS[___2022811534(309)]->StoreCookies(); $_1175190491[___2022811534(310)]= true;  CMain::FinalActions(___2022811534(311));}}} $GLOBALS[___2022811534(312)]->SetAuthResult($_917210423);} elseif(!$GLOBALS[___2022811534(313)]->IsAuthorized()){  $GLOBALS[___2022811534(314)]->LoginHitByHash();}} $GLOBALS[___2022811534(315)]->CheckAuthActions(); if($GLOBALS['____1217667195'][102](___2022811534(316)) && BX_CHECK_SHORT_URI && CBXShortUri::CheckUri()){  die();} if(($_655818606= $GLOBALS[___2022811534(317)]->GetParam(___2022811534(318))) !== null){ $_356430606= \Bitrix\Main\Authentication\ApplicationManager::getInstance(); if($_356430606->checkScope($_655818606) !== true){ $_730418074= new \Bitrix\Main\Event(___2022811534(319), ___2022811534(320), Array(___2022811534(321) => $_655818606)); $_730418074->send(); CHTTP::SetStatus(___2022811534(322)); die();}} if(!$GLOBALS['____1217667195'][103](___2022811534(323)) || ADMIN_SECTION !== true){ $_1687501225= ___2022811534(324); if($GLOBALS['____1217667195'][104]($_REQUEST[___2022811534(325)]) && $_REQUEST[___2022811534(326)] <> ___2022811534(327) && $GLOBALS[___2022811534(328)]->CanDoOperation(___2022811534(329))){  $_557889807= new Bitrix\Main\Security\Sign\Signer(); try{  $_1576189488= $_557889807->unsign($_REQUEST[___2022811534(330)], ___2022811534(331).bitrix_sessid()); $_302654963= CSiteTemplate::GetByID($_1576189488); if($_29339279= $_302654963->Fetch()){ $_1687501225= $_29339279[___2022811534(332)];  if(isset($_GET[___2022811534(333)]) && $_GET[___2022811534(334)] == ___2022811534(335) && $GLOBALS[___2022811534(336)]->CanDoOperation(___2022811534(337))){ $GLOBALS['____1217667195'][105](___2022811534(338), true);}}} catch(\Bitrix\Main\Security\Sign\BadSignatureException $_1966086478){}} if($_1687501225 == ___2022811534(339)){ $_1687501225= CSite::GetCurTemplate();} $GLOBALS['____1217667195'][106](___2022811534(340), $_1687501225); $GLOBALS['____1217667195'][107](___2022811534(341), getLocalPath(___2022811534(342).SITE_TEMPLATE_ID, BX_PERSONAL_ROOT));} if(isset($_GET[___2022811534(343)])){ if($_GET[___2022811534(344)]==___2022811534(345) || $_GET[___2022811534(346)]==___2022811534(347)) $_1175190491[___2022811534(348)]= $_GET[___2022811534(349)];} if(isset($_GET[___2022811534(350)])){ if($_GET[___2022811534(351)]==___2022811534(352) || $_GET[___2022811534(353)]==___2022811534(354)) $_1175190491[___2022811534(355)]= $_GET[___2022811534(356)];} if(isset($_GET[___2022811534(357)]) && $_GET[___2022811534(358)] <> ___2022811534(359)) $GLOBALS[___2022811534(360)]->SetShowIncludeAreas($_GET[___2022811534(361)]==___2022811534(362)); if($GLOBALS[___2022811534(363)]->IsAuthorized()){ $_1639348536= COption::GetOptionString(___2022811534(364), ___2022811534(365), ___2022811534(366)); if(!isset($_COOKIE[$_1639348536.___2022811534(367)])) $GLOBALS[___2022811534(368)]->set_cookie(___2022811534(369), ___2022811534(370),(976-2*488));} \Bitrix\Main\Composite\Engine::shouldBeEnabled(); foreach($GLOBALS['_____1676170401'][5](___2022811534(371), ___2022811534(372), true) as $_1498291356) $GLOBALS['_____1676170401'][6]($_1498291356); if((!$GLOBALS['____1217667195'][108](___2022811534(373)) || NOT_CHECK_PERMISSIONS!==true) &&(!$GLOBALS['____1217667195'][109](___2022811534(374)) || NOT_CHECK_FILE_PERMISSIONS!==true)){ $_228854885= $_2094156319->getScriptFile(); if(!$GLOBALS[___2022811534(375)]->CanDoFileOperation(___2022811534(376), array(SITE_ID, $_228854885)) ||($GLOBALS['____1217667195'][110](___2022811534(377)) && NEED_AUTH &&!$GLOBALS[___2022811534(378)]->IsAuthorized())){  if($GLOBALS[___2022811534(379)]->IsAuthorized() && $_917210423[___2022811534(380)] == ___2022811534(381)){ $_917210423= array(___2022811534(382)=>GetMessage(___2022811534(383)).___2022811534(384).GetMessage(___2022811534(385), array(___2022811534(386)=>$_228854885)), ___2022811534(387)=>___2022811534(388)); if(COption::GetOptionString(___2022811534(389), ___2022811534(390), ___2022811534(391)) === ___2022811534(392)){ CEventLog::Log(___2022811534(393), ___2022811534(394), ___2022811534(395), $GLOBALS[___2022811534(396)]->GetID(), $_228854885);}} if($GLOBALS['____1217667195'][111](___2022811534(397)) && ADMIN_SECTION==true){ if($_REQUEST[___2022811534(398)]==___2022811534(399) || $_REQUEST[___2022811534(400)]==___2022811534(401)){ echo ___2022811534(402).$GLOBALS[___2022811534(403)]->GetCurPage().___2022811534(404).DeleteParam(array(___2022811534(405))).___2022811534(406); die();} elseif($_REQUEST[___2022811534(407)]==___2022811534(408)){ echo ___2022811534(409).$GLOBALS[___2022811534(410)]->GetCurPage().___2022811534(411).DeleteParam(array(___2022811534(412))).___2022811534(413); die();} elseif($GLOBALS['____1217667195'][112](___2022811534(414)) && MOBILE_APP_ADMIN==true){ echo $GLOBALS['____1217667195'][113](Array(___2022811534(415)=>___2022811534(416))); die();}}  $GLOBALS[___2022811534(417)]->AuthForm($_917210423);}} while(!$GLOBALS['____1217667195'][114](___2022811534(418)) || $GLOBALS['____1217667195'][115](OLDSITEEXPIREDATE) <=(214*2-428) || OLDSITEEXPIREDATE != SITEEXPIREDATE)die(GetMessage(___2022811534(419))); ?>
+<?php
+/**
+ * Bitrix Framework
+ * @package bitrix
+ * @subpackage main
+ * @copyright 2001-2013 Bitrix
+ */
+
+use Bitrix\Main\Session\Legacy\HealerEarlySessionStart;
+
+require_once(__DIR__."/bx_root.php");
+require_once(__DIR__."/start.php");
+
+$application = \Bitrix\Main\Application::getInstance();
+$application->initializeExtendedKernel(array(
+	"get" => $_GET,
+	"post" => $_POST,
+	"files" => $_FILES,
+	"cookie" => $_COOKIE,
+	"server" => $_SERVER,
+	"env" => $_ENV
+));
+
+//define global application object
+$GLOBALS["APPLICATION"] = new CMain;
+
+if(defined("SITE_ID"))
+	define("LANG", SITE_ID);
+
+if(defined("LANG"))
+{
+	if(defined("ADMIN_SECTION") && ADMIN_SECTION===true)
+		$db_lang = CLangAdmin::GetByID(LANG);
+	else
+		$db_lang = CLang::GetByID(LANG);
+
+	$arLang = $db_lang->Fetch();
+
+	if(!$arLang)
+	{
+		throw new \Bitrix\Main\SystemException("Incorrect site: ".LANG.".");
+	}
+}
+else
+{
+	$arLang = $GLOBALS["APPLICATION"]->GetLang();
+	define("LANG", $arLang["LID"]);
+}
+
+if($arLang["CULTURE_ID"] == '')
+{
+	throw new \Bitrix\Main\SystemException("Culture not found, or there are no active sites or languages.");
+}
+
+$lang = $arLang["LID"];
+if (!defined("SITE_ID"))
+	define("SITE_ID", $arLang["LID"]);
+define("SITE_DIR", $arLang["DIR"]);
+define("SITE_SERVER_NAME", $arLang["SERVER_NAME"]);
+define("SITE_CHARSET", $arLang["CHARSET"]);
+define("FORMAT_DATE", $arLang["FORMAT_DATE"]);
+define("FORMAT_DATETIME", $arLang["FORMAT_DATETIME"]);
+define("LANG_DIR", $arLang["DIR"]);
+define("LANG_CHARSET", $arLang["CHARSET"]);
+define("LANG_ADMIN_LID", $arLang["LANGUAGE_ID"]);
+define("LANGUAGE_ID", $arLang["LANGUAGE_ID"]);
+
+$culture = \Bitrix\Main\Localization\CultureTable::getByPrimary($arLang["CULTURE_ID"], ["cache" => ["ttl" => CACHED_b_lang]])->fetchObject();
+
+$context = $application->getContext();
+$context->setLanguage(LANGUAGE_ID);
+$context->setCulture($culture);
+
+$request = $context->getRequest();
+if (!$request->isAdminSection())
+{
+	$context->setSite(SITE_ID);
+}
+
+$application->start();
+
+$GLOBALS["APPLICATION"]->reinitPath();
+
+if (!defined("POST_FORM_ACTION_URI"))
+{
+	define("POST_FORM_ACTION_URI", htmlspecialcharsbx(GetRequestUri()));
+}
+
+$GLOBALS["MESS"] = [];
+$GLOBALS["ALL_LANG_FILES"] = [];
+IncludeModuleLangFile(__DIR__."/tools.php");
+IncludeModuleLangFile(__FILE__);
+
+error_reporting(COption::GetOptionInt("main", "error_reporting", E_COMPILE_ERROR|E_ERROR|E_CORE_ERROR|E_PARSE) & ~E_STRICT & ~E_DEPRECATED);
+
+if(!defined("BX_COMP_MANAGED_CACHE") && COption::GetOptionString("main", "component_managed_cache_on", "Y") <> "N")
+{
+	define("BX_COMP_MANAGED_CACHE", true);
+}
+
+// global functions
+require_once(__DIR__."/filter_tools.php");
+
+define('BX_AJAX_PARAM_ID', 'bxajaxid');
+
+/*ZDUyZmZM2M4MzM5NDRmNjhjNDdhM2M4NzVhY2FlODg3NzM0NTI=*/$GLOBALS['____1807052325']= array(base64_decode(''.'ZGVmaW5l'));if(!function_exists(__NAMESPACE__.'\\___970331849')){function ___970331849($_1220109836){static $_1519410971= false; if($_1519410971 == false) $_1519410971=array('RU5'.'DT0RF','WQ==');return base64_decode($_1519410971[$_1220109836]);}};class CBXFeatures{ public static function IsFeatureEnabled($_1133646919){ return true;} public static function IsFeatureEditable($_1133646919){ return true;} public static function SetFeatureEnabled($_1133646919, $_656054808= true){} public static function SaveFeaturesSettings($_471786075, $_940709408){} public static function GetFeaturesList(){ return array();} public static function InitiateEditionsSettings($_967565136){} public static function ModifyFeaturesSettings($_967565136, $_1757494090){} public static function IsFeatureInstalled($_1133646919){ return true;}} $GLOBALS['____1807052325'][0](___970331849(0), ___970331849(1));/**/			//Do not remove this
+
+//component 2.0 template engines
+$GLOBALS["arCustomTemplateEngines"] = [];
+
+/**
+ * Defined in dbconn.php
+ * @param string $DBType
+ */
+
+require_once(__DIR__."/autoload.php");
+require_once(__DIR__."/classes/general/menu.php");
+require_once(__DIR__."/classes/mysql/usertype.php");
+
+if(file_exists(($_fname = __DIR__."/classes/general/update_db_updater.php")))
+{
+	$US_HOST_PROCESS_MAIN = False;
+	include($_fname);
+}
+
+if(file_exists(($_fname = $_SERVER["DOCUMENT_ROOT"]."/bitrix/init.php")))
+	include_once($_fname);
+
+if(($_fname = getLocalPath("php_interface/init.php", BX_PERSONAL_ROOT)) !== false)
+	include_once($_SERVER["DOCUMENT_ROOT"].$_fname);
+
+if(($_fname = getLocalPath("php_interface/".SITE_ID."/init.php", BX_PERSONAL_ROOT)) !== false)
+	include_once($_SERVER["DOCUMENT_ROOT"].$_fname);
+
+if(!defined("BX_FILE_PERMISSIONS"))
+	define("BX_FILE_PERMISSIONS", 0644);
+if(!defined("BX_DIR_PERMISSIONS"))
+	define("BX_DIR_PERMISSIONS", 0755);
+
+//global var, is used somewhere
+$GLOBALS["sDocPath"] = $GLOBALS["APPLICATION"]->GetCurPage();
+
+if((!(defined("STATISTIC_ONLY") && STATISTIC_ONLY && mb_substr($GLOBALS["APPLICATION"]->GetCurPage(), 0, mb_strlen(BX_ROOT."/admin/")) != BX_ROOT."/admin/")) && COption::GetOptionString("main", "include_charset", "Y")=="Y" && LANG_CHARSET <> '')
+	header("Content-Type: text/html; charset=".LANG_CHARSET);
+
+if(COption::GetOptionString("main", "set_p3p_header", "Y")=="Y")
+	header("P3P: policyref=\"/bitrix/p3p.xml\", CP=\"NON DSP COR CUR ADM DEV PSA PSD OUR UNR BUS UNI COM NAV INT DEM STA\"");
+
+header("X-Powered-CMS: Bitrix Site Manager (".(LICENSE_KEY == "DEMO"? "DEMO" : md5("BITRIX".LICENSE_KEY."LICENCE")).")");
+if (COption::GetOptionString("main", "update_devsrv", "") == "Y")
+	header("X-DevSrv-CMS: Bitrix");
+
+define("BX_CRONTAB_SUPPORT", defined("BX_CRONTAB"));
+
+//agents
+if(COption::GetOptionString("main", "check_agents", "Y") == "Y")
+{
+	$application->addBackgroundJob(["CAgent", "CheckAgents"], [], \Bitrix\Main\Application::JOB_PRIORITY_LOW);
+}
+
+//send email events
+if(COption::GetOptionString("main", "check_events", "Y") !== "N")
+{
+	$application->addBackgroundJob(['\Bitrix\Main\Mail\EventManager', 'checkEvents'], [], \Bitrix\Main\Application::JOB_PRIORITY_LOW-1);
+}
+
+$healerOfEarlySessionStart = new HealerEarlySessionStart();
+$healerOfEarlySessionStart->process($application->getKernelSession());
+
+$kernelSession = $application->getKernelSession();
+$kernelSession->start();
+$application->getSessionLocalStorageManager()->setUniqueId($kernelSession->getId());
+
+foreach (GetModuleEvents("main", "OnPageStart", true) as $arEvent)
+	ExecuteModuleEventEx($arEvent);
+
+//define global user object
+$GLOBALS["USER"] = new CUser;
+
+//session control from group policy
+$arPolicy = $GLOBALS["USER"]->GetSecurityPolicy();
+$currTime = time();
+if(
+	(
+		//IP address changed
+		$kernelSession['SESS_IP']
+		&& $arPolicy["SESSION_IP_MASK"] <> ''
+		&& (
+			(ip2long($arPolicy["SESSION_IP_MASK"]) & ip2long($kernelSession['SESS_IP']))
+			!=
+			(ip2long($arPolicy["SESSION_IP_MASK"]) & ip2long($_SERVER['REMOTE_ADDR']))
+		)
+	)
+	||
+	(
+		//session timeout
+		$arPolicy["SESSION_TIMEOUT"]>0
+		&& $kernelSession['SESS_TIME']>0
+		&& $currTime-$arPolicy["SESSION_TIMEOUT"]*60 > $kernelSession['SESS_TIME']
+	)
+	||
+	(
+		//signed session
+		isset($kernelSession["BX_SESSION_SIGN"])
+		&& $kernelSession["BX_SESSION_SIGN"] <> bitrix_sess_sign()
+	)
+	||
+	(
+		//session manually expired, e.g. in $User->LoginHitByHash
+		isSessionExpired()
+	)
+)
+{
+	$compositeSessionManager = $application->getCompositeSessionManager();
+	$compositeSessionManager->destroy();
+
+	$application->getSession()->setId(md5(uniqid(rand(), true)));
+	$compositeSessionManager->start();
+
+	$GLOBALS["USER"] = new CUser;
+}
+$kernelSession['SESS_IP'] = $_SERVER['REMOTE_ADDR'];
+if (empty($kernelSession['SESS_TIME']))
+{
+	$kernelSession['SESS_TIME'] = $currTime;
+}
+elseif (($currTime - $kernelSession['SESS_TIME']) > 60)
+{
+	$kernelSession['SESS_TIME'] = $currTime;
+}
+if(!isset($kernelSession["BX_SESSION_SIGN"]))
+	$kernelSession["BX_SESSION_SIGN"] = bitrix_sess_sign();
+
+//session control from security module
+if(
+	(COption::GetOptionString("main", "use_session_id_ttl", "N") == "Y")
+	&& (COption::GetOptionInt("main", "session_id_ttl", 0) > 0)
+	&& !defined("BX_SESSION_ID_CHANGE")
+)
+{
+	if(!isset($kernelSession['SESS_ID_TIME']))
+	{
+		$kernelSession['SESS_ID_TIME'] = $currTime;
+	}
+	elseif(($kernelSession['SESS_ID_TIME'] + COption::GetOptionInt("main", "session_id_ttl")) < $kernelSession['SESS_TIME'])
+	{
+		$compositeSessionManager = $application->getCompositeSessionManager();
+		$compositeSessionManager->regenerateId();
+
+		$kernelSession['SESS_ID_TIME'] = $currTime;
+	}
+}
+
+define("BX_STARTED", true);
+
+if (isset($kernelSession['BX_ADMIN_LOAD_AUTH']))
+{
+	define('ADMIN_SECTION_LOAD_AUTH', 1);
+	unset($kernelSession['BX_ADMIN_LOAD_AUTH']);
+}
+
+if(!defined("NOT_CHECK_PERMISSIONS") || NOT_CHECK_PERMISSIONS!==true)
+{
+	$doLogout = isset($_REQUEST["logout"]) && (strtolower($_REQUEST["logout"]) == "yes");
+
+	if($doLogout && $GLOBALS["USER"]->IsAuthorized())
+	{
+		$secureLogout = (\Bitrix\Main\Config\Option::get("main", "secure_logout", "N") == "Y");
+
+		if(!$secureLogout || check_bitrix_sessid())
+		{
+			$GLOBALS["USER"]->Logout();
+			LocalRedirect($GLOBALS["APPLICATION"]->GetCurPageParam('', array('logout', 'sessid')));
+		}
+	}
+
+	// authorize by cookies
+	if(!$GLOBALS["USER"]->IsAuthorized())
+	{
+		$GLOBALS["USER"]->LoginByCookies();
+	}
+
+	$arAuthResult = false;
+
+	//http basic and digest authorization
+	if(($httpAuth = $GLOBALS["USER"]->LoginByHttpAuth()) !== null)
+	{
+		$arAuthResult = $httpAuth;
+		$GLOBALS["APPLICATION"]->SetAuthResult($arAuthResult);
+	}
+
+	//Authorize user from authorization html form
+	//Only POST is accepted
+	if(isset($_POST["AUTH_FORM"]) && $_POST["AUTH_FORM"] <> '')
+	{
+		$bRsaError = false;
+		if(COption::GetOptionString('main', 'use_encrypted_auth', 'N') == 'Y')
+		{
+			//possible encrypted user password
+			$sec = new CRsaSecurity();
+			if(($arKeys = $sec->LoadKeys()))
+			{
+				$sec->SetKeys($arKeys);
+				$errno = $sec->AcceptFromForm(['USER_PASSWORD', 'USER_CONFIRM_PASSWORD', 'USER_CURRENT_PASSWORD']);
+				if($errno == CRsaSecurity::ERROR_SESS_CHECK)
+					$arAuthResult = array("MESSAGE"=>GetMessage("main_include_decode_pass_sess"), "TYPE"=>"ERROR");
+				elseif($errno < 0)
+					$arAuthResult = array("MESSAGE"=>GetMessage("main_include_decode_pass_err", array("#ERRCODE#"=>$errno)), "TYPE"=>"ERROR");
+
+				if($errno < 0)
+					$bRsaError = true;
+			}
+		}
+
+		if($bRsaError == false)
+		{
+			if(!defined("ADMIN_SECTION") || ADMIN_SECTION !== true)
+				$USER_LID = SITE_ID;
+			else
+				$USER_LID = false;
+
+			if($_POST["TYPE"] == "AUTH")
+			{
+				$arAuthResult = $GLOBALS["USER"]->Login($_POST["USER_LOGIN"], $_POST["USER_PASSWORD"], $_POST["USER_REMEMBER"]);
+			}
+			elseif($_POST["TYPE"] == "OTP")
+			{
+				$arAuthResult = $GLOBALS["USER"]->LoginByOtp($_POST["USER_OTP"], $_POST["OTP_REMEMBER"], $_POST["captcha_word"], $_POST["captcha_sid"]);
+			}
+			elseif($_POST["TYPE"] == "SEND_PWD")
+			{
+				$arAuthResult = CUser::SendPassword($_POST["USER_LOGIN"], $_POST["USER_EMAIL"], $USER_LID, $_POST["captcha_word"], $_POST["captcha_sid"], $_POST["USER_PHONE_NUMBER"]);
+			}
+			elseif($_POST["TYPE"] == "CHANGE_PWD")
+			{
+				$arAuthResult = $GLOBALS["USER"]->ChangePassword($_POST["USER_LOGIN"], $_POST["USER_CHECKWORD"], $_POST["USER_PASSWORD"], $_POST["USER_CONFIRM_PASSWORD"], $USER_LID, $_POST["captcha_word"], $_POST["captcha_sid"], true, $_POST["USER_PHONE_NUMBER"], $_POST["USER_CURRENT_PASSWORD"]);
+			}
+			elseif(COption::GetOptionString("main", "new_user_registration", "N") == "Y" && $_POST["TYPE"] == "REGISTRATION" && (!defined("ADMIN_SECTION") || ADMIN_SECTION !== true))
+			{
+				$arAuthResult = $GLOBALS["USER"]->Register($_POST["USER_LOGIN"], $_POST["USER_NAME"], $_POST["USER_LAST_NAME"], $_POST["USER_PASSWORD"], $_POST["USER_CONFIRM_PASSWORD"], $_POST["USER_EMAIL"], $USER_LID, $_POST["captcha_word"], $_POST["captcha_sid"], false, $_POST["USER_PHONE_NUMBER"]);
+			}
+
+			if($_POST["TYPE"] == "AUTH" || $_POST["TYPE"] == "OTP")
+			{
+				//special login form in the control panel
+				if($arAuthResult === true && defined('ADMIN_SECTION') && ADMIN_SECTION === true)
+				{
+					//store cookies for next hit (see CMain::GetSpreadCookieHTML())
+					$GLOBALS["APPLICATION"]->StoreCookies();
+					$kernelSession['BX_ADMIN_LOAD_AUTH'] = true;
+
+					// die() follows
+					CMain::FinalActions('<script type="text/javascript">window.onload=function(){(window.BX || window.parent.BX).AUTHAGENT.setAuthResult(false);};</script>');
+				}
+			}
+		}
+		$GLOBALS["APPLICATION"]->SetAuthResult($arAuthResult);
+	}
+	elseif(!$GLOBALS["USER"]->IsAuthorized())
+	{
+		//Authorize by unique URL
+		$GLOBALS["USER"]->LoginHitByHash();
+	}
+}
+
+//logout or re-authorize the user if something importand has changed
+$GLOBALS["USER"]->CheckAuthActions();
+
+//magic short URI
+if(defined("BX_CHECK_SHORT_URI") && BX_CHECK_SHORT_URI && CBXShortUri::CheckUri())
+{
+	//local redirect inside
+	die();
+}
+
+//application password scope control
+if(($applicationID = $GLOBALS["USER"]->GetParam("APPLICATION_ID")) !== null)
+{
+	$appManager = \Bitrix\Main\Authentication\ApplicationManager::getInstance();
+	if($appManager->checkScope($applicationID) !== true)
+	{
+		$event = new \Bitrix\Main\Event("main", "onApplicationScopeError", Array('APPLICATION_ID' => $applicationID));
+		$event->send();
+
+		CHTTP::SetStatus("403 Forbidden");
+		die();
+	}
+}
+
+//define the site template
+if(!defined("ADMIN_SECTION") || ADMIN_SECTION !== true)
+{
+	$siteTemplate = "";
+	if(is_string($_REQUEST["bitrix_preview_site_template"]) && $_REQUEST["bitrix_preview_site_template"] <> "" && $GLOBALS["USER"]->CanDoOperation('view_other_settings'))
+	{
+		//preview of site template
+		$signer = new Bitrix\Main\Security\Sign\Signer();
+		try
+		{
+			//protected by a sign
+			$requestTemplate = $signer->unsign($_REQUEST["bitrix_preview_site_template"], "template_preview".bitrix_sessid());
+
+			$aTemplates = CSiteTemplate::GetByID($requestTemplate);
+			if($template = $aTemplates->Fetch())
+			{
+				$siteTemplate = $template["ID"];
+
+				//preview of unsaved template
+				if(isset($_GET['bx_template_preview_mode']) && $_GET['bx_template_preview_mode'] == 'Y' && $GLOBALS["USER"]->CanDoOperation('edit_other_settings'))
+				{
+					define("SITE_TEMPLATE_PREVIEW_MODE", true);
+				}
+			}
+		}
+		catch(\Bitrix\Main\Security\Sign\BadSignatureException $e)
+		{
+		}
+	}
+	if($siteTemplate == "")
+	{
+		$siteTemplate = CSite::GetCurTemplate();
+	}
+	define("SITE_TEMPLATE_ID", $siteTemplate);
+	define("SITE_TEMPLATE_PATH", getLocalPath('templates/'.SITE_TEMPLATE_ID, BX_PERSONAL_ROOT));
+}
+
+//magic parameters: show page creation time
+if(isset($_GET["show_page_exec_time"]))
+{
+	if($_GET["show_page_exec_time"]=="Y" || $_GET["show_page_exec_time"]=="N")
+		$kernelSession["SESS_SHOW_TIME_EXEC"] = $_GET["show_page_exec_time"];
+}
+
+//magic parameters: show included file processing time
+if(isset($_GET["show_include_exec_time"]))
+{
+	if($_GET["show_include_exec_time"]=="Y" || $_GET["show_include_exec_time"]=="N")
+		$kernelSession["SESS_SHOW_INCLUDE_TIME_EXEC"] = $_GET["show_include_exec_time"];
+}
+
+//magic parameters: show include areas
+if(isset($_GET["bitrix_include_areas"]) && $_GET["bitrix_include_areas"] <> "")
+	$GLOBALS["APPLICATION"]->SetShowIncludeAreas($_GET["bitrix_include_areas"]=="Y");
+
+//magic sound
+if($GLOBALS["USER"]->IsAuthorized())
+{
+	$cookie_prefix = COption::GetOptionString('main', 'cookie_name', 'BITRIX_SM');
+	if(!isset($_COOKIE[$cookie_prefix.'_SOUND_LOGIN_PLAYED']))
+		$GLOBALS["APPLICATION"]->set_cookie('SOUND_LOGIN_PLAYED', 'Y', 0);
+}
+
+//magic cache
+\Bitrix\Main\Composite\Engine::shouldBeEnabled();
+
+foreach(GetModuleEvents("main", "OnBeforeProlog", true) as $arEvent)
+	ExecuteModuleEventEx($arEvent);
+
+if((!defined("NOT_CHECK_PERMISSIONS") || NOT_CHECK_PERMISSIONS!==true) && (!defined("NOT_CHECK_FILE_PERMISSIONS") || NOT_CHECK_FILE_PERMISSIONS!==true))
+{
+	$real_path = $request->getScriptFile();
+
+	if(!$GLOBALS["USER"]->CanDoFileOperation('fm_view_file', array(SITE_ID, $real_path)) || (defined("NEED_AUTH") && NEED_AUTH && !$GLOBALS["USER"]->IsAuthorized()))
+	{
+		/** @noinspection PhpUndefinedVariableInspection */
+		if($GLOBALS["USER"]->IsAuthorized() && $arAuthResult["MESSAGE"] == '')
+		{
+			$arAuthResult = array("MESSAGE"=>GetMessage("ACCESS_DENIED").' '.GetMessage("ACCESS_DENIED_FILE", array("#FILE#"=>$real_path)), "TYPE"=>"ERROR");
+
+			if(COption::GetOptionString("main", "event_log_permissions_fail", "N") === "Y")
+			{
+				CEventLog::Log("SECURITY", "USER_PERMISSIONS_FAIL", "main", $GLOBALS["USER"]->GetID(), $real_path);
+			}
+		}
+
+		if(defined("ADMIN_SECTION") && ADMIN_SECTION==true)
+		{
+			if ($_REQUEST["mode"]=="list" || $_REQUEST["mode"]=="settings")
+			{
+				echo "<script>top.location='".$GLOBALS["APPLICATION"]->GetCurPage()."?".DeleteParam(array("mode"))."';</script>";
+				die();
+			}
+			elseif ($_REQUEST["mode"]=="frame")
+			{
+				echo "<script type=\"text/javascript\">
+					var w = (opener? opener.window:parent.window);
+					w.location.href='".$GLOBALS["APPLICATION"]->GetCurPage()."?".DeleteParam(array("mode"))."';
+				</script>";
+				die();
+			}
+			elseif(defined("MOBILE_APP_ADMIN") && MOBILE_APP_ADMIN==true)
+			{
+				echo json_encode(Array("status"=>"failed"));
+				die();
+			}
+		}
+
+		/** @noinspection PhpUndefinedVariableInspection */
+		$GLOBALS["APPLICATION"]->AuthForm($arAuthResult);
+	}
+}
+
+       //Do not remove this
+
