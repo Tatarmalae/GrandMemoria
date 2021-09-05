@@ -337,7 +337,7 @@ class Catalog
     }
 
     /**
-     * Получает информацию об Инфоблоке
+     * Получает информацию об ИНФОБЛОКЕ
      * @param $id
      * @return array|false
      * @throws ArgumentException
