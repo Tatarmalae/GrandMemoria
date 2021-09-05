@@ -22,7 +22,7 @@
                             </a>
                         </div>
                         <div class="more">
-                            <a class="more__link" href="<?php // TODO: куда ссылка ?>">
+                            <a class="more__link" href="/info/installment/">
                                 <span>Рассчитать рассрочку</span>
                                 <svg class="icon__arrow-right" width="24" height="24">
                                     <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
