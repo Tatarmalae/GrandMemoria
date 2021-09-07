@@ -29,7 +29,11 @@ class Basket
             $_SESSION[self::$sessionName] = [];
         }
         if (!in_array($id, $_SESSION[self::$sessionName])) {
-            $_SESSION[self::$sessionName][$id] = $quantity;
+            if ($quantity === 0) {
+                unset($_SESSION[self::$sessionName][$id]);
+            } else {
+                $_SESSION[self::$sessionName][$id] = $quantity;
+            }
         }
     }
 
