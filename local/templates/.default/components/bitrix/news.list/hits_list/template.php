@@ -74,9 +74,11 @@ $this->setFrameMode(true);
                                                 Новинки
                                             </span>
                                         <?php endif ?>
-                                        <span class="label label_small label_bg label_fiery-rose">
-                                            -<?= ceil((($arItem['PROPERTIES']['OLD_PRICE']['VALUE'] - $arItem['PROPERTIES']['PRICE']['VALUE']) * 100) / $arItem['PROPERTIES']['PRICE']['VALUE']); ?>%
-                                        </span>
+                                        <?php if (!empty($arItem['PROPERTIES']['OLD_PRICE']['VALUE'])): ?>
+                                            <span class="label label_small label_bg label_fiery-rose">
+                                                -<?= ceil((($arItem['PROPERTIES']['OLD_PRICE']['VALUE'] - $arItem['PROPERTIES']['PRICE']['VALUE']) * 100) / $arItem['PROPERTIES']['PRICE']['VALUE']); ?>%
+                                            </span>
+                                        <?php endif ?>
                                     </div>
                                 </div>
                                 <div class="catalog-item__content">

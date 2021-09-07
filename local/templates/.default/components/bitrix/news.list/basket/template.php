@@ -30,9 +30,11 @@ $this->setFrameMode(true);
                                                 Новинки
                                             </span>
                                         <?php endif ?>
-                                        <span class="label label_small label_bg label_fiery-rose">
-                                            -<?= ceil((($item['PROPERTIES']['OLD_PRICE']['VALUE'] - $item['PROPERTIES']['PRICE']['VALUE']) * 100) / $item['PROPERTIES']['PRICE']['VALUE']); ?>%
-                                        </span>
+                                        <?php if (!empty($item['PROPERTIES']['OLD_PRICE']['VALUE'])): ?>
+                                            <span class="label label_small label_bg label_fiery-rose">
+                                                -<?= ceil((($item['PROPERTIES']['OLD_PRICE']['VALUE'] - $item['PROPERTIES']['PRICE']['VALUE']) * 100) / $item['PROPERTIES']['PRICE']['VALUE']); ?>%
+                                            </span>
+                                        <?php endif ?>
                                     </div>
                                 </div>
                             </div>
