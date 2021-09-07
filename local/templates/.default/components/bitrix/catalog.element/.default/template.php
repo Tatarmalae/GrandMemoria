@@ -30,7 +30,7 @@ $this->EndViewTarget();
             <?php endif ?>
             <?php if (!empty($arResult['PROPERTIES']['OLD_PRICE']['VALUE'])): ?>
                 <span class="label label_small label_bg label_fiery-rose">
-                    -<?= ceil((($arResult['PROPERTIES']['OLD_PRICE']['VALUE'] - $arResult['PROPERTIES']['PRICE']['VALUE']) * 100) / $arResult['PROPERTIES']['PRICE']['VALUE']); ?>%
+                    -<?= ceil((($arResult['PROPERTIES']['OLD_PRICE']['VALUE'] - $arResult['PROPERTIES']['PRICE']['VALUE']) * 100) / $arResult['PROPERTIES']['OLD_PRICE']['VALUE']); ?>%
                 </span>
             <?php endif ?>
         </div>
