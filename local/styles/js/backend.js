@@ -1,6 +1,7 @@
 $(document).ready(function () {
   addBasket();
   delBasket();
+  updBasket();
 });
 
 //Ajax-добавление в корзину
@@ -81,6 +82,57 @@ function delBasket() {
           } else {
             $('.basket-wrap').hide();
             $('.basket-empty').show();
+          }
+        }
+      }
+    });
+  });
+}
+
+function updBasket() {
+  let body = $('body');
+  body.on('click', '.basket-card .count__nav', function (event) {
+    event.preventDefault();
+    let elem = $(this);
+    let id = elem.closest('.count').data('id');
+    let action;
+    if (elem.hasClass('el-plus')) {
+      action = 'plus';
+    } else if (elem.hasClass('el-minus')) {
+      action = 'minus';
+    }
+
+    $.ajax({
+      type: "POST",
+      url: "/local/ajax/upd_basket.php",
+      dataType: 'json',
+      data: {
+        "action": action,
+        "id": id
+      },
+      success: function (res) {
+        console.log(res);
+        if (res['status'] === 'success') {
+          $('.btn.btn-basket .btn-basket__count').html(res['count']);
+
+          if (res['method'] === 'update') {
+
+            $('.price-base.counter').html(res['count'] + ' шт.');
+            let sum = number_format(res['sum'], 0, ' ', ' ') + ' ₽';
+            $('.price-base.sum').html('от ' + sum);
+
+          } else if (res['method'] === 'delete') {
+
+            elem.closest('.basket-card').remove();
+            $('.price-base.counter').html(res['count'] + ' шт.');
+            let sum = number_format(res['sum'], 0, ' ', ' ') + ' ₽';
+            $('.price-base.sum').html('от ' + sum);
+
+          } else if (res['count'] === 0) {
+
+            $('.basket-wrap').hide();
+            $('.basket-empty').show();
+
           }
         }
       }

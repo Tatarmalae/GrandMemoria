@@ -48,9 +48,8 @@ $sum = 0;
                                     <h5><?= $item['NAME'] ?></h5>
                                 </div>
                                 <div class="basket-card__column">
-                                    <?php // TODO: сценарий ?>
                                     <span class="basket-label">Кол–во:</span>
-                                    <div class="count">
+                                    <div class="count" data-id="<?= $item['ID'] ?>">
                                         <input type="hidden">
                                         <span class="count__nav el-minus">-</span>
                                         <input class="count__control" value="<?= Basket::getBasket()[$item['ID']] ?>">
