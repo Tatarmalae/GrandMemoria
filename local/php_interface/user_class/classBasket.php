@@ -2,6 +2,9 @@
 
 namespace Dev;
 
+use Bitrix\Main\Diag\Debug;
+use Throwable;
+
 /**
  * Класс для работы с корзиной
  * Class Basket
@@ -18,14 +21,15 @@ class Basket
     /**
      * Добавление в корзину
      * @param $id
+     * @param int $quantity
      */
-    public static function addBasket($id)
+    public static function addBasket($id, int $quantity = 1)
     {
         if (!isset($_SESSION[self::$sessionName])) {
             $_SESSION[self::$sessionName] = [];
         }
         if (!in_array($id, $_SESSION[self::$sessionName])) {
-            $_SESSION[self::$sessionName][] = $id;
+            $_SESSION[self::$sessionName][$id] = $quantity;
         }
     }
 
@@ -35,14 +39,14 @@ class Basket
      */
     public static function delBasket($id)
     {
-        if (in_array($id, $_SESSION[self::$sessionName])) {
-            $_SESSION[self::$sessionName] = array_diff($_SESSION[self::$sessionName], [$id]);
+        if (array_key_exists($id, $_SESSION[self::$sessionName])) {
+            unset($_SESSION[self::$sessionName][$id]);
         }
     }
 
     /**
      * Вывод корзины
-     * @return bool
+     * @return array
      */
     public static function getBasket(): array
     {
@@ -60,6 +64,24 @@ class Basket
     public static function getCount(): int
     {
         return count($_SESSION[self::$sessionName]) ?? 0;
+    }
+
+    /**
+     * Возвращает сумму в корзине
+     * @return int
+     */
+    public static function getSum(): int
+    {
+        $basket = self::getBasket();
+        $sum = 0;
+        foreach ($basket as $key => $item) {
+            try {
+                $sum += Catalog::getElementByID($key)['PROPERTIES']['PRICE']['VALUE'] * $item;
+            } catch (Throwable $e) {
+                Debug::dumpToFile($e->getMessage());
+            }
+        }
+        return $sum;
     }
 
     /**

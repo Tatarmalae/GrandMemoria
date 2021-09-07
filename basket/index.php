@@ -10,7 +10,7 @@ $APPLICATION->SetTitle("Корзина");
 
 global $arrFilterBasket;
 $arrFilterBasket = [
-    'ID' => Basket::getBasket() ?: 0,
+    'ID' => array_keys(Basket::getBasket()) ?: 0,
 ];
 ?>
 <?php $APPLICATION->IncludeComponent(

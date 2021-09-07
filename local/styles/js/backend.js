@@ -13,11 +13,43 @@ function addBasket() {
     $.ajax({
       type: "POST",
       url: "/local/ajax/add_basket.php",
+      dataType: 'json',
       data: {
         "id": id
       },
-      success: function (count) {
-        $('.btn.btn-basket .btn-basket__count').html(count);
+      success: function (res) {
+        if (res['status'] === 'success') {
+          $('.btn.btn-basket .btn-basket__count').html(res['count']);
+
+          //Очистим
+          $('#modalBasket img.lazy').attr('data-src', '').attr('src', '');
+          $('#modalBasket .label-wrap').html('');
+
+          setTimeout(function () {
+            $('#modalBasket img.lazy').attr('data-src', res['element']['PREVIEW_PICTURE']).attr('src', res['element']['PREVIEW_PICTURE']).attr('alt', res['element']['NAME']);
+            if (res['element']['PROPERTIES']['NEW']['VALUE']) {
+              $('#modalBasket .label-wrap').append('<span class="label label_small label_bg label_fiery-rose">Новинки</span>');
+            }
+
+            $('#modalBasket h4').html(res['element']['NAME']);
+
+            let price = number_format(res['element']['PROPERTIES']['PRICE']['VALUE'], 0, ' ', ' ') + ' ₽';
+            $('#modalBasket .price-now').html(price);
+
+            if (res['element']['PROPERTIES']['OLD_PRICE']['VALUE'] !== null) {
+              let oldPrice = number_format(res['element']['PROPERTIES']['OLD_PRICE']['VALUE'], 0, ' ', ' ') + ' ₽';
+              $('#modalBasket .price-old').html(oldPrice);
+
+              let discount = '-' + Math.ceil(((res['element']['PROPERTIES']['OLD_PRICE']['VALUE'] - res['element']['PROPERTIES']['PRICE']['VALUE']) * 100) / res['element']['PROPERTIES']['OLD_PRICE']['VALUE']) + '%';
+              $('#modalBasket .label-wrap').append('<span class="label label_small label_bg label_fiery-rose">' + discount + '</span>');
+            }
+
+            let count = declension(+res['count'], ['товар', 'товара', 'товаров']);
+            let sum = number_format(res['sum'], 0, ' ', ' ') + ' ₽';
+            $('#modalBasket .popup__count').html('В корзине ' + res['count'] + ' ' + count + ' на сумму от ' + sum);
+
+          }, 300)
+        }
       }
     });
   });

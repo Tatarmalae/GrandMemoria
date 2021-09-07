@@ -93,7 +93,7 @@ $this->setFrameMode(true);
                                         <?php endif ?>
                                     </div>
                                     <div class="more-btn">
-                                        <button class="btn btn-blue small" type="button" data-toggle="modal" data-target="#modalBasket<?php // TODO: передать id?>">
+                                        <button class="btn btn-blue small" type="button" data-toggle="modal" data-target="#modalBasket" data-id="<?= $arItem['ID'] ?>">
                                             <span class="btn__text">
                                                 <span data-text="В корзину">В корзину</span>
                                             </span>
