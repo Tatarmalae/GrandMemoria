@@ -186,6 +186,7 @@ class Catalog
             'ACTIVE' => 'Y',
             '=ID' => $id,
         ]);
+        $query->setLimit(1);
         $query->setSelect([
             'ID',
             'CODE',
@@ -198,7 +199,8 @@ class Catalog
         ]);
         $result = $query->exec();
         $arItems = [];
-        while ($arItem = $result->Fetch()) {
+        if ($arItem = $result->Fetch()) {
+            $arItem['PREVIEW_PICTURE'] = \CFile::GetPath($arItem['PREVIEW_PICTURE']);
             $arItem['DETAIL_PAGE_URL'] = \CIBlock::ReplaceDetailUrl($arItem['DETAIL_PAGE_URL'], $arItem, false, 'E');
 
             $dbProperty = \CIBlockElement::getProperty($arItem['IBLOCK_ID'], $arItem['ID'], [
@@ -210,7 +212,7 @@ class Catalog
                     $arItem['PROPERTIES'][$arProperty['CODE']] = $arProperty;
                 }
             }
-            $arItems[] = $arItem;
+            $arItems = $arItem;
         }
         return $arItems;
     }
