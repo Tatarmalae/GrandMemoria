@@ -111,8 +111,8 @@ function updBasket() {
         "id": id
       },
       success: function (res) {
-        console.log(res);
         if (res['status'] === 'success') {
+
           $('.btn.btn-basket .btn-basket__count').html(res['count']);
 
           if (res['method'] === 'update') {
