@@ -188,6 +188,7 @@ class Catalog
         ]);
         $query->setLimit(1);
         $query->setSelect([
+            'IBLOCK_ID',
             'ID',
             'CODE',
             'NAME',
