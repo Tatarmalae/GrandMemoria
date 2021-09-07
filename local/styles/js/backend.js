@@ -65,12 +65,24 @@ function delBasket() {
     $.ajax({
       type: "POST",
       url: "/local/ajax/del_basket.php",
+      dataType: 'json',
       data: {
         "id": id
       },
-      success: function (count) {
-        $('.btn.btn-basket .btn-basket__count').html(count);
-        elem.closest('.basket-card').remove();
+      success: function (res) {
+        if (res['status'] === 'success') {
+          $('.btn.btn-basket .btn-basket__count').html(res['count']);
+          elem.closest('.basket-card').remove();
+
+          if (res['count'] !== 0) {
+            $('.price-base.counter').html(res['count'] + ' шт.');
+            let sum = number_format(res['sum'], 0, ' ', ' ') + ' ₽';
+            $('.price-base.sum').html('от ' + sum);
+          } else {
+            $('.basket-wrap').hide();
+            $('.basket-empty').show();
+          }
+        }
       }
     });
   });

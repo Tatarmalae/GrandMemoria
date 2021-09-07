@@ -11,12 +11,17 @@
 /** @var string $componentPath */
 /** @var CBitrixComponent $component */
 $this->setFrameMode(true);
+
+use Dev\Basket;
+
+$sum = 0;
 ?>
 <?php if (count($arResult['ITEMS']) > 0): ?>
     <div class="basket-wrap items">
         <div class="basket-column item">
             <div class="basket-cards">
                 <?php foreach ($arResult['ITEMS'] as $item): ?>
+                    <?php $sum += $item['PROPERTIES']['PRICE']['VALUE'] * Basket::getBasket()[$item['ID']] ?>
                     <div class="basket-card box">
                         <div class="basket-card__wrap">
                             <div class="basket-card__left">
@@ -48,7 +53,7 @@ $this->setFrameMode(true);
                                     <div class="count">
                                         <input type="hidden">
                                         <span class="count__nav el-minus">-</span>
-                                        <input class="count__control" value="1">
+                                        <input class="count__control" value="<?= Basket::getBasket()[$item['ID']] ?>">
                                         <span class="count__nav el-plus">+</span>
                                     </div>
                                 </div>
@@ -80,13 +85,13 @@ $this->setFrameMode(true);
                     <div class="basket-info__item">
                         <span class="basket-label">Кол–во товаров:</span>
                         <div class="price price_small">
-                            <span class="price-base"><?= count($arResult['ITEMS']) ?> шт.</span>
+                            <span class="price-base counter"><?= count($arResult['ITEMS']) ?> шт.</span>
                         </div>
                     </div>
                     <div class="basket-info__item">
                         <span class="basket-label">Товаров на сумму:</span>
                         <div class="price price_small">
-                            <span class="price-base">от 16 000 ₽</span>
+                            <span class="price-base sum">от <?= number_format($sum, 0, ' ', ' ') ?> ₽</span>
                         </div>
                     </div>
                 </div>
@@ -109,6 +114,27 @@ $this->setFrameMode(true);
                         </span>
                     </a>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="basket-empty" style="display: none">
+        <div class="basket-empty__inner">
+            <div class="basket-empty__icon">
+                <img src="<?= SITE_STYLE_PATH ?>/img/content/basket/shopping.svg" alt="basket">
+            </div>
+            <h2>В корзине пока ничего нет</h2>
+            <p>Вы можете начать свой выбор с главной страницы, посмотреть акции или воспользоваться поиском, если ищете что-то конкретное</p>
+            <div class="more-btn">
+                <a class="btn btn-blue big" href="/catalog/">
+                    <span class="btn__text">
+                        <span data-text="Каталог товаров">Каталог товаров</span>
+                    </span>
+                </a>
+                <a class="btn btn-blue-light big" href="/stock/">
+                    <span class="btn__text">
+                        <span data-text="Акции и скидки">Акции и скидки</span>
+                    </span>
+                </a>
             </div>
         </div>
     </div>

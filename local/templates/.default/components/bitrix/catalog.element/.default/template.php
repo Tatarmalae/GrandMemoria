@@ -219,7 +219,7 @@ $this->EndViewTarget();
                         <?php endif ?>
                     </div>
                 </div>
-                <button class="btn btn-blue small" type="button" data-toggle="modal" data-target="#modalBasket<?php // TODO: передать id ?>">
+                <button class="btn btn-blue small" type="button" data-toggle="modal" data-target="#modalBasket" data-id="<?= $arResult['ID'] ?>">
                     <span class="btn__text">
                         <span data-text="В корзину">В корзину</span>
                     </span>
