@@ -218,6 +218,15 @@ class Catalog
         return $arItems;
     }
 
+    /**
+     * Возвращает минимальную цену элементов раздела
+     * @param $IBlockID
+     * @param $sectionID
+     * @return array
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
+     */
     public static function getElementMinPriceBySection($IBlockID, $sectionID): array
     {
         $query = new Query(
