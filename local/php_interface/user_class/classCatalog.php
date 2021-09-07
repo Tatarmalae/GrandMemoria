@@ -107,7 +107,7 @@ class Catalog
             $query->setFilter([
                 '=IBLOCK_ID' => $IBlockID,
                 '=ROOT.ID' => $sectionID,
-                '==LINK.ADDITIONAL_PROPERTY_ID' => NULL
+                '==LINK.ADDITIONAL_PROPERTY_ID' => NULL,
             ]);
         }
         $query->setSelect([
@@ -216,6 +216,64 @@ class Catalog
             $arItems = $arItem;
         }
         return $arItems;
+    }
+
+    public static function getElementMinPriceBySection($IBlockID, $sectionID): array
+    {
+        $query = new Query(
+            ElementTable::getEntity()
+        );
+        $query->setFilter([
+            'ACTIVE' => 'Y',
+            '=IBLOCK_ID' => $IBlockID,
+            '=ROOT.ID' => $sectionID,
+            '==LINK.ADDITIONAL_PROPERTY_ID' => NULL,
+            'IBLOCK_ELEMENT_PRICE_IBLOCK_PROPERTY_ID' => 30,
+        ]);
+        $query->setLimit(1);
+        $query->setSelect([
+            'PRICE',
+            'PRICE_VALUE' => 'IBLOCK_ELEMENT_PRICE_VALUE',
+        ]);
+        $query->registerRuntimeField(
+            'LINK',
+            [
+                'data_type' => SectionElementTable::class,
+                'reference' => ['=this.ID' => 'ref.IBLOCK_ELEMENT_ID'],
+                ['join_type' => 'INNER'],
+            ]
+        );
+        $query->registerRuntimeField(
+            'PARENT',
+            [
+                'data_type' => SectionTable::class,
+                'reference' => ['=this.LINK.IBLOCK_SECTION_ID' => 'ref.ID'],
+                ['join_type' => 'INNER'],
+            ]
+        );
+        $query->registerRuntimeField(
+            'ROOT',
+            [
+                'data_type' => SectionTable::class,
+                'reference' => [
+                    '=this.PARENT.IBLOCK_ID' => 'ref.IBLOCK_ID',
+                    '<=ref.LEFT_MARGIN' => 'this.PARENT.LEFT_MARGIN',
+                    '>=ref.RIGHT_MARGIN' => 'this.PARENT.RIGHT_MARGIN',
+                ],
+                ['join_type' => 'INNER'],
+            ]
+        );
+        $query->registerRuntimeField(
+            'PRICE',
+            [
+                'data_type' => ElementPropertyTable::class,
+                'reference' => ['=this.ID' => 'ref.IBLOCK_ELEMENT_ID'],
+            ]
+        );
+        $query->setOrder(['IBLOCK_ELEMENT_PRICE_VALUE' => 'ASC']);
+        $result = $query->exec();
+
+        return $result->fetch();
     }
 
     /**

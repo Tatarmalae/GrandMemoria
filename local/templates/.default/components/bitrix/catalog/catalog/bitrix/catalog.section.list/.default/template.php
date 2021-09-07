@@ -41,8 +41,7 @@ if (empty($arResult)) return;
                     <?php endif ?>
                     <div class="price price_small">
                         <span class="price-now">
-                            <?php //TODO: price ?>
-                            от 17 000 ₽
+                            от <?= number_format($sections['MIN_PRICE'], 0, ' ', ' ') ?> ₽
                         </span>
                     </div>
                     <div class="more-btn">
