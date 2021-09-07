@@ -168,6 +168,54 @@ class Catalog
     }
 
     /**
+     * Возвращает информацию об элементе по ID
+     * @param $id
+     * @return array
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
+     * @throws LoaderException
+     */
+    public static function getElementByID($id): array
+    {
+        Loader::IncludeModule('iblock');
+        $query = new Query(
+            ElementTable::getEntity()
+        );
+        $query->setFilter([
+            'ACTIVE' => 'Y',
+            '=ID' => $id,
+        ]);
+        $query->setSelect([
+            'ID',
+            'CODE',
+            'NAME',
+            'PREVIEW_TEXT',
+            'DETAIL_TEXT',
+            'PREVIEW_PICTURE',
+            'ACTIVE_FROM',
+            'DETAIL_PAGE_URL' => 'IBLOCK.DETAIL_PAGE_URL',
+        ]);
+        $result = $query->exec();
+        $arItems = [];
+        while ($arItem = $result->Fetch()) {
+            $arItem['DETAIL_PAGE_URL'] = \CIBlock::ReplaceDetailUrl($arItem['DETAIL_PAGE_URL'], $arItem, false, 'E');
+
+            $dbProperty = \CIBlockElement::getProperty($arItem['IBLOCK_ID'], $arItem['ID'], [
+                "sort",
+                "asc",
+            ], []);
+            while ($arProperty = $dbProperty->Fetch()) {
+                if ($arProperty['VALUE'] !== '') {
+                    $arItem['PROPERTIES'][$arProperty['CODE']] = $arProperty;
+                }
+            }
+            $arItems[] = $arItem;
+        }
+        return $arItems;
+    }
+
+    /**
      * Получает активные разделы ИНФОБЛОКА с элементами > 0
      * @param $IBlockID
      * @return array
