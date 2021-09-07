@@ -1,3 +1,61 @@
+<?php //Корзина?>
+<div class="modal fade" id="modalBasket" tabindex="-1" role="dialog" aria-labelledby="modalBasketLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <button class="modal-close" type="button" data-dismiss="modal" aria-label="Close">
+                <svg class="icon__close-modal" width="48" height="48">
+                    <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
+                </svg>
+            </button>
+            <div class="modal-body">
+                <a class="logo-link" href="<?= SITE_DIR ?>">
+                    <div class="logo">
+                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
+                    </div>
+                </a>
+                <div class="modal-scroll">
+                    <div class="modal-scroll__inner">
+                        <div class="modal-basket">
+                            <h2 class="static">Товар успешно добавлен в корзину</h2>
+                            <div class="modal-basket__product">
+                                <div class="catalog-item catalog-item_line">
+                                    <div class="catalog-item__img img">
+                                        <div class="img__inner object-fit">
+                                            <img class="lazy" data-src="" alt="" src="">
+                                        </div>
+                                        <div class="catalog-item__labels label-wrap"></div>
+                                    </div>
+                                    <div class="catalog-item__content">
+                                        <span class="label label_small label_fiery-rose">В наличии</span>
+                                        <h4></h4>
+                                        <div class="price price_small">
+                                            <span class="price-now"></span>
+                                            <s class="price-old"></s>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="popup__count"></p>
+                            <div class="more-btn">
+                                <a class="btn btn-blue big" href="/basket/">
+                                    <span class="btn__text">
+                                        <span>Перейти в корзину</span>
+                                    </span>
+                                </a>
+                                <button class="btn btn-blue-light big" type="button" data-dismiss="modal">
+                                    <span class="btn__text">
+                                        <span>Вернуться к просмотру</span>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="modalCall" tabindex="-1" role="dialog" aria-labelledby="modalCallLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -266,65 +324,6 @@
                                 <span>Вернуться к просмотру</span>
                             </span>
                         </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="modalBasket" tabindex="-1" role="dialog" aria-labelledby="modalBasketLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <button class="modal-close" type="button" data-dismiss="modal" aria-label="Close">
-                <svg class="icon__close-modal" width="48" height="48">
-                    <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
-                </svg>
-            </button>
-            <div class="modal-body">
-                <a class="logo-link" href="<?= SITE_DIR ?>">
-                    <div class="logo">
-                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
-                    </div>
-                </a>
-                <div class="modal-scroll">
-                    <div class="modal-scroll__inner">
-                        <div class="modal-basket">
-                            <h2 class="static">Товар успешно добавлен в корзину</h2>
-                            <div class="modal-basket__product">
-                                <div class="catalog-item catalog-item_line">
-                                    <div class="catalog-item__img img">
-                                        <div class="img__inner object-fit">
-                                            <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/catalog/1.jpg" alt=""/>
-                                        </div>
-                                        <div class="catalog-item__labels label-wrap">
-                                            <span class="label label_small label_bg label_fiery-rose">Новинки</span>
-                                            <span class="label label_small label_bg label_fiery-rose">-15%</span>
-                                        </div>
-                                    </div>
-                                    <div class="catalog-item__content">
-                                        <span class="label label_small label_fiery-rose">В наличие</span>
-                                        <h4>Гранитный БК-1</h4>
-                                        <div class="price price_small">
-                                            <span class="price-now">от 4 000 ₽</span>
-                                            <s class="price-old">от 5 200 ₽</s>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <p>В корзине 1 товар на сумму от 4 000 ₽</p>
-                            <div class="more-btn">
-                                <a class="btn btn-blue big" href="/basket/">
-                                    <span class="btn__text">
-                                        <span>Перейти в корзину</span>
-                                    </span>
-                                </a>
-                                <button class="btn btn-blue-light big" type="button" data-dismiss="modal">
-                                    <span class="btn__text">
-                                        <span>Вернуться к просмотру</span>
-                                    </span>
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
