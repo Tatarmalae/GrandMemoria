@@ -58,29 +58,28 @@ $this->setFrameMode(true);
 
 <section class="contacts">
     <div class="content">
-        <?php // TODO: какой смысл закладывался у данного блока и куда должен быть переход со ссылок ?>
         <div class="contacts-delivery items">
-            <a class="contacts-delivery__item item" href="#">
+            <div class="contacts-delivery__item item">
                 <div class="contacts-delivery__item-img img">
                     <div class="img__inner object-fit">
                         <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/contacts/delivery/1.jpg" alt="" src="">
                     </div>
                 </div>
-            </a>
-            <a class="contacts-delivery__item item" href="#">
+            </div>
+            <div class="contacts-delivery__item item">
                 <div class="contacts-delivery__item-img img">
                     <div class="img__inner object-fit">
                         <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/contacts/delivery/2.jpg" alt="" src="">
                     </div>
                 </div>
-            </a>
-            <a class="contacts-delivery__item item" href="#">
+            </div>
+            <div class="contacts-delivery__item item">
                 <div class="contacts-delivery__item-img img">
                     <div class="img__inner object-fit">
                         <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/contacts/delivery/3.jpg" alt="" src="">
                     </div>
                 </div>
-            </a>
+            </div>
         </div>
         <?php if (!empty($arResult['PROPERTIES']['CONTACTS_TITLE']['VALUE'])): ?>
             <div class="contacts-cite box">
