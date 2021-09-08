@@ -79,7 +79,7 @@ $this->setFrameMode(true);
                 </div>
                 <div class="reviews-item__content">
                     <p>
-                        <?= $arItem['PREVIEW_TEXT'] //TODO: реализовать обрезание текста на стороне js         ?>
+                        <?= $arItem['PREVIEW_TEXT'] ?>
                     </p>
                 </div>
                 <div class="reviews-item__bottom">
@@ -92,11 +92,11 @@ $this->setFrameMode(true);
                         </a>
                     </div>
                     <?php if (!empty($arItem['PROPERTIES']['PLACEMENT']['VALUE'])): ?>
-                        <a class="logo-link" href="<?php //TODO: куда ссылка. Можно в HL-блоке прописать ссылку ?>">
+                        <div class="logo-link">
                             <div class="logo">
                                 <img src="<?= CFile::GetPath($arItem['PROPERTIES']['PLACEMENT']['VALUE']['UF_FILE']) ?>" alt="<?= CFile::GetPath($arItem['PROPERTIES']['PLACEMENT']['VALUE']['UF_NAME']) ?>">
                             </div>
-                        </a>
+                        </div>
                     <?php endif ?>
                 </div>
             </div>
@@ -158,11 +158,11 @@ $this->setFrameMode(true);
                                             <?php if (!empty($arItem['PROPERTIES']['PLACEMENT']['VALUE'])): ?>
                                                 <div class="reviews-item__bottom">
                                                     <span class="reviews-item__bottom-label"><?= $arItem['PROPERTIES']['PLACEMENT']['NAME'] ?>:</span>
-                                                    <a class="logo-link" href="<?php //TODO: куда ссылка. Можно в HL-блоке прописать ссылку ?>">
+                                                    <div class="logo-link">
                                                         <div class="logo">
                                                             <img src="<?= CFile::GetPath($arItem['PROPERTIES']['PLACEMENT']['VALUE']['UF_FILE']) ?>" alt="<?= CFile::GetPath($arItem['PROPERTIES']['PLACEMENT']['VALUE']['UF_NAME']) ?>">
                                                         </div>
-                                                    </a>
+                                                    </div>
                                                 </div>
                                             <?php endif ?>
                                         </div>
