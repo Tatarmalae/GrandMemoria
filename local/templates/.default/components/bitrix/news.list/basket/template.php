@@ -15,13 +15,19 @@ $this->setFrameMode(true);
 use Dev\Basket;
 
 $sum = 0;
+$installment = true;
 ?>
 <?php if (count($arResult['ITEMS']) > 0): ?>
     <div class="basket-wrap items">
         <div class="basket-column item">
             <div class="basket-cards">
                 <?php foreach ($arResult['ITEMS'] as $item): ?>
-                    <?php $sum += $item['PROPERTIES']['PRICE']['VALUE'] * Basket::getBasket()[$item['ID']] ?>
+                    <?php
+                    $sum += $item['PROPERTIES']['PRICE']['VALUE'] * Basket::getBasket()[$item['ID']];
+                    if ($item['IBLOCK_SECTION_PARENT_ID'] != 15) {
+                        $installment = false;
+                    }
+                    ?>
                     <div class="basket-card box">
                         <div class="basket-card__wrap">
                             <div class="basket-card__left">
@@ -94,18 +100,20 @@ $sum = 0;
                         </div>
                     </div>
                 </div>
-                <div class="checkbox-wrap">
-                    <div class="checkbox">
-                        <input type="checkbox" name="checkbox" id="basketCheck">
-                        <label for="basketCheck">
-                            <span class="checkbox__box"></span>
-                            <div class="checkbox-content">
-                                <h5>Оформить рассрочку</h5>
-                                <span>Ваши товары доступны в рассрочку</span>
-                            </div>
-                        </label>
+                <?php if ($installment): ?>
+                    <div class="checkbox-wrap">
+                        <div class="checkbox">
+                            <input type="checkbox" name="installment" id="basketCheck">
+                            <label for="basketCheck">
+                                <span class="checkbox__box"></span>
+                                <div class="checkbox-content">
+                                    <h5>Оформить рассрочку</h5>
+                                    <span>Ваши товары доступны в рассрочку</span>
+                                </div>
+                            </label>
+                        </div>
                     </div>
-                </div>
+                <?php endif ?>
                 <div class="more-btn">
                     <a class="btn btn-blue big btn-block" href="#" data-toggle="modal" data-target="#modalCheckout">
                         <span class="btn__text">

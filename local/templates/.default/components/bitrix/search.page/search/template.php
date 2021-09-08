@@ -22,7 +22,6 @@
             </label>
         </div>
         <div class="form-btn">
-            <?php // TODO: баг в js - при нажатии submit всплывает popup успешной отправки]!?>
             <button type="submit" class="btn btn-blue big">
                 <span class="btn__arrow">
                     <svg class="icon__search" width="20" height="20">
