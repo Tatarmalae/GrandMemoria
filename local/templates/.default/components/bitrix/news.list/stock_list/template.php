@@ -5,7 +5,7 @@
  */
 ?>
 <?php if (count($arResult["ITEMS"]) > 0): ?>
-    <section class="section_padding bg_black-haze stock">
+    <section class="<?= ($arParams['CLASS'] !== 'white') ? 'section_padding bg_black-haze ' : '' ?>stock">
         <div class="content">
             <div class="heading">
                 <div class="heading__content">
