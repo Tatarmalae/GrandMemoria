@@ -11,6 +11,7 @@
 /** @var string $componentPath */
 /** @var CBitrixComponent $component */
 $this->setFrameMode(true);
+if (count($arResult["ITEMS"]) == 0) return;
 ?>
 <section class="gallery<?= !empty($arParams['CLASS']) ? $arParams['CLASS'] : '' ?>">
     <div class="content">
