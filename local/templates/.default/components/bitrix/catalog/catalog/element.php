@@ -12,6 +12,22 @@
 /** @var string $componentPath */
 /** @var CBitrixComponent $component */
 $this->setFrameMode(true);
+
+use Bitrix\Main\Diag\Debug;
+use Dev\Catalog;
+
+$section = '';
+$sectionName = '';
+$sectionProps = '';
+$elementAlsoIDs = '';
+try {
+    $section = Catalog::getSectionByCode($arParams["IBLOCK_ID"], $arResult["VARIABLES"]["SECTION_CODE"]);
+    $sectionName = Catalog::getSectionByID($section['IBLOCK_SECTION_ID'])['NAME'];
+    $sectionProps = Catalog::getSectionProps($arParams["IBLOCK_ID"], $section['IBLOCK_SECTION_ID']);
+    $elementAlsoIDs = Catalog::getOneElementIDBySections($arParams["IBLOCK_ID"], $sectionProps['UF_ALSO_ORDER']);
+} catch (Throwable $e) {
+    Debug::dumpToFile($e->getMessage());
+}
 ?>
 <div class="product-wrap">
     <?php
@@ -172,7 +188,11 @@ $this->setFrameMode(true);
 
 <?php $this->SetViewTarget('after_parent_sect'); ?>
 
-<?php //TODO: условия
+<?php
+global $arrFilterSimilar;
+$arrFilterSimilar = [
+    'SECTION_ID' => $section['ID'],
+];
 $APPLICATION->IncludeComponent(
     "bitrix:news.list",
     "product_list",
@@ -185,7 +205,7 @@ $APPLICATION->IncludeComponent(
         "SORT_ORDER1" => "ASC",
         "SORT_BY2" => "SORT",
         "SORT_ORDER2" => "ASC",
-        "FILTER_NAME" => "",
+        "FILTER_NAME" => "arrFilterSimilar",
         "FIELD_CODE" => [
             0 => "ID",
             1 => "CODE",
@@ -267,9 +287,14 @@ $APPLICATION->IncludeComponent(
     ],
     false
 );
+unset($arrFilterSimilar);
 ?>
 
-<?php //TODO: условия
+<?php
+global $arrFilterAlso;
+$arrFilterAlso = [
+    'ID' => $elementAlsoIDs,
+];
 $APPLICATION->IncludeComponent(
     "bitrix:news.list",
     "product_list",
@@ -282,7 +307,7 @@ $APPLICATION->IncludeComponent(
         "SORT_ORDER1" => "ASC",
         "SORT_BY2" => "SORT",
         "SORT_ORDER2" => "ASC",
-        "FILTER_NAME" => "",
+        "FILTER_NAME" => "arrFilterAlso",
         "FIELD_CODE" => [
             0 => "ID",
             1 => "CODE",
@@ -364,11 +389,23 @@ $APPLICATION->IncludeComponent(
     ],
     false
 );
+unset($arrFilterAlso);
 ?>
 
 <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/installment_banner.php", [], ["SHOW_BORDER" => true]); ?>
 
-<?php //TODO: сколько выводить и из какого раздела
+<?php
+$galleryElementIDs = '';
+try {
+    $sectionGalleryCode = Catalog::getSectionByName(4, $sectionName);
+    $galleryElementIDs = Catalog::getElementIDsBySectionID(4, $sectionGalleryCode);
+} catch (Throwable $e) {
+    Debug::dumpToFile($e->getMessage());
+}
+global $arrFilterGallery;
+$arrFilterGallery = [
+    'ID' => $galleryElementIDs,
+];
 $APPLICATION->IncludeComponent(
     "bitrix:news.list",
     "gallery_list",
@@ -381,7 +418,7 @@ $APPLICATION->IncludeComponent(
         "SORT_ORDER1" => "ASC",
         "SORT_BY2" => "SORT",
         "SORT_ORDER2" => "ASC",
-        "FILTER_NAME" => "",
+        "FILTER_NAME" => "arrFilterGallery",
         "FIELD_CODE" => [
             0 => "ID",
             1 => "CODE",
@@ -464,9 +501,22 @@ $APPLICATION->IncludeComponent(
     ],
     false
 );
+unset($arrFilterGallery);
 ?>
 
-<?php //TODO: сколько выводить и из какого раздела
+<?php
+$reviewsElementIDs = '';
+try {
+    $sectionReviewsCode = Catalog::getSectionByName(13, $sectionName);
+    $reviewsElementIDs = Catalog::getElementIDsBySectionID(13, $sectionReviewsCode);
+} catch (Throwable $e) {
+    Debug::dumpToFile($e->getMessage());
+}
+
+global $arrFilterReviews;
+$arrFilterReviews = [
+    'ID' => $reviewsElementIDs,
+];
 $APPLICATION->IncludeComponent(
     "bitrix:news.list",
     "reviews_list",
@@ -479,7 +529,7 @@ $APPLICATION->IncludeComponent(
         "SORT_ORDER1" => "DESC",
         "SORT_BY2" => "SORT",
         "SORT_ORDER2" => "ASC",
-        "FILTER_NAME" => "",
+        "FILTER_NAME" => "arrFilterReviews",
         "FIELD_CODE" => [
             0 => "ID",
             1 => "CODE",
@@ -563,6 +613,7 @@ $APPLICATION->IncludeComponent(
     ],
     false
 );
+unset($arrFilterReviews);
 ?>
 
 <?php
@@ -651,12 +702,17 @@ $APPLICATION->IncludeComponent(
         "SHOW_404" => "N",
         "FILE_404" => "",
         "TITLE" => "Акции и скидки",
+        "CLASS" => "white",
     ],
     false
 );
 ?>
 
-<?php //TODO: сколько выводить и из какого раздела
+<?php
+global $arrFilterFaq;
+$arrFilterFaq = [
+    'SECTION_ID' => '7',
+];
 $APPLICATION->IncludeComponent(
     "bitrix:news.list",
     "faq_list",
@@ -669,7 +725,7 @@ $APPLICATION->IncludeComponent(
         "SORT_ORDER1" => "ASC",
         "SORT_BY2" => "SORT",
         "SORT_ORDER2" => "ASC",
-        "FILTER_NAME" => "",
+        "FILTER_NAME" => "arrFilterFaq",
         "FIELD_CODE" => [
             0 => "ID",
             1 => "CODE",
@@ -745,7 +801,7 @@ $APPLICATION->IncludeComponent(
         "SET_STATUS_404" => "N",
         "SHOW_404" => "N",
         "FILE_404" => "",
-        "TITLE" => "Часто задаваемые вопросы",
+        "TITLE" => "Вопрос–ответ",
         "DISPLAY_DATE" => "Y",
         "DISPLAY_NAME" => "Y",
         "DISPLAY_PICTURE" => "Y",
@@ -754,6 +810,7 @@ $APPLICATION->IncludeComponent(
     ],
     false
 );
+unset($arrFilterFaq);
 ?>
 
 <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/feedback_form.php", [], ["SHOW_BORDER" => true]); ?>
