@@ -28,7 +28,7 @@ $this->EndViewTarget();
         <div class="img__inner object-fit">
             <picture>
                 <source media="(max-width:1279px)" data-srcset="<?= CFile::GetPath($arResult['PREVIEW_PICTURE']['ID']) ?>" srcset="">
-                <img class="lazy" data-src="<?= CFile::GetPath($arResult['PREVIEW_PICTURE']['ID']) ?>" alt="<?= $arResult['NAME'] ?>" src="">
+                <img class="lazy" data-src="<?= CFile::GetPath($arResult['DETAIL_PICTURE']['ID']) ?>" alt="<?= $arResult['NAME'] ?>" src="">
             </picture>
         </div>
     </div>

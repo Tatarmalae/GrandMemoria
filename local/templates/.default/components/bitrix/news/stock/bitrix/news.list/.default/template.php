@@ -39,7 +39,7 @@ $this->setFrameMode(true);
                         <div class="img__inner object-fit">
                             <picture>
                                 <source media="(max-width:1279px)" data-srcset="<?= CFile::GetPath($arItem['PREVIEW_PICTURE']['ID']) ?>" srcset="">
-                                <img class="lazy" data-src="<?= CFile::GetPath($arItem['PREVIEW_PICTURE']['ID']) ?>" alt="<?= $arItem['NAME'] ?>" src="">
+                                <img class="lazy" data-src="<?= CFile::GetPath($arItem['DETAIL_PICTURE']['ID']) ?>" alt="<?= $arItem['NAME'] ?>" src="">
                             </picture>
                         </div>
                     </div>
