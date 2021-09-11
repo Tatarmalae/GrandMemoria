@@ -168,7 +168,11 @@ $APPLICATION->IncludeComponent(
 );
 ?>
 
-<?php //TODO: сколько выводить и из какого раздела
+<?php
+global $arrFilterGallery;
+$arrFilterGallery = [
+    'SECTION_ID' => '48',
+];
 $APPLICATION->IncludeComponent(
     "bitrix:news.list",
     "gallery_list",
@@ -181,7 +185,7 @@ $APPLICATION->IncludeComponent(
         "SORT_ORDER1" => "ASC",
         "SORT_BY2" => "SORT",
         "SORT_ORDER2" => "ASC",
-        "FILTER_NAME" => "",
+        "FILTER_NAME" => "arrFilterGallery",
         "FIELD_CODE" => [
             0 => "ID",
             1 => "CODE",
@@ -262,8 +266,8 @@ $APPLICATION->IncludeComponent(
     ],
     false
 );
+unset($arrFilterGallery);
 ?>
-
     <section class="section_padding section_glitter services">
         <div class="content">
             <div class="heading">
@@ -333,8 +337,11 @@ $APPLICATION->IncludeComponent(
             ?>
         </div>
     </section>
-
-<?php //TODO: сколько выводить и из какого раздела
+<?php
+global $arrFilterReviews;
+$arrFilterReviews = [
+    'SECTION_ID' => '47',
+];
 $APPLICATION->IncludeComponent(
     "bitrix:news.list",
     "reviews_list",
@@ -347,7 +354,7 @@ $APPLICATION->IncludeComponent(
         "SORT_ORDER1" => "DESC",
         "SORT_BY2" => "SORT",
         "SORT_ORDER2" => "ASC",
-        "FILTER_NAME" => "",
+        "FILTER_NAME" => "arrFilterReviews",
         "FIELD_CODE" => [
             0 => "ID",
             1 => "CODE",
@@ -431,11 +438,16 @@ $APPLICATION->IncludeComponent(
     ],
     false
 );
+unset($arrFilterReviews);
 ?>
 
 <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/feedback_form.php", [], ["SHOW_BORDER" => true]); ?>
 
-<?php //TODO: сколько выводить и из какого раздела
+<?php
+global $arrFilterFaq;
+$arrFilterFaq = [
+    'SECTION_ID' => '8',
+];
 $APPLICATION->IncludeComponent(
     "bitrix:news.list",
     "faq_list",
@@ -448,7 +460,7 @@ $APPLICATION->IncludeComponent(
         "SORT_ORDER1" => "ASC",
         "SORT_BY2" => "SORT",
         "SORT_ORDER2" => "ASC",
-        "FILTER_NAME" => "",
+        "FILTER_NAME" => "arrFilterFaq",
         "FIELD_CODE" => [
             0 => "ID",
             1 => "CODE",
@@ -524,7 +536,7 @@ $APPLICATION->IncludeComponent(
         "SET_STATUS_404" => "N",
         "SHOW_404" => "N",
         "FILE_404" => "",
-        "TITLE" => "Вопросы и ответы по услугам",
+        "TITLE" => "Вопрос–ответ",
         "DISPLAY_DATE" => "Y",
         "DISPLAY_NAME" => "Y",
         "DISPLAY_PICTURE" => "Y",
@@ -533,6 +545,7 @@ $APPLICATION->IncludeComponent(
     ],
     false
 );
+unset($arrFilterFaq);
 ?>
 
 <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/calculation.php", [], ["SHOW_BORDER" => true]); ?>
