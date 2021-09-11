@@ -11,6 +11,7 @@
 /** @var string $componentPath */
 /** @var CBitrixComponent $component */
 $this->setFrameMode(true);
+if (count($arResult["ITEMS"]) == 0) return;
 ?>
 <section class="reviews">
     <div class="content">
@@ -44,9 +45,9 @@ $this->setFrameMode(true);
                                             <?php endif ?>
                                             <?php if (!empty($arItem['PROPERTIES']['FILE']['VALUE'])): ?>
                                                 <span class="reviews-photo">
-                                                     <svg class="icon__photo" width="24" height="24">
-                                                         <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#photo"></use>
-                                                     </svg>
+                                                    <svg class="icon__photo" width="24" height="24">
+                                                        <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#photo"></use>
+                                                    </svg>
                                                     1
                                                 </span>
                                             <?php endif ?>
@@ -139,9 +140,9 @@ $this->setFrameMode(true);
                                                 <?php endif ?>
                                                 <?php if (!empty($arItem['PROPERTIES']['FILE']['VALUE'])): ?>
                                                     <span class="reviews-photo">
-                                                         <svg class="icon__photo" width="24" height="24">
-                                                             <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#photo"></use>
-                                                         </svg>
+                                                        <svg class="icon__photo" width="24" height="24">
+                                                            <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#photo"></use>
+                                                        </svg>
                                                         1
                                                     </span>
                                                 <?php endif ?>
