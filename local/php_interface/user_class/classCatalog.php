@@ -6,6 +6,7 @@ use Bitrix\Highloadblock\HighloadBlockTable;
 use Bitrix\Iblock\ElementPropertyTable;
 use Bitrix\Iblock\ElementTable;
 use Bitrix\Iblock\IblockTable;
+use Bitrix\Iblock\Model\Section;
 use Bitrix\Iblock\PropertyEnumerationTable;
 use Bitrix\Iblock\PropertyTable;
 use Bitrix\Iblock\SectionElementTable;
@@ -79,16 +80,17 @@ class Catalog
     }
 
     /**
-     * Возвращает элементы ИНФОБЛОКА. Может учитывать раздел
+     * Возвращает элементы ИНФОБЛОКА. Может учитывать ID раздела
      * @param $IBlockID
      * @param string $sectionID
      * @param array|null $order
+     * @param $limit
      * @return array
      * @throws ArgumentException
      * @throws ObjectPropertyException
      * @throws SystemException
      */
-    public static function getElementList($IBlockID, string $sectionID = '', ?array $order = []): array
+    public static function getElementList($IBlockID, string $sectionID = '', ?array $order = [], $limit = null): array
     {
         $query = new Query(
             ElementTable::getEntity()
@@ -109,6 +111,9 @@ class Catalog
                 '=ROOT.ID' => $sectionID,
                 '==LINK.ADDITIONAL_PROPERTY_ID' => NULL,
             ]);
+        }
+        if($limit !== null){
+            $query->setLimit($limit);
         }
         $query->setSelect([
             'ID',
@@ -165,6 +170,39 @@ class Catalog
             $arItems[] = $arItem;
         }
         return $arItems;
+    }
+
+    /**
+     * Возвращает ID элементов ИНФОБЛОКА по ID раздела
+     * @param $IBlockID
+     * @param string $sectionID
+     * @return array
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
+     */
+    public static function getElementIDsBySectionID($IBlockID, string $sectionID): array
+    {
+        $query = new Query(
+            ElementTable::getEntity()
+        );
+        $query->setOrder([
+            'SORT' => 'ASC',
+        ]);
+        $query->setFilter([
+            'ACTIVE' => 'Y',
+            'IBLOCK_ID' => $IBlockID,
+            'IBLOCK_SECTION_ID' => $sectionID,
+        ]);
+        $query->setSelect([
+            'ID',
+        ]);
+        $res = $query->FetchAll();
+        $result = [];
+        foreach ($res as $item){
+            $result[] = $item['ID'];
+        }
+        return $result;
     }
 
     /**
@@ -356,6 +394,24 @@ class Catalog
     }
 
     /**
+     * Возвращает по одному товару из каждого раздела $sections
+     * @param $IBlockID
+     * @param array $sections
+     * @return array
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
+     */
+    public static function getOneElementIDBySections($IBlockID, array $sections = []): array
+    {
+        $result = [];
+        foreach ($sections as  $section) {
+            $result[$section] = current(self::getElementList($IBlockID, $section, [], 1))['ID'];
+        }
+        return $result;
+    }
+
+    /**
      * Получает информацию о разделе по ID
      * @param $sectionID
      * @return array|false
@@ -392,6 +448,54 @@ class Catalog
                 'NAME',
                 'IBLOCK_SECTION_ID',
             ],
+        ]);
+        return current($rsSection->fetchAll());
+    }
+
+    /**
+     * Получает информацию о разделе по названию
+     * @param $IBlockID
+     * @param $sectionName
+     * @return array|false
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
+     */
+    public static function getSectionByName($IBlockID, $sectionName)
+    {
+        $rsSection = SectionTable::getList([
+            'filter' => [
+                'IBLOCK_ID' => $IBlockID,
+                'NAME' => $sectionName,
+                'ACTIVE' => 'Y',
+                'GLOBAL_ACTIVE' => 'Y',
+            ],
+            'limit' => 1,
+            'select' => [
+                'ID'
+            ],
+        ]);
+        return current($rsSection->fetchAll())['ID'];
+    }
+
+    /**
+     * Получает пользовательские поля раздела ИНФОБЛОКА
+     * @param $IBlockID
+     * @param $sectionId
+     * @return false|mixed
+     */
+    public static function getSectionProps($IBlockID, $sectionId)
+    {
+        $entity = Section::compileEntityByIblock($IBlockID);
+        $rsSection = $entity::getList([
+            'filter' => [
+                'IBLOCK_ID' => $IBlockID,
+                'ID' => $sectionId,
+                'ACTIVE' => 'Y',
+                'GLOBAL_ACTIVE' => 'Y',
+            ],
+            'limit' => 1,
+            'select' => ['UF_*'],
         ]);
         return current($rsSection->fetchAll());
     }
