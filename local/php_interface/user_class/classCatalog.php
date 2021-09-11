@@ -76,7 +76,7 @@ class Catalog
             ]
         );
         $result = $query->exec();
-        return $result->fetch();
+        return $result->fetchAll();
     }
 
     /**

@@ -539,7 +539,7 @@ $APPLICATION->IncludeComponent(
 
 <?php
 try {
-    $props = Catalog::getElementProps($arParams['IBLOCK_ID'], 'SEO');
+    $props = current(Catalog::getElementProps($arParams['IBLOCK_ID'], 'SEO'));
     $seo = unserialize($props['PROPERTY_VALUE']);
 } catch (Throwable $e) {
     Debug::dumpToFile($e->getMessage());

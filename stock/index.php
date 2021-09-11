@@ -117,7 +117,7 @@ $APPLICATION->SetTitle("Акции и скидки");
             27 => "",
         ],
         "DETAIL_PROPERTY_CODE" => [
-            0 => "",
+            0 => "PRODUCTS",
             1 => "",
         ],
         "DETAIL_DISPLAY_TOP_PAGER" => "N",
