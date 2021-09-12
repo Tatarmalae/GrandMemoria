@@ -45,7 +45,7 @@ $arAddress = [];
                     </div>
                 </div>
             </div>
-            <?php foreach ($arResult["ITEMS"] as $arItem): ?>
+            <?php foreach ($arResult["ITEMS"] as $keyContacts => $arItem): ?>
                 <?php
                 $this->AddEditAction($arItem['ID'], $arItem['EDIT_LINK'], CIBlock::GetArrayByID($arItem["IBLOCK_ID"], "ELEMENT_EDIT"));
                 $this->AddDeleteAction($arItem['ID'], $arItem['DELETE_LINK'], CIBlock::GetArrayByID($arItem["IBLOCK_ID"], "ELEMENT_DELETE"), ["CONFIRM" => GetMessage('CT_BNL_ELEMENT_DELETE_CONFIRM')]);
@@ -80,8 +80,8 @@ $arAddress = [];
                                         </svg>
                                         <span class="contacts-address__label"><?= $arItem['PROPERTIES']['PARKING']['NAME'] ?>:</span>
                                         <span class="contacts-address__desc">
-                                        <?= $arItem['PROPERTIES']['PARKING']['VALUE'] ?>
-                                    </span>
+                                            <?= $arItem['PROPERTIES']['PARKING']['VALUE'] ?>
+                                        </span>
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -89,7 +89,7 @@ $arAddress = [];
                                 <div class="contacts-photo">
                                     <?php foreach ($arItem['PROPERTIES']['PHOTO']['VALUE'] as $key => $photo): ?>
                                         <div class="contacts-photo__item">
-                                            <a class="contacts-photo__item-img img img-1by1" href="javascript:void(0);" data-fancybox="gallery" data-options="{&quot;src&quot;:&quot;<?= CFile::GetPath($photo) ?>&quot;}">
+                                            <a class="contacts-photo__item-img img img-1by1" href="javascript:void(0);" data-fancybox="gallery<?= $keyContacts + 1 ?>" data-options="{&quot;src&quot;:&quot;<?= CFile::GetPath($photo) ?>&quot;}">
                                                 <div class="img__inner object-fit">
                                                     <img class="lazy" src="" data-src="<?= CFile::GetPath($photo) ?>" alt="<?= $arItem['PROPERTIES']['PHOTO']['DESCRIPTION'][$key] ?>">
                                                 </div>
