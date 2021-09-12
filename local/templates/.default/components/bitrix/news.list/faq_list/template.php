@@ -19,7 +19,7 @@ $this->setFrameMode(true);
                 <h2><?= $arParams['TITLE'] ?></h2>
             </div>
             <div class="more">
-                <a class="more__link" href="<?= current($arResult['ITEMS'])['LIST_PAGE_URL'] ?>">
+                <a class="more__link" href="<?= current($arResult['ITEMS'])['LIST_PAGE_URL'] ?>"<?php //TODO: фильтр по разделу из перехода ?>>
                     <span>Подробнее</span>
                     <svg class="icon__arrow-right" width="24" height="24">
                         <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
@@ -46,9 +46,9 @@ $this->setFrameMode(true);
                                 <svg class="icon__slider-next" width="24" height="24">
                                     <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#slider-next"></use>
                                 </svg>
-                                 <svg class="icon__close-modal" width="24" height="24">
-                                     <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
-                                 </svg>
+                                <svg class="icon__close-modal" width="24" height="24">
+                                    <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
+                                </svg>
                             </span>
                         </div>
                         <?php if (!empty($arItem['PREVIEW_TEXT']) || !empty($arItem['PROPERTIES']['LINKS']['VALUE'])): ?>

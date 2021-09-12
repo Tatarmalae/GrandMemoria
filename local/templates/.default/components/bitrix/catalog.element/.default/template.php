@@ -227,6 +227,7 @@ $this->EndViewTarget();
             </div>
         </div>
     </div>
+    <?php // TODO: блок доставки не изменяемый, а блок преимуществ для каждого родительского раздела редактируем ?>
     <div class="product-delivery">
         <div class="product-delivery__row">
             <div class="product-delivery__column">
@@ -275,38 +276,32 @@ $this->EndViewTarget();
                 </div>
             </div>
         <?php endif ?>
-        <?php //TODO: условие ?>
-        <div class="product-char__item">
-            <h4>Другие размеры:</h4>
-            <div class="product-char__list">
-                <div class="product-char__list-item">
-                    <span>Размеры (см), Цена (руб):</span>
-                    <span>100х50х8 – от 4 000 ₽</span>
-                </div>
-                <div class="product-char__list-item">
-                    <span>Размеры (см), Цена (руб):</span>
-                    <span>120х50х8 – от 5 200 ₽</span>
-                </div>
-                <div class="product-char__list-item">
-                    <span>Размеры (см), Цена (руб):</span>
-                    <span>160х50х8 – от 7 000 ₽</span>
+        <?php if (!empty($arResult['PROPERTIES']['OTHER_SIZE']['VALUE'])): ?>
+            <div class="product-char__item">
+                <h4><?= $arResult['PROPERTIES']['OTHER_SIZE']['NAME'] ?>:</h4>
+                <div class="product-char__list">
+                    <?php foreach ($arResult['PROPERTIES']['OTHER_SIZE']['VALUE'] as $size): ?>
+                        <div class="product-char__list-item">
+                            <span>Размеры (см), Цена (руб):</span>
+                            <span><?= $size ?></span>
+                        </div>
+                    <?php endforeach ?>
                 </div>
             </div>
-        </div>
-        <?php //TODO: условие ?>
-        <div class="product-char__item">
-            <h4>Дополнение:</h4>
-            <div class="product-char__list">
-                <div class="product-char__list-item">
-                    <span>Установка памятников:</span>
-                    <span>Есть</span>
-                </div>
-                <div class="product-char__list-item">
-                    <span>Скидки:</span>
-                    <span>Есть</span>
+        <?php endif ?>
+        <?php if (!empty($arResult['PROPERTIES']['ADDITION']['VALUE'])): ?>
+            <div class="product-char__item">
+                <h4><?= $arResult['PROPERTIES']['ADDITION']['NAME'] ?>:</h4>
+                <div class="product-char__list">
+                    <?php foreach ($arResult['PROPERTIES']['ADDITION']['VALUE'] as $addition): ?>
+                        <div class="product-char__list-item">
+                            <span><?= $addition ?>:</span>
+                            <span>Есть</span>
+                        </div>
+                    <?php endforeach ?>
                 </div>
             </div>
-        </div>
+        <?php endif ?>
     </div>
     <div class="product-share">
         <span class="share">

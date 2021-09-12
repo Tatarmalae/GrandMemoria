@@ -19,6 +19,7 @@ $this->setFrameMode(true);
                 <span>Все</span>
             </a>
             <?php foreach ($arResult['TAGS'] as $tag): ?>
+                <?//php \Dev\Utilities::DB($tag['PROPS']); ?>
                 <a class="tags-item" data-section="<?= $tag['ID'] ?>" href="javascript:void(0);">
                     <span><?= $tag['NAME'] ?></span>
                 </a>
@@ -31,7 +32,7 @@ $this->setFrameMode(true);
         <div class="more-link__inner">
             <h3>Перейти в каталог</h3>
             <div class="more">
-                <a class="more__link" href="<?php //TODO: куда переход и откуда ссылку брать ?>">
+                <a class="more__link" href="<?php //TODO: для каждого раздела ссылка задаётся вручную ?>">
                     <span>Памятники</span>
                     <svg class="icon__arrow-right" width="24" height="24">
                         <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
@@ -82,7 +83,7 @@ $this->setFrameMode(true);
                                                 <h4><?= $arItem['NAME'] ?></h4>
                                                 <?php if (!empty($arItem['PROPERTIES']['PRODUCT']['VALUE'])): ?>
                                                     <div class="more-btn">
-                                                        <a class="btn btn-blue big" href="<?= $arItem['PROPERTIES']['PRODUCT']['VALUE']//TODO: куда переход и откуда ссылку брать ?>">
+                                                        <a class="btn btn-blue big" href="<?= $arItem['PROPERTIES']['PRODUCT']['VALUE']  ?>">
                                                             <span class="btn__text">
                                                                 <span data-text="Перейти к товару">Перейти к товару</span>
                                                             </span>
