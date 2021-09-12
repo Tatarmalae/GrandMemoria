@@ -22,8 +22,8 @@ $this->setFrameMode(true);
             'height' => 270,
         ], BX_RESIZE_IMAGE_PROPORTIONAL_ALT, true, []);
         ?>
-        <a class="catalog-item item link-item" id="<?= $this->GetEditAreaId($arItem['ID']); ?>" href="<?= $arItem['DETAIL_PAGE_URL'] ?>">
-            <div class="catalog-item__img img">
+        <div class="catalog-item item link-item" id="<?= $this->GetEditAreaId($arItem['ID']); ?>">
+            <a class="catalog-item__img img" href="<?= $arItem['DETAIL_PAGE_URL'] ?>">
                 <div class="img__inner object-fit">
                     <img class="lazy" data-src="<?= $thumb['src'] ?>" alt="<?= $arItem['NAME'] ?>" src="">
                 </div>
@@ -39,12 +39,16 @@ $this->setFrameMode(true);
                         </span>
                     <?php endif ?>
                 </div>
-            </div>
+            </a>
             <div class="catalog-item__content">
                 <span class="label label_small label_fiery-rose">
                     В наличии
                 </span>
-                <h4><?= $arItem['NAME'] ?></h4>
+                <h4>
+                    <a href="<?= $arItem['DETAIL_PAGE_URL'] ?>">
+                        <?= $arItem['NAME'] ?>
+                    </a>
+                </h4>
                 <div class="price price_small">
                     <span class="price-now">от <?= number_format($arItem['PROPERTIES']['PRICE']['VALUE'], 0, ' ', ' ') ?> ₽</span>
                     <?php if (!empty($arItem['PROPERTIES']['OLD_PRICE']['VALUE'])): ?>
@@ -59,7 +63,7 @@ $this->setFrameMode(true);
                     </button>
                 </div>
             </div>
-        </a>
+        </div>
     <?php endforeach; ?>
 </div>
 <?php if ($arParams["DISPLAY_BOTTOM_PAGER"]): ?>
