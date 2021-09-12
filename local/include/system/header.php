@@ -42,9 +42,11 @@ use Dev\Basket;
                         <svg class="icon__phone" width="20" height="20">
                             <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#phone"></use>
                         </svg>
-                        <a href="tel:+<?= preg_replace('~\D+~', '', Option::get("askaron.settings", "UF_PHONE")) ?>">
-                            <?= Option::get("askaron.settings", "UF_PHONE"); ?>
-                        </a>
+                        <span>
+                            <a href="tel:+<?= preg_replace('~\D+~', '', Option::get("askaron.settings", "UF_PHONE")) ?>">
+                                <?= Option::get("askaron.settings", "UF_PHONE"); ?>
+                            </a>
+                        </span>
                         <a href="#" data-toggle="modal" data-target="#modalCall">
                             <strong>Заказать звонок</strong>
                         </a>
