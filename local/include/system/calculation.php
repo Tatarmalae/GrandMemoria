@@ -8,7 +8,7 @@
                 <p>Мы с уважением относимся к памяти об усопшем и традициям религий, берем все на себя.</p>
                 <a class="logo-link" href="<?= SITE_DIR ?>">
                     <div class="logo">
-                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>">
+                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo-short.svg" alt="<?= SITE_SERVER_NAME ?>">
                     </div>
                 </a>
             </div>
