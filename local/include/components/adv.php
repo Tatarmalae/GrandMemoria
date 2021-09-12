@@ -19,7 +19,7 @@ try {
 }
 if (count($arResult['ITEMS']) == 0) return;
 ?>
-<div class="adv">
+<div class="adv mob-0">
     <div class="content">
         <div class="adv-box bg_pippin">
             <div class="heading">
