@@ -59,7 +59,7 @@ if (count($arResult["ITEMS"]) == 0) return;
                                         <?php endif ?>
                                     </div>
                                     <div class="reviews-item__content">
-                                        <p>
+                                        <p class="dotdotdot-text">
                                             <?= $arItem['PREVIEW_TEXT'] ?>
                                         </p>
                                     </div>
