@@ -20,14 +20,14 @@
                                 <div class="stock-item item">
                                     <div class="<?= !empty($arItem['PREVIEW_PICTURE']['ID']) ? 'box' : 'stock-info' ?>">
                                         <?php if (!empty($arItem['PREVIEW_PICTURE']['ID'])): ?>
-                                            <div class="stock-item__img img">
+                                            <a class="stock-item__img img" href="<?= $arItem["DETAIL_PAGE_URL"] ?>">
                                                 <div class="img__inner object-fit">
                                                     <picture>
                                                         <source media="(max-width:1279px)" data-srcset="<?= CFile::GetPath($arItem['PREVIEW_PICTURE']['ID']) ?>" srcset="">
                                                         <img class="lazy" data-src="<?= CFile::GetPath($arItem['PREVIEW_PICTURE']['ID']) ?>" alt="<?= $arItem['NAME'] ?>" src="">
                                                     </picture>
                                                 </div>
-                                            </div>
+                                            </a>
                                         <?php else: ?>
                                             <div class="stock-bg">
                                                 <picture>
@@ -43,7 +43,9 @@
                                                 </span>
                                             <?php endif ?>
                                             <h4>
-                                                <?= $arItem['NAME'] ?>
+                                                <a href="<?= $arItem["DETAIL_PAGE_URL"] ?>">
+                                                    <?= $arItem['NAME'] ?>
+                                                </a>
                                             </h4>
                                             <?php if (!empty($arItem['PREVIEW_TEXT'])): ?>
                                                 <?= $arItem['PREVIEW_TEXT'] ?>
