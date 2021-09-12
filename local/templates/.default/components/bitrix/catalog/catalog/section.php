@@ -13,12 +13,43 @@
 /** @var array $arCurSection */
 $this->setFrameMode(true);
 
+use Bitrix\Iblock\SectionPropertyTable;
 use Bitrix\Main\Diag\Debug;
 use Dev\Catalog;
 
 $section = '';
 try {
     $section = Catalog::getSectionByCode($arParams["IBLOCK_ID"], $arResult["VARIABLES"]["SECTION_CODE"]);
+} catch (Throwable $e) {
+    Debug::dumpToFile($e->getMessage());
+}
+
+$propertyList = SectionPropertyTable::getList([
+    "select" => [
+        "PROPERTY_ID",
+    ],
+    "filter" => [
+        "=IBLOCK_ID" => $arParams["IBLOCK_ID"],
+        "=SMART_FILTER" => "Y",
+    ],
+]);
+$propIDs = [];
+while ($res = $propertyList->fetch()) {
+    $propIDs[] = $res['PROPERTY_ID'];
+}
+
+$properties = [];
+try {
+    $elements = Catalog::getElementList($arParams["IBLOCK_ID"], $section["ID"]);
+    foreach ($elements as $element) {
+        foreach ($element['PROPERTIES'] as $property) {
+            if (!in_array($property['ID'], $propIDs) || empty($property['VALUE'])) continue;
+            $properties[$property['ID']]['NAME'] = $property['NAME'];
+            $properties[$property['ID']]['CODE'] = $property['CODE'];
+            $properties[$property['ID']]['VALUES'][] = $property['VALUE_ENUM'] ?: $property['VALUE'];
+            $properties[$property['ID']]['LIST_TYPE'] = $property['LIST_TYPE'];
+        }
+    }
 } catch (Throwable $e) {
     Debug::dumpToFile($e->getMessage());
 }
@@ -32,7 +63,7 @@ $APPLICATION->IncludeComponent(
     [
         "IBLOCK_TYPE" => $arParams["IBLOCK_TYPE"],
         "IBLOCK_ID" => $arParams["IBLOCK_ID"],
-        "ID" => $section['IBLOCK_SECTION_ID']?:$section["ID"],
+        "ID" => $section['IBLOCK_SECTION_ID'] ?: $section["ID"],
         "CACHE_TYPE" => $arParams["CACHE_TYPE"],
         "CACHE_TIME" => $arParams["CACHE_TIME"],
         "CACHE_GROUPS" => $arParams["CACHE_GROUPS"],
@@ -51,7 +82,6 @@ $APPLICATION->IncludeComponent(
 <?php $this->EndViewTarget() ?>
 
 <div class="filter">
-
     <?php
     $APPLICATION->IncludeComponent(
         "bitrix:catalog.section.list",
@@ -77,7 +107,6 @@ $APPLICATION->IncludeComponent(
     );
     ?>
 
-    <?php //TODO: фильтр ?>
     <div class="filter-item filter-item_center filter-fixed">
         <div class="filter-fixed__top">
             <div class="filter-fixed__back">
@@ -93,268 +122,87 @@ $APPLICATION->IncludeComponent(
             </div>
         </div>
         <div class="filter-fixed__clear">
+            <?php // TODO: сбросить всё ?>
             <span>Сбросить все</span>
         </div>
         <div class="filter-fixed__inner">
             <div class="filter-row">
-                <div class="filter-column">
-                    <div class="filter-fixed__label">
-                        <span>Количество людей</span>
-                        <svg class="icon__arrow-right" width="32" height="32">
-                            <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
-                        </svg>
-                    </div>
-                    <div class="dropdown">
-                        <input type="hidden" value="Количество людей">
-                        <div class="dropdown-label" id="filterDrop1" data-toggle="dropdown" aria-expanded="false">
-                            <svg class="icon__arrow-drop" width="32" height="32">
-                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-drop"></use>
+                <?php foreach ($properties as $prop): ?>
+                    <?php $prop['VALUES'] = array_unique($prop['VALUES']) ?>
+                    <?php if ($prop['CODE'] === 'PRICE') continue ?>
+                    <div class="filter-column">
+                        <div class="filter-fixed__label">
+                            <span><?= $prop['NAME'] ?></span>
+                            <svg class="icon__arrow-right" width="32" height="32">
+                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
                             </svg>
-                            <div class="dropdown-value" data-value="Количество людей">Количество людей</div>
                         </div>
-                        <ul class="dropdown-menu" aria-labelledby="filterDrop1">
-                            <li data-value="Количество людей 1">Количество людей 1</li>
-                            <li data-value="Количество людей 2">Количество людей 2</li>
-                            <li data-value="Количество людей 3">Количество людей 3</li>
-                        </ul>
-                    </div>
-                    <div class="filter-fixed__items">
-                        <div class="filter-fixed__items-inner">
-                            <div class="checkbox">
-                                <input type="checkbox" name="checkbox" id="filterFixed1_1">
-                                <label for="filterFixed1_1">
-                                    <span class="checkbox__box"></span>
-                                    Количество людей 1</label>
+                        <div class="dropdown">
+                            <input type="hidden" value="<?= $prop['NAME'] ?>">
+                            <div class="dropdown-label" id="filterDrop1" data-toggle="dropdown" aria-expanded="false">
+                                <svg class="icon__arrow-drop" width="32" height="32">
+                                    <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-drop"></use>
+                                </svg>
+                                <div class="dropdown-value" data-value="<?= $prop['NAME'] ?>"><?= $prop['NAME'] ?></div>
                             </div>
-                            <div class="checkbox">
-                                <input type="checkbox" name="checkbox" id="filterFixed1_2">
-                                <label for="filterFixed1_2">
-                                    <span class="checkbox__box"></span>
-                                    Количество людей 2</label>
-                            </div>
-                            <div class="checkbox">
-                                <input type="checkbox" name="checkbox" id="filterFixed1_3">
-                                <label for="filterFixed1_3">
-                                    <span class="checkbox__box"></span>
-                                    Количество людей 3</label>
-                            </div>
+                            <ul class="dropdown-menu" aria-labelledby="filterDrop<?= $prop['CODE'] ?>">
+                                <?php foreach ($prop['VALUES'] as $value): ?>
+                                    <li data-value="<?= $value ?>"><?= $value ?></li>
+                                <?php endforeach ?>
+                            </ul>
                         </div>
-                    </div>
-                </div>
-                <div class="filter-column">
-                    <div class="filter-fixed__label">
-                        <span>Цвета</span>
-                        <svg class="icon__arrow-right" width="32" height="32">
-                            <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
-                        </svg>
-                    </div>
-                    <div class="dropdown">
-                        <input type="hidden" value="Цвета">
-                        <div class="dropdown-label" id="filterDrop2" data-toggle="dropdown" aria-expanded="false">
-                            <svg class="icon__arrow-drop" width="32" height="32">
-                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-drop"></use>
-                            </svg>
-                            <div class="dropdown-value" data-value="Цвета">Цвета</div>
-                        </div>
-                        <ul class="dropdown-menu" aria-labelledby="filterDrop2">
-                            <li data-value="Цвета 1">Цвета 1</li>
-                            <li data-value="Цвета 2">Цвета 2</li>
-                            <li data-value="Цвета 3">Цвета 3</li>
-                        </ul>
-                    </div>
-                    <div class="filter-fixed__items">
-                        <div class="filter-fixed__items-inner">
-                            <div class="checkbox">
-                                <input type="checkbox" name="checkbox" id="filterFixed2_1">
-                                <label for="filterFixed2_1">
-                                    <span class="checkbox__box"></span>
-                                    Цвета 1</label>
-                            </div>
-                            <div class="checkbox">
-                                <input type="checkbox" name="checkbox" id="filterFixed2_2">
-                                <label for="filterFixed2_2">
-                                    <span class="checkbox__box"></span>
-                                    Цвета 2</label>
-                            </div>
-                            <div class="checkbox">
-                                <input type="checkbox" name="checkbox" id="filterFixed2_3">
-                                <label for="filterFixed2_3">
-                                    <span class="checkbox__box"></span>
-                                    Цвета 3</label>
+                        <div class="filter-fixed__items">
+                            <div class="filter-fixed__items-inner">
+                                <?php foreach ($prop['VALUES'] as $value): ?>
+                                    <div class="checkbox">
+                                        <input type="checkbox" name="checkbox" id="<?= $prop['CODE'] ?>">
+                                        <label for="<?= $prop['CODE'] ?>">
+                                            <span class="checkbox__box"></span>
+                                            <?= $value ?>
+                                        </label>
+                                    </div>
+                                <?php endforeach ?>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="filter-column">
-                    <div class="filter-fixed__label">
-                        <span>Принадлежность</span>
-                        <svg class="icon__arrow-right" width="32" height="32">
-                            <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
-                        </svg>
-                    </div>
-                    <div class="dropdown">
-                        <input type="hidden" value="Принадлежность">
-                        <div class="dropdown-label" id="filterDrop3" data-toggle="dropdown" aria-expanded="false">
-                            <svg class="icon__arrow-drop" width="32" height="32">
-                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-drop"></use>
-                            </svg>
-                            <div class="dropdown-value" data-value="Принадлежность">Принадлежность</div>
-                        </div>
-                        <ul class="dropdown-menu" aria-labelledby="filterDrop3">
-                            <li data-value="Принадлежность 1">Принадлежность 1</li>
-                            <li data-value="Принадлежность 2">Принадлежность 2</li>
-                            <li data-value="Принадлежность 3">Принадлежность 3</li>
-                        </ul>
-                    </div>
-                    <div class="filter-fixed__items">
-                        <div class="filter-fixed__items-inner">
-                            <div class="checkbox">
-                                <input type="checkbox" name="checkbox" id="filterFixed3_1">
-                                <label for="filterFixed3_1">
-                                    <span class="checkbox__box"></span>
-                                    Принадлежность 1</label>
-                            </div>
-                            <div class="checkbox">
-                                <input type="checkbox" name="checkbox" id="filterFixed3_2">
-                                <label for="filterFixed3_2">
-                                    <span class="checkbox__box"></span>
-                                    Принадлежность 2</label>
-                            </div>
-                            <div class="checkbox">
-                                <input type="checkbox" name="checkbox" id="filterFixed3_3">
-                                <label for="filterFixed3_3">
-                                    <span class="checkbox__box"></span>
-                                    Принадлежность 3</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="filter-column">
-                    <div class="filter-fixed__label">
-                        <span>Ориентация</span>
-                        <svg class="icon__arrow-right" width="32" height="32">
-                            <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
-                        </svg>
-                    </div>
-                    <div class="dropdown">
-                        <input type="hidden" value="Ориентация">
-                        <div class="dropdown-label" id="filterDrop4" data-toggle="dropdown" aria-expanded="false">
-                            <svg class="icon__arrow-drop" width="32" height="32">
-                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-drop"></use>
-                            </svg>
-                            <div class="dropdown-value" data-value="Ориентация">Ориентация</div>
-                        </div>
-                        <ul class="dropdown-menu" aria-labelledby="filterDrop4">
-                            <li data-value="Ориентация 1">Ориентация 1</li>
-                            <li data-value="Ориентация 2">Ориентация 2</li>
-                            <li data-value="Ориентация 3">Ориентация 3</li>
-                        </ul>
-                    </div>
-                    <div class="filter-fixed__items">
-                        <div class="filter-fixed__items-inner">
-                            <div class="checkbox">
-                                <input type="checkbox" name="checkbox" id="filterFixed4_1">
-                                <label for="filterFixed4_1">
-                                    <span class="checkbox__box"></span>
-                                    Ориентация 1</label>
-                            </div>
-                            <div class="checkbox">
-                                <input type="checkbox" name="checkbox" id="filterFixed4_2">
-                                <label for="filterFixed4_2">
-                                    <span class="checkbox__box"></span>
-                                    Ориентация 2</label>
-                            </div>
-                            <div class="checkbox">
-                                <input type="checkbox" name="checkbox" id="filterFixed4_3">
-                                <label for="filterFixed4_3">
-                                    <span class="checkbox__box"></span>
-                                    Ориентация 3</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="filter-column">
-                    <div class="filter-fixed__label">
-                        <span>Форма</span>
-                        <svg class="icon__arrow-right" width="32" height="32">
-                            <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
-                        </svg>
-                    </div>
-                    <div class="dropdown">
-                        <input type="hidden" value="Форма">
-                        <div class="dropdown-label" id="filterDrop5" data-toggle="dropdown" aria-expanded="false">
-                            <svg class="icon__arrow-drop" width="32" height="32">
-                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-drop"></use>
-                            </svg>
-                            <div class="dropdown-value" data-value="Форма">Форма</div>
-                        </div>
-                        <ul class="dropdown-menu" aria-labelledby="filterDrop5">
-                            <li data-value="Форма 1">Форма 1</li>
-                            <li data-value="Форма 2">Форма 2</li>
-                            <li data-value="Форма 3">Форма 3</li>
-                        </ul>
-                    </div>
-                    <div class="filter-fixed__items">
-                        <div class="filter-fixed__items-inner">
-                            <div class="checkbox">
-                                <input type="checkbox" name="checkbox" id="filterFixed5_1">
-                                <label for="filterFixed5_1">
-                                    <span class="checkbox__box"></span>
-                                    Форма 1</label>
-                            </div>
-                            <div class="checkbox">
-                                <input type="checkbox" name="checkbox" id="filterFixed5_2">
-                                <label for="filterFixed5_2">
-                                    <span class="checkbox__box"></span>
-                                    Форма 2</label>
-                            </div>
-                            <div class="checkbox">
-                                <input type="checkbox" name="checkbox" id="filterFixed5_3">
-                                <label for="filterFixed5_3">
-                                    <span class="checkbox__box"></span>
-                                    Форма 3</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="filter-column">
-                    <div class="filter-fixed__label">
-                        <span>Цена</span>
-                        <svg class="icon__arrow-right" width="32" height="32">
-                            <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
-                        </svg>
-                    </div>
-                    <div class="filter-fixed__items filter-fixed__items_static">
-                        <div class="filter-fixed__items-inner">
-                            <div class="filter-interval">
-                                <div class="interval">
-                                    <div id="slider" data-type="range" data-size="small"></div>
-                                </div>
-                                <div class="filter-interval__item">
-                                    <span class="filter-interval__label">От</span>
-                                    <input id="input-with-keypress-0" value="0">
-                                </div>
-                                <div class="filter-interval__item">
-                                    <span class="filter-interval__label">До</span>
-                                    <input id="input-with-keypress-1" value="0">
+                <?php endforeach ?>
+                <?php foreach ($properties as $prop): ?>
+                    <?php if ($prop['CODE'] !== 'PRICE') continue ?>
+                    <div class="filter-column">
+                        <div class="filter-fixed__items filter-fixed__items_static">
+                            <div class="filter-fixed__items-inner">
+                                <div class="filter-interval">
+                                    <div class="interval">
+                                        <div id="slider" data-type="range" data-size="small"></div>
+                                    </div>
+                                    <div class="filter-interval__item">
+                                        <span class="filter-interval__label">От</span>
+                                        <input id="input-with-keypress-0" value="0">
+                                    </div>
+                                    <div class="filter-interval__item">
+                                        <span class="filter-interval__label">До</span>
+                                        <input id="input-with-keypress-1" value="0">
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                <?php endforeach ?>
                 <div class="filter-column filter-column_check">
                     <div class="checkbox-line">
                         <div class="checkbox">
                             <input type="checkbox" name="checkbox" id="filterCheck1">
                             <label for="filterCheck1">
                                 <span class="checkbox__box"></span>
-                                Новинки</label>
+                                Новинки<?php // TODO: Новинки ?>
+                            </label>
                         </div>
                         <div class="checkbox">
                             <input type="checkbox" name="checkbox" id="filterCheck2">
                             <label for="filterCheck2">
                                 <span class="checkbox__box"></span>
-                                Акции и скидки</label>
+                                Акции и скидки<?php // TODO: Акции и скидки ?>
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -363,7 +211,7 @@ $APPLICATION->IncludeComponent(
         <div class="filter-fixed__btn">
             <button class="btn btn-blue small btn-block" type="button">
                 <span class="btn__text">
-                    <span data-text="Посмотреть 748 товаров">Посмотреть 748 товаров</span>
+                    <span data-text="Посмотреть 748 товаров">Посмотреть 748 товаров</span><?php // TODO: кол-во ?>
                 </span>
             </button>
         </div>
@@ -379,16 +227,16 @@ $APPLICATION->IncludeComponent(
                 </div>
             </div>
             <div class="filter-column filter-column_count">
-                <div class="filter-count">748 товара</div>
+                <div class="filter-count">748 товара</div><?php // TODO: кол-во ?>
             </div>
             <div class="filter-column">
                 <div class="dropdown">
+                    <?php // TODO: сортировка ?>
                     <input type="hidden" value="По популярности">
                     <div class="dropdown-label" id="filterDrop6" data-toggle="dropdown" aria-expanded="false">
                         <svg class="icon__arrow-drop" width="32" height="32">
                             <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-drop"></use>
                         </svg>
-
                         <div class="dropdown-value" data-value="По популярности">По популярности</div>
                     </div>
                     <ul class="dropdown-menu" aria-labelledby="filterDrop6">
