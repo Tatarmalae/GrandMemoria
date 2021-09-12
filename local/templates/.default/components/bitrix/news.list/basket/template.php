@@ -31,7 +31,7 @@ $installment = true;
                     <div class="basket-card box">
                         <div class="basket-card__wrap">
                             <div class="basket-card__left">
-                                <div class="basket-card__img img">
+                                <a class="basket-card__img img" href="<?= $item['DETAIL_PAGE_URL'] ?>">
                                     <div class="img__inner object-fit">
                                         <img class="lazy" data-src="<?= $item['PREVIEW_PICTURE']['SRC'] ?>" alt="<?= $item['NAME'] ?>">
                                     </div>
@@ -47,11 +47,13 @@ $installment = true;
                                             </span>
                                         <?php endif ?>
                                     </div>
-                                </div>
+                                </a>
                             </div>
                             <div class="basket-card__right">
                                 <div class="basket-card__column">
-                                    <h5><?= $item['NAME'] ?></h5>
+                                    <h5>
+                                        <a href="<?= $item['DETAIL_PAGE_URL'] ?>"><?= $item['NAME'] ?></a>
+                                    </h5>
                                 </div>
                                 <div class="basket-card__column">
                                     <span class="basket-label">Кол–во:</span>
