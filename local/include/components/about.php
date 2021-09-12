@@ -19,7 +19,7 @@ try {
 }
 if (count($arResult['ITEMS']) == 0) return;
 ?>
-<div class="adv-box bg_pippin">
+<div class="adv-box bg_pippin mob-0">
     <div class="adv-info items">
         <div class="adv-info__column item">
             <div class="adv-info__left">
@@ -28,14 +28,6 @@ if (count($arResult['ITEMS']) == 0) return;
                         <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
                     </div>
                 </a>
-                <div class="more">
-                    <a class="more__link" href="/info/about/">
-                        <span>Подробнее</span>
-                        <svg class="icon__arrow-right" width="24" height="24">
-                            <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
-                        </svg>
-                    </a>
-                </div>
             </div>
         </div>
         <div class="adv-info__column item">
@@ -43,6 +35,14 @@ if (count($arResult['ITEMS']) == 0) return;
             <p>
                 <?= $arResult['IBLOCK']['DESCRIPTION'] ?>
             </p>
+            <div class="more">
+                <a class="more__link" href="/info/about/">
+                    <span>Подробнее</span>
+                    <svg class="icon__arrow-right" width="24" height="24">
+                        <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
+                    </svg>
+                </a>
+            </div>
             <div class="adv-counts items">
                 <?php foreach ($arResult['ITEMS'] as $arItem): ?>
                     <?php if (!$arItem['PROPERTIES']['SHOW_INDEX']['VALUE']) continue ?>
