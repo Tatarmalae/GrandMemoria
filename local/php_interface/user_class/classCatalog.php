@@ -84,13 +84,14 @@ class Catalog
      * @param $IBlockID
      * @param string $sectionID
      * @param array|null $order
-     * @param $limit
+     * @param null $limit
+     * @param array $filter
      * @return array
      * @throws ArgumentException
      * @throws ObjectPropertyException
      * @throws SystemException
      */
-    public static function getElementList($IBlockID, string $sectionID = '', ?array $order = [], $limit = null): array
+    public static function getElementList($IBlockID, string $sectionID = '', ?array $order = [], $limit = null, array $filter = []): array
     {
         $query = new Query(
             ElementTable::getEntity()
@@ -101,16 +102,16 @@ class Catalog
         if ($order) {
             $query->setOrder($order);
         }
-        $query->setFilter([
+        $query->setFilter(array_merge([
             'ACTIVE' => 'Y',
             '=IBLOCK_ID' => $IBlockID,
-        ]);
+        ], $filter));
         if (!empty($sectionID)) {
-            $query->setFilter([
+            $query->setFilter(array_merge([
                 '=IBLOCK_ID' => $IBlockID,
                 '=ROOT.ID' => $sectionID,
                 '==LINK.ADDITIONAL_PROPERTY_ID' => NULL,
-            ]);
+            ], $filter));
         }
         if($limit !== null){
             $query->setLimit($limit);
@@ -199,7 +200,7 @@ class Catalog
         ]);
         $res = $query->FetchAll();
         $result = [];
-        foreach ($res as $item){
+        foreach ($res as $item) {
             $result[] = $item['ID'];
         }
         return $result;
@@ -405,7 +406,7 @@ class Catalog
     public static function getOneElementIDBySections($IBlockID, array $sections = []): array
     {
         $result = [];
-        foreach ($sections as  $section) {
+        foreach ($sections as $section) {
             $result[$section] = current(self::getElementList($IBlockID, $section, [], 1))['ID'];
         }
         return $result;
@@ -472,7 +473,7 @@ class Catalog
             ],
             'limit' => 1,
             'select' => [
-                'ID'
+                'ID',
             ],
         ]);
         return current($rsSection->fetchAll())['ID'];
