@@ -2,7 +2,34 @@ $(document).ready(function () {
   addBasket();
   delBasket();
   updBasket();
+  catalogFilter();
 });
+
+//Ajax-фильтрация в каталоге
+function catalogFilter() {
+  let body = $('body');
+  body.on('click', '.dropdown-menu li', function (event) {
+    event.preventDefault();
+    let elem = $(this);
+    let code = elem.data('code');
+    let prop = elem.closest('.dropdown').find('[type=hidden]').val();
+    if(prop === 'Ориентация' || prop === 'Принадлежность'){
+      prop = '';
+    }
+    $.ajax({
+      type: "POST",
+      url: window.location.href,
+      data: {
+        "code": code,
+        "prop": prop
+      },
+      success: function (data) {
+        let content = $(data).filter('.catalog-items');
+        $('.catalog-items').replaceWith(content);
+      }
+    });
+  });
+}
 
 //Ajax-добавление в корзину
 function addBasket() {
