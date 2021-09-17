@@ -11,18 +11,20 @@ function catalogFilter() {
   body.on('click', '.dropdown-menu li', function (event) {
     event.preventDefault();
     let elem = $(this);
-    let code = elem.data('code');
-    let prop = elem.closest('.dropdown').find('[type=hidden]').val();
-    if(prop === 'Ориентация' || prop === 'Принадлежность'){
-      prop = '';
-    }
+    let inputs = elem.closest('.filter-row').find('.filter-column');
+
+    let props = {};
+    inputs.each(function (index, element){
+      let code = $(element).find('[type=hidden]').data('code');
+      let prop = $(element).find('[type=hidden]').val();
+      props[code] = prop;
+    });
+    console.log(props);
+
     $.ajax({
       type: "POST",
       url: window.location.href,
-      data: {
-        "code": code,
-        "prop": prop
-      },
+      data: props,
       success: function (data) {
         let content = $(data).filter('.catalog-items');
         $('.catalog-items').replaceWith(content);

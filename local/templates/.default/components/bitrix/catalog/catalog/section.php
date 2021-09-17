@@ -142,7 +142,7 @@ $APPLICATION->IncludeComponent(
                             </svg>
                         </div>
                         <div class="dropdown">
-                            <input type="hidden" value="<?= $prop['NAME'] ?>">
+                            <input type="hidden" data-code="<?= $prop['CODE'] ?>" value="<?= $prop['NAME'] ?>">
                             <div class="dropdown-label" id="filterDrop_<?= $prop['CODE'] ?>" data-toggle="dropdown" aria-expanded="false">
                                 <svg class="icon__arrow-drop" width="32" height="32">
                                     <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-drop"></use>
@@ -257,9 +257,12 @@ $APPLICATION->IncludeComponent(
 <?php
 if ($request->isAjaxRequest()) {
     global $arrFilter;
-    $arrFilter = [
-        'PROPERTY_' . $request->get('code') . '_VALUE' => $request->get('prop'),
-    ];
+    $arrFilter = [];
+    foreach ($request->getPostList() as $key => $item) {
+        $arrFilter['PROPERTY_' . $key . '_VALUE'] = array_search($item, array_column($properties, 'NAME')) ? '' : $item;
+
+    }
+    \Dev\Utilities::DB($arrFilter);
 }
 
 $APPLICATION->IncludeComponent(
