@@ -16,10 +16,8 @@ function catalogFilter() {
     let props = {};
     inputs.each(function (index, element){
       let code = $(element).find('[type=hidden]').data('code');
-      let prop = $(element).find('[type=hidden]').val();
-      props[code] = prop;
+      props[code] = $(element).find('[type=hidden]').val();
     });
-    console.log(props);
 
     $.ajax({
       type: "POST",
