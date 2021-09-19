@@ -3,7 +3,7 @@
 <?php if (!empty($arResult)): ?>
     <?php $previousLevel = 0; ?>
     <?php foreach ($arResult as $arItem): ?>
-        <?= ($previousLevel && $arItem["DEPTH_LEVEL"] < $previousLevel) ? str_repeat("</ul></div><span class='footer__sublist-label'>+ Еще</span></div>", ($previousLevel - $arItem["DEPTH_LEVEL"])) : ''; ?>
+        <?= ($previousLevel && $arItem["DEPTH_LEVEL"] < $previousLevel) ? str_repeat("</ul><span class='footer__sublist-label'>+ Еще</span></div></div>", ($previousLevel - $arItem["DEPTH_LEVEL"])) : ''; ?>
         <?php if ($arItem["IS_PARENT"]): ?>
             <?php if ($arItem["DEPTH_LEVEL"] == 1): ?>
                 <div class="footer__column">
@@ -37,5 +37,5 @@
         <?php endif ?>
         <?php $previousLevel = $arItem["DEPTH_LEVEL"];?>
     <?php endforeach ?>
-    <?= ($previousLevel > 1) ? str_repeat("</li>", ($previousLevel - 1)) : '' ?>
+    <?= ($previousLevel > 1) ? str_repeat("</li></div></div>", ($previousLevel - 1)) : '' ?>
 <?php endif ?>
