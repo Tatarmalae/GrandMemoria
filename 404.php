@@ -6,7 +6,7 @@ include_once($_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/main/include/urlrewrit
 CHTTP::SetStatus("404 Not Found");
 @define("ERROR_404", "Y");
 @define("404", true);
-require($_SERVER["DOCUMENT_ROOT"] . "/local/templates/index/header.php");
+require($_SERVER["DOCUMENT_ROOT"] . "/local/templates/404/header.php");
 $APPLICATION->SetTitle("Ошибка 404");
 ?>
     <section class="not-found">
@@ -40,5 +40,5 @@ $APPLICATION->SetTitle("Ошибка 404");
             </div>
         </div>
     </section>
-<?php require($_SERVER["DOCUMENT_ROOT"] . "/local/templates/index/footer.php"); ?>
+<?php require($_SERVER["DOCUMENT_ROOT"] . "/local/templates/404/footer.php"); ?>
 <?php die(); ?>
