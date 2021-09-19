@@ -214,8 +214,10 @@ $APPLICATION->IncludeComponent(
         </div>
         <div class="filter-fixed__btn">
             <button class="btn btn-blue small btn-block" type="button">
-                <span class="btn__text">
-                    <span data-text="Посмотреть 748 товаров">Посмотреть 748 товаров</span><?php // TODO: кол-во ?>
+                <span class="btn__text ajax-count">
+                    <span data-text="Посмотреть <?php $APPLICATION->ShowViewContent('catalog__count') ?>">
+                        Посмотреть <?php $APPLICATION->ShowViewContent('catalog__count') ?>
+                    </span>
                 </span>
             </button>
         </div>
@@ -231,7 +233,9 @@ $APPLICATION->IncludeComponent(
                 </div>
             </div>
             <div class="filter-column filter-column_count">
-                <div class="filter-count">748 товара</div><?php // TODO: кол-во ?>
+                <div class="filter-count">
+                    <?php $APPLICATION->ShowViewContent('catalog__count') ?>
+                </div>
             </div>
             <div class="filter-column">
                 <div class="dropdown">
