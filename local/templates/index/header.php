@@ -352,7 +352,7 @@ use Bitrix\Main\Config\Option;
                     "MODIFIED_BY",
                     "",
                 ],
-                "SECTION_ID" => $_REQUEST["SECTION_ID"],
+                "SECTION_ID" => "",
                 "SECTION_URL" => "",
                 "SECTION_USER_FIELDS" => [
                     "",
@@ -361,6 +361,7 @@ use Bitrix\Main\Config\Option;
                 "SHOW_PARENT_NAME" => "Y",
                 "TOP_DEPTH" => "2",
                 "VIEW_MODE" => "LINE",
+                "COUNT" => "8",
             ]
         ); ?>
 
