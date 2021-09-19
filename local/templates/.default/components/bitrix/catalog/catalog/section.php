@@ -142,25 +142,25 @@ $APPLICATION->IncludeComponent(
                             </svg>
                         </div>
                         <div class="dropdown">
-                            <input type="hidden" data-code="<?= $prop['CODE'] ?>" value="<?= $prop['NAME'] ?>">
+                            <input type="hidden" data-code="PROPERTY_<?= $prop['CODE'] ?>_VALUE" value="<?= $prop['NAME'] ?>">
                             <div class="dropdown-label" id="filterDrop_<?= $prop['CODE'] ?>" data-toggle="dropdown" aria-expanded="false">
                                 <svg class="icon__arrow-drop" width="32" height="32">
                                     <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-drop"></use>
                                 </svg>
                                 <div class="dropdown-value" data-value="<?= $prop['NAME'] ?>"><?= $prop['NAME'] ?></div>
                             </div>
-                            <ul class="dropdown-menu" aria-labelledby="filterDrop_<?= $prop['CODE'] ?>">
+                            <ul class="dropdown-menu ajax__filter" aria-labelledby="filterDrop_<?= $prop['CODE'] ?>">
                                 <?php foreach ($prop['VALUES'] as $value): ?>
                                     <li data-code="<?= $prop['CODE'] ?>" data-value="<?= $value ?>"><?= $value ?></li>
                                 <?php endforeach ?>
                             </ul>
                         </div>
                         <div class="filter-fixed__items">
-                            <div class="filter-fixed__items-inner">
+                            <div class="filter-fixed__items-inner ajax_filter__mobile">
                                 <?php foreach ($prop['VALUES'] as $value): ?>
                                     <div class="checkbox">
-                                        <input type="checkbox" name="checkbox" id="<?= $prop['CODE'] ?>">
-                                        <label for="<?= $prop['CODE'] ?>">
+                                        <input type="checkbox" name="checkbox" id="PROPERTY_<?= $prop['CODE'] ?>_VALUE" value="<?= $value ?>">
+                                        <label for="PROPERTY_<?= $prop['CODE'] ?>_VALUE">
                                             <span class="checkbox__box"></span>
                                             <?= $value ?>
                                         </label>
@@ -181,11 +181,11 @@ $APPLICATION->IncludeComponent(
                                     </div>
                                     <div class="filter-interval__item">
                                         <span class="filter-interval__label">От</span>
-                                        <input id="input-with-keypress-0" value="0">
+                                        <input id="input-with-keypress-0" value="<?= min($prop['VALUES']); ?>">
                                     </div>
                                     <div class="filter-interval__item">
                                         <span class="filter-interval__label">До</span>
-                                        <input id="input-with-keypress-1" value="0">
+                                        <input id="input-with-keypress-1" value="<?= max($prop['VALUES']); ?>">
                                     </div>
                                 </div>
                             </div>
@@ -193,19 +193,19 @@ $APPLICATION->IncludeComponent(
                     </div>
                 <?php endforeach ?>
                 <div class="filter-column filter-column_check">
-                    <div class="checkbox-line">
+                    <div class="checkbox-line ajax__filter">
                         <div class="checkbox">
-                            <input type="checkbox" name="checkbox" id="filterCheck1">
-                            <label for="filterCheck1">
+                            <input type="checkbox" name="checkbox" id="PROPERTY_NEW">
+                            <label for="PROPERTY_NEW">
                                 <span class="checkbox__box"></span>
-                                Новинки<?php // TODO: Новинки ?>
+                                Новинки
                             </label>
                         </div>
                         <div class="checkbox">
-                            <input type="checkbox" name="checkbox" id="filterCheck2">
-                            <label for="filterCheck2">
+                            <input type="checkbox" name="checkbox" id="PROPERTY_STOCK">
+                            <label for="PROPERTY_STOCK">
                                 <span class="checkbox__box"></span>
-                                Акции и скидки<?php // TODO: Акции и скидки ?>
+                                Акции и скидки
                             </label>
                         </div>
                     </div>
@@ -263,10 +263,20 @@ if ($request->isAjaxRequest()) {
     global $arrFilter;
     $arrFilter = [];
     foreach ($request->getPostList() as $key => $item) {
-        $arrFilter['PROPERTY_' . $key . '_VALUE'] = array_search($item, array_column($properties, 'NAME')) ? '' : $item;
-
+        $arrFilter[$key] = array_search($item, array_column($properties, 'NAME')) ? '' : $item;
+        if ($key === 'PROPERTY_STOCK') {
+            $IDs = [];
+            try {
+                $actions = Catalog::getElementProps('14', 'PRODUCTS');
+                $IDs = array_column($actions, 'PROPERTY_VALUE');
+            } catch (Throwable $e) {
+                Debug::dumpToFile($e->getMessage());
+            }
+            $arrFilter['ID'] = $arrFilter['PROPERTY_STOCK'] ? $IDs : '';
+            unset($arrFilter['PROPERTY_STOCK']);
+        }
     }
-    \Dev\Utilities::DB($arrFilter);
+    //\Dev\Utilities::DB($arrFilter);
 }
 
 $APPLICATION->IncludeComponent(

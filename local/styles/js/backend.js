@@ -8,15 +8,26 @@ $(document).ready(function () {
 //Ajax-фильтрация в каталоге
 function catalogFilter() {
   let body = $('body');
-  body.on('click', '.dropdown-menu li', function (event) {
-    event.preventDefault();
+  body.on('click', '.ajax__filter li, .ajax__filter input[type=checkbox]', function () {
     let elem = $(this);
     let inputs = elem.closest('.filter-row').find('.filter-column');
+    if ($('.filter-column_btn').is(":visible")) {
+      inputs = elem.closest('.filter-row').find('.ajax_filter__mobile .checkbox input[type=checkbox]');
+    }
+    let checkboxes = elem.closest('.filter-row').find('.ajax__filter .checkbox input[type=checkbox]');
 
     let props = {};
-    inputs.each(function (index, element){
+    inputs.each(function (index, element) {
       let code = $(element).find('[type=hidden]').data('code');
       props[code] = $(element).find('[type=hidden]').val();
+      if ($('.filter-fixed').is(":visible")) {
+        code = $(element).attr('id');
+        props[code] = $(element).is(':checked') ? $(element).val() : '';
+      }
+    });
+    checkboxes.each(function (index, element) {
+      let code = $(element).attr('id');
+      props[code] = $(element).is(':checked') ? '1' : '';
     });
 
     $.ajax({
@@ -26,8 +37,38 @@ function catalogFilter() {
       success: function (data) {
         let content = $(data).filter('.catalog-items');
         $('.catalog-items').replaceWith(content);
+        $('.filter-count').replaceWith($(data).find('.filter-count'));
+        $('.ajax-count').replaceWith($(data).find('.ajax-count'));
       }
     });
+  });
+  //Фильтр на телефоне и планшете
+  body.on('click', '.ajax_filter__mobile input[type=checkbox]', function () {
+    let elem = $(this);
+    let inputs = elem.closest('.filter-row').find('.ajax_filter__mobile .checkbox input[type=checkbox]');
+    let checkboxes = elem.closest('.filter-row').find('.ajax__filter .checkbox input[type=checkbox]');
+
+    let props = {};
+    inputs.each(function (index, element) {
+      let code = $(element).attr('id');
+      props[code] = $(element).is(':checked') ? $(element).val() : '';
+    });
+    checkboxes.each(function (index, element) {
+      let code = $(element).attr('id');
+      props[code] = $(element).is(':checked') ? '1' : '';
+    });
+
+    $.ajax({
+      type: "POST",
+      url: window.location.href,
+      data: props,
+      success: function (data) {
+        let content = $(data).filter('.catalog-items');
+        $('.catalog-items').replaceWith(content);
+        $('.filter-count').replaceWith($(data).find('.filter-count'));
+        $('.ajax-count').replaceWith($(data).find('.ajax-count'));
+      }
+    })
   });
 }
 
