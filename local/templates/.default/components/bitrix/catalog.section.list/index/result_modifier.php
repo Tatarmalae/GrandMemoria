@@ -11,12 +11,12 @@ use Dev\Catalog;
 
 try {
     $arResult['SECTIONS'] = Utilities::getMultilevelArray($arResult['SECTIONS']);
+	$arResult['SECTIONS'] = array_slice($arResult['SECTIONS'], 0, $arParams['COUNT']);
 
     foreach ($arResult['SECTIONS'] as $key => $section) {
         $elements = Catalog::getElementMinPriceBySection($arParams["IBLOCK_ID"], $section['ID']);
         $arResult['SECTIONS'][$key]['MIN_PRICE'] = $elements['PRICE_VALUE'];
     }
-    $arResult['SECTIONS'] = array_slice($arResult['SECTIONS'], 0, $arParams['COUNT']);
 } catch (Throwable $e) {
     Debug::dumpToFile($e->getMessage());
 }
