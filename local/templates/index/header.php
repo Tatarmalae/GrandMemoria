@@ -92,7 +92,7 @@ use Bitrix\Main\Config\Option;
                 "PARENT_SECTION_CODE" => "",
                 "PREVIEW_TRUNCATE_LEN" => "",
                 "PROPERTY_CODE" => [
-                    0 => "",
+                    0 => "LINK",
                     1 => "",
                 ],
                 "SET_BROWSER_TITLE" => "N",

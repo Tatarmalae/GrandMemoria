@@ -23,14 +23,25 @@ $this->setFrameMode(true);
                 ?>
                 <div class="hello__slide swiper-slide" id="<?= $this->GetEditAreaId($arItem['ID']); ?>">
                     <div class="hello__item">
-                        <div class="hello__bg">
-                            <div class="hello__bg-inner object-fit">
-                                <picture>
-                                    <source media="(max-width:1279px)" data-srcset="<?= $arItem['PREVIEW_PICTURE']['SRC'] ?>" srcset="">
-                                    <img class="lazy" data-src="<?= $arItem['DETAIL_PICTURE']['SRC'] ?>" alt="<?= $arItem['NAME'] ?>" src="">
-                                </picture>
+                        <?php if (!empty($arItem['PROPERTIES']['LINK']['VALUE'])): ?>
+                            <a class="hello__bg" href="<?= $arItem['PROPERTIES']['LINK']['VALUE'] ?>">
+                                <div class="hello__bg-inner object-fit">
+                                    <picture>
+                                        <source media="(max-width:1279px)" data-srcset="<?= $arItem['PREVIEW_PICTURE']['SRC'] ?>" srcset="">
+                                        <img class="lazy" data-src="<?= $arItem['DETAIL_PICTURE']['SRC'] ?>" alt="<?= $arItem['NAME'] ?>" src="">
+                                    </picture>
+                                </div>
+                            </a>
+                        <?php else: ?>
+                            <div class="hello__bg">
+                                <div class="hello__bg-inner object-fit">
+                                    <picture>
+                                        <source media="(max-width:1279px)" data-srcset="<?= $arItem['PREVIEW_PICTURE']['SRC'] ?>" srcset="">
+                                        <img class="lazy" data-src="<?= $arItem['DETAIL_PICTURE']['SRC'] ?>" alt="<?= $arItem['NAME'] ?>" src="">
+                                    </picture>
+                                </div>
                             </div>
-                        </div>
+                        <?php endif ?>
                     </div>
                 </div>
             <?php endforeach; ?>
