@@ -39,6 +39,7 @@ function catalogFilter() {
         $('.catalog-items').replaceWith(content);
         $('.filter-count').replaceWith($(data).find('.filter-count'));
         $('.ajax-count').replaceWith($(data).find('.ajax-count'));
+        initImgLazyLoad();
       }
     });
   });
@@ -67,9 +68,30 @@ function catalogFilter() {
         $('.catalog-items').replaceWith(content);
         $('.filter-count').replaceWith($(data).find('.filter-count'));
         $('.ajax-count').replaceWith($(data).find('.ajax-count'));
+        initImgLazyLoad();
       }
     })
   });
+  body.on('change', '#input-with-keypress-0', function () {
+    stepsSlider.noUiSlider.set([this.value, null]);
+  });
+  body.on('change', '#input-with-keypress-1', function () {
+    stepsSlider.noUiSlider.set([null, this.value]);
+  });
+  setTimeout(function () {
+    const stepsSlider = document.getElementById("slider");
+    let props = {};
+    stepsSlider.noUiSlider.on('set', function (values) {
+
+      values.map(function (index, element) {
+        let code = element ? 'PRICE_MAX' : 'PRICE_MIN';
+        props[code] = Math.ceil(Number(index));
+      });
+      console.log(props);
+      //console.log(Math.ceil(Number(values[handle])));
+    });
+
+  }, 500);
 }
 
 //Ajax-добавление в корзину

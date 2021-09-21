@@ -596,9 +596,11 @@ class Catalog
      * @throws ArgumentException
      * @throws ObjectPropertyException
      * @throws SystemException
+     * @throws LoaderException
      */
     public static function getIBlock($id)
     {
+        Loader::includeModule('iblock');
         return IblockTable::getList([
             'limit' => 1,
             'filter' => ['ID' => $id],
