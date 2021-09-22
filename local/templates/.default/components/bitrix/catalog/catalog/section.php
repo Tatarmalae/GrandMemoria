@@ -110,7 +110,6 @@ $APPLICATION->IncludeComponent(
         ["HIDE_ICONS" => "Y"]
     );
     ?>
-
     <div class="filter-item filter-item_center filter-fixed">
         <div class="filter-fixed__top">
             <div class="filter-fixed__back">
@@ -126,7 +125,6 @@ $APPLICATION->IncludeComponent(
             </div>
         </div>
         <div class="filter-fixed__clear">
-            <?php // TODO: сбросить всё ?>
             <span>Сбросить все</span>
         </div>
         <div class="filter-fixed__inner">
@@ -173,6 +171,12 @@ $APPLICATION->IncludeComponent(
                 <?php foreach ($properties as $prop): ?>
                     <?php if ($prop['CODE'] !== 'PRICE') continue ?>
                     <div class="filter-column">
+                        <div class="filter-fixed__label">
+                            <span><?= $prop['NAME'] ?></span>
+                            <svg class="icon__arrow-right" width="32" height="32">
+                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
+                            </svg>
+                        </div>
                         <div class="filter-fixed__items filter-fixed__items_static">
                             <div class="filter-fixed__items-inner">
                                 <div class="filter-interval">

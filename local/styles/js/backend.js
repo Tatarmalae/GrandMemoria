@@ -8,6 +8,8 @@ $(document).ready(function () {
 //Ajax-фильтрация в каталоге
 function catalogFilter() {
   let body = $('body');
+
+  //Фильтр на десктопе
   body.on('click', '.ajax__filter li, .ajax__filter input[type=checkbox]', function () {
     let elem = $(this);
     let inputs = elem.closest('.filter-row').find('.filter-column');
@@ -43,6 +45,7 @@ function catalogFilter() {
       }
     });
   });
+
   //Фильтр на телефоне и планшете
   body.on('click', '.ajax_filter__mobile input[type=checkbox]', function () {
     let elem = $(this);
@@ -70,28 +73,91 @@ function catalogFilter() {
         $('.ajax-count').replaceWith($(data).find('.ajax-count'));
         initImgLazyLoad();
       }
-    })
+    });
   });
-  body.on('change', '#input-with-keypress-0', function () {
-    stepsSlider.noUiSlider.set([this.value, null]);
-  });
-  body.on('change', '#input-with-keypress-1', function () {
-    stepsSlider.noUiSlider.set([null, this.value]);
-  });
-  setTimeout(function () {
-    const stepsSlider = document.getElementById("slider");
-    let props = {};
-    stepsSlider.noUiSlider.on('set', function (values) {
 
+  // Фильтр по цене и предыдущим значениям
+  setTimeout(function () {
+    body.on('change', '#input-with-keypress-0', function () {
+      stepsSlider.noUiSlider.set([this.value, null]);
+    });
+    body.on('change', '#input-with-keypress-1', function () {
+      stepsSlider.noUiSlider.set([null, this.value]);
+    });
+    const stepsSlider = document.getElementById("slider");
+    stepsSlider.noUiSlider.on('set', function (values) {
+      let elem = $(stepsSlider);
+      let inputs = elem.closest('.filter-row').find('.filter-column');
+      if ($('.filter-column_btn').is(":visible")) {
+        inputs = elem.closest('.filter-row').find('.ajax_filter__mobile .checkbox input[type=checkbox]');
+      }
+      let checkboxes = elem.closest('.filter-row').find('.ajax__filter .checkbox input[type=checkbox]');
+
+      let props = {};
+      inputs.each(function (index, element) {
+        let code = $(element).find('[type=hidden]').data('code');
+        props[code] = $(element).find('[type=hidden]').val();
+        if ($('.filter-fixed').is(":visible")) {
+          code = $(element).attr('id');
+          props[code] = $(element).is(':checked') ? $(element).val() : '';
+        }
+      });
+      checkboxes.each(function (index, element) {
+        let code = $(element).attr('id');
+        props[code] = $(element).is(':checked') ? '1' : '';
+      });
       values.map(function (index, element) {
         let code = element ? 'PRICE_MAX' : 'PRICE_MIN';
         props[code] = Math.ceil(Number(index));
       });
-      console.log(props);
-      //console.log(Math.ceil(Number(values[handle])));
+
+      $.ajax({
+        type: "POST",
+        url: window.location.href,
+        data: props,
+        success: function (data) {
+          let content = $(data).filter('.catalog-items');
+          $('.catalog-items').replaceWith(content);
+          $('.filter-count').replaceWith($(data).find('.filter-count'));
+          $('.ajax-count').replaceWith($(data).find('.ajax-count'));
+          initImgLazyLoad();
+        }
+      });
+    });
+  }, 500);
+
+  //Сбросить фильтр
+  body.on('click', '.filter-fixed__clear', function () {
+    let filter = $('.filter-row');
+    let inputs = filter.find('.filter-column');
+    let inputsMob = filter.find('.ajax_filter__mobile .checkbox input[type=checkbox]');
+    let checkboxes = filter.find('.ajax__filter .checkbox input[type=checkbox]');
+
+    let props = {};
+    inputs.each(function (index, element) {
+      //$(element).find('[type=hidden]').data('code');
+      $(element).find('[type=hidden]').val('');
+    });
+    inputsMob.each(function (index, element) {
+      $(element).is(':checked') ? $(element).trigger('click') : '';
+    });
+    checkboxes.each(function (index, element) {
+      $(element).is(':checked') ? $(element).trigger('click') : '';
     });
 
-  }, 500);
+    $.ajax({
+      type: "POST",
+      url: window.location.href,
+      data: props,
+      success: function (data) {
+        let content = $(data).filter('.catalog-items');
+        $('.catalog-items').replaceWith(content);
+        $('.filter-count').replaceWith($(data).find('.filter-count'));
+        $('.ajax-count').replaceWith($(data).find('.ajax-count'));
+        initImgLazyLoad();
+      }
+    });
+  });
 }
 
 //Ajax-добавление в корзину
