@@ -267,6 +267,7 @@ if ($request->isAjaxRequest()) {
     global $arrFilter;
     $arrFilter = [];
     foreach ($request->getPostList() as $key => $item) {
+        if($key==='undefined') continue;
         $arrFilter[$key] = array_search($item, array_column($properties, 'NAME')) ? '' : $item;
         if ($key === 'PROPERTY_STOCK') {
             $IDs = [];

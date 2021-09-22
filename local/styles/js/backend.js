@@ -107,7 +107,7 @@ function catalogFilter() {
         props[code] = $(element).is(':checked') ? '1' : '';
       });
       values.map(function (index, element) {
-        let code = element ? 'PRICE_MAX' : 'PRICE_MIN';
+        let code = element ? '<=PROPERTY_PRICE' : '>=PROPERTY_PRICE';
         props[code] = Math.ceil(Number(index));
       });
 
