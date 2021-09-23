@@ -78,13 +78,16 @@ function catalogFilter() {
 
   // Фильтр по цене и предыдущим значениям
   setTimeout(function () {
+    const stepsSlider = document.getElementById('slider');
+    if(!stepsSlider) return false;
+
     body.on('change', '#input-with-keypress-0', function () {
       stepsSlider.noUiSlider.set([this.value, null]);
     });
     body.on('change', '#input-with-keypress-1', function () {
       stepsSlider.noUiSlider.set([null, this.value]);
     });
-    const stepsSlider = document.getElementById("slider");
+
     stepsSlider.noUiSlider.on('set', function (values) {
       let elem = $(stepsSlider);
       let inputs = elem.closest('.filter-row').find('.filter-column');
