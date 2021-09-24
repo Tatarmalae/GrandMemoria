@@ -97,7 +97,7 @@
                                             <label for="callCheck">
                                                 <span class="checkbox__box"></span>
                                                 Нажимая на кнопку, вы соглашаетесь с
-                                                <a href="#">политикой конфиденциальности</a>
+                                                <a href="/privacy/">политикой конфиденциальности</a>
                                             </label>
                                         </div>
                                     </div>
@@ -169,7 +169,7 @@
                                             <label for="consultationCheck">
                                                 <span class="checkbox__box"></span>
                                                 Нажимая на кнопку, вы соглашаетесь с
-                                                <a href="#">политикой конфиденциальности</a>
+                                                <a href="/privacy/">политикой конфиденциальности</a>
                                             </label>
                                         </div>
                                     </div>
@@ -299,7 +299,7 @@
                                             <label for="questionCheck">
                                                 <span class="checkbox__box"></span>
                                                 Нажимая на кнопку, вы соглашаетесь с
-                                                <a href="#">политикой конфиденциальности</a>
+                                                <a href="/privacy/">политикой конфиденциальности</a>
                                             </label>
                                         </div>
                                     </div>
@@ -371,7 +371,7 @@
                                             <label for="checkoutCheck">
                                                 <span class="checkbox__box"></span>
                                                 Нажимая на кнопку, вы соглашаетесь с
-                                                <a href="#">политикой конфиденциальности</a>
+                                                <a href="/privacy/">политикой конфиденциальности</a>
                                             </label>
                                         </div>
                                     </div>
@@ -472,7 +472,7 @@
                                             <label for="communicationCheck">
                                                 <span class="checkbox__box"></span>
                                                 Нажимая на кнопку, вы соглашаетесь с
-                                                <a href="#">политикой конфиденциальности</a>
+                                                <a href="/privacy/">политикой конфиденциальности</a>
                                             </label>
                                         </div>
                                     </div>
@@ -577,7 +577,7 @@
                                             <label for="callCheck">
                                                 <span class="checkbox__box"></span>
                                                 Нажимая на кнопку, вы соглашаетесь с
-                                                <a href="#">политикой конфиденциальности</a>
+                                                <a href="/privacy/">политикой конфиденциальности</a>
                                             </label>
                                         </div>
                                     </div>
@@ -679,7 +679,7 @@
                                             <label for="reviewsCheck">
                                                 <span class="checkbox__box"></span>
                                                 Нажимая на кнопку, вы соглашаетесь с
-                                                <a href="#">политикой конфиденциальности</a>
+                                                <a href="/privacy/">политикой конфиденциальности</a>
                                             </label>
                                         </div>
                                     </div>
@@ -751,7 +751,7 @@
                                             <label for="stockCheck">
                                                 <span class="checkbox__box"></span>
                                                 Нажимая на кнопку, вы соглашаетесь с
-                                                <a href="#">политикой конфиденциальности</a>
+                                                <a href="/privacy/">политикой конфиденциальности</a>
                                             </label>
                                         </div>
                                     </div>

@@ -32,7 +32,7 @@
                             <label for="feedbackCheck">
                                 <span class="checkbox__box"></span>
                                 Нажимая на кнопку, вы соглашаетесь с
-                                <a href="#">политикой конфиденциальности</a>
+                                <a href="/privacy/">политикой конфиденциальности</a>
                             </label>
                         </div>
                     </div>
