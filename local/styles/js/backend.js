@@ -7,6 +7,7 @@ $(document).ready(function () {
   ajaxPagination();
 });
 
+//ajax-пагинация
 function ajaxPagination() {
   let body = $('body');
   body.on('click', 'a.pagination-link, a.pagination-icon, a.pagination__more', function (event) {
@@ -48,7 +49,7 @@ function ajaxPagination() {
   });
 }
 
-// Ajax-табы
+//Ajax-tabs
 function ajaxTabs() {
   let body = $('body');
   body.on('click', '.ajax__tabs a', function (event) {
