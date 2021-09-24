@@ -3,6 +3,20 @@
  * @var $APPLICATION
  */
 $APPLICATION->SetTitle("Наши работы");
+
+use Bitrix\Main\Application;
+
+$request = Application::getInstance()->getContext()->getRequest();
+if ($request->isAjaxRequest()) $APPLICATION->RestartBuffer();
+if ($request->isAjaxRequest()) {
+    global $arrFilterGallery;
+    $arrFilterGallery = [
+        'IBLOCK_ID' => $request->getPost('IBLOCK_ID'),
+    ];
+    if ($request->getPost('SECTION_ID')) {
+        $arrFilterGallery['SECTION_ID'] = $request->getPost('SECTION_ID');
+    }
+}
 ?>
 <?php $APPLICATION->IncludeComponent(
     "bitrix:news.list",
@@ -16,7 +30,7 @@ $APPLICATION->SetTitle("Наши работы");
         "SORT_ORDER1" => "ASC",
         "SORT_BY2" => "SORT",
         "SORT_ORDER2" => "ASC",
-        "FILTER_NAME" => "",
+        "FILTER_NAME" => "arrFilterGallery",
         "FIELD_CODE" => [
             0 => "ID",
             1 => "CODE",
@@ -96,4 +110,6 @@ $APPLICATION->SetTitle("Наши работы");
     ],
     false
 ); ?>
+<?php unset($arrFilterGallery) ?>
+<?php if ($request->isAjaxRequest()) die(); ?>
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>

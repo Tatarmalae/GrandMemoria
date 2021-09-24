@@ -7,17 +7,18 @@ $(document).ready(function () {
   ajaxPagination();
 });
 
-//ajax-пагинация
+//Ajax-пагинация
 function ajaxPagination() {
   let body = $('body');
   body.on('click', 'a.pagination-link, a.pagination-icon, a.pagination__more', function (event) {
     event.preventDefault();
     let elem = $(this);
     let tabs = elem.closest('.content').find('.ajax__tabs');
+
     let props = {};
     let url = elem.attr('href');
 
-    if(tabs.length){
+    if (tabs.length) {
       let IBlockID = tabs.data('iblock');
       let id = tabs.find('a.tags-item.tags-item_active').data('id');
       props.IBLOCK_ID = IBlockID;
@@ -59,6 +60,22 @@ function ajaxTabs() {
     elem.addClass('tags-item_active');
     let IBlockID = elem.closest('.ajax__tabs').data('iblock');
     let id = elem.data('id');
+
+    let ajaxBox = $('.ajax__box');
+    if (ajaxBox.length) {
+      ajaxBox.hide();
+      let name = elem.data('name');
+      let link = elem.data('link');
+
+      ajaxBox.find('a.more__link span').html(name);
+      ajaxBox.find('a.more__link').attr('href', link);
+
+      if(link !== ''){
+        ajaxBox.show();
+      }
+
+    }
+
     let props = {
       'IBLOCK_ID': IBlockID
     };

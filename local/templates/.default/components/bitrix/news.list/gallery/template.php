@@ -12,28 +12,27 @@
 /** @var CBitrixComponent $component */
 $this->setFrameMode(true);
 ?>
-<?php if (!empty($arResult['TAGS'])): //TODO: ajax-подгрузка. Проверить в пагинации ?>
-    <div class="tags-wrap">
+<?php if (!empty($arResult['TAGS'])): ?>
+    <div class="tags-wrap ajax__tabs" data-iblock="<?= $arParams['IBLOCK_ID'] ?>">
         <div class="tags">
-            <a class="tags-item tags-item_active" data-section="" href="javascript:void(0);">
+            <a class="tags-item tags-item_active" data-id="false" data-name="Каталог" data-link="/catalog/" href="javascript:void(0);">
                 <span>Все</span>
             </a>
             <?php foreach ($arResult['TAGS'] as $tag): ?>
-                <?//php \Dev\Utilities::DB($tag['PROPS']); ?>
-                <a class="tags-item" data-section="<?= $tag['ID'] ?>" href="javascript:void(0);">
+                <a class="tags-item" data-id="<?= $tag['ID'] ?>" data-name="<?= $tag['NAME'] ?>" data-link="<?= $tag['PROPS']['UF_LINK'] ?>" href="javascript:void(0);">
                     <span><?= $tag['NAME'] ?></span>
                 </a>
             <?php endforeach ?>
         </div>
     </div>
 <?php endif ?>
-<div class="more-link box">
+<div class="more-link box ajax__box">
     <div class="box__inner">
         <div class="more-link__inner">
             <h3>Перейти в каталог</h3>
             <div class="more">
-                <a class="more__link" href="<?php //TODO: для каждого раздела ссылка задаётся вручную ?>">
-                    <span>Памятники</span>
+                <a class="more__link" href="/catalog/">
+                    <span>Каталог</span>
                     <svg class="icon__arrow-right" width="24" height="24">
                         <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
                     </svg>
@@ -42,7 +41,7 @@ $this->setFrameMode(true);
         </div>
     </div>
 </div>
-<div class="gallery-items gallery-items_size-4 items">
+<div class="gallery-items gallery-items_size-4 items ajax__items">
     <?php foreach ($arResult["ITEMS"] as $key => $arItem): ?>
         <?php
         $this->AddEditAction($arItem['ID'], $arItem['EDIT_LINK'], CIBlock::GetArrayByID($arItem["IBLOCK_ID"], "ELEMENT_EDIT"));
