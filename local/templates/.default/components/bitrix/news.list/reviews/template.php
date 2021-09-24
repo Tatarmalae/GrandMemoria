@@ -12,15 +12,15 @@
 /** @var CBitrixComponent $component */
 $this->setFrameMode(true);
 ?>
-<?php if (!empty($arResult['TAGS'])): //TODO: ajax-подгрузка. Проверить в пагинации ?>
-    <div class="tags-slider__wrapper">
+<?php if (!empty($arResult['TAGS'])): ?>
+    <div class="tags-slider__wrapper ajax__tabs" data-iblock="<?= $arParams['IBLOCK_ID'] ?>">
         <div class="tags-wrap swiper-container tags-slider">
             <div class="tags swiper-wrapper">
-                <a class="tags-item swiper-slide tags-item_active" data-section="" href="javascript:void(0);">
+                <a class="tags-item swiper-slide tags-item_active" data-id="false" href="javascript:void(0);">
                     <span>Все</span>
                 </a>
                 <?php foreach ($arResult['TAGS'] as $tag): ?>
-                    <a class="tags-item swiper-slide" data-section="<?= $tag['ID'] ?>" href="javascript:void(0);">
+                    <a class="tags-item swiper-slide" data-id="<?= $tag['ID'] ?>" href="javascript:void(0);">
                         <span><?= $tag['NAME'] ?></span>
                     </a>
                 <?php endforeach ?>
@@ -42,7 +42,7 @@ $this->setFrameMode(true);
         </div>
     </div>
 <?php endif ?>
-<div class="reviews-items items">
+<div class="reviews-items items ajax__items">
     <?php foreach ($arResult["ITEMS"] as $key => $arItem): ?>
         <?php
         $this->AddEditAction($arItem['ID'], $arItem['EDIT_LINK'], CIBlock::GetArrayByID($arItem["IBLOCK_ID"], "ELEMENT_EDIT"));

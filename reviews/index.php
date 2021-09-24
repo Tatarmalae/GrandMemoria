@@ -3,6 +3,20 @@
  * @var $APPLICATION
  */
 $APPLICATION->SetTitle("Отзывы");
+
+use Bitrix\Main\Application;
+
+$request = Application::getInstance()->getContext()->getRequest();
+if ($request->isAjaxRequest()) $APPLICATION->RestartBuffer();
+if ($request->isAjaxRequest()) {
+    global $arrFilterReviews;
+    $arrFilterReviews = [
+        'IBLOCK_ID' => $request->getPost('IBLOCK_ID'),
+    ];
+    if($request->getPost('SECTION_ID')){
+        $arrFilterReviews['SECTION_ID'] = $request->getPost('SECTION_ID');
+    }
+}
 ?>
 <?php $APPLICATION->IncludeComponent(
     "bitrix:news.list",
@@ -57,7 +71,7 @@ $APPLICATION->SetTitle("Отзывы");
             26 => "USER_NAME",
             27 => "",
         ],
-        "FILTER_NAME" => "",
+        "FILTER_NAME" => "arrFilterReviews",
         "HIDE_LINK_WHEN_NO_DETAIL" => "N",
         "IBLOCK_ID" => "13",
         "IBLOCK_TYPE" => "content",
@@ -99,4 +113,6 @@ $APPLICATION->SetTitle("Отзывы");
     ],
     false
 ); ?>
+<?php unset($arrFilterReviews) ?>
+<?php if ($request->isAjaxRequest()) die(); ?>
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>
