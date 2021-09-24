@@ -13,7 +13,7 @@ if ($request->isAjaxRequest()) {
     $arrFilterReviews = [
         'IBLOCK_ID' => $request->getPost('IBLOCK_ID'),
     ];
-    if($request->getPost('SECTION_ID')){
+    if ($request->getPost('SECTION_ID')) {
         $arrFilterReviews['SECTION_ID'] = $request->getPost('SECTION_ID');
     }
 }
