@@ -92,10 +92,10 @@ if (!$arResult["NavShowAlways"]) {
         </ul>
     </nav>
     <?php if (!$bNextDisabled): ?>
-        <button class="btn btn-blue-light big" type="button" onclick="location.href='<?= $sNextHref; ?>';" id="<?= $clientID ?>_next_page">
+        <a class="btn btn-blue-light big" href="<?= $sNextHref; ?>'" id="<?= $clientID ?>_next_page">
             <span class="btn__text">
                 <span data-text="Показать еще">Показать еще</span>
             </span>
-        </button>
+        </a>
     <?php endif; ?>
 </div>
