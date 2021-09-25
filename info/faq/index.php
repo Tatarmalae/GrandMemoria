@@ -1,9 +1,22 @@
-<?php
+<?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
 /**
  * @var $APPLICATION
  */
-require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
 $APPLICATION->SetTitle("Вопрос–ответ");
+
+use Bitrix\Main\Application;
+
+$request = Application::getInstance()->getContext()->getRequest();
+if ($request->isAjaxRequest()) $APPLICATION->RestartBuffer();
+if ($request->isAjaxRequest()) {
+    global $arrFilterFaq;
+    $arrFilterFaq = [
+        'IBLOCK_ID' => $request->getPost('IBLOCK_ID'),
+    ];
+    if ($request->getPost('SECTION_ID')) {
+        $arrFilterFaq['SECTION_ID'] = $request->getPost('SECTION_ID');
+    }
+}
 ?>
 <?php $APPLICATION->IncludeComponent(
     "bitrix:news.list",
@@ -22,7 +35,7 @@ $APPLICATION->SetTitle("Вопрос–ответ");
         "CACHE_TYPE" => "A",
         "CHECK_DATES" => "Y",
         "DETAIL_URL" => "",
-        "DISPLAY_BOTTOM_PAGER" => "N",
+        "DISPLAY_BOTTOM_PAGER" => "Y",
         "DISPLAY_DATE" => "Y",
         "DISPLAY_NAME" => "Y",
         "DISPLAY_PICTURE" => "Y",
@@ -58,7 +71,7 @@ $APPLICATION->SetTitle("Вопрос–ответ");
             26 => "USER_NAME",
             27 => "",
         ],
-        "FILTER_NAME" => "",
+        "FILTER_NAME" => "arrFilterFaq",
         "HIDE_LINK_WHEN_NO_DETAIL" => "N",
         "IBLOCK_ID" => "3",
         "IBLOCK_TYPE" => "info",
@@ -71,7 +84,7 @@ $APPLICATION->SetTitle("Вопрос–ответ");
         "PAGER_DESC_NUMBERING_CACHE_TIME" => "36000",
         "PAGER_SHOW_ALL" => "N",
         "PAGER_SHOW_ALWAYS" => "N",
-        "PAGER_TEMPLATE" => "",
+        "PAGER_TEMPLATE" => "pager",
         "PAGER_TITLE" => "Новости",
         "PARENT_SECTION" => "",
         "PARENT_SECTION_CODE" => "",
@@ -96,4 +109,6 @@ $APPLICATION->SetTitle("Вопрос–ответ");
     ],
     false
 ); ?>
+<?php unset($arrFilterFaq) ?>
+<?php if ($request->isAjaxRequest()) die(); ?>
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>
