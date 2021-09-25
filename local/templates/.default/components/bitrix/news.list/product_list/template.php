@@ -18,16 +18,6 @@ $this->setFrameMode(true);
             <div class="heading__content">
                 <h2><?= $arParams['TITLE'] ?></h2>
             </div>
-            <?php if ($arParams['SHOW_MORE'] === 'Y'): ?>
-                <div class="more">
-                    <a class="more__link" href="/catalog/<?php //TODO: фильтр по акции - В какой раздел переход???  ?>">
-                        <span>Все товары</span>
-                        <svg class="icon__arrow-right" width="24" height="24">
-                            <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
-                        </svg>
-                    </a>
-                </div>
-            <?php endif ?>
         </div>
         <div class="catalog-items items" data-type="column">
             <div class="swiper-container base-slider" data-count="4">

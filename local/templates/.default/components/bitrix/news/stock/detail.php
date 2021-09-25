@@ -172,7 +172,6 @@ foreach ($arProps['PRODUCTS'] as $arProp) {
             "DISPLAY_PICTURE" => "Y",
             "DISPLAY_PREVIEW_TEXT" => "Y",
             "MESSAGE_404" => "",
-            "SHOW_MORE" => "Y",
         ],
         false
     );
