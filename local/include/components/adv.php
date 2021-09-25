@@ -36,7 +36,7 @@ if (count($arResult['ITEMS']) == 0) return;
                 <?php endforeach ?>
             </div>
             <div class="more-btn">
-                <a  href="#" class="btn btn-red big" data-toggle="modal" data-target="#modalCall">
+                <a  href="#" class="btn btn-red big" data-toggle="modal" data-target="#modalCall" data-theme="<?= $arResult['IBLOCK']['NAME'] ?>">
                     <span class="btn__text">
                         <span data-text="Позвонить">Позвонить</span>
                     </span>

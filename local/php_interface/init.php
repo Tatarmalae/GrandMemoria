@@ -17,6 +17,9 @@ try {
         '\Dev\Utilities' => SITE_USER_CLASS_PATH . '/classUtilities.php',
         '\Dev\AsdIblockTable' => SITE_USER_CLASS_PATH . '/classAsdIblockTable.php',
         '\Dev\Basket' => SITE_USER_CLASS_PATH . '/classBasket.php',
+        '\Dev\FormCallback' => SITE_USER_CLASS_PATH . '/classFormCallback.php',
+        '\Dev\FormConsultation' => SITE_USER_CLASS_PATH . '/classFormConsultation.php',
+        '\Dev\FormFaq' => SITE_USER_CLASS_PATH . '/classFormFaq.php',
     ]);
 } catch (LoaderException $e) {
     die($e->getMessage());

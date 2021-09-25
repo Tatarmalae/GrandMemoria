@@ -33,8 +33,6 @@ Asset::getInstance()->addCss(SITE_STYLE_PATH . "/css/backend.css", true);
 Asset::getInstance()->addJs(SITE_STYLE_PATH . "/js/separate-js/jquery.min.js");
 Asset::getInstance()->addJs(SITE_STYLE_PATH . "/js/main.min.js");
 Asset::getInstance()->addJs(SITE_STYLE_PATH . "/js/backend.js");
-/*Подключается, т.к. в js используются функции BX*/
-CJSCore::Init(['fx']);
 ?>
 <style>
     .layer,

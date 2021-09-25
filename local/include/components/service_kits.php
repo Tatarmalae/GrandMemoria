@@ -72,7 +72,7 @@ if (count($arResult['ITEMS']) == 0) return;
                                     <p><?= $item['PREVIEW_TEXT'] ?></p>
                                 <?php endif ?>
                                 <div class="more-btn">
-                                    <a href="#" class="btn btn-blue big btn-block" data-toggle="modal" data-target="#modalConsultation" <?php //TODO: ссылка на услугу ?>>
+                                    <a href="#" class="btn btn-blue big btn-block" data-toggle="modal" data-target="#modalConsultation" data-theme="<?= $item['NAME'] ?>">
                                         <span class="btn__text">
                                             <span data-text="Получить консультацию">Получить консультацию</span>
                                         </span>

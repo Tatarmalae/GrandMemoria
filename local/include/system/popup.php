@@ -1,4 +1,4 @@
-<?php //Корзина?>
+<?php //Корзина ?>
 <div class="modal fade" id="modalBasket" tabindex="-1" role="dialog" aria-labelledby="modalBasketLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -55,7 +55,7 @@
         </div>
     </div>
 </div>
-
+<?php //Заказать звонок ?>
 <div class="modal fade" id="modalCall" tabindex="-1" role="dialog" aria-labelledby="modalCallLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -76,7 +76,8 @@
                             <h2 class="static">Заказать звонок</h2>
                             <p>Оставьте свои данные, и мы свяжемся с вами в ближайшее время.</p>
                             <div class="modal-form">
-                                <form class="default-form" id="formCall" action="" method="post" enctype="multipart/form-data">
+                                <form class="default-form" id="formCall" action="<?= SITE_AJAX_PATH ?>/forms/form_callback.php" method="post" enctype="multipart/form-data">
+                                    <input type="hidden" name="theme" value="">
                                     <div class="form-inputs">
                                         <div class="form-input">
                                             <input class="form-control" id="callName" placeholder="" name="name"/>
@@ -128,6 +129,7 @@
         </div>
     </div>
 </div>
+<?php //Получить консультацию ?>
 <div class="modal fade" id="modalConsultation" tabindex="-1" role="dialog" aria-labelledby="modalConsultationLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -148,7 +150,8 @@
                             <h2 class="static">Получить консультацию</h2>
                             <p>Оставьте свои данные, и мы свяжемся с вами в ближайшее время.</p>
                             <div class="modal-form">
-                                <form class="default-form" id="formConsultation" action="" method="post" enctype="multipart/form-data">
+                                <form class="default-form" id="formConsultation" action="<?= SITE_AJAX_PATH ?>/forms/form_consultation.php" method="post" enctype="multipart/form-data">
+                                    <input type="hidden" name="theme" value="">
                                     <div class="form-inputs">
                                         <div class="form-input">
                                             <input class="form-control" id="consultationName" placeholder="" name="name"/>
@@ -200,35 +203,7 @@
         </div>
     </div>
 </div>
-<div class="modal fade is-success" id="modalCalculationSuccess" tabindex="-1" role="dialog" aria-labelledby="modalCalculationSuccessLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <button class="modal-close" type="button" data-dismiss="modal" aria-label="Close">
-                <svg class="icon__close-modal" width="48" height="48">
-                    <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
-                </svg>
-            </button>
-            <div class="modal-body">
-                <a class="logo-link" href="<?= SITE_DIR ?>">
-                    <div class="logo">
-                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
-                    </div>
-                </a>
-                <div class="modal-success">
-                    <h2 class="static">Расчет похорон отправлен</h2>
-                    <p>Спасибо! Мы свяжемся с вами в ближайшее время.</p>
-                    <div class="more-btn">
-                        <button class="btn btn-blue big" type="button" data-dismiss="modal">
-                            <span class="btn__text">
-                                <span>Вернуться к просмотру</span>
-                            </span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<?php //Задать вопрос ?>
 <div class="modal fade" id="modalQuestion" tabindex="-1" role="dialog" aria-labelledby="modalQuestionLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -249,7 +224,7 @@
                             <h2 class="static">Задать вопрос</h2>
                             <p>Напишите нам, мы с удовольствием вам поможем.</p>
                             <div class="modal-form">
-                                <form class="default-form" id="formQuestion" action="" method="post" enctype="multipart/form-data">
+                                <form class="default-form" id="formQuestion" action="<?= SITE_AJAX_PATH ?>/forms/form_faq.php" method="post" enctype="multipart/form-data">
                                     <div class="form-inputs">
                                         <div class="form-input">
                                             <input class="form-control" id="questionName" placeholder="" name="name"/>
@@ -275,23 +250,6 @@
                                                 <span>Задать вопрос *</span>
                                             </label>
                                         </div>
-                                    </div>
-                                    <div class="form-file">
-                                        <label class="file" for="questionFile">
-                                            <input type="hidden"/>
-                                            <input type="file" name="file" id="questionFile"/>
-                                            <div class="file__icon">
-                                                <div class="file__icon-hide">
-                                                    <div class="file__close">
-                                                        <svg class="icon__file-close" width="22" height="22">
-                                                            <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#file-close"></use>
-                                                        </svg>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="file__text" data-text="+ Прикрепить файл">+ Прикрепить файл</div>
-                                        </label>
                                     </div>
                                     <div class="form-checkbox">
                                         <div class="checkbox">
@@ -330,6 +288,8 @@
         </div>
     </div>
 </div>
+
+
 <div class="modal fade" id="modalCheckout" tabindex="-1" role="dialog" aria-labelledby="modalCheckoutLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -769,6 +729,36 @@
                 </div>
                 <div class="modal-success">
                     <h2>Заявка отправлена</h2>
+                    <p>Спасибо! Мы свяжемся с вами в ближайшее время.</p>
+                    <div class="more-btn">
+                        <button class="btn btn-blue big" type="button" data-dismiss="modal">
+                            <span class="btn__text">
+                                <span>Вернуться к просмотру</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade is-success" id="modalCalculationSuccess" tabindex="-1" role="dialog" aria-labelledby="modalCalculationSuccessLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <button class="modal-close" type="button" data-dismiss="modal" aria-label="Close">
+                <svg class="icon__close-modal" width="48" height="48">
+                    <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
+                </svg>
+            </button>
+            <div class="modal-body">
+                <a class="logo-link" href="<?= SITE_DIR ?>">
+                    <div class="logo">
+                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
+                    </div>
+                </a>
+                <div class="modal-success">
+                    <h2 class="static">Расчет похорон отправлен</h2>
                     <p>Спасибо! Мы свяжемся с вами в ближайшее время.</p>
                     <div class="more-btn">
                         <button class="btn btn-blue big" type="button" data-dismiss="modal">

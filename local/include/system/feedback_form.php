@@ -1,4 +1,3 @@
-<?php //TODO: обработчик формы?>
 <section class="feedback">
     <div class="content">
         <div class="feedback-wrap">
@@ -11,7 +10,8 @@
                 </div>
             </div>
             <div class="feedback-form">
-                <form class="default-form" id="formFeedback" action="" method="post" enctype="multipart/form-data">
+                <form class="default-form" id="formFeedback" action="<?= SITE_AJAX_PATH ?>/forms/form_consultation.php" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="theme" value="Получите бесплатную консультацию">
                     <div class="form-inputs">
                         <div class="form-input">
                             <input class="form-control" id="feedbackName" placeholder="" name="name">

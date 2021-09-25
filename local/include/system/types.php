@@ -42,7 +42,7 @@
                             </a>
                         </div>
                         <div class="more">
-                            <a class="more__link" href="#" data-toggle="modal" data-target="#modalConsultation">
+                            <a class="more__link" href="#" data-toggle="modal" data-target="#modalConsultation" data-theme="Ритуальные услуги">
                                 <span>Получить консультацию</span>
                                 <svg class="icon__arrow-right" width="24" height="24">
                                     <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>

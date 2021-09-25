@@ -5,7 +5,52 @@ $(document).ready(function () {
   catalogFilter();
   ajaxTabs();
   ajaxPagination();
+  forms();
 });
+
+//Формы обратной связи
+function forms() {
+  let body = $('body');
+
+  //Передадим название в форму
+  body.on('click', '[data-toggle]', function (event) {
+    event.preventDefault();
+    if (typeof ($(this).data('theme')) !== 'undefined') {
+      let theme = $(this).data('theme');
+      setTimeout(function () {
+        $('.modal.show').find('input[name=theme]:hidden').val('').val(theme);
+      }, 500);
+    }
+  });
+
+  body.on('submit', 'form.default-form', function (event) {
+    event.preventDefault();
+    let elem = $(this);
+    let url = elem.attr('action');
+    let data = elem.serialize();
+
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: data,
+      dataType: "json",
+      beforeSend: function () {
+      },
+      success: function (res) {
+        if (res['status'] === 'ok') {
+          elem.parents(".modal").addClass("is-success");
+          elem.trigger('reset');
+          elem.find('.form-control').removeClass('is-focus');
+
+          setTimeout((function () {
+            $(".modal").modal("hide")
+          }), 3e3);
+          elem.parents(".modal").find('input[name=theme]').val('');
+        }
+      }
+    });
+  });
+}
 
 //Ajax-пагинация
 function ajaxPagination() {
@@ -71,7 +116,7 @@ function ajaxTabs() {
       ajaxBox.find('a.more__link span').html(name);
       ajaxBox.find('a.more__link').attr('href', link);
 
-      if(link !== ''){
+      if (link !== '') {
         ajaxBox.show();
       }
 
@@ -523,14 +568,3 @@ function getArrayDiff(a, b) {
   }
   return ret;
 }
-
-//Замена битриксовых прелоадеров
-BX.showWait = function (node, msg) {
-  $('.profile-main-loader').show();
-  $('.wrapper__loader').show();
-
-};
-BX.closeWait = function (node, obMsg) {
-  $('.profile-main-loader').hide();
-  $('.wrapper__loader').hide();
-};
