@@ -45,6 +45,7 @@ function ajaxPagination() {
 
         initImgLazyLoad();
         dotdotdotInit();
+        wowInit();
       }
     });
   });
@@ -100,6 +101,7 @@ function ajaxTabs() {
 
         initImgLazyLoad();
         dotdotdotInit();
+        wowInit();
       }
     });
   });

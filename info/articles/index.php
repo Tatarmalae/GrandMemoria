@@ -3,6 +3,20 @@
  * @var $APPLICATION
  */
 $APPLICATION->SetTitle("Статьи");
+
+use Bitrix\Main\Application;
+
+$request = Application::getInstance()->getContext()->getRequest();
+if ($request->isAjaxRequest()) $APPLICATION->RestartBuffer();
+if ($request->isAjaxRequest()) {
+    global $arrFilterArticles;
+    $arrFilterArticles = [
+        'IBLOCK_ID' => $request->getPost('IBLOCK_ID'),
+    ];
+    if ($request->getPost('SECTION_ID')) {
+        $arrFilterArticles['SECTION_ID'] = $request->getPost('SECTION_ID');
+    }
+}
 ?>
 <?php $APPLICATION->IncludeComponent(
     "bitrix:news",
@@ -16,7 +30,8 @@ $APPLICATION->SetTitle("Статьи");
         "USE_RSS" => "N",
         "USE_RATING" => "N",
         "USE_CATEGORIES" => "N",
-        "USE_FILTER" => "N",
+        "USE_FILTER" => "Y",
+        "FILTER_NAME" => "arrFilterArticles",
         "SORT_BY1" => "ACTIVE_FROM",
         "SORT_ORDER1" => "DESC",
         "SORT_BY2" => "SORT",
@@ -157,4 +172,6 @@ $APPLICATION->SetTitle("Статьи");
     ],
     false
 ); ?>
+<?php unset($arrFilterArticles) ?>
+<?php if ($request->isAjaxRequest()) die(); ?>
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>
