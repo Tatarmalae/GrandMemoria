@@ -156,7 +156,7 @@ $APPLICATION->SetTitle("Каталог товаров");
         "USER_CONSENT_IS_CHECKED" => "N",
         "USER_CONSENT_IS_LOADED" => "N",
         "USE_COMPARE" => "N",
-        "USE_ELEMENT_COUNTER" => "N",
+        "USE_ELEMENT_COUNTER" => "Y",
         "USE_ENHANCED_ECOMMERCE" => "N",
         "USE_FILTER" => "N",
         "USE_MAIN_ELEMENT_SECTION" => "N",
