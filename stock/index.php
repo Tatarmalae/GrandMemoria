@@ -3,6 +3,20 @@
  * @var $APPLICATION
  */
 $APPLICATION->SetTitle("Акции и скидки");
+
+use Bitrix\Main\Application;
+
+$request = Application::getInstance()->getContext()->getRequest();
+if ($request->isAjaxRequest()) $APPLICATION->RestartBuffer();
+if ($request->isAjaxRequest()) {
+    global $arrFilterStock;
+    $arrFilterStock = [
+        'IBLOCK_ID' => $request->getPost('IBLOCK_ID'),
+    ];
+    if ($request->getPost('SECTION_ID')) {
+        $arrFilterStock['SECTION_ID'] = $request->getPost('SECTION_ID');
+    }
+}
 ?>
 <?php $APPLICATION->IncludeComponent(
     "bitrix:news",
@@ -16,7 +30,8 @@ $APPLICATION->SetTitle("Акции и скидки");
         "USE_RSS" => "N",
         "USE_RATING" => "N",
         "USE_CATEGORIES" => "N",
-        "USE_FILTER" => "N",
+        "USE_FILTER" => "Y",
+        "FILTER_NAME" => "arrFilterStock",
         "SORT_BY1" => "SORT",
         "SORT_ORDER1" => "ASC",
         "SORT_BY2" => "SORT",
@@ -157,4 +172,6 @@ $APPLICATION->SetTitle("Акции и скидки");
     ],
     false
 ); ?>
+<?php unset($arrFilterStock) ?>
+<?php if ($request->isAjaxRequest()) die(); ?>
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>

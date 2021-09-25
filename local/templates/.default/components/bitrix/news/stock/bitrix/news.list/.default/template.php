@@ -12,21 +12,21 @@
 /** @var CBitrixComponent $component */
 $this->setFrameMode(true);
 ?>
-<?php if (!empty($arResult['TAGS'])): //TODO: ajax-подгрузка. Проверить в пагинации ?>
-    <div class="tags-wrap">
+<?php if (!empty($arResult['TAGS'])): ?>
+    <div class="tags-wrap ajax__tabs" data-iblock="<?= $arParams['IBLOCK_ID'] ?>">
         <div class="tags">
-            <a class="tags-item tags-item_active" data-section="" href="javascript:void(0);">
+            <a class="tags-item tags-item_active" data-id="false" href="javascript:void(0);">
                 <span>Все</span>
             </a>
             <?php foreach ($arResult['TAGS'] as $tag): ?>
-                <a class="tags-item" data-section="<?= $tag['ID'] ?>" href="javascript:void(0);">
+                <a class="tags-item" data-id="<?= $tag['ID'] ?>" href="javascript:void(0);">
                     <span><?= $tag['NAME'] ?></span>
                 </a>
             <?php endforeach ?>
         </div>
     </div>
 <?php endif ?>
-<div class="stock-items items">
+<div class="stock-items items ajax__items">
     <?php foreach ($arResult["ITEMS"] as $key => $arItem): ?>
         <?php
         $this->AddEditAction($arItem['ID'], $arItem['EDIT_LINK'], CIBlock::GetArrayByID($arItem["IBLOCK_ID"], "ELEMENT_EDIT"));
