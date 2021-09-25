@@ -19,7 +19,7 @@ $this->setFrameMode(true);
                 <h2><?= $arParams['TITLE'] ?></h2>
             </div>
             <div class="more">
-                <a class="more__link" href="<?= current($arResult['ITEMS'])['LIST_PAGE_URL'] ?>"<?php //TODO: фильтр по разделу из перехода ?>>
+                <a class="more__link" href="<?= current($arResult['ITEMS'])['LIST_PAGE_URL'] ?>?PARENT_SECTION=<?= $GLOBALS['arrFilterFaq']['SECTION_ID'] ?>">
                     <span>Подробнее</span>
                     <svg class="icon__arrow-right" width="24" height="24">
                         <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>

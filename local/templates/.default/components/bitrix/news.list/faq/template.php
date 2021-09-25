@@ -11,15 +11,19 @@
 /** @var string $componentPath */
 /** @var CBitrixComponent $component */
 $this->setFrameMode(true);
+
+use Bitrix\Main\Application;
+
+$request = Application::getInstance()->getContext()->getRequest();
 ?>
-<?php if (!empty($arResult['TAGS'])): //TODO: ajax-подгрузка. ?>
+<?php if (!empty($arResult['TAGS'])): ?>
     <div class="tags-wrap ajax__tabs" data-iblock="<?= $arParams['IBLOCK_ID'] ?>">
         <div class="tags">
-            <a class="tags-item tags-item_active" data-id="false" href="javascript:void(0);">
+            <a class="tags-item<?= empty($request->getQuery('PARENT_SECTION')) ? ' tags-item_active' : '' ?>" data-id="false" href="javascript:void(0);">
                 <span>Все</span>
             </a>
             <?php foreach ($arResult['TAGS'] as $tag): ?>
-                <a class="tags-item" data-id="<?= $tag['ID'] ?>" href="javascript:void(0);">
+                <a class="tags-item<?= $request->getQuery('PARENT_SECTION') == $tag['ID'] ? ' tags-item_active' : '' ?>" data-id="<?= $tag['ID'] ?>" href="javascript:void(0);">
                     <span><?= $tag['NAME'] ?></span>
                 </a>
             <?php endforeach ?>
@@ -45,9 +49,9 @@ $this->setFrameMode(true);
                         <svg class="icon__slider-next" width="24" height="24">
                             <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#slider-next"></use>
                         </svg>
-                         <svg class="icon__close-modal" width="24" height="24">
-                             <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
-                         </svg>
+                        <svg class="icon__close-modal" width="24" height="24">
+                            <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
+                        </svg>
                     </span>
                 </div>
                 <?php if (!empty($arItem['PREVIEW_TEXT']) || !empty($arItem['PROPERTIES']['LINKS']['VALUE'])): ?>

@@ -8,6 +8,8 @@ use Bitrix\Main\Application;
 
 $request = Application::getInstance()->getContext()->getRequest();
 if ($request->isAjaxRequest()) $APPLICATION->RestartBuffer();
+
+$section = '';
 if ($request->isAjaxRequest()) {
     global $arrFilterFaq;
     $arrFilterFaq = [
@@ -16,6 +18,8 @@ if ($request->isAjaxRequest()) {
     if ($request->getPost('SECTION_ID')) {
         $arrFilterFaq['SECTION_ID'] = $request->getPost('SECTION_ID');
     }
+} else {
+    $section = $request->getQuery('PARENT_SECTION');
 }
 ?>
 <?php $APPLICATION->IncludeComponent(
@@ -86,7 +90,7 @@ if ($request->isAjaxRequest()) {
         "PAGER_SHOW_ALWAYS" => "N",
         "PAGER_TEMPLATE" => "pager",
         "PAGER_TITLE" => "Новости",
-        "PARENT_SECTION" => "",
+        "PARENT_SECTION" => $section,
         "PARENT_SECTION_CODE" => "",
         "PREVIEW_TRUNCATE_LEN" => "",
         "PROPERTY_CODE" => [
