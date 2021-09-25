@@ -17,6 +17,7 @@ use Bitrix\Iblock\SectionPropertyTable;
 use Bitrix\Main\Application;
 use Bitrix\Main\Diag\Debug;
 use Dev\Catalog;
+use Dev\Utilities;
 
 $request = Application::getInstance()->getContext()->getRequest();
 if ($request->isAjaxRequest()) $APPLICATION->RestartBuffer();
@@ -24,6 +25,12 @@ if ($request->isAjaxRequest()) $APPLICATION->RestartBuffer();
 $section = '';
 try {
     $section = Catalog::getSectionByCode($arParams["IBLOCK_ID"], $arResult["VARIABLES"]["SECTION_CODE"]);
+    $section['COUNT_ROOT'] = (new CIBlockSection)->GetSectionElementsCount($section['IBLOCK_SECTION_ID'] ?: $section["ID"], ["CNT_ACTIVE" => "Y"]);
+    $section['COUNT_ROOT'] = Utilities::getWord($section['COUNT_ROOT'], [
+        'товар',
+        'товара',
+        'товаров',
+    ]);
 } catch (Throwable $e) {
     Debug::dumpToFile($e->getMessage());
 }
@@ -219,8 +226,8 @@ $APPLICATION->IncludeComponent(
         <div class="filter-fixed__btn">
             <button class="btn btn-blue small btn-block" type="button">
                 <span class="btn__text ajax-count">
-                    <span data-text="Посмотреть <?php $APPLICATION->ShowViewContent('catalog__count') ?>">
-                        Посмотреть <?php $APPLICATION->ShowViewContent('catalog__count') ?>
+                    <span data-text="Посмотреть <?= $section['COUNT_ROOT'] ?>">
+                        Посмотреть <?= $section['COUNT_ROOT'] ?>
                     </span>
                 </span>
             </button>
@@ -238,7 +245,7 @@ $APPLICATION->IncludeComponent(
             </div>
             <div class="filter-column filter-column_count">
                 <div class="filter-count">
-                    <?php $APPLICATION->ShowViewContent('catalog__count') ?>
+                    <?= $section['COUNT_ROOT'] ?>
                 </div>
             </div>
             <div class="filter-column">
@@ -267,7 +274,7 @@ if ($request->isAjaxRequest()) {
     global $arrFilter;
     $arrFilter = [];
     foreach ($request->getPostList() as $key => $item) {
-        if($key==='undefined') continue;
+        if ($key === 'undefined') continue;
         $arrFilter[$key] = array_search($item, array_column($properties, 'NAME')) ? '' : $item;
         if ($key === 'PROPERTY_STOCK') {
             $IDs = [];

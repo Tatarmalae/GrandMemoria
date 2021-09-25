@@ -11,9 +11,6 @@
 /** @var string $componentPath */
 /** @var CBitrixComponent $component */
 $this->setFrameMode(true);
-
-use Dev\Utilities;
-
 ?>
 <?php if (count($arResult["ITEMS"]) === 0): ?>
     <div class="catalog-items items">
@@ -21,13 +18,6 @@ use Dev\Utilities;
         <h2>По заданным параметрам, ничего не найдено</h2>
     </div>
 <?php else: ?>
-    <?php $this->SetViewTarget('catalog__count'); ?>
-    <?= Utilities::getWord(count($arResult["ITEMS"]), [
-        'товар',
-        'товара',
-        'товаров',
-    ]) ?>
-    <?php $this->EndViewTarget() ?>
     <div class="catalog-items items" data-type="column" data-view="border">
         <?php foreach ($arResult["ITEMS"] as $arItem): ?>
             <?php
