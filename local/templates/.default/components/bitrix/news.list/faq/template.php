@@ -101,3 +101,9 @@ $request = Application::getInstance()->getContext()->getRequest();
         </div>
     </div>
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    let newURL = location.href.split("?")[0];
+    window.history.pushState('object', document.title, newURL);
+  });
+</script>
