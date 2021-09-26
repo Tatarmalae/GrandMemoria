@@ -13,10 +13,10 @@ $section = '';
 if ($request->isAjaxRequest()) {
     global $arrFilterFaq;
     $arrFilterFaq = [
-        'IBLOCK_ID' => $request->getPost('IBLOCK_ID'),
+        'IBLOCK_ID' => $request->getPost('props')['IBLOCK_ID'],
     ];
-    if ($request->getPost('SECTION_ID')) {
-        $arrFilterFaq['SECTION_ID'] = $request->getPost('SECTION_ID');
+    if ($request->getPost('props')['SECTION_ID']) {
+        $arrFilterFaq['SECTION_ID'] = $request->getPost('props')['SECTION_ID'];
     }
 } else {
     $section = $request->getQuery('PARENT_SECTION');

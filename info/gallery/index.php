@@ -11,10 +11,10 @@ if ($request->isAjaxRequest()) $APPLICATION->RestartBuffer();
 if ($request->isAjaxRequest()) {
     global $arrFilterGallery;
     $arrFilterGallery = [
-        'IBLOCK_ID' => $request->getPost('IBLOCK_ID'),
+        'IBLOCK_ID' => $request->getPost('props')['IBLOCK_ID'],
     ];
-    if ($request->getPost('SECTION_ID')) {
-        $arrFilterGallery['SECTION_ID'] = $request->getPost('SECTION_ID');
+    if ($request->getPost('props')['SECTION_ID']) {
+        $arrFilterGallery['SECTION_ID'] = $request->getPost('props')['SECTION_ID'];
     }
 }
 ?>

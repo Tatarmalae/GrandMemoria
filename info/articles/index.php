@@ -11,10 +11,10 @@ if ($request->isAjaxRequest()) $APPLICATION->RestartBuffer();
 if ($request->isAjaxRequest()) {
     global $arrFilterArticles;
     $arrFilterArticles = [
-        'IBLOCK_ID' => $request->getPost('IBLOCK_ID'),
+        'IBLOCK_ID' => $request->getPost('props')['IBLOCK_ID'],
     ];
-    if ($request->getPost('SECTION_ID')) {
-        $arrFilterArticles['SECTION_ID'] = $request->getPost('SECTION_ID');
+    if ($request->getPost('props')['SECTION_ID']) {
+        $arrFilterArticles['SECTION_ID'] = $request->getPost('props')['SECTION_ID'];
     }
 }
 ?>
@@ -25,7 +25,7 @@ if ($request->isAjaxRequest()) {
         "COMPONENT_TEMPLATE" => "articles",
         "IBLOCK_TYPE" => "info",
         "IBLOCK_ID" => "11",
-        "NEWS_COUNT" => "9",
+        "NEWS_COUNT" => "1",
         "USE_SEARCH" => "N",
         "USE_RSS" => "N",
         "USE_RATING" => "N",
