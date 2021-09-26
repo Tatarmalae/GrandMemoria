@@ -312,27 +312,96 @@
                             <h2 class="static">Оформить рассрочку</h2>
                             <p>Оставьте свои данные, и мы свяжемся с вами в ближайшее время.</p>
                             <div class="modal-form">
-                                <form class="default-form" id="formCheckout" action="<?= SITE_AJAX_PATH ?>/forms/form_installment.php" method="post" enctype="multipart/form-data">
+                                <form class="default-form" id="formInstallment" action="<?= SITE_AJAX_PATH ?>/forms/form_installment.php" method="post" enctype="multipart/form-data">
                                     <input type="hidden" name="theme" value="">
                                     <input type="hidden" name="type" value="Оформить рассрочку">
                                     <div class="form-inputs">
                                         <div class="form-input">
-                                            <input class="form-control" id="checkoutName" placeholder="" name="name"/>
-                                            <label class="form-input__label" for="checkoutName">
+                                            <input class="form-control" id="installmentName" placeholder="" name="name"/>
+                                            <label class="form-input__label" for="installmentName">
                                                 <span>Ваше имя *</span>
                                             </label>
                                         </div>
                                         <div class="form-input">
-                                            <input class="form-control phone-mask" type="tel" id="checkoutPhone" placeholder="" name="phone"/>
-                                            <label class="form-input__label" for="checkoutPhone">
+                                            <input class="form-control phone-mask" type="tel" id="installmentPhone" placeholder="" name="phone"/>
+                                            <label class="form-input__label" for="installmentPhone">
                                                 <span>Телефон *</span>
                                             </label>
                                         </div>
                                     </div>
                                     <div class="form-checkbox">
                                         <div class="checkbox">
-                                            <input type="checkbox" name="checkbox" id="checkoutCheck"/>
-                                            <label for="checkoutCheck">
+                                            <input type="checkbox" name="checkbox" id="installmentCheck"/>
+                                            <label for="installmentCheck">
+                                                <span class="checkbox__box"></span>
+                                                Нажимая на кнопку, вы соглашаетесь с
+                                                <a href="/privacy/">политикой конфиденциальности</a>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-btn">
+                                        <button class="btn btn-blue big">
+                                            <span class="btn__text">
+                                                <span>Отправить</span>
+                                            </span>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-success">
+                    <h2>Заявка отправлена</h2>
+                    <p>Спасибо! Мы свяжемся с вами в ближайшее время.</p>
+                    <div class="more-btn">
+                        <button class="btn btn-blue big" type="button" data-dismiss="modal">
+                            <span class="btn__text">
+                                <span>Вернуться к просмотру</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php //Купить в 1 клик ?>
+<div class="modal fade" id="modalBuyOneClick" tabindex="-1" role="dialog" aria-labelledby="modalBuyOneClickLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <button class="modal-close" type="button" data-dismiss="modal" aria-label="Close">
+                <svg class="icon__close-modal" width="48" height="48">
+                    <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
+                </svg>
+            </button>
+            <div class="modal-body">
+                <a class="logo-link" href="<?= SITE_DIR ?>">
+                    <div class="logo">
+                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
+                    </div>
+                </a>
+                <div class="modal-start">
+                    <div class="modal-scroll">
+                        <div class="modal-scroll__inner">
+                            <h2 class="static">Купить в 1 клик</h2>
+                            <p>Оставьте свои данные, и мы свяжемся с вами в ближайшее время.</p>
+                            <div class="modal-form">
+                                <form class="default-form" id="formBuyOneClick" action="<?= SITE_AJAX_PATH ?>/forms/form_one_click.php" method="post" enctype="multipart/form-data">
+                                    <input type="hidden" name="theme" value="">
+                                    <input type="hidden" name="type" value="Купить в 1 клик">
+                                    <div class="form-inputs">
+                                        <div class="form-input">
+                                            <input class="form-control phone-mask" type="tel" id="buyOneClickPhone" placeholder="" name="phone"/>
+                                            <label class="form-input__label" for="buyOneClickPhone">
+                                                <span>Телефон *</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-checkbox">
+                                        <div class="checkbox">
+                                            <input type="checkbox" name="checkbox" id="buyOneClickCheck"/>
+                                            <label for="buyOneClickCheck">
                                                 <span class="checkbox__box"></span>
                                                 Нажимая на кнопку, вы соглашаетесь с
                                                 <a href="/privacy/">политикой конфиденциальности</a>
@@ -596,22 +665,22 @@
                                 <form class="default-form" id="formInstallmentPlan" action="" method="post" enctype="multipart/form-data">
                                     <div class="form-inputs">
                                         <div class="form-input">
-                                            <input class="form-control" id="callName" placeholder="" name="name"/>
-                                            <label class="form-input__label" for="callName">
+                                            <input class="form-control" id="installmentPlanName" placeholder="" name="name"/>
+                                            <label class="form-input__label" for="installmentPlanName">
                                                 <span>Ваше имя *</span>
                                             </label>
                                         </div>
                                         <div class="form-input">
-                                            <input class="form-control phone-mask" type="tel" id="callPhone" placeholder="" name="phone"/>
-                                            <label class="form-input__label" for="callPhone">
+                                            <input class="form-control phone-mask" type="tel" id="installmentPlanPhone" placeholder="" name="phone"/>
+                                            <label class="form-input__label" for="installmentPlanPhone">
                                                 <span>Телефон *</span>
                                             </label>
                                         </div>
                                     </div>
                                     <div class="form-checkbox">
                                         <div class="checkbox">
-                                            <input type="checkbox" name="checkbox" id="callCheck"/>
-                                            <label for="callCheck">
+                                            <input type="checkbox" name="checkbox" id="installmentPlanCheck"/>
+                                            <label for="installmentPlanCheck">
                                                 <span class="checkbox__box"></span>
                                                 Нажимая на кнопку, вы соглашаетесь с
                                                 <a href="/privacy/">политикой конфиденциальности</a>

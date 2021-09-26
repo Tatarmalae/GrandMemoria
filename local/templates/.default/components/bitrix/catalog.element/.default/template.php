@@ -197,7 +197,7 @@ $this->EndViewTarget();
                         <span data-text="Добавить в корзину">Добавить в корзину</span>
                     </span>
                 </button>
-                <button class="btn btn-blue-light big btn-block" type="button"<?php // TODO: модалка + передать id ?>>
+                <button class="btn btn-blue-light big btn-block" type="button" data-toggle="modal" data-target="#modalBuyOneClick" data-theme="<?= $arResult['ID'] ?>">
                     <span class="btn__text">
                         <span data-text="Купить в 1 клик">Купить в 1 клик</span>
                     </span>
