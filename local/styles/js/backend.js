@@ -29,6 +29,21 @@ function forms() {
     let url = elem.attr('action');
     let data = elem.serialize();
 
+    let calc = $('.calculator');
+    if (
+      elem.is('[id=formInstallmentPlan]')
+      && calc.length
+      && elem.find('input[name=theme]:hidden').val() === 'Калькулятор рассрочки'
+    ) {
+      data = unSerialize(data);
+      data.SUM = calc.find('span.calc-sum').text() + ' руб.';
+      data.COUNT = calc.find('span.calc-time').text() + ' мес.';
+      data.TOTAL = calc.find('span.calc-generalSum').text() + ' руб.';
+      data.FIRST_PAYMENT_PER = calc.find('span.calc-contributionPercent').text() + '%';
+      data.FIRST_PAYMENT_RUB = calc.find('span.calc-contributionRuble').text() + ' руб.';
+      data.MONTHLY_PAYMENT = calc.find('span.calc-payment').text() + ' руб.';
+    }
+
     $.ajax({
       type: "POST",
       url: url,
@@ -423,7 +438,7 @@ function catalogFilter() {
   });
 
   //Сортировка
-  body.on('click', '.ajax__sort li', function (){
+  body.on('click', '.ajax__sort li', function () {
     let filter = $('.filter');
     let inputs = filter.find('.filter-column');
     if ($('.filter-column_btn').is(":visible")) {
@@ -736,4 +751,15 @@ function getArrayDiff(a, b) {
     }
   }
   return ret;
+}
+
+// Функция обратная serialize() и возвращает данные json
+function unSerialize(data) {
+  data = data.split('&');
+  let response = {};
+  for (let k in data){
+    let newData = data[k].split('=');
+    response[newData[0]] = newData[1];
+  }
+  return response;
 }

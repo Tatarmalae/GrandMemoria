@@ -9,7 +9,7 @@
                     <h3>Расчет рассрочки на приобретение памятника</h3>
                     <p>Для вашего удобства мы предлагаем рассчитать рассрочку на срок от 2 до 12 месяцев</p>
                     <div class="more-btn">
-                        <a class="btn btn-red big" href="#" data-toggle="modal" data-target="#modalInstallmentPlan">
+                        <a class="btn btn-red big" href="#" data-toggle="modal" data-target="#modalInstallmentPlan" data-theme="Расчет рассрочки">
                             <span class="btn__text">
                                 <span data-text="Оставить заявку">Оставить заявку</span>
                             </span>

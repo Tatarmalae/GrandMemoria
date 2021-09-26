@@ -93,7 +93,7 @@
                             </div>
                         </div>
                         <div class="more-btn">
-                            <button class="btn btn-blue big btn-block" type="button" data-toggle="modal" data-target="#modalInstallmentPlan">
+                            <button class="btn btn-blue big btn-block" type="button" data-toggle="modal" data-target="#modalInstallmentPlan" data-theme="Калькулятор рассрочки">
                                 <span class="btn__text"><span data-text="Оставить заявку">Оставить заявку</span></span>
                             </button>
                         </div>

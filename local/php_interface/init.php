@@ -22,6 +22,7 @@ try {
         '\Dev\FormFaq' => SITE_USER_CLASS_PATH . '/classFormFaq.php',
         '\Dev\FormInstallment' => SITE_USER_CLASS_PATH . '/classFormInstallment.php',
         '\Dev\FormBuyOneClick' => SITE_USER_CLASS_PATH . '/classFormBuyOneClick.php',
+        '\Dev\FormInstallmentPlan' => SITE_USER_CLASS_PATH . '/classFormInstallmentPlan.php',
     ]);
 } catch (LoaderException $e) {
     die($e->getMessage());
