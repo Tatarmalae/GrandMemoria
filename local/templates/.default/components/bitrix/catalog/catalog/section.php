@@ -34,7 +34,6 @@ try {
 } catch (Throwable $e) {
     Debug::dumpToFile($e->getMessage());
 }
-\Dev\Utilities::DB($section);
 
 $propertyList = SectionPropertyTable::getList([
     "select" => [
