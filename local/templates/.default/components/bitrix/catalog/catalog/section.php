@@ -250,7 +250,6 @@ $APPLICATION->IncludeComponent(
             </div>
             <div class="filter-column">
                 <div class="dropdown">
-                    <?php // TODO: сортировка ?>
                     <input type="hidden" value="По популярности">
                     <div class="dropdown-label" id="filterDrop6" data-toggle="dropdown" aria-expanded="false">
                         <svg class="icon__arrow-drop" width="32" height="32">
