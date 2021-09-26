@@ -13,7 +13,7 @@
 ?>
 <?php $this->SetViewTarget('after_title') ?>
 <div class="results-form">
-    <form class="default-form" id="formResults" action="" method="get">
+    <form class="default-form no__ajax" id="formResults" action="" method="get">
         <input type="hidden" name="how" value="<?= $arResult["REQUEST"]["HOW"] == "d" ? "d" : "r" ?>"/>
         <div class="form-input">
             <input class="form-control<?= ($arResult["REQUEST"]["QUERY"]) ? ' valid is-focus' : '' ?>" id="resultsName" type="text" name="q" value="<?= $arResult["REQUEST"]["QUERY"] ?>" size="40"/>
@@ -38,7 +38,7 @@
 <?php $this->EndViewTarget() ?>
 
 <?php if (count($arResult["SEARCH"]) > 0): ?>
-    <div class="results-links">
+    <div class="results-links ajax__items">
         <?php foreach ($arResult["SEARCH"] as $arItem): ?>
             <div class="results-link">
                 <h4>
@@ -60,6 +60,7 @@
 
     <?php $this->EndViewTarget() ?>
 <?php endif; ?>
+
 <?php if ($arParams["DISPLAY_BOTTOM_PAGER"]): ?>
     <?= $arResult["NAV_STRING"] ?>
 <?php endif; ?>

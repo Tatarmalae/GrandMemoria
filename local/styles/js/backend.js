@@ -23,7 +23,7 @@ function forms() {
     }
   });
 
-  body.on('submit', 'form.default-form', function (event) {
+  body.on('submit', 'form.default-form:not(.no__ajax)', function (event) {
     event.preventDefault();
     let elem = $(this);
     let url = elem.attr('action');

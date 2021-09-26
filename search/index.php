@@ -1,9 +1,13 @@
-<?php
-require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
+<?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
 /**
  * @var $APPLICATION
  */
 $APPLICATION->SetTitle("Поиск по сайту");
+
+use Bitrix\Main\Application;
+
+$request = Application::getInstance()->getContext()->getRequest();
+if ($request->isAjaxRequest()) $APPLICATION->RestartBuffer();
 ?>
 <?php $APPLICATION->IncludeComponent(
     "bitrix:search.page",
@@ -48,4 +52,5 @@ $APPLICATION->SetTitle("Поиск по сайту");
     ],
     false
 ); ?>
+<?php unset($arrFilterReviews) ?>
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>
