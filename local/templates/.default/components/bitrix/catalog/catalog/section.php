@@ -192,11 +192,11 @@ $APPLICATION->IncludeComponent(
                                     </div>
                                     <div class="filter-interval__item">
                                         <span class="filter-interval__label">От</span>
-                                        <input id="input-with-keypress-0" value="<?= min($prop['VALUES']); ?>">
+                                        <input id="input-with-keypress-0" value="<?= min($prop['VALUES']); ?>" data-default="<?= min($prop['VALUES']); ?>">
                                     </div>
                                     <div class="filter-interval__item">
                                         <span class="filter-interval__label">До</span>
-                                        <input id="input-with-keypress-1" value="<?= max($prop['VALUES']); ?>">
+                                        <input id="input-with-keypress-1" value="<?= max($prop['VALUES']); ?>" data-default="<?= max($prop['VALUES']); ?>">
                                     </div>
                                 </div>
                             </div>
@@ -256,12 +256,11 @@ $APPLICATION->IncludeComponent(
                         <svg class="icon__arrow-drop" width="32" height="32">
                             <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-drop"></use>
                         </svg>
-                        <div class="dropdown-value" data-value="По популярности">По популярности</div>
+                        <div class="dropdown-value" data-value="По популярности" data-sort="SHOW_COUNTER" data-order="DESC">По популярности</div>
                     </div>
-                    <ul class="dropdown-menu" aria-labelledby="filterDrop6">
-                        <li data-value="По популярности 1">По популярности 1</li>
-                        <li data-value="По популярности 2">По популярности 2</li>
-                        <li data-value="По популярности 3">По популярности 3</li>
+                    <ul class="dropdown-menu ajax__sort" aria-labelledby="filterDrop6">
+                        <li data-value="По цене (по возрастанию)" data-sort="PROPERTY_PRICE" data-order="ASC">По цене (по возрастанию)</li>
+                        <li data-value="По цене (по убыванию)" data-sort="PROPERTY_PRICE" data-order="DESC">По цене (по убыванию)</li>
                     </ul>
                 </div>
             </div>
@@ -273,7 +272,7 @@ $APPLICATION->IncludeComponent(
 if ($request->isAjaxRequest()) {
     global $arrFilter;
     $arrFilter = [];
-    foreach ($request->getPostList() as $key => $item) {
+    foreach ($request->getPostList()['props'] as $key => $item) {
         if ($key === 'undefined') continue;
         $arrFilter[$key] = array_search($item, array_column($properties, 'NAME')) ? '' : $item;
         if ($key === 'PROPERTY_STOCK') {
@@ -288,7 +287,6 @@ if ($request->isAjaxRequest()) {
             unset($arrFilter['PROPERTY_STOCK']);
         }
     }
-    //\Dev\Utilities::DB($arrFilter);
 }
 
 $APPLICATION->IncludeComponent(
@@ -299,8 +297,8 @@ $APPLICATION->IncludeComponent(
         "IBLOCK_TYPE" => "catalog",
         "IBLOCK_ID" => "12",
         "NEWS_COUNT" => "12",
-        "SORT_BY1" => "PROPERTY_PRICE",
-        "SORT_ORDER1" => "ASC",
+        "SORT_BY1" => $request->getPostList()['sort']['BY'] ?: 'SHOW_COUNTER',
+        "SORT_ORDER1" => $request->getPostList()['sort']['ORDER'] ?: 'DESC',
         "SORT_BY2" => "SORT",
         "SORT_ORDER2" => "ASC",
         "FILTER_NAME" => "arrFilter",
