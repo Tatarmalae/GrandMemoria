@@ -511,6 +511,7 @@ function addBasket() {
       success: function (res) {
         if (res['status'] === 'success') {
           $('.btn.btn-basket .btn-basket__count').html(res['count']);
+          $('.btn-basket__add').html(res['count']);
 
           //Очистим
           $('#modalBasket img.lazy').attr('data-src', '').attr('src', '');
@@ -563,6 +564,7 @@ function delBasket() {
       success: function (res) {
         if (res['status'] === 'success') {
           $('.btn.btn-basket .btn-basket__count').html(res['count']);
+          $('.btn-basket__add').html(res['count']);
           elem.closest('.basket-card').remove();
 
           if (res['count'] !== 0) {
@@ -605,6 +607,7 @@ function updBasket() {
         if (res['status'] === 'success') {
 
           $('.btn.btn-basket .btn-basket__count').html(res['count']);
+          $('.btn-basket__add').html(res['count']);
 
           if (res['method'] === 'update') {
 

@@ -53,19 +53,21 @@ use Dev\Basket;
                     </div>
                 </div>
                 <div class="header__column header__column_btn header__column_basket">
-                    <a class="btn btn-blue-light small btn-basket" href="/basket/">
-                        <span class="btn__arrow">
-                            <svg class="icon__basket" width="20" height="20">
-                                <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#basket"></use>
-                            </svg>
-                        </span>
-                        <span class="btn__text">
-                            <span data-text="Корзина">Корзина
-                                <span class="btn-basket__count"><?= Basket::getCount() ?></span>
+                    <div class="btn-basket__yes">
+                        <a class="btn btn-blue-light small btn-basket" href="/basket/">
+                            <span class="btn__arrow">
+                                <svg class="icon__basket" width="20" height="20">
+                                    <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#basket"></use>
+                                </svg>
                             </span>
-                        </span>
-                        <span class="btn-basket__add">2</span>
-                    </a>
+                            <span class="btn__text">
+                                <span data-text="Корзина">Корзина
+                                    <span class="btn-basket__count"><?= Basket::getCount() ?></span>
+                                </span>
+                            </span>
+                        </a>
+                        <span class="btn-basket__add"><?= Basket::getCount() ?></span>
+                    </div>
                 </div>
                 <div class="header__column header__column_btn header__column_calculation">
                     <a class="btn btn-blue small" href="/calculation/">
