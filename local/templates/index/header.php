@@ -457,7 +457,7 @@ use Bitrix\Main\Config\Option;
 
         <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/calculation.php", [], ["SHOW_BORDER" => true]); ?>
 
-        <section style="margin-top: -31px;">
+        <section>
             <div class="content">
                 <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/components/about.php", [], ["SHOW_BORDER" => true]); ?>
             </div>
