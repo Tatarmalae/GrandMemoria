@@ -6,6 +6,7 @@ use Bitrix\Main\Loader;
 use Bitrix\Main\LoaderException;
 use Bitrix\Main\Mail\Event;
 use CIBlockElement;
+use CIBlockProperty;
 
 /**
  * Класс для работы с формой "Заказать звонок"
@@ -46,7 +47,7 @@ class FormCallback extends Iblock
         $fieldText = '';
         foreach ($arLoadProductArray['PROPERTY_VALUES'] as $key => $values) {
             if ($values != '') {
-                $resName = \CIBlockProperty::GetByID($key, $this->IBlockID, false)->GetNext();
+                $resName = CIBlockProperty::GetByID($key, $this->IBlockID, false)->GetNext();
                 $name = $resName['NAME'];
                 $fieldText .= $name . ': ' . $values . '<br>';
             }

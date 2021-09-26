@@ -2,6 +2,7 @@
 
 namespace Dev;
 
+use Bitrix\Main\Context;
 use Bitrix\Main\Loader;
 use Bitrix\Main\LoaderException;
 use Bitrix\Main\Mail\Event;
@@ -9,11 +10,11 @@ use CIBlockElement;
 use CIBlockProperty;
 
 /**
- * Класс для работы с формой "Получить консультацию"
- * Class FormConsultation
+ * Класс для работы с формой "Оформить рассрочку"
+ * Class FormInstallment
  * @package Dev
  */
-class FormConsultation extends Iblock
+class FormInstallment extends Iblock
 {
 
     /**
@@ -34,7 +35,7 @@ class FormConsultation extends Iblock
             'PROPERTY_VALUES' => [
                 'NAME' => $arFields['name'],
                 'PHONE' => $arFields['phone'],
-                'THEME' => $arFields['theme'],
+                'PRODUCT' => $arFields['theme'],
             ],
             'NAME' => 'Заявка от ' . date('d.m.Y H:i:s'),
             'ACTIVE' => 'N',
@@ -47,6 +48,12 @@ class FormConsultation extends Iblock
         $fieldText = '';
         foreach ($arLoadProductArray['PROPERTY_VALUES'] as $key => $values) {
             if ($values != '') {
+                if ($key == 'PRODUCT') {
+                    $arElem = CIBlockElement::GetByID($arFields['theme'])->GetNext();
+                    $protocol = Context::getCurrent()->getRequest()->isHttps()? 'https://' : 'http://';
+                    $url = $protocol . SITE_SERVER_NAME . $arElem["DETAIL_PAGE_URL"];
+                    $values = '<a href="' .  $url . '">' . $arElem["NAME"] . '</a>';
+                }
                 $resName = CIBlockProperty::GetByID($key, $this->IBlockID, false)->GetNext();
                 $name = $resName['NAME'];
                 $fieldText .= $name . ': ' . $values . '<br>';

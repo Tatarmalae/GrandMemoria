@@ -184,7 +184,7 @@ $this->EndViewTarget();
                 <span class="label label_small label_fiery-rose">В наличии</span>
             </div>
             <?php if ($arResult['SECTION']['PATH'][0]['ID'] == '15'): ?>
-                <a class="product-link" href="#"<?php // TODO: модалка + передать id ?>>
+                <a class="product-link" href="#" data-toggle="modal" data-target="#modalInstallment" data-theme="<?= $arResult['ID'] ?>">
                     <span>Оформить в рассрочку 0%</span>
                     <svg class="icon__info" width="16" height="16">
                         <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#info"></use>
