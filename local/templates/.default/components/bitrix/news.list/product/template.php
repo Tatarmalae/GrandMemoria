@@ -18,7 +18,7 @@ $this->setFrameMode(true);
         <h2>По заданным параметрам, ничего не найдено</h2>
     </div>
 <?php else: ?>
-    <div class="catalog-items items" data-type="column" data-view="border">
+    <div class="catalog-items items ajax__items" data-type="column" data-view="border">
         <?php foreach ($arResult["ITEMS"] as $arItem): ?>
             <?php
             $this->AddEditAction($arItem['ID'], $arItem['EDIT_LINK'], CIBlock::GetArrayByID($arItem["IBLOCK_ID"], "ELEMENT_EDIT"));

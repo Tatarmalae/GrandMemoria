@@ -72,6 +72,37 @@ function ajaxPagination() {
       }
     }
 
+    let sort = {};
+    let filter = $('.filter');
+    if (filter.length) {
+      let inputs = filter.find('.filter-column');
+      if ($('.filter-column_btn').is(":visible")) {
+        inputs = filter.find('.ajax_filter__mobile .checkbox input[type=checkbox]');
+      }
+      let checkboxes = filter.find('.ajax__filter .checkbox input[type=checkbox]');
+
+      inputs.each(function (index, element) {
+        let code = $(element).find('[type=hidden]').data('code');
+        props[code] = $(element).find('[type=hidden]').val();
+        if ($('.filter-column_btn').is(":visible")) {
+          code = $(element).attr('id');
+          props[code] = $(element).is(':checked') ? $(element).val() : '';
+        }
+      });
+      checkboxes.each(function (index, element) {
+        let code = $(element).attr('id');
+        props[code] = $(element).is(':checked') ? '1' : '';
+      });
+      props['>=PROPERTY_PRICE'] = $('#input-with-keypress-0').val();
+      props['<=PROPERTY_PRICE'] = $('#input-with-keypress-1').val();
+
+      let elSort = $('.ajax__sort');
+      let sortBy = elSort.closest('.dropdown').find('.dropdown-value').data('sort');
+      let sortOrder = elSort.closest('.dropdown').find('.dropdown-value').data('order');
+      sort.BY = sortBy;
+      sort.ORDER = sortOrder;
+    }
+
     $.ajax({
       type: "POST",
       url: url,
@@ -183,16 +214,36 @@ function catalogFilter() {
       let code = $(element).attr('id');
       props[code] = $(element).is(':checked') ? '1' : '';
     });
+    props['>=PROPERTY_PRICE'] = $('#input-with-keypress-0').val();
+    props['<=PROPERTY_PRICE'] = $('#input-with-keypress-1').val();
+
+    let sort = {};
+    let elSort = $('.ajax__sort');
+    let sortBy = elSort.closest('.dropdown').find('.dropdown-value').data('sort');
+    let sortOrder = elSort.closest('.dropdown').find('.dropdown-value').data('order');
+    sort.BY = sortBy;
+    sort.ORDER = sortOrder;
+
 
     $.ajax({
       type: "POST",
       url: window.location.href,
-      data: props,
+      data: {
+        props: props,
+        sort: sort
+      },
       success: function (data) {
         let content = $(data).filter('.catalog-items');
         $('.catalog-items').replaceWith(content);
         $('.filter-count').replaceWith($(data).find('.filter-count'));
         $('.ajax-count').replaceWith($(data).find('.ajax-count'));
+
+        let pagination = $(data).filter('.filter-bottom');
+        $('.filter-bottom').remove();
+        if (pagination.length) {
+          content.after(pagination);
+        }
+
         initImgLazyLoad();
       }
     });
@@ -213,22 +264,41 @@ function catalogFilter() {
       let code = $(element).attr('id');
       props[code] = $(element).is(':checked') ? '1' : '';
     });
+    props['>=PROPERTY_PRICE'] = $('#input-with-keypress-0').val();
+    props['<=PROPERTY_PRICE'] = $('#input-with-keypress-1').val();
+
+    let sort = {};
+    let elSort = $('.ajax__sort');
+    let sortBy = elSort.closest('.dropdown').find('.dropdown-value').data('sort');
+    let sortOrder = elSort.closest('.dropdown').find('.dropdown-value').data('order');
+    sort.BY = sortBy;
+    sort.ORDER = sortOrder;
 
     $.ajax({
       type: "POST",
       url: window.location.href,
-      data: props,
+      data: {
+        props: props,
+        sort: sort
+      },
       success: function (data) {
         let content = $(data).filter('.catalog-items');
         $('.catalog-items').replaceWith(content);
         $('.filter-count').replaceWith($(data).find('.filter-count'));
         $('.ajax-count').replaceWith($(data).find('.ajax-count'));
+
+        let pagination = $(data).filter('.filter-bottom');
+        $('.filter-bottom').remove();
+        if (pagination.length) {
+          content.after(pagination);
+        }
+
         initImgLazyLoad();
       }
     });
   });
 
-  // Фильтр по цене и предыдущим значениям
+  // Фильтр по цене
   setTimeout(function () {
     const stepsSlider = document.getElementById('slider');
     if (!stepsSlider) return false;
@@ -266,15 +336,32 @@ function catalogFilter() {
         props[code] = Math.ceil(Number(index));
       });
 
+      let sort = {};
+      let elSort = $('.ajax__sort');
+      let sortBy = elSort.closest('.dropdown').find('.dropdown-value').data('sort');
+      let sortOrder = elSort.closest('.dropdown').find('.dropdown-value').data('order');
+      sort.BY = sortBy;
+      sort.ORDER = sortOrder;
+
       $.ajax({
         type: "POST",
         url: window.location.href,
-        data: props,
+        data: {
+          props: props,
+          sort: sort
+        },
         success: function (data) {
           let content = $(data).filter('.catalog-items');
           $('.catalog-items').replaceWith(content);
           $('.filter-count').replaceWith($(data).find('.filter-count'));
           $('.ajax-count').replaceWith($(data).find('.ajax-count'));
+
+          let pagination = $(data).filter('.filter-bottom');
+          $('.filter-bottom').remove();
+          if (pagination.length) {
+            content.after(pagination);
+          }
+
           initImgLazyLoad();
         }
       });
@@ -290,7 +377,6 @@ function catalogFilter() {
 
     let props = {};
     inputs.each(function (index, element) {
-      //$(element).find('[type=hidden]').data('code');
       $(element).find('[type=hidden]').val('');
     });
     inputsMob.each(function (index, element) {
@@ -300,15 +386,93 @@ function catalogFilter() {
       $(element).is(':checked') ? $(element).trigger('click') : '';
     });
 
+    const stepsSlider = document.getElementById('slider');
+    if (!stepsSlider) return false;
+    let inputsPrice = [document.getElementById("input-with-keypress-0"), document.getElementById("input-with-keypress-1")];
+    stepsSlider.noUiSlider.set([$(inputsPrice[0]).data('default'), $(inputsPrice[1]).data('default')])
+
+    let sort = {};
+    let elSort = $('.ajax__sort');
+    let sortBy = elSort.closest('.dropdown').find('.dropdown-value').data('sort');
+    let sortOrder = elSort.closest('.dropdown').find('.dropdown-value').data('order');
+    sort.BY = sortBy;
+    sort.ORDER = sortOrder;
+
     $.ajax({
       type: "POST",
       url: window.location.href,
-      data: props,
+      data: {
+        props: props,
+        sort: sort
+      },
       success: function (data) {
         let content = $(data).filter('.catalog-items');
         $('.catalog-items').replaceWith(content);
         $('.filter-count').replaceWith($(data).find('.filter-count'));
         $('.ajax-count').replaceWith($(data).find('.ajax-count'));
+
+        let pagination = $(data).filter('.filter-bottom');
+        $('.filter-bottom').remove();
+        if (pagination.length) {
+          content.after(pagination);
+        }
+
+        initImgLazyLoad();
+      }
+    });
+  });
+
+  //Сортировка
+  body.on('click', '.ajax__sort li', function (){
+    let filter = $('.filter');
+    let inputs = filter.find('.filter-column');
+    if ($('.filter-column_btn').is(":visible")) {
+      inputs = filter.find('.ajax_filter__mobile .checkbox input[type=checkbox]');
+    }
+    let checkboxes = filter.find('.ajax__filter .checkbox input[type=checkbox]');
+
+    let props = {};
+    inputs.each(function (index, element) {
+      let code = $(element).find('[type=hidden]').data('code');
+      props[code] = $(element).find('[type=hidden]').val();
+      if ($('.filter-column_btn').is(":visible")) {
+        code = $(element).attr('id');
+        props[code] = $(element).is(':checked') ? $(element).val() : '';
+      }
+    });
+    checkboxes.each(function (index, element) {
+      let code = $(element).attr('id');
+      props[code] = $(element).is(':checked') ? '1' : '';
+    });
+    props['>=PROPERTY_PRICE'] = $('#input-with-keypress-0').val();
+    props['<=PROPERTY_PRICE'] = $('#input-with-keypress-1').val();
+
+    let sort = {};
+    let elSort = $('.ajax__sort');
+    let sortBy = elSort.closest('.dropdown').find('.dropdown-value').data('sort');
+    let sortOrder = elSort.closest('.dropdown').find('.dropdown-value').data('order');
+    sort.BY = sortBy;
+    sort.ORDER = sortOrder;
+
+    $.ajax({
+      type: "POST",
+      url: window.location.href,
+      data: {
+        props: props,
+        sort: sort
+      },
+      success: function (data) {
+        let content = $(data).filter('.catalog-items');
+        $('.catalog-items').replaceWith(content);
+        $('.filter-count').replaceWith($(data).find('.filter-count'));
+        $('.ajax-count').replaceWith($(data).find('.ajax-count'));
+
+        let pagination = $(data).filter('.filter-bottom');
+        $('.filter-bottom').remove();
+        if (pagination.length) {
+          content.after(pagination);
+        }
+
         initImgLazyLoad();
       }
     });
