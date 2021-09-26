@@ -75,7 +75,10 @@ function ajaxPagination() {
     $.ajax({
       type: "POST",
       url: url,
-      data: props,
+      data: {
+        props: props,
+        sort: sort
+      },
       success: function (data) {
         let content = $(data).filter('.ajax__items');
         let items = $('.ajax__items');
@@ -131,7 +134,9 @@ function ajaxTabs() {
     $.ajax({
       type: "POST",
       url: window.location.href,
-      data: props,
+      data: {
+        props: props
+      },
       success: function (data) {
         let content = $(data).filter('.ajax__items');
         let items = $('.ajax__items');
