@@ -43,7 +43,7 @@ class FormCheckout extends Iblock
             'DATE_ACTIVE_FROM' => date('d.m.Y H:i:s'),
             'PROPERTY_VALUES' => [
                 'NAME' => $arFields['name'],
-                'PHONE' => $arFields['phone'],
+                'PHONE' => str_replace('%2B', '+', $arFields['phone']),
                 'PRODUCTS' => array_keys($products),
                 'INSTALLMENT' => $arFields['INSTALLMENT'],
             ],
