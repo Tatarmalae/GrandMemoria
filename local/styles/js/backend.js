@@ -29,6 +29,7 @@ function forms() {
     let url = elem.attr('action');
     let data = elem.serialize();
 
+    // Дополнение данными, если находимся на странице калькулятора рассрочки
     let calc = $('.calculator');
     if (
       elem.is('[id=formInstallmentPlan]')
@@ -42,6 +43,12 @@ function forms() {
       data.FIRST_PAYMENT_PER = calc.find('span.calc-contributionPercent').text() + '%';
       data.FIRST_PAYMENT_RUB = calc.find('span.calc-contributionRuble').text() + ' руб.';
       data.MONTHLY_PAYMENT = calc.find('span.calc-payment').text() + ' руб.';
+    }
+
+    // Дополнение данными, если находимся в корзине
+    if ($('.basket-wrap').length && $('[name=installment]').is(':checked')) {
+      data = unSerialize(data);
+      data.INSTALLMENT = 1;
     }
 
     $.ajax({
@@ -61,6 +68,12 @@ function forms() {
             $(".modal").modal("hide")
           }), 3e3);
           elem.parents(".modal").find('input[name=theme]').val('');
+
+          if (res['reload'] === 'ok') {
+            setTimeout((function () {
+              window.location.reload();
+            }), 3e3 + 100);
+          }
         }
       }
     });
@@ -760,7 +773,7 @@ function getArrayDiff(a, b) {
 function unSerialize(data) {
   data = data.split('&');
   let response = {};
-  for (let k in data){
+  for (let k in data) {
     let newData = data[k].split('=');
     response[newData[0]] = newData[1];
   }

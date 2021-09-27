@@ -510,9 +510,7 @@
         </div>
     </div>
 </div>
-
-
-
+<?php //Оформить заказ ?>
 <div class="modal fade" id="modalCheckout" tabindex="-1" role="dialog" aria-labelledby="modalCheckoutLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -533,7 +531,8 @@
                             <h2 class="static">Оформить заказ</h2>
                             <p>Оставьте свои данные, и мы свяжемся с вами в ближайшее время.</p>
                             <div class="modal-form">
-                                <form class="default-form" id="formCheckout" action="" method="post" enctype="multipart/form-data">
+                                <form class="default-form" id="formCheckout" action="<?= SITE_AJAX_PATH ?>/forms/form_checkout.php" method="post" enctype="multipart/form-data">
+                                    <input type="hidden" name="type" value="Оформить заказ">
                                     <div class="form-inputs">
                                         <div class="form-input">
                                             <input class="form-control" id="checkoutName" placeholder="" name="name"/>
@@ -585,6 +584,9 @@
         </div>
     </div>
 </div>
+
+
+
 <div class="modal fade" id="modalCommunication" tabindex="-1" role="dialog" aria-labelledby="modalCommunicationLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
