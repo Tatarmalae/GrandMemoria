@@ -23,7 +23,6 @@ $this->setFrameMode(true);
 <?php $this->SetViewTarget('cover__anons') ?>
 <p><?= $arResult['PREVIEW_TEXT'] ?></p>
 <div class="more-btn">
-    <?php //TODO: передать в модалку ссылку на заявку ?>
     <a class="btn btn-blue big" href="#" data-toggle="modal" data-target="#modalCommunication">
         <span class="btn__text">
             <span data-text="Получить консультацию">Оставить заявку</span>
