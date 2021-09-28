@@ -25,6 +25,7 @@ try {
         '\Dev\FormInstallmentPlan' => SITE_USER_CLASS_PATH . '/classFormInstallmentPlan.php',
         '\Dev\FormCheckout' => SITE_USER_CLASS_PATH . '/classFormCheckout.php',
         '\Dev\FormCommunication' => SITE_USER_CLASS_PATH . '/classFormCommunication.php',
+        '\Dev\FormReviews' => SITE_USER_CLASS_PATH . '/classFormReviews.php',
     ]);
 } catch (LoaderException $e) {
     die($e->getMessage());

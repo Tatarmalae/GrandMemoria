@@ -644,7 +644,6 @@
                                                         <svg class="icon__file-close" width="22" height="22">
                                                             <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#file-close"></use>
                                                         </svg>
-
                                                     </div>
                                                 </div>
                                             </div>
@@ -688,8 +687,7 @@
         </div>
     </div>
 </div>
-
-
+<?php //Оставить отзыв ?>
 <div class="modal fade" id="modalReviews" tabindex="-1" role="dialog" aria-labelledby="modalReviewsLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -710,7 +708,7 @@
                             <h2 class="static">Оставить отзыв</h2>
                             <p>Поделитесь отзывам о нашей работе</p>
                             <div class="modal-form">
-                                <form class="default-form" id="formReviews" action="<?= SITE_AJAX_PATH ?>/forms/form_reviews.php" method="post" enctype="multipart/form-data">
+                                <form class="default-form file__form" id="formReviews" action="<?= SITE_AJAX_PATH ?>/forms/form_reviews.php" method="post" enctype="multipart/form-data">
                                     <input type="hidden" name="theme" value="">
                                     <input type="hidden" name="type" value="Оставить отзыв">
                                     <div class="form-inputs">
@@ -749,7 +747,6 @@
                                                         <svg class="icon__file-close" width="22" height="22">
                                                             <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#file-close"></use>
                                                         </svg>
-
                                                     </div>
                                                 </div>
                                             </div>
@@ -793,6 +790,8 @@
         </div>
     </div>
 </div>
+
+
 <div class="modal fade" id="modalStock" tabindex="-1" role="dialog" aria-labelledby="modalStockLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
