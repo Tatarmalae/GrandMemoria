@@ -28,6 +28,14 @@ function forms() {
     let elem = $(this);
     let url = elem.attr('action');
     let data = elem.serialize();
+    if (elem.hasClass('file__form')) {
+      data = new FormData(elem[0]);
+      $.ajaxSetup({
+        cache: false,
+        contentType: false,
+        processData: false,
+      });
+    }
 
     // Дополнение данными, если находимся на странице калькулятора рассрочки
     let calc = $('.calculator');
@@ -67,6 +75,7 @@ function forms() {
           setTimeout((function () {
             $(".modal").modal("hide")
           }), 3e3);
+
           elem.parents(".modal").find('input[name=theme]').val('');
 
           if (res['reload'] === 'ok') {

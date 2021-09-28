@@ -584,9 +584,7 @@
         </div>
     </div>
 </div>
-
-
-
+<?php //Написать нам ?>
 <div class="modal fade" id="modalCommunication" tabindex="-1" role="dialog" aria-labelledby="modalCommunicationLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -607,7 +605,9 @@
                             <h2 class="static">Написать нам</h2>
                             <p>Директор лично читает письма и принимает решения.</p>
                             <div class="modal-form">
-                                <form class="default-form" id="formCommunication" action="" method="post" enctype="multipart/form-data">
+                                <form class="default-form file__form" id="formCommunication" action="<?= SITE_AJAX_PATH ?>/forms/form_communication.php" method="post" enctype="multipart/form-data">
+                                    <input type="hidden" name="theme" value="">
+                                    <input type="hidden" name="type" value="Написать нам">
                                     <div class="form-inputs">
                                         <div class="form-input">
                                             <input class="form-control" id="communicationName" placeholder="" name="name"/>
@@ -637,7 +637,7 @@
                                     <div class="form-file">
                                         <label class="file" for="communicationFile">
                                             <input type="hidden"/>
-                                            <input type="file" name="file" id="communicationFile"/>
+                                            <input type="file" name="file[]" id="communicationFile"/>
                                             <div class="file__icon">
                                                 <div class="file__icon-hide">
                                                     <div class="file__close">
@@ -688,6 +688,8 @@
         </div>
     </div>
 </div>
+
+
 <div class="modal fade" id="modalReviews" tabindex="-1" role="dialog" aria-labelledby="modalReviewsLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -695,12 +697,11 @@
                 <svg class="icon__close-modal" width="48" height="48">
                     <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
                 </svg>
-
             </button>
             <div class="modal-body">
-                <a class="logo-link" href="#">
+                <a class="logo-link" href="<?= SITE_DIR ?>">
                     <div class="logo">
-                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt=""/>
+                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
                     </div>
                 </a>
                 <div class="modal-start">
@@ -709,7 +710,9 @@
                             <h2 class="static">Оставить отзыв</h2>
                             <p>Поделитесь отзывам о нашей работе</p>
                             <div class="modal-form">
-                                <form class="default-form" id="formReviews" action="" method="post" enctype="multipart/form-data">
+                                <form class="default-form" id="formReviews" action="<?= SITE_AJAX_PATH ?>/forms/form_reviews.php" method="post" enctype="multipart/form-data">
+                                    <input type="hidden" name="theme" value="">
+                                    <input type="hidden" name="type" value="Оставить отзыв">
                                     <div class="form-inputs">
                                         <div class="form-input">
                                             <input class="form-control" id="reviewsName" placeholder="" name="name"/>
@@ -739,7 +742,7 @@
                                     <div class="form-file">
                                         <label class="file" for="reviewsFile">
                                             <input type="hidden"/>
-                                            <input type="file" name="file" id="reviewsFile"/>
+                                            <input type="file" name="file[]" id="reviewsFile"/>
                                             <div class="file__icon">
                                                 <div class="file__icon-hide">
                                                     <div class="file__close">
