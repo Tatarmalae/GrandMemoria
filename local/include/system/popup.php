@@ -790,8 +790,7 @@
         </div>
     </div>
 </div>
-
-
+<?php //Получить акционное предложение ?>
 <div class="modal fade" id="modalStock" tabindex="-1" role="dialog" aria-labelledby="modalStockLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -812,7 +811,9 @@
                             <h2 class="static">Получить акционное предложение</h2>
                             <p>Оставьте свои данные, и мы свяжемся с вами в ближайшее время.</p>
                             <div class="modal-form">
-                                <form class="default-form" id="formStock" action="" method="post" enctype="multipart/form-data">
+                                <form class="default-form" id="formStock" action="<?= SITE_AJAX_PATH ?>/forms/form_stock.php" method="post" enctype="multipart/form-data">
+                                    <input type="hidden" name="theme" value="">
+                                    <input type="hidden" name="type" value="Получить акционное предложение">
                                     <div class="form-inputs">
                                         <div class="form-input">
                                             <input class="form-control" id="stockName" placeholder="" name="name"/>

@@ -37,5 +37,5 @@ $this->EndViewTarget();
 
 <article>
     <?= $arResult['DETAIL_TEXT'] ?>
-    <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/stock_banner.php", [], ["SHOW_BORDER" => true]); ?>
+    <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/stock_banner.php", ['THEME' => $arResult['ID']], ["SHOW_BORDER" => true]); ?>
 </article>
