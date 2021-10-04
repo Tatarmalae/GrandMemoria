@@ -532,6 +532,7 @@
                             <p>Оставьте свои данные, и мы свяжемся с вами в ближайшее время.</p>
                             <div class="modal-form">
                                 <form class="default-form" id="formCheckout" action="<?= SITE_AJAX_PATH ?>/forms/form_checkout.php" method="post" enctype="multipart/form-data">
+                                    <input type="hidden" name="theme" value="">
                                     <input type="hidden" name="type" value="Оформить заказ">
                                     <div class="form-inputs">
                                         <div class="form-input">

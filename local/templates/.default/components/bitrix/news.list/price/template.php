@@ -54,7 +54,7 @@ $this->setFrameMode(true);
                                 </div>
                             <?php endif ?>
                             <div class="more-btn">
-                                <a class="btn btn-blue big btn-block" href="#" data-toggle="modal" data-target="#modalCheckout"<?php //TODO: передать id услуги ?>>
+                                <a class="btn btn-blue big btn-block" href="#" data-toggle="modal" data-target="#modalCheckout" data-theme="<?= $arItem['ID'] ?>">
                                     <span class="btn__text">
                                         <span data-text="Заказать">Заказать</span>
                                     </span>
