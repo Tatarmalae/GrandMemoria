@@ -11,7 +11,7 @@
  * @var string $templateFolder
  */
 
-use \Dev\Utilities;
+use Dev\Utilities;
 
 $this->setFrameMode(true);
 $this->SetViewTarget('no_bg');
@@ -227,7 +227,6 @@ $this->EndViewTarget();
             </div>
         </div>
     </div>
-    <?php // TODO: блок доставки не изменяемый, а блок преимуществ для каждого родительского раздела редактируем ?>
     <div class="product-delivery">
         <div class="product-delivery__row">
             <div class="product-delivery__column">
@@ -245,21 +244,21 @@ $this->EndViewTarget();
                     Доставка – от 500 ₽
                 </div>
             </div>
-            <div class="product-delivery__column">
-                <h5>Преимущества:</h5>
-                <div class="product-delivery__item">
-                    <span class="product-delivery__icon">
-                        <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/product/delivery/3.svg" alt="" src="">
-                    </span>
-                    Срок службы не ограничен
+            <?php if ($arParams['BENEFITS']): ?>
+                <div class="product-delivery__column">
+                    <h5>Преимущества:</h5>
+                    <?php foreach ($arParams['BENEFITS'] as $benefit): ?>
+                        <div class="product-delivery__item">
+                            <?php if (!empty($benefit['PROPERTIES']['ICO']['VALUE'])): ?>
+                                <span class="product-delivery__icon">
+                                    <img class="lazy" data-src="<?= CFile::GetPath($benefit['PROPERTIES']['ICO']['VALUE']) ?>" alt="<?= $benefit['NAME'] ?>" src="">
+                                </span>
+                            <?php endif ?>
+                            <?= $benefit['NAME'] ?>
+                        </div>
+                    <?php endforeach ?>
                 </div>
-                <div class="product-delivery__item">
-                    <span class="product-delivery__icon">
-                        <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/product/delivery/4.svg" alt="" src="">
-                    </span>
-                    Гарантия на памятник - 20 лет
-                </div>
-            </div>
+            <?php endif ?>
         </div>
     </div>
     <div class="product-char box">

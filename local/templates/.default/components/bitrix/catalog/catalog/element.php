@@ -20,11 +20,15 @@ $section = '';
 $sectionName = '';
 $sectionProps = '';
 $elementAlsoIDs = '';
+$elementBenefits = false;
 try {
     $section = Catalog::getSectionByCode($arParams["IBLOCK_ID"], $arResult["VARIABLES"]["SECTION_CODE"]);
     $sectionName = Catalog::getSectionByID($section['IBLOCK_SECTION_ID'])['NAME'];
     $sectionProps = Catalog::getSectionProps($arParams["IBLOCK_ID"], $section['IBLOCK_SECTION_ID']);
     $elementAlsoIDs = Catalog::getOneElementIDBySections($arParams["IBLOCK_ID"], $sectionProps['UF_ALSO_ORDER']);
+    if($sectionProps['UF_BENEFITS']){
+        $elementBenefits = Catalog::getElementList(37, '', [], 2, ['ID' => $sectionProps['UF_BENEFITS']]);
+    }
 } catch (Throwable $e) {
     Debug::dumpToFile($e->getMessage());
 }
@@ -179,6 +183,7 @@ try {
             'GIFTS_MAIN_PRODUCT_DETAIL_PAGE_ELEMENT_COUNT' => $arParams['GIFTS_MAIN_PRODUCT_DETAIL_PAGE_ELEMENT_COUNT'],
             'GIFTS_MAIN_PRODUCT_DETAIL_BLOCK_TITLE' => $arParams['GIFTS_MAIN_PRODUCT_DETAIL_BLOCK_TITLE'],
             'GIFTS_MAIN_PRODUCT_DETAIL_HIDE_BLOCK_TITLE' => $arParams['GIFTS_MAIN_PRODUCT_DETAIL_HIDE_BLOCK_TITLE'],
+            'BENEFITS' => $elementBenefits ?? null,
         ],
         $component
     );
