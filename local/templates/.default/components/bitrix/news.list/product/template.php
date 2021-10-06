@@ -19,7 +19,7 @@ $this->setFrameMode(true);
     </div>
 <?php else: ?>
     <?php $this->EndViewTarget() ?>
-    <div class="catalog-items items ajax__items" data-type="column" data-view="border">
+    <div class="catalog-items items ajax__items" data-type="column" data-view="border" data-wow="not">
         <?php foreach ($arResult["ITEMS"] as $arItem): ?>
             <?php
             $this->AddEditAction($arItem['ID'], $arItem['EDIT_LINK'], CIBlock::GetArrayByID($arItem["IBLOCK_ID"], "ELEMENT_EDIT"));
