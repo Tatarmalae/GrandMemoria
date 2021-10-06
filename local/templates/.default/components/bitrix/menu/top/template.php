@@ -7,8 +7,8 @@
             <?= ($previousLevel && $arItem["DEPTH_LEVEL"] < $previousLevel) ? str_repeat("</ul></div></div></div></div></div>", ($previousLevel - $arItem["DEPTH_LEVEL"])) : ''; ?>
             <?php if ($arItem["IS_PARENT"]): ?>
                 <?php if ($arItem["DEPTH_LEVEL"] == 1): ?>
-                    <div class="nav-menu__item nav-menu__item_drop">
-                        <a class="nav-menu__link<?= $arItem["SELECTED"] ? ' selected' : '' ?>" href="<?= $arItem["LINK"] ?>">
+                    <div class="nav-menu__item nav-menu__item_drop<?= $arItem["SELECTED"] ? ' nav-menu__item_active' : '' ?>">
+                        <a class="nav-menu__link" href="<?= $arItem["LINK"] ?>">
                             <span><?= $arItem["TEXT"] ?></span>
                         </a>
                         <div class="megamenu">
@@ -30,22 +30,22 @@
                                         </div>
                                         <ul class="megamenu-menu">
                 <?php else: ?>
-                    <div class="nav-menu__item">
-                        <a class="nav-menu__link<?= $arItem["SELECTED"] ? ' selected' : '' ?>" href="<?= $arItem["LINK"] ?>">
+                    <div class="nav-menu__item<?= $arItem["SELECTED"] ? ' nav-menu__item_active' : '' ?>">
+                        <a class="nav-menu__link" href="<?= $arItem["LINK"] ?>">
                             <span><?= $arItem["TEXT"] ?></span>
                         </a>
                 <?php endif ?>
             <?php else: ?>
                 <?php if ($arItem["PERMISSION"] > "D"): ?>
                     <?php if ($arItem["DEPTH_LEVEL"] == 1): ?>
-                        <div class="nav-menu__item">
-                            <a class="nav-menu__link<?= $arItem["SELECTED"] ? ' selected' : '' ?>" href="<?= $arItem["LINK"] ?>">
+                        <div class="nav-menu__item<?= $arItem["SELECTED"] ? ' nav-menu__item_active' : '' ?>">
+                            <a class="nav-menu__link" href="<?= $arItem["LINK"] ?>">
                                 <span><?= $arItem["TEXT"] ?></span>
                             </a>
                         </div>
                     <?php else: ?>
-                        <li class="megamenu-menu__item">
-                            <a class="megamenu-menu__link<?= $arItem["SELECTED"] ? ' selected' : '' ?>" href="<?= $arItem["LINK"] ?>"><?= $arItem["TEXT"] ?></a>
+                        <li class="megamenu-menu__item<?= $arItem["SELECTED"] ? ' nav-menu__item_active' : '' ?>">
+                            <a class="megamenu-menu__link" href="<?= $arItem["LINK"] ?>"><?= $arItem["TEXT"] ?></a>
                         </li>
                     <?php endif ?>
                 <?php endif ?>
