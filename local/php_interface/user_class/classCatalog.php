@@ -12,11 +12,13 @@ use Bitrix\Iblock\PropertyTable;
 use Bitrix\Iblock\SectionElementTable;
 use Bitrix\Iblock\SectionTable;
 use Bitrix\Main\ArgumentException;
+use Bitrix\Main\Diag\Debug;
 use Bitrix\Main\Entity\Query;
 use Bitrix\Main\Loader;
 use Bitrix\Main\LoaderException;
 use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Main\SystemException;
+use Throwable;
 
 /**
  * Класс для работы с каталогом
@@ -113,7 +115,7 @@ class Catalog
                 '==LINK.ADDITIONAL_PROPERTY_ID' => NULL,
             ], $filter));
         }
-        if($limit !== null){
+        if ($limit !== null) {
             $query->setLimit($limit);
         }
         $query->setSelect([
@@ -605,5 +607,111 @@ class Catalog
             'limit' => 1,
             'filter' => ['ID' => $id],
         ])->fetch();
+    }
+
+    /**
+     * Получает активные разделы ИНФОБЛОКА для построения дерева
+     * @param $IBlockID
+     * @return array
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
+     */
+    public static function getSectionList($IBlockID): array
+    {
+        $query = new Query(
+            SectionTable::getEntity()
+        );
+        $query->setOrder(['LEFT_MARGIN' => 'ASC']);
+        $query->setFilter([
+            'IBLOCK_ID' => $IBlockID,
+            'ACTIVE' => 'Y',
+            'GLOBAL_ACTIVE' => 'Y',
+        ]);
+        $query->setSelect([
+            'ID',
+            'NAME',
+            'DEPTH_LEVEL',
+        ]);
+        return $query->exec()->fetchAll();
+    }
+
+    /**
+     * Возвращает информацию об элементе по ID для калькулятора
+     * @param $id
+     * @return array
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
+     * @throws LoaderException
+     */
+    public static function getElement($id): array
+    {
+        Loader::IncludeModule('iblock');
+        $query = new Query(
+            ElementTable::getEntity()
+        );
+        $query->setFilter([
+            'ACTIVE' => 'Y',
+            '=ID' => $id,
+        ]);
+        $query->setLimit(1);
+        $query->setSelect([
+            'IBLOCK_ID',
+            'ID',
+            'CODE',
+            'NAME',
+            'PREVIEW_TEXT',
+            'DETAIL_TEXT',
+            'PREVIEW_PICTURE',
+            'ACTIVE_FROM',
+            'DETAIL_PAGE_URL' => 'IBLOCK.DETAIL_PAGE_URL',
+        ]);
+        $result = $query->exec();
+        $arItems = [];
+        if ($arItem = $result->Fetch()) {
+            $arItem['PREVIEW_PICTURE'] = \CFile::GetPath($arItem['PREVIEW_PICTURE']);
+            $arItem['DETAIL_PAGE_URL'] = \CIBlock::ReplaceDetailUrl($arItem['DETAIL_PAGE_URL'], $arItem, false, 'E');
+
+            $dbProperty = \CIBlockElement::getProperty($arItem['IBLOCK_ID'], $arItem['ID'], [
+                "sort",
+                "asc",
+            ], []);
+            while ($arProperty = $dbProperty->Fetch()) {
+                if ($arProperty['VALUE'] !== '') {
+                    $arItem['PROPERTIES'][$arProperty['CODE']][] = $arProperty;
+                }
+            }
+            $arItems = $arItem;
+        }
+        return $arItems;
+    }
+
+    /**
+     * Получает разделы с элементами для калькулятора
+     * @param $IBlockID
+     * @return array
+     */
+    public static function getCalculation($IBlockID): array
+    {
+        $sections = [];
+        try {
+            $sections = Utilities::getMultilevelArray(self::getSectionList($IBlockID));
+            foreach ($sections as $keyStep => $steps) {
+                foreach ($steps['ITEMS'] as $key => $section) {
+                    $sections[$keyStep]['ITEMS'][$key]['ELEMENTS'] = self::getElementIDsBySectionID($IBlockID, $section['ID']);
+                }
+            }
+            foreach ($sections as $keyStep => $steps) {
+                foreach ($steps['ITEMS'] as $key => $section) {
+                    foreach ($section['ELEMENTS'] as $elKey => $element) {
+                        $sections[$keyStep]['ITEMS'][$key]['ELEMENTS'][$elKey] = self::getElement($element);
+                    }
+                }
+            }
+        } catch (Throwable $e) {
+            Debug::dumpToFile($e->getMessage());
+        }
+        return $sections;
     }
 }
