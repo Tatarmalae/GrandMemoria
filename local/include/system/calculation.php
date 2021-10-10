@@ -52,8 +52,8 @@ try {
                                     <?php foreach ($item['ELEMENTS'] as $keyElem => $element): ?>
                                         <div class="calculation-radio__wrap">
                                             <div class="radio">
-                                                <input type="radio" name="radio" id="calculationCheck_<?= $element['CODE'] ?>" value="<?= $element['NAME'] ?>">
-                                                <label for="calculationCheck_<?= $element['CODE'] ?>">
+                                                <input type="radio" name="radio" id="calculationCheck<?= ($keys + 1) . '_' . ($keyElem + 1) ?>" value="<?= $element['NAME'] ?>">
+                                                <label for="calculationCheck<?= ($keys + 1) . '_' . ($keyElem + 1) ?>">
                                                     <span class="radio__box"></span>
                                                     <?= $element['NAME'] ?>
                                                 </label>
@@ -69,7 +69,7 @@ try {
                                         <?php foreach ($item['ELEMENTS'] as $keyElem => $element): ?>
                                             <div class="item">
                                                 <div class="dropdown dropdown_white dropdown_hint">
-                                                    <div class="dropdown-label" id="calculationDrop_<?= $element['CODE'] ?>" data-toggle="dropdown" aria-expanded="false">
+                                                    <div class="dropdown-label" id="calculationDrop<?= ($keys + 1) . '_' . ($keyElem + 1) ?>" data-toggle="dropdown" aria-expanded="false">
                                                         <svg class="icon__arrow-drop" width="32" height="32">
                                                             <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-drop"></use>
                                                         </svg>
@@ -89,7 +89,7 @@ try {
                                                         </div>
                                                     </div>
                                                     <?php if (!empty($element['PROPERTIES']['DROPDOWN'])): ?>
-                                                        <ul class="dropdown-menu" aria-labelledby="calculationDrop_<?= $element['CODE'] ?>">
+                                                        <ul class="dropdown-menu" aria-labelledby="calculationDrop<?= ($keys + 1) . '_' . ($keyElem + 1) ?>">
                                                             <li data-value="Не выбран" data-sum="0">
                                                                 <div class="dropdown-wrap">
                                                                     <div class="dropdown-wrap__column">
@@ -182,7 +182,7 @@ try {
                             <span data-text="Назад">Назад</span>
                         </span>
                     </button>
-                    <button class="btn btn-blue big btn-next" type="button">
+                    <button class="btn btn-blue big btn-next" type="button" disabled>
                         <span class="btn__text">
                             <span data-text="Далее">Далее</span>
                         </span>
