@@ -37,6 +37,17 @@ function forms() {
       });
     }
 
+    // Дополнение данными, если находимся на странице "Расчет похорон"
+    let calculation = $('.calculation');
+    if (
+      elem.is('[id=formCalculationResult]')
+      && calculation.length
+      && elem.find('input[name=theme]:hidden').val() === 'Расчет похорон'
+    ) {
+      data = unSerialize(data);
+      data.result = calculation.find('.calculation-result').html();
+    }
+
     // Дополнение данными, если находимся на странице калькулятора рассрочки
     let calc = $('.calculator');
     if (

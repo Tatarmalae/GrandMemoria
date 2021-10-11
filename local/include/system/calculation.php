@@ -141,7 +141,9 @@ try {
                                 </div>
                                 <div class="item">
                                     <div class="calculation-form">
-                                        <form class="default-form" id="formCalculationResult" action="" method="post" enctype="multipart/form-data">
+                                        <form class="default-form" id="formCalculationResult" action="<?= SITE_AJAX_PATH ?>/forms/form_calculation.php" method="post" enctype="multipart/form-data">
+                                            <input type="hidden" name="theme" value="Расчет похорон">
+                                            <input type="hidden" name="type" value="Расчет похорон">
                                             <div class="form-inputs">
                                                 <div class="form-input">
                                                     <input class="form-control phone-mask" type="tel" id="calculationResultPhone" placeholder="" name="phone">
