@@ -79,16 +79,20 @@ function forms() {
       },
       success: function (res) {
         if (res['status'] === 'ok') {
-          elem.parents(".modal").addClass("is-success");
-          elem.trigger('reset');
-          elem.find('.form-control').removeClass('is-focus');
+          if (res['form'] === 'calculation') {
+            elem.trigger('reset');
+            formValidationSuccess();
+          } else {
+            elem.parents(".modal").addClass("is-success");
+            elem.trigger('reset');
+            elem.find('.form-control').removeClass('is-focus');
 
-          setTimeout((function () {
-            $(".modal").modal("hide")
-          }), 3e3);
+            setTimeout((function () {
+              $(".modal").modal("hide")
+            }), 3e3);
 
-          elem.parents(".modal").find('input[name=theme]').val('');
-
+            elem.parents(".modal").find('input[name=theme]').val('');
+          }
           if (res['reload'] === 'ok') {
             setTimeout((function () {
               window.location.reload();

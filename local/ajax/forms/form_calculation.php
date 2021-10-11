@@ -12,7 +12,7 @@ unset($arFields['type'], $arFields['checkbox']);
 try {
     $res = $obForm->add($type, $arFields);
     if ($res === true) {
-        echo json_encode(['status' => 'ok']);
+        echo json_encode(['status' => 'ok', 'form' => 'calculation']);
     } else {
         Debug::dumpToFile($res);
     }

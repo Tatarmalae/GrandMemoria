@@ -32,7 +32,7 @@ class FormCalculation extends Iblock
             'IBLOCK_ID' => $this->IBlockID,
             'DATE_ACTIVE_FROM' => date('d.m.Y H:i:s'),
             'PROPERTY_VALUES' => [
-                'PHONE' => $arFields['phone'],
+                'PHONE' => str_replace('%2B', '+', $arFields['phone']),
                 'THEME' => $arFields['theme'],
             ],
             'PREVIEW_TEXT' => $arFields['result'],
