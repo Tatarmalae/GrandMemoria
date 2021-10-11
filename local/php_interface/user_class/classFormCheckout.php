@@ -57,7 +57,7 @@ class FormCheckout extends Iblock
             'PREVIEW_TEXT' => $productLinks,
             'NAME' => 'Заявка от ' . date('d.m.Y H:i:s'),
             'ACTIVE' => 'N',
-            'TYPE' => 'html',
+            'PREVIEW_TEXT_TYPE' => 'html',
         ];
         if (!$el->Add($arLoadProductArray)) {
             return $el->LAST_ERROR;
