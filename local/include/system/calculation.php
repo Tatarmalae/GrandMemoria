@@ -52,7 +52,7 @@ try {
                                     <?php foreach ($item['ELEMENTS'] as $keyElem => $element): ?>
                                         <div class="calculation-radio__wrap">
                                             <div class="radio">
-                                                <input type="radio" name="radio" id="calculationCheck<?= ($keys + 1) . '_' . ($keyElem + 1) ?>" value="<?= $element['NAME'] ?>">
+                                                <input type="radio" name="radio" id="calculationCheck<?= ($keys + 1) . '_' . ($keyElem + 1) ?>" value="<?= $element['NAME'] ?>" data-type="type<?= $keyElem + 1 ?>">
                                                 <label for="calculationCheck<?= ($keys + 1) . '_' . ($keyElem + 1) ?>">
                                                     <span class="radio__box"></span>
                                                     <?= $element['NAME'] ?>
@@ -63,7 +63,7 @@ try {
                                     <?php endforeach ?>
                                 </div>
                             <?php else: ?>
-                                <div class="calculation-group">
+                                <div class="calculation-group" data-type="type<?= implode('_', $item['UF_TYPE']) ?>">
                                     <h4><?= $item['NAME'] ?></h4>
                                     <div class="calculation-items items">
                                         <?php foreach ($item['ELEMENTS'] as $keyElem => $element): ?>
