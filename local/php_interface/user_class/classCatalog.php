@@ -34,10 +34,11 @@ class Catalog
      * @return array
      * @throws ArgumentException
      * @throws ObjectPropertyException
-     * @throws SystemException
+     * @throws SystemException|LoaderException
      */
     public static function getElementProps($IBlockID, $props): array
     {
+        Loader::IncludeModule('iblock');
         $query = new Query(
             ElementTable::getEntity()
         );
@@ -91,10 +92,11 @@ class Catalog
      * @return array
      * @throws ArgumentException
      * @throws ObjectPropertyException
-     * @throws SystemException
+     * @throws SystemException|LoaderException
      */
     public static function getElementList($IBlockID, string $sectionID = '', ?array $order = [], $limit = null, array $filter = []): array
     {
+        Loader::IncludeModule('iblock');
         $query = new Query(
             ElementTable::getEntity()
         );
@@ -182,10 +184,11 @@ class Catalog
      * @return array
      * @throws ArgumentException
      * @throws ObjectPropertyException
-     * @throws SystemException
+     * @throws SystemException|LoaderException
      */
     public static function getElementIDsBySectionID($IBlockID, string $sectionID): array
     {
+        Loader::IncludeModule('iblock');
         $query = new Query(
             ElementTable::getEntity()
         );
@@ -266,10 +269,11 @@ class Catalog
      * @return array
      * @throws ArgumentException
      * @throws ObjectPropertyException
-     * @throws SystemException
+     * @throws SystemException|LoaderException
      */
     public static function getElementMinPriceBySection($IBlockID, $sectionID): array
     {
+        Loader::IncludeModule('iblock');
         $query = new Query(
             ElementTable::getEntity()
         );
@@ -332,10 +336,11 @@ class Catalog
      * @return array
      * @throws ArgumentException
      * @throws ObjectPropertyException
-     * @throws SystemException
+     * @throws SystemException|LoaderException
      */
     public static function getIBlockSections($IBlockID): array
     {
+        Loader::IncludeModule('iblock');
         $query = new Query(
             SectionTable::getEntity()
         );
@@ -420,10 +425,11 @@ class Catalog
      * @return array|false
      * @throws ArgumentException
      * @throws ObjectPropertyException
-     * @throws SystemException
+     * @throws SystemException|LoaderException
      */
     public static function getSectionByID($sectionID)
     {
+        Loader::IncludeModule('iblock');
         return SectionTable::GetByID($sectionID)->Fetch();
     }
 
@@ -434,10 +440,11 @@ class Catalog
      * @return array|false
      * @throws ArgumentException
      * @throws ObjectPropertyException
-     * @throws SystemException
+     * @throws SystemException|LoaderException
      */
     public static function getSectionByCode($IBlockID, $sectionCode)
     {
+        Loader::IncludeModule('iblock');
         $rsSection = SectionTable::getList([
             'filter' => [
                 'IBLOCK_ID' => $IBlockID,
@@ -462,10 +469,11 @@ class Catalog
      * @return array|false
      * @throws ArgumentException
      * @throws ObjectPropertyException
-     * @throws SystemException
+     * @throws SystemException|LoaderException
      */
     public static function getSectionByName($IBlockID, $sectionName)
     {
+        Loader::IncludeModule('iblock');
         $rsSection = SectionTable::getList([
             'filter' => [
                 'IBLOCK_ID' => $IBlockID,
@@ -486,9 +494,11 @@ class Catalog
      * @param $IBlockID
      * @param $sectionId
      * @return false|mixed
+     * @throws LoaderException
      */
     public static function getSectionProps($IBlockID, $sectionId)
     {
+        Loader::IncludeModule('iblock');
         $entity = Section::compileEntityByIblock($IBlockID);
         $rsSection = $entity::getList([
             'filter' => [
@@ -616,12 +626,13 @@ class Catalog
      * @throws ArgumentException
      * @throws ObjectPropertyException
      * @throws SystemException
+     * @throws LoaderException
      */
     public static function getSectionList($IBlockID): array
     {
-        $query = new Query(
-            SectionTable::getEntity()
-        );
+        Loader::IncludeModule('iblock');
+        $sectionClass = Section::compileEntityByIblock($IBlockID);
+        $query = new Query($sectionClass::getEntity());
         $query->setOrder(['LEFT_MARGIN' => 'ASC']);
         $query->setFilter([
             'IBLOCK_ID' => $IBlockID,
@@ -632,6 +643,7 @@ class Catalog
             'ID',
             'NAME',
             'DEPTH_LEVEL',
+            'UF_TYPE',
         ]);
         return $query->exec()->fetchAll();
     }
