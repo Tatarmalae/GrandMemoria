@@ -87,34 +87,40 @@ $this->setFrameMode(true);
                 </div>
             </div>
         <?php endif ?>
-        <div class="contacts-items items">
-            <div class="contacts-item item">
-                <div class="contacts-info bg_glitter">
-                    <div class="contacts-info__bg">
-                        <img class="lazy" src="" data-src="<?= SITE_STYLE_PATH ?>/img/content/contacts/bg-1.svg" alt="">
+        <?php if (!empty($arResult['PROPERTIES']['PHONE']['VALUE']) || !empty($arResult['PROPERTIES']['EMAIL']['VALUE'])): ?>
+            <div class="contacts-items items">
+                <?php if (!empty($arResult['PROPERTIES']['PHONE']['VALUE'])): ?>
+                    <div class="contacts-item item">
+                        <div class="contacts-info bg_glitter">
+                            <div class="contacts-info__bg">
+                                <img class="lazy" src="" data-src="<?= SITE_STYLE_PATH ?>/img/content/contacts/bg-1.svg" alt="">
+                            </div>
+                            <div class="contacts-info__content">
+                                <span><?= $arResult['PROPERTIES']['PHONE']['NAME'] ?></span>
+                                <a href="tel:+<?= preg_replace('~\D+~', '', $arResult['PROPERTIES']['PHONE']['VALUE']) ?>">
+                                    <?= $arResult['PROPERTIES']['PHONE']['VALUE'] ?>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="contacts-info__content">
-                        <span>Единый номер для связи</span>
-                        <a href="tel:+<?= preg_replace('~\D+~', '', Option::get("askaron.settings", "UF_PHONE")) ?>">
-                            <?= Option::get("askaron.settings", "UF_PHONE"); ?>
-                        </a>
+                <?php endif ?>
+                <?php if (!empty($arResult['PROPERTIES']['EMAIL']['VALUE'])): ?>
+                    <div class="contacts-item item">
+                        <div class="contacts-info bg_pippin">
+                            <div class="contacts-info__bg">
+                                <img class="lazy" src="" data-src="<?= SITE_STYLE_PATH ?>/img/content/contacts/bg-2.svg" alt="">
+                            </div>
+                            <div class="contacts-info__content">
+                                <span><?= $arResult['PROPERTIES']['EMAIL']['NAME'] ?></span>
+                                <a href="mailto:<?= $arResult['PROPERTIES']['EMAIL']['VALUE'] ?>">
+                                    <?= $arResult['PROPERTIES']['EMAIL']['VALUE'] ?>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                <?php endif ?>
             </div>
-            <div class="contacts-item item">
-                <div class="contacts-info bg_pippin">
-                    <div class="contacts-info__bg">
-                        <img class="lazy" src="" data-src="<?= SITE_STYLE_PATH ?>/img/content/contacts/bg-2.svg" alt="">
-                    </div>
-                    <div class="contacts-info__content">
-                        <span>Почтовый ящик для писем</span>
-                        <a href="mailto:<?= Option::get("askaron.settings", "UF_EMAIL"); ?>">
-                            <?= Option::get("askaron.settings", "UF_EMAIL"); ?>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <?php endif ?>
     </div>
 </section>
 
