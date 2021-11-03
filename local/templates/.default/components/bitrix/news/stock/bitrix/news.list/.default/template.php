@@ -26,7 +26,7 @@ $this->setFrameMode(true);
         </div>
     </div>
 <?php endif ?>
-<div class="stock-items items ajax__items">
+<div class="stock-items items ajax__items" data-wow="not">
     <?php foreach ($arResult["ITEMS"] as $key => $arItem): ?>
         <?php
         $this->AddEditAction($arItem['ID'], $arItem['EDIT_LINK'], CIBlock::GetArrayByID($arItem["IBLOCK_ID"], "ELEMENT_EDIT"));

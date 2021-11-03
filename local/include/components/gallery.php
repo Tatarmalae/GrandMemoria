@@ -87,7 +87,7 @@ if (count($arResult['ITEMS']) == 0) return;
                             <div class="modal-gallery">
                                 <div class="modal-gallery__img">
                                     <div class="gallery-item">
-                                        <div class="gallery-item__img img img-1by1">
+                                        <div class="gallery-item__img img img-16by9">
                                             <div class="img__inner object-fit">
                                                 <img class="lazy" src="" data-src="<?= CFile::GetPath($item['PREVIEW_PICTURE']) ?>" alt="<?= $item['NAME'] ?>"/>
                                             </div>

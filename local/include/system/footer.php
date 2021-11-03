@@ -98,7 +98,7 @@ use Bitrix\Main\Config\Option;
                 <div class="footer__column">
                     <div class="creator">
                         <div class="creator-text">Разработка сайта «
-                            <a href="https://www.behance.net/k_pashukov" target="_blank">k.pashukov</a>
+                            <a href="https://www.instagram.com/k.pashukov/" target="_blank">k.pashukov</a>
                             »
                         </div>
                     </div>

@@ -32,7 +32,7 @@ if (count($arResult['ITEMS']) == 0) return;
                     <?php foreach ($arResult['ITEMS'] as $item): ?>
                         <?php $file = CFile::GetFileArray($item['PROPERTIES']['FILE']['VALUE']); ?>
                         <div class="slider-slide swiper-slide">
-                            <a class="docs-item item link-item" href="<?= CFile::GetPath($item['PROPERTIES']['FILE']['VALUE']) ?>">
+                            <a class="docs-item item link-item" target="_blank" href="<?= CFile::GetPath($item['PROPERTIES']['FILE']['VALUE']) ?>">
                                 <div class="box">
                                     <div class="docs-item__inner">
                                         <h5><?= $item['NAME'] ?></h5>

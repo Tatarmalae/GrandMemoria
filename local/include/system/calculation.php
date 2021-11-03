@@ -65,7 +65,7 @@ try {
                             <?php else: ?>
                                 <div class="calculation-group" data-type="type<?= implode('_', $item['UF_TYPE']) ?>">
                                     <h4><?= $item['NAME'] ?></h4>
-                                    <div class="calculation-items items">
+                                    <div class="calculation-items items" data-wow="not">
                                         <?php foreach ($item['ELEMENTS'] as $keyElem => $element): ?>
                                             <div class="item">
                                                 <div class="dropdown dropdown_white dropdown_hint">

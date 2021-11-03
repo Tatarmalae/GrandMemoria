@@ -27,7 +27,7 @@ if (count($arResult['ITEMS']) == 0) return;
             <div class="gallery">
                 <div class="gallery-items items">
                     <?php foreach ($arResult['ITEMS'] as $item): ?>
-                        <a class="gallery-item item" href="#" data-fancybox="gallery" data-options="{&quot;src&quot;:&quot;<?= $item['PREVIEW_PICTURE']['SRC'] ?>&quot;}">
+                        <a class="gallery-item item" href="#" data-fancybox="gallery" data-options="{&quot;src&quot;:&quot;<?= CFile::GetPath($item['PREVIEW_PICTURE']) ?>&quot;}">
                             <div class="gallery-item__img img img-1by1">
                                 <div class="gallery__zoom">
                                     <div class="gallery__zoom-inner">
