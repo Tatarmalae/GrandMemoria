@@ -22,11 +22,11 @@ $sectionProps = '';
 $elementAlsoIDs = '';
 $elementBenefits = false;
 try {
-    $section = Catalog::getSectionByCode($arParams["IBLOCK_ID"], $arResult["VARIABLES"]["SECTION_CODE"]);
-    $sectionName = Catalog::getSectionByID($section['IBLOCK_SECTION_ID'])['NAME'];
-    $sectionProps = Catalog::getSectionProps($arParams["IBLOCK_ID"], $section['IBLOCK_SECTION_ID']);
-    $elementAlsoIDs = Catalog::getOneElementIDBySections($arParams["IBLOCK_ID"], $sectionProps['UF_ALSO_ORDER']);
-    if($sectionProps['UF_BENEFITS']){
+    $section = Catalog::getSectionByCode($arParams['IBLOCK_ID'], $arResult['VARIABLES']['SECTION_CODE']);
+    $sectionName = $section['IBLOCK_SECTION_ID'] ? Catalog::getSectionByID($section['IBLOCK_SECTION_ID'])['NAME'] : $section['NAME'];
+    $sectionProps = Catalog::getSectionProps($arParams['IBLOCK_ID'], $section['IBLOCK_SECTION_ID'] ?: $section['ID']);
+    $elementAlsoIDs = Catalog::getOneElementIDBySections($arParams['IBLOCK_ID'], $sectionProps['UF_ALSO_ORDER']);
+    if ($sectionProps['UF_BENEFITS']) {
         $elementBenefits = Catalog::getElementList(37, '', [], 2, ['ID' => $sectionProps['UF_BENEFITS']]);
     }
 } catch (Throwable $e) {
@@ -403,7 +403,9 @@ unset($arrFilterAlso);
 $galleryElementIDs = '';
 try {
     $sectionGalleryCode = Catalog::getSectionByName(4, $sectionName);
-    $galleryElementIDs = Catalog::getElementIDsBySectionID(4, $sectionGalleryCode);
+    if ($sectionGalleryCode) {
+        $galleryElementIDs = Catalog::getElementIDsBySectionID(4, (string)$sectionGalleryCode);
+    }
 } catch (Throwable $e) {
     Debug::dumpToFile($e->getMessage());
 }
@@ -513,7 +515,9 @@ unset($arrFilterGallery);
 $reviewsElementIDs = '';
 try {
     $sectionReviewsCode = Catalog::getSectionByName(13, $sectionName);
-    $reviewsElementIDs = Catalog::getElementIDsBySectionID(13, $sectionReviewsCode);
+    if ($sectionReviewsCode) {
+        $reviewsElementIDs = Catalog::getElementIDsBySectionID(13, (string)$sectionReviewsCode);
+    }
 } catch (Throwable $e) {
     Debug::dumpToFile($e->getMessage());
 }

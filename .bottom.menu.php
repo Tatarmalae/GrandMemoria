@@ -9,7 +9,7 @@ $aMenuLinks = [
     ],
     [
         "Ритуальные услуги",
-        "/services/",
+        "/ritualnye-uslugi/",
         [],
         [],
         "",

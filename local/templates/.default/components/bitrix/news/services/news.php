@@ -11,6 +11,9 @@
 /** @var string $componentPath */
 /** @var CBitrixComponent $component */
 $this->setFrameMode(true);
+
+use Bitrix\Main\Diag\Debug;
+use Dev\Catalog;
 ?>
 <?php $APPLICATION->IncludeComponent(
     "bitrix:news.list",
@@ -67,4 +70,20 @@ $this->setFrameMode(true);
 ); ?>
 <?php $this->SetViewTarget('after_parent_sect') ?>
 <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/components/adv.php", [], ["SHOW_BORDER" => true]); ?>
+<?php
+try {
+    $seo = Catalog::getIBlock($arParams['IBLOCK_ID']);
+} catch (Throwable $e) {
+    Debug::dumpToFile($e->getMessage());
+}
+?>
+<?php if (!empty($seo['DESCRIPTION'])): ?>
+    <section class="article">
+        <div class="content">
+            <article>
+                <?= $seo['DESCRIPTION'] ?>
+            </article>
+        </div>
+    </section>
+<?php endif ?>
 <?php $this->EndViewTarget() ?>

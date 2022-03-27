@@ -13,6 +13,7 @@
 /** @var array $arCurSection */
 $this->setFrameMode(true);
 
+use Bitrix\Iblock\Component\Tools;
 use Bitrix\Iblock\SectionPropertyTable;
 use Bitrix\Main\Application;
 use Bitrix\Main\Diag\Debug;
@@ -25,12 +26,25 @@ if ($request->isAjaxRequest()) $APPLICATION->RestartBuffer();
 $section = '';
 try {
     $section = Catalog::getSectionByCode($arParams["IBLOCK_ID"], $arResult["VARIABLES"]["SECTION_CODE"]);
-    $section['COUNT_ROOT'] = (new CIBlockSection)->GetSectionElementsCount($section["ID"], ["CNT_ACTIVE" => "Y"]);
-    $section['COUNT_ROOT'] = Utilities::getWord($section['COUNT_ROOT'], [
-        'товар',
-        'товара',
-        'товаров',
-    ]);
+    if ($section) {
+        $section['COUNT_ROOT'] = (new CIBlockSection)->GetSectionElementsCount($section["ID"], ["CNT_ACTIVE" => "Y"]);
+        $section['COUNT_ROOT'] = Utilities::getWord($section['COUNT_ROOT'], [
+            'товар',
+            'товара',
+            'товаров',
+        ]);
+    } else {
+        CHTTP::SetStatus("404 Not Found");
+        @define("ERROR_404", "Y");
+        @define("404", true);
+        Tools::process404(
+            '',
+            true,
+            true,
+            true,
+            false
+        );
+    }
 } catch (Throwable $e) {
     Debug::dumpToFile($e->getMessage());
 }
@@ -57,13 +71,38 @@ try {
             if (!in_array($property['ID'], $propIDs) || empty($property['VALUE'])) continue;
             $properties[$property['ID']]['NAME'] = $property['NAME'];
             $properties[$property['ID']]['CODE'] = $property['CODE'];
-            $properties[$property['ID']]['VALUES'][] = $property['VALUE_ENUM'] ?: $property['VALUE'];
+
+            // $properties[$property['ID']]['VALUES'][] = $property['VALUE_ENUM'] ?: $property['VALUE'];
+            if (!empty($property['VALUE_ENUM'])) {
+                $properties[$property['ID']]['VALUES'][$property['VALUE_ENUM']] = ['NAME' => $property['VALUE_ENUM'], 'SORT' => $property['VALUE_SORT']];
+                $properties[$property['ID']]['VALUES2'][$property['VALUE_SORT']] = $property['VALUE_ENUM'];
+            } elseif ($property['CODE'] !== 'PRICE') {
+                $properties[$property['ID']]['VALUES'][$property['VALUE_SORT']] = null;
+            } else {
+                $properties[$property['ID']]['VALUES'][$property['VALUE']] = $property['VALUE'];
+            }
             $properties[$property['ID']]['LIST_TYPE'] = $property['LIST_TYPE'];
         }
     }
 } catch (Throwable $e) {
     Debug::dumpToFile($e->getMessage());
 }
+
+foreach ($properties as &$property) {
+    usort($property['VALUES'], function ($a, $b)
+    {
+        return ((intval($a['SORT']) == intval($b['SORT'])) ? !strcmp($a['NAME'], $b['NAME']) : (intval($a['SORT']) < intval($b['SORT']))) ? -1 : 1;
+    });
+}
+
+// function arraysortBySort($a, $b): int
+// {
+//     return ((intval($a['SORT']) == intval($b['SORT'])) ? !strcmp($a['NAME'], $b['NAME']) : (intval($a['SORT']) < intval($b['SORT']))) ? -1 : 1;
+// }
+//
+// usort($properties['53']['VALUES2'],'arraysortBySort');
+//
+// Utilities::DH($properties['53']);
 ?>
 
 <?php $this->SetViewTarget('before_parent_sect'); ?>
@@ -137,7 +176,7 @@ $APPLICATION->IncludeComponent(
         <div class="filter-fixed__inner">
             <div class="filter-row">
                 <?php foreach ($properties as $prop): ?>
-                    <?php $prop['VALUES'] = array_unique($prop['VALUES']) ?>
+                    <?php //$prop['VALUES'] = array_unique($prop['VALUES']) ?>
                     <?php if ($prop['CODE'] === 'PRICE') continue ?>
                     <div class="filter-column">
                         <div class="filter-fixed__label">
@@ -156,18 +195,18 @@ $APPLICATION->IncludeComponent(
                             </div>
                             <ul class="dropdown-menu ajax__filter" aria-labelledby="filterDrop_<?= $prop['CODE'] ?>">
                                 <?php foreach ($prop['VALUES'] as $value): ?>
-                                    <li data-code="<?= $prop['CODE'] ?>" data-value="<?= $value ?>"><?= $value ?></li>
+                                    <li data-code="<?= $prop['CODE'] ?>" data-value="<?= $value['NAME'] ?>"><?= $value['NAME'] ?></li>
                                 <?php endforeach ?>
                             </ul>
                         </div>
                         <div class="filter-fixed__items">
                             <div class="filter-fixed__items-inner ajax_filter__mobile">
-                                <?php foreach ($prop['VALUES'] as $value): ?>
+                                <?php foreach ($prop['VALUES'] as $key => $value): ?>
                                     <div class="checkbox">
-                                        <input type="checkbox" name="checkbox" id="PROPERTY_<?= $prop['CODE'] ?>_VALUE" value="<?= $value ?>">
-                                        <label for="PROPERTY_<?= $prop['CODE'] ?>_VALUE">
+                                        <input type="checkbox" name="checkbox" id="PROPERTY_<?= $prop['CODE'] ?>_VALUE_<?= $key ?>" value="<?= $value['NAME'] ?>">
+                                        <label for="PROPERTY_<?= $prop['CODE'] ?>_VALUE_<?= $key ?>">
                                             <span class="checkbox__box"></span>
-                                            <?= $value ?>
+                                            <?= $value['NAME'] ?>
                                         </label>
                                     </div>
                                 <?php endforeach ?>
@@ -255,9 +294,10 @@ $APPLICATION->IncludeComponent(
                         <svg class="icon__arrow-drop" width="32" height="32">
                             <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-drop"></use>
                         </svg>
-                        <div class="dropdown-value" data-value="По популярности" data-sort="SHOW_COUNTER" data-order="DESC">По популярности</div>
+                        <div class="dropdown-value" data-value="По умолчанию" data-sort="SORT" data-order="ASC">По умолчанию</div>
                     </div>
                     <ul class="dropdown-menu ajax__sort" aria-labelledby="filterDrop6">
+                        <li data-value="По популярности" data-sort="SHOW_COUNTER" data-order="DESC">По популярности</li>
                         <li data-value="По цене (по возрастанию)" data-sort="PROPERTY_PRICE" data-order="ASC">По цене (по возрастанию)</li>
                         <li data-value="По цене (по убыванию)" data-sort="PROPERTY_PRICE" data-order="DESC">По цене (по убыванию)</li>
                     </ul>
@@ -278,7 +318,10 @@ if ($request->isAjaxRequest()) {
             $IDs = [];
             try {
                 $actions = Catalog::getElementProps('14', 'PRODUCTS');
-                $IDs = array_column($actions, 'PROPERTY_VALUE');
+                foreach ($actions as $action) {
+                    if (empty($action['PROPERTY_VALUE'])) continue;
+                    $IDs[$action['PROPERTY_VALUE']] = $action['PROPERTY_VALUE'];
+                }
             } catch (Throwable $e) {
                 Debug::dumpToFile($e->getMessage());
             }
@@ -287,7 +330,6 @@ if ($request->isAjaxRequest()) {
         }
     }
 }
-
 $APPLICATION->IncludeComponent(
     "bitrix:news.list",
     "product",
@@ -296,8 +338,10 @@ $APPLICATION->IncludeComponent(
         "IBLOCK_TYPE" => "catalog",
         "IBLOCK_ID" => "12",
         "NEWS_COUNT" => "12",
-        "SORT_BY1" => $request->getPostList()['sort']['BY'] ?: 'SHOW_COUNTER',
-        "SORT_ORDER1" => $request->getPostList()['sort']['ORDER'] ?: 'DESC',
+        // "SORT_BY1" => $request->getPostList()['sort']['BY'] ?: 'SHOW_COUNTER',
+        // "SORT_ORDER1" => $request->getPostList()['sort']['ORDER'] ?: 'DESC',
+        "SORT_BY1" => $request->getPostList()['sort']['BY'] ?: 'SORT',
+        "SORT_ORDER1" => $request->getPostList()['sort']['ORDER'] ?: 'ASC',
         "SORT_BY2" => "SORT",
         "SORT_ORDER2" => "ASC",
         "FILTER_NAME" => "arrFilter",

@@ -35,7 +35,7 @@
                         <h3>Ритуальные услуги</h3>
                         <p>Приезд специалиста в течение 30 минут. Организуем весь процесс похорон на всех кладбищах Казани и РТ.</p>
                         <div class="more-btn">
-                            <a class="btn btn-blue big btn-block" href="/services/">
+                            <a class="btn btn-blue big btn-block" href="/ritualnye-uslugi/">
                                 <span class="btn__text">
                                     <span data-text="Посмотреть все услуги">Посмотреть все услуги</span>
                                 </span>

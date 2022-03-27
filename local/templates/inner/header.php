@@ -15,7 +15,7 @@
 <div class="main-wrapper">
     <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/header.php", [], ["SHOW_BORDER" => false]); ?>
     <div class="container">
-        <?php if($_SERVER['REAL_FILE_PATH'] === '/services/index.php' || CSite::InDir('/info/wholesale/index.php') ):?>
+        <?php if($_SERVER['REAL_FILE_PATH'] === '/ritualnye-uslugi/index.php' || CSite::InDir('/info/wholesale/index.php') ):?>
             <div class="cover">
                 <?php $APPLICATION->ShowViewContent('cover__bg'); ?>
                 <div class="cover-wrap">

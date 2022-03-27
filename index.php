@@ -2,7 +2,7 @@
 /**
  * @var $APPLICATION
  */
-$APPLICATION->SetTitle("1С-Битрикс: Управление сайтом");
+$APPLICATION->SetTitle("Ритуальные услуги в Казани - Grand Memoria (Мемория), ИП Мелузов Е.А.");
 ?>
 
 <?php

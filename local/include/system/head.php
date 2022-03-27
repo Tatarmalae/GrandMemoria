@@ -33,6 +33,11 @@ Asset::getInstance()->addCss(SITE_STYLE_PATH . "/css/backend.css", true);
 Asset::getInstance()->addJs(SITE_STYLE_PATH . "/js/separate-js/jquery.min.js");
 Asset::getInstance()->addJs(SITE_STYLE_PATH . "/js/main.min.js");
 Asset::getInstance()->addJs(SITE_STYLE_PATH . "/js/backend.js");
+// if (!CSite::InDir('/catalog/')) {
+    $curPage = $APPLICATION->GetCurPage(false);
+    $canonical = $_SERVER["REQUEST_SCHEME"] . '://' . $_SERVER["HTTP_HOST"] . $curPage;
+    Asset::getInstance()->addString('<link rel="canonical" href="' . $canonical . '" />');
+// }
 ?>
 <style>
     .layer,

@@ -84,8 +84,8 @@ $this->EndViewTarget();
                 <div class="product-gallery__big-wrapper swiper-wrapper">
                     <?php
                     $thumbFirst = CFile::ResizeImageGet($arResult['PREVIEW_PICTURE']['ID'], [
-                        'width' => 270,
-                        'height' => 270,
+                        'width' => 800,
+                        'height' => 800,
                     ], BX_RESIZE_IMAGE_PROPORTIONAL_ALT, true, []);
                     ?>
                     <div class="product-gallery__big-slide swiper-slide">
@@ -107,8 +107,8 @@ $this->EndViewTarget();
                         <?php foreach ($arResult['PROPERTIES']['PHOTO']['VALUE'] as $photo): ?>
                             <?php
                             $thumbSecond = CFile::ResizeImageGet($photo, [
-                                'width' => 270,
-                                'height' => 270,
+                                'width' => 800,
+                                'height' => 800,
                             ], BX_RESIZE_IMAGE_PROPORTIONAL_ALT, true, []);
                             ?>
                             <div class="product-gallery__big-slide swiper-slide">
@@ -184,6 +184,7 @@ $this->EndViewTarget();
                 <span class="label label_small label_fiery-rose">В наличии</span>
             </div>
             <?php if ($arResult['SECTION']['PATH'][0]['ID'] == '15'): ?>
+                <small style="display: block">*– цена указана за форму памятника</small>
                 <a class="product-link" href="#" data-toggle="modal" data-target="#modalInstallment" data-theme="<?= $arResult['ID'] ?>">
                     <span>Оформить в рассрочку 0%</span>
                     <svg class="icon__info" width="16" height="16">
@@ -218,6 +219,9 @@ $this->EndViewTarget();
                             </s>
                         <?php endif ?>
                     </div>
+                    <?php if ($arResult['SECTION']['PATH'][0]['ID'] == '15'): ?>
+                        <small>*– цена указана за форму памятника</small>
+                    <?php endif ?>
                 </div>
                 <button class="btn btn-blue small" type="button" data-toggle="modal" data-target="#modalBasket" data-id="<?= $arResult['ID'] ?>">
                     <span class="btn__text">
@@ -241,7 +245,7 @@ $this->EndViewTarget();
                     <span class="product-delivery__icon">
                         <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/product/delivery/2.svg" alt="" src="">
                     </span>
-                    Доставка – от 500 ₽
+                    Доставка – от 1000 ₽
                 </div>
             </div>
             <?php if ($arParams['BENEFITS']): ?>
@@ -262,14 +266,20 @@ $this->EndViewTarget();
         </div>
     </div>
     <div class="product-char box">
-        <?php if (!empty($arResult['DISPLAY_PROPERTIES'])): ?>
+        <?php if (!empty($arResult['DISPLAY_PROPERTIES']) || !empty($arResult['PROPERTIES']['OTHER_CHARS']['VALUE'])): ?>
             <div class="product-char__item">
                 <h4>Характеристики товара:</h4>
                 <div class="product-char__list">
                     <?php foreach ($arResult['DISPLAY_PROPERTIES'] as $prop): ?>
                         <div class="product-char__list-item">
                             <span><?= $prop['NAME'] ?>:</span>
-                            <span><?= $prop['VALUE'] ?></span>
+                            <span><?= is_array($prop['VALUE']) ? implode(', ', $prop['VALUE']) : $prop['VALUE'] ?></span>
+                        </div>
+                    <?php endforeach ?>
+                    <?php foreach ($arResult['PROPERTIES']['OTHER_CHARS']['VALUE'] as $key => $prop): ?>
+                        <div class="product-char__list-item">
+                            <span><?= $prop ?>:</span>
+                            <span><?= $arResult['PROPERTIES']['OTHER_CHARS']['DESCRIPTION'][$key] ?></span>
                         </div>
                     <?php endforeach ?>
                 </div>
@@ -292,10 +302,10 @@ $this->EndViewTarget();
             <div class="product-char__item">
                 <h4><?= $arResult['PROPERTIES']['ADDITION']['NAME'] ?>:</h4>
                 <div class="product-char__list">
-                    <?php foreach ($arResult['PROPERTIES']['ADDITION']['VALUE'] as $addition): ?>
+                    <?php foreach ($arResult['PROPERTIES']['ADDITION']['VALUE'] as $key => $addition): ?>
                         <div class="product-char__list-item">
                             <span><?= $addition ?>:</span>
-                            <span>Есть</span>
+                            <span><?= $arResult['PROPERTIES']['ADDITION']['DESCRIPTION'][$key] ?: 'Есть' ?></span>
                         </div>
                     <?php endforeach ?>
                 </div>

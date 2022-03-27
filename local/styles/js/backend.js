@@ -163,20 +163,22 @@ function ajaxPagination() {
         sort: sort
       },
       success: function (data) {
-        let content = $(data).filter('.ajax__items');
-        let items = $('.ajax__items');
+        $('html,body').stop().animate({scrollTop: $('section .content').offset().top}, 1000, function () {
+          let content = $(data).filter('.ajax__items');
+          let items = $('.ajax__items');
 
-        let pagination = $(data).filter('.filter-bottom');
-        $('.filter-bottom').remove();
-        if (pagination.length) {
-          items.after(pagination);
-        }
+          let pagination = $(data).filter('.filter-bottom');
+          $('.filter-bottom').remove();
+          if (pagination.length) {
+            items.after(pagination);
+          }
 
-        items.replaceWith(content);
+          items.replaceWith(content);
 
-        initImgLazyLoad();
-        dotdotdotInit();
-        wowInit();
+          initImgLazyLoad();
+          dotdotdotInit();
+          wowInit();
+        });
       }
     });
   });
@@ -276,7 +278,6 @@ function catalogFilter() {
     sort.BY = sortBy;
     sort.ORDER = sortOrder;
 
-
     $.ajax({
       type: "POST",
       url: window.location.href,
@@ -304,13 +305,19 @@ function catalogFilter() {
   //Фильтр на телефоне и планшете
   body.on('click', '.ajax_filter__mobile input[type=checkbox]', function () {
     let elem = $(this);
+    $(this).closest('.ajax_filter__mobile').find('input[type=checkbox]').not(this).prop('checked', false);
     let inputs = elem.closest('.filter-row').find('.ajax_filter__mobile .checkbox input[type=checkbox]');
     let checkboxes = elem.closest('.filter-row').find('.ajax__filter .checkbox input[type=checkbox]');
 
     let props = {};
     inputs.each(function (index, element) {
-      let code = $(element).attr('id');
-      props[code] = $(element).is(':checked') ? $(element).val() : '';
+      // let code = $(element).attr('id');
+      // props[code] = $(element).is(':checked') ? $(element).val() : '';
+      let code = $(element).attr('id').replace(/_\d+$/g, '');
+
+      if ($(element).is(':checked')) {
+        props[code] = $(element).val();
+      }
     });
     checkboxes.each(function (index, element) {
       let code = $(element).attr('id');

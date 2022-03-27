@@ -48,6 +48,9 @@ if (empty($arResult)) return;
         </a>
         <div class="catalog-items items" data-type="column">
             <?php foreach ($arResult['SECTIONS'] as $sections): ?>
+                <?php if (mb_strpos($sections['SECTION_PAGE_URL'], 'ustanovka-pamyatnikov') || mb_strpos($sections['SECTION_PAGE_URL'], 'gravirovka-pamyatnikov')) {
+                    $sections['SECTION_PAGE_URL'] = str_replace('catalog', 'ritualnye-uslugi', $sections['SECTION_PAGE_URL']);
+                } ?>
                 <div class="catalog-item item link-item">
                     <a class="catalog-item__img img" href="<?= $sections['SECTION_PAGE_URL'] ?>">
                         <div class="img__inner object-fit">
@@ -71,11 +74,13 @@ if (empty($arResult)) return;
                                 <?php endforeach ?>
                             </ul>
                         <?php endif ?>
-                        <div class="price price_small">
-                            <span class="price-now">
-                                от <?= number_format($sections['MIN_PRICE'], 0, ' ', ' ') ?> ₽
-                            </span>
-                        </div>
+                        <?php if (!empty($sections['MIN_PRICE'])): ?>
+                            <div class="price price_small">
+                                <span class="price-now">
+                                    от <?= number_format($sections['MIN_PRICE'], 0, ' ', ' ') ?> ₽
+                                </span>
+                            </div>
+                        <?php endif ?>
                     </div>
                 </div>
             <?php endforeach ?>

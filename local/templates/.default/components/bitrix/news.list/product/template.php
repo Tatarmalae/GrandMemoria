@@ -32,7 +32,7 @@ $this->setFrameMode(true);
             <div class="catalog-item item link-item" id="<?= $this->GetEditAreaId($arItem['ID']); ?>">
                 <a class="catalog-item__img img" href="<?= $arItem['DETAIL_PAGE_URL'] ?>">
                     <div class="img__inner object-fit">
-                        <img class="lazy" data-src="<?= $thumb['src'] ?>" alt="<?= $arItem['NAME'] ?>" src="">
+                        <img class="lazy" data-src="<?= $thumb['src'] ?>" alt="<?= $arItem['NAME'] ?>">
                     </div>
                     <div class="catalog-item__labels label-wrap">
                         <?php if ($arItem['PROPERTIES']['NEW']['VALUE']): ?>

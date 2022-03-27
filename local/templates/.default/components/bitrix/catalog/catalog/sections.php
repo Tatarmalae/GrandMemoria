@@ -11,8 +11,10 @@
 /** @var string $templateFolder */
 /** @var string $componentPath */
 /** @var CBitrixComponent $component */
-
 $this->setFrameMode(true);
+
+use Bitrix\Main\Diag\Debug;
+use Dev\Catalog;
 
 $sectionListParams = [
     "IBLOCK_TYPE" => $arParams["IBLOCK_TYPE"],
@@ -42,3 +44,23 @@ $APPLICATION->IncludeComponent(
     ($arParams["SHOW_TOP_ELEMENTS"] !== "N" ? ["HIDE_ICONS" => "Y"] : [])
 );
 unset($sectionListParams);
+?>
+
+<?php
+$this->SetViewTarget('after_parent_sect');
+try {
+    $seo = Catalog::getIBlock($arParams['IBLOCK_ID']);
+} catch (Throwable $e) {
+    Debug::dumpToFile($e->getMessage());
+}
+?>
+<?php if (!empty($seo['DESCRIPTION'])): ?>
+    <section class="article">
+        <div class="content">
+            <article>
+                <?= $seo['DESCRIPTION'] ?>
+            </article>
+        </div>
+    </section>
+<?php endif ?>
+<?php $this->EndViewTarget() ?>

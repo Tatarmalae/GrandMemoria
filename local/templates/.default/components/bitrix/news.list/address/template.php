@@ -67,7 +67,7 @@ $arAddress = [];
                                                         </div>
                                                     <?php endif ?>
                                                     <?php if (!empty($arItem['PROPERTIES']['PHONE']['VALUE'])): ?>
-                                                        <a class="map-address" href="tel:<?= preg_replace('~\D+~', '', $arItem['PROPERTIES']['PHONE']['VALUE']) ?>">
+                                                        <a class="map-address" href="tel:+<?= preg_replace('~\D+~', '', $arItem['PROPERTIES']['PHONE']['VALUE']) ?>">
                                                             <svg class="icon__phone" width="14" height="14">
                                                                 <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#phone"></use>
                                                             </svg>

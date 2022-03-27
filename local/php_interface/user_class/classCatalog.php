@@ -233,6 +233,7 @@ class Catalog
         $query->setLimit(1);
         $query->setSelect([
             'IBLOCK_ID',
+            'IBLOCK_SECTION_ID',
             'ID',
             'CODE',
             'NAME',
@@ -245,6 +246,7 @@ class Catalog
         $result = $query->exec();
         $arItems = [];
         if ($arItem = $result->Fetch()) {
+            $arItem['PREVIEW_PICTURE_ID'] = $arItem['PREVIEW_PICTURE'];
             $arItem['PREVIEW_PICTURE'] = \CFile::GetPath($arItem['PREVIEW_PICTURE']);
             $arItem['DETAIL_PAGE_URL'] = \CIBlock::ReplaceDetailUrl($arItem['DETAIL_PAGE_URL'], $arItem, false, 'E');
 
@@ -274,9 +276,7 @@ class Catalog
     public static function getElementMinPriceBySection($IBlockID, $sectionID): array
     {
         Loader::IncludeModule('iblock');
-        $query = new Query(
-            ElementTable::getEntity()
-        );
+        $query = ElementTable::query();
         $query->setFilter([
             'ACTIVE' => 'Y',
             '=IBLOCK_ID' => $IBlockID,
@@ -324,8 +324,12 @@ class Catalog
                 'reference' => ['=this.ID' => 'ref.IBLOCK_ELEMENT_ID'],
             ]
         );
-        $query->setOrder(['IBLOCK_ELEMENT_PRICE_VALUE' => 'ASC']);
+        $query->setOrder(['IBLOCK_ELEMENT_PRICE_VALUE_NUM' => 'ASC']);
+
         $result = $query->exec();
+        if(!$result->getSelectedRowsCount()){
+            return [];
+        }
 
         return $result->fetch();
     }

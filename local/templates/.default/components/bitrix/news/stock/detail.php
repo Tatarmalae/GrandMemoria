@@ -11,12 +11,6 @@
 /** @var string $componentPath */
 /** @var CBitrixComponent $component */
 $this->setFrameMode(true);
-
-$arProps['PRODUCTS'] = \Dev\Catalog::getElementProps($arParams["IBLOCK_ID"], 'PRODUCTS');
-$arPropsIDS = [];
-foreach ($arProps['PRODUCTS'] as $arProp) {
-    $arPropsIDS[] = $arProp['PROPERTY_VALUE'];
-}
 ?>
 <?php $ElementID = $APPLICATION->IncludeComponent(
     "bitrix:news.detail",
@@ -74,6 +68,14 @@ foreach ($arProps['PRODUCTS'] as $arProp) {
     ],
     $component
 ); ?>
+<?php
+$dbProperty = CIBlockElement::getProperty($arParams['IBLOCK_ID'], $ElementID, [], ['CODE' => 'PRODUCTS']);
+$arPropsIDS = [];
+while ($ob = $dbProperty->GetNext()) {
+    if (empty($ob['VALUE'])) continue;
+    $arPropsIDS[] = $ob['VALUE'];
+}
+?>
 <?php if (!empty($arPropsIDS)): ?>
     <?php $this->SetViewTarget('after_parent_sect') ?>
     <?php
@@ -89,8 +91,8 @@ foreach ($arProps['PRODUCTS'] as $arProp) {
             "IBLOCK_TYPE" => "catalog",
             "IBLOCK_ID" => "12",
             "NEWS_COUNT" => "10",
-            "SORT_BY1" => "",
-            "SORT_ORDER1" => "ASC",
+            "SORT_BY1" => "ID",
+            "SORT_ORDER1" => $arPropsIDS,
             "SORT_BY2" => "SORT",
             "SORT_ORDER2" => "ASC",
             "FILTER_NAME" => "arrFilterProduct",

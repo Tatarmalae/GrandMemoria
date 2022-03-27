@@ -14,7 +14,9 @@ try {
 
     foreach ($arResult['SECTIONS'] as $key => $section) {
         $elements = Catalog::getElementMinPriceBySection($arParams["IBLOCK_ID"], $section['ID']);
-        $arResult['SECTIONS'][$key]['MIN_PRICE'] = $elements['PRICE_VALUE'];
+        if (!empty($elements)) {
+            $arResult['SECTIONS'][$key]['MIN_PRICE'] = $elements['PRICE_VALUE'];
+        }
     }
 
 } catch (Throwable $e) {

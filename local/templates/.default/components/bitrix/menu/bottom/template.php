@@ -3,6 +3,9 @@
 <?php if (!empty($arResult)): ?>
     <?php $previousLevel = 0; ?>
     <?php foreach ($arResult as $arItem): ?>
+        <?php if (mb_strpos($arItem["LINK"], 'ustanovka-pamyatnikov') || mb_strpos($arItem["LINK"], 'gravirovka-pamyatnikov')) {
+            $arItem["LINK"] = str_replace('catalog', 'ritualnye-uslugi', $arItem["LINK"]);
+        } ?>
         <?= ($previousLevel && $arItem["DEPTH_LEVEL"] < $previousLevel) ? str_repeat("</ul><span class='footer__sublist-label'>+ Еще</span></div></div>", ($previousLevel - $arItem["DEPTH_LEVEL"])) : ''; ?>
         <?php if ($arItem["IS_PARENT"]): ?>
             <?php if ($arItem["DEPTH_LEVEL"] == 1): ?>

@@ -55,7 +55,7 @@ if (count($arResult['ITEMS']) == 0) return;
                                                     <p><?= $item['PREVIEW_TEXT'] ?></p>
                                                 <?php endif ?>
                                                 <div class="more">
-                                                    <a class="more__link" href="#" data-toggle="modal" data-target="#modalHistoryItem_<?= $key + 1 ?>">
+                                                    <a class="more__link" href="#" data-toggle="modal" data-target="#modalHistoryItem_<?= ($keyTab + 1) . ($key + 1) ?>">
                                                         <span>Читать целиком</span>
                                                         <svg class="icon__arrow-right" width="24" height="24">
                                                             <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
@@ -90,7 +90,7 @@ if (count($arResult['ITEMS']) == 0) return;
 </section>
 <?php foreach ($arResult['ITEMS'] as $keyTab => $tabs): ?>
     <?php foreach ($tabs['ELEMENTS'] as $key => $item): ?>
-        <div class="modal fade" id="modalHistoryItem_<?= $key + 1 ?>" tabindex="-1" role="dialog" aria-labelledby="modalHistoryItemLabel">
+        <div class="modal fade" id="modalHistoryItem_<?= ($keyTab + 1) . ($key + 1) ?>" tabindex="-1" role="dialog" aria-labelledby="modalHistoryItemLabel">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <button class="modal-close" type="button" data-dismiss="modal" aria-label="Close">

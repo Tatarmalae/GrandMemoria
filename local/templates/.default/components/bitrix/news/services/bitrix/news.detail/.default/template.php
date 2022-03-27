@@ -50,4 +50,25 @@ $this->setFrameMode(true);
             </div>
         </div>
     <?php endif ?>
+    <?php if (!empty($arResult['PROPERTIES']['PHOTO']['VALUE'])): ?>
+        <div class="gallery-items gallery-items_size-4 items">
+            <?php foreach ($arResult['PROPERTIES']['PHOTO']['VALUE'] as $key => $arItem): ?>
+                <a class="gallery-item item" href="#" data-fancybox="gallery" data-options="{&quot;src&quot; : &quot;<?= CFile::GetPath($arItem) ?>&quot; , &quot;caption&quot; : &quot;<?= $arResult['PROPERTIES']['PHOTO']['DESCRIPTION'][$key] ?>&quot;}">
+                    <div class="gallery-item__img img img-1by1">
+                        <div class="gallery__zoom">
+                            <div class="gallery__zoom-inner">
+                                <svg class="icon__search" width="14" height="14">
+                                    <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#search"></use>
+                                </svg>
+                                <span>Смотреть</span>
+                            </div>
+                        </div>
+                        <div class="img__inner object-fit">
+                            <img class="lazy" data-src="<?= CFile::GetPath($arItem) ?>" alt="<?= $arResult['PROPERTIES']['PHOTO']['DESCRIPTION'][$key] ?>">
+                        </div>
+                    </div>
+                </a>
+            <?php endforeach ?>
+        </div>
+    <?php endif ?>
 </article>

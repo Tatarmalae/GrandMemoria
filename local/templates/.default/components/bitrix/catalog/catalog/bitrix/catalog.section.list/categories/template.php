@@ -19,6 +19,9 @@ if (empty($arResult)) return;
             <div class="swiper-container categories-slider">
                 <ul class="nav nav-tabs categories-items swiper-wrapper" id="catalogTab" role="tablist">
                     <?php foreach ($arResult['SECTIONS'] as $key => $sections): ?>
+                        <?php if (mb_strpos($sections['SECTION_PAGE_URL'], 'ustanovka-pamyatnikov') || mb_strpos($sections['SECTION_PAGE_URL'], 'gravirovka-pamyatnikov')) {
+                            continue;
+                        } ?>
                         <li class="nav-item categories-li swiper-slide">
                             <a class="nav-link categories-item<?= $arParams['ID'] === $sections['ID'] ? ' active' : '' ?>"
                                href="<?= $sections['SECTION_PAGE_URL'] ?>">

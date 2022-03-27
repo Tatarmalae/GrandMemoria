@@ -10,10 +10,10 @@ $arUrlRewrite=array (
   ),
   3 => 
   array (
-    'CONDITION' => '#^/services/#',
+    'CONDITION' => '#^/ritualnye-uslugi/#',
     'RULE' => '',
     'ID' => 'bitrix:news',
-    'PATH' => '/services/index.php',
+    'PATH' => '/ritualnye-uslugi/index.php',
     'SORT' => 100,
   ),
   4 => 
