@@ -73,6 +73,8 @@ use Bitrix\Main\Diag\Debug;
 ); ?>
 <?php $this->SetViewTarget('after_parent_sect') ?>
 
+<?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/whatsapp.php", [], ["SHOW_BORDER" => true]); ?>
+
 <?php
 $dbProperty = CIBlockElement::getProperty($arParams['IBLOCK_ID'], $ElementID, [], ['CODE' => 'PRODUCTS']);
 $arPropsIDS = [];

@@ -58,10 +58,14 @@ $this->EndViewTarget();
                             'share_small',
                             [
                                 "HANDLERS" => [
-                                    0 => "ok",
-                                    1 => "vk",
-                                    2 => "twitter",
-                                    3 => "facebook",
+                                    // 0 => "ok",
+                                    // 1 => "twitter",
+                                    // 2 => "facebook",
+                                    3 => "whatsapp",
+                                    4 => "telegram",
+                                    5 => "viber",
+                                    6 => "vk",
+                                    7 => "link",
                                 ],
                                 "PAGE_URL" => $arResult["~DETAIL_PAGE_URL"],
                                 "PAGE_TITLE" => $arResult["~NAME"],
@@ -205,7 +209,7 @@ $this->EndViewTarget();
                 </button>
             </div>
         </div>
-        <div class="product-fixed">
+        <?php /*<div class="product-fixed">
             <div class="product-fixed__inner">
                 <div class="product-fixed__content">
                     <h4><?= $arResult['NAME'] ?></h4>
@@ -229,7 +233,7 @@ $this->EndViewTarget();
                     </span>
                 </button>
             </div>
-        </div>
+        </div>*/?>
     </div>
     <div class="product-delivery">
         <div class="product-delivery__row">
@@ -265,53 +269,59 @@ $this->EndViewTarget();
             <?php endif ?>
         </div>
     </div>
-    <div class="product-char box">
-        <?php if (!empty($arResult['DISPLAY_PROPERTIES']) || !empty($arResult['PROPERTIES']['OTHER_CHARS']['VALUE'])): ?>
-            <div class="product-char__item">
-                <h4>Характеристики товара:</h4>
-                <div class="product-char__list">
-                    <?php foreach ($arResult['DISPLAY_PROPERTIES'] as $prop): ?>
-                        <div class="product-char__list-item">
-                            <span><?= $prop['NAME'] ?>:</span>
-                            <span><?= is_array($prop['VALUE']) ? implode(', ', $prop['VALUE']) : $prop['VALUE'] ?></span>
-                        </div>
-                    <?php endforeach ?>
-                    <?php foreach ($arResult['PROPERTIES']['OTHER_CHARS']['VALUE'] as $key => $prop): ?>
-                        <div class="product-char__list-item">
-                            <span><?= $prop ?>:</span>
-                            <span><?= $arResult['PROPERTIES']['OTHER_CHARS']['DESCRIPTION'][$key] ?></span>
-                        </div>
-                    <?php endforeach ?>
+    <?php if (
+        !empty($arResult['DISPLAY_PROPERTIES']) || !empty($arResult['PROPERTIES']['OTHER_CHARS']['VALUE'])
+        &&
+        !empty($arResult['PROPERTIES']['OTHER_SIZE']['VALUE']) || !empty($arResult['PROPERTIES']['ADDITION']['VALUE'])
+    ): ?>
+        <div class="product-char box">
+            <?php if (!empty($arResult['DISPLAY_PROPERTIES']) || !empty($arResult['PROPERTIES']['OTHER_CHARS']['VALUE'])): ?>
+                <div class="product-char__item">
+                    <h4>Характеристики товара:</h4>
+                    <div class="product-char__list">
+                        <?php foreach ($arResult['DISPLAY_PROPERTIES'] as $prop): ?>
+                            <div class="product-char__list-item">
+                                <span><?= $prop['NAME'] ?>:</span>
+                                <span><?= is_array($prop['VALUE']) ? implode(', ', $prop['VALUE']) : $prop['VALUE'] ?></span>
+                            </div>
+                        <?php endforeach ?>
+                        <?php foreach ($arResult['PROPERTIES']['OTHER_CHARS']['VALUE'] as $key => $prop): ?>
+                            <div class="product-char__list-item">
+                                <span><?= $prop ?>:</span>
+                                <span><?= $arResult['PROPERTIES']['OTHER_CHARS']['DESCRIPTION'][$key] ?></span>
+                            </div>
+                        <?php endforeach ?>
+                    </div>
                 </div>
-            </div>
-        <?php endif ?>
-        <?php if (!empty($arResult['PROPERTIES']['OTHER_SIZE']['VALUE'])): ?>
-            <div class="product-char__item">
-                <h4><?= $arResult['PROPERTIES']['OTHER_SIZE']['NAME'] ?>:</h4>
-                <div class="product-char__list">
-                    <?php foreach ($arResult['PROPERTIES']['OTHER_SIZE']['VALUE'] as $size): ?>
-                        <div class="product-char__list-item">
-                            <span>Размеры (см), Цена (руб):</span>
-                            <span><?= $size ?></span>
-                        </div>
-                    <?php endforeach ?>
+            <?php endif ?>
+            <?php if (!empty($arResult['PROPERTIES']['OTHER_SIZE']['VALUE'])): ?>
+                <div class="product-char__item">
+                    <h4><?= $arResult['PROPERTIES']['OTHER_SIZE']['NAME'] ?>:</h4>
+                    <div class="product-char__list">
+                        <?php foreach ($arResult['PROPERTIES']['OTHER_SIZE']['VALUE'] as $size): ?>
+                            <div class="product-char__list-item">
+                                <span>Размеры (см), Цена (руб):</span>
+                                <span><?= $size ?></span>
+                            </div>
+                        <?php endforeach ?>
+                    </div>
                 </div>
-            </div>
-        <?php endif ?>
-        <?php if (!empty($arResult['PROPERTIES']['ADDITION']['VALUE'])): ?>
-            <div class="product-char__item">
-                <h4><?= $arResult['PROPERTIES']['ADDITION']['NAME'] ?>:</h4>
-                <div class="product-char__list">
-                    <?php foreach ($arResult['PROPERTIES']['ADDITION']['VALUE'] as $key => $addition): ?>
-                        <div class="product-char__list-item">
-                            <span><?= $addition ?>:</span>
-                            <span><?= $arResult['PROPERTIES']['ADDITION']['DESCRIPTION'][$key] ?: 'Есть' ?></span>
-                        </div>
-                    <?php endforeach ?>
+            <?php endif ?>
+            <?php if (!empty($arResult['PROPERTIES']['ADDITION']['VALUE'])): ?>
+                <div class="product-char__item">
+                    <h4><?= $arResult['PROPERTIES']['ADDITION']['NAME'] ?>:</h4>
+                    <div class="product-char__list">
+                        <?php foreach ($arResult['PROPERTIES']['ADDITION']['VALUE'] as $key => $addition): ?>
+                            <div class="product-char__list-item">
+                                <span><?= $addition ?>:</span>
+                                <span><?= $arResult['PROPERTIES']['ADDITION']['DESCRIPTION'][$key] ?: 'Есть' ?></span>
+                            </div>
+                        <?php endforeach ?>
+                    </div>
                 </div>
-            </div>
-        <?php endif ?>
-    </div>
+            <?php endif ?>
+        </div>
+    <?php endif ?>
     <div class="product-share">
         <span class="share">
             <svg class="icon__share" width="24" height="24">
@@ -326,10 +336,14 @@ $this->EndViewTarget();
                         'share_small',
                         [
                             "HANDLERS" => [
-                                0 => "ok",
-                                1 => "vk",
-                                2 => "twitter",
-                                3 => "facebook",
+                                // 0 => "ok",
+                                // 1 => "twitter",
+                                // 2 => "facebook",
+                                3 => "whatsapp",
+                                4 => "telegram",
+                                5 => "viber",
+                                6 => "vk",
+                                7 => "link",
                             ],
                             "PAGE_URL" => $arResult["~DETAIL_PAGE_URL"],
                             "PAGE_TITLE" => $arResult["~NAME"],
@@ -340,5 +354,17 @@ $this->EndViewTarget();
                 </span>
             </span>
         </span>
+    </div>
+    <div class="product-back">
+        <a class="btn btn-blue big" href="javascript:void(0);" onclick="checkRefer();">
+            <span class="btn__arrow">
+                <svg class="icon__arrow-right" width="24" height="24">
+                    <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
+                </svg>
+            </span>
+            <span class="btn__text">
+                <span data-text="Вернуться назад">Вернуться назад</span>
+            </span>
+        </a>
     </div>
 </div>

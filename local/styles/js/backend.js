@@ -6,6 +6,16 @@ $(document).ready(function () {
   ajaxTabs();
   ajaxPagination();
   forms();
+  $(window).on('popstate', function (event) {
+    let url = '';
+    // Проверяем данные внутри события, и если там наш pagination
+    if (event.originalEvent.state && event.originalEvent.state['pagination']) {
+      url = event.originalEvent.state['pagination'];
+    } else {
+      url = document.location.href.split("?")[0];
+    }
+    loadPage(url);
+  });
 });
 
 //Формы обратной связи
@@ -28,6 +38,8 @@ function forms() {
     let elem = $(this);
     let url = elem.attr('action');
     let data = elem.serialize();
+    let id_metrika = 88060052;
+    let metrika = elem.data('metrika');
     if (elem.hasClass('file__form')) {
       data = new FormData(elem[0]);
       $.ajaxSetup({
@@ -79,11 +91,19 @@ function forms() {
       },
       success: function (res) {
         if (res['status'] === 'ok') {
+          if (typeof metrika !== 'undefined') {
+            ym(id_metrika, 'reachGoal', metrika);
+          }
           if (res['form'] === 'calculation') {
             elem.trigger('reset');
             formValidationSuccess();
           } else {
-            elem.parents(".modal").addClass("is-success");
+            if (elem.parents(".modal").length) {
+              elem.parents(".modal").addClass("is-success");
+            } else {
+              $("#modalSuccess").modal("show");
+            }
+
             elem.trigger('reset');
             elem.find('.form-control').removeClass('is-focus');
 
@@ -104,57 +124,76 @@ function forms() {
   });
 }
 
-//Ajax-пагинация
+//Событие запуска Ajax-пагинации
 function ajaxPagination() {
   let body = $('body');
   body.on('click', 'a.pagination-link, a.pagination-icon, a.pagination__more', function (event) {
     event.preventDefault();
     let elem = $(this);
-    let tabs = elem.closest('.content').find('.ajax__tabs');
-
-    let props = {};
     let url = elem.attr('href');
-
-    if (tabs.length) {
-      let IBlockID = tabs.data('iblock');
-      let id = tabs.find('a.tags-item.tags-item_active').data('id');
-      props.IBLOCK_ID = IBlockID;
-      if (id) {
-        props.SECTION_ID = id
+    let oldBrowser = !(window.history && history.pushState);
+    if (url != '') {
+      // Если браузер не старый - добавляем адрес страницы ему в историю
+      if (!oldBrowser) {
+        window.history.pushState({pagination: url}, '', url);
       }
+      // И загружаем её
+      loadPage(url);
     }
+  });
+}
 
-    let sort = {};
-    let filter = $('.filter');
-    if (filter.length) {
-      let inputs = filter.find('.filter-column');
+//Ajax-пагинация
+function loadPage(url) {
+  let props = {};
+  let tabs = $('.ajax__tabs');
+  if (tabs.length) {
+    let IBlockID = tabs.data('iblock');
+    let id = tabs.find('a.tags-item.tags-item_active').data('id');
+    props.IBLOCK_ID = IBlockID;
+    if (id) {
+      props.SECTION_ID = id
+    }
+  }
+
+  let sort = {};
+  let filter = $('.filter');
+  if (filter.length) {
+    let inputs = filter.find('.filter-column');
+    if ($('.filter-column_btn').is(":visible")) {
+      inputs = filter.find('.ajax_filter__mobile .checkbox input[type=checkbox]');
+    }
+    let checkboxes = filter.find('.ajax__filter .checkbox input[type=checkbox]');
+
+    inputs.each(function (index, element) {
+      let code = $(element).find('[type=hidden]').data('code');
+      props[code] = $(element).find('[type=hidden]').val();
+
       if ($('.filter-column_btn').is(":visible")) {
-        inputs = filter.find('.ajax_filter__mobile .checkbox input[type=checkbox]');
-      }
-      let checkboxes = filter.find('.ajax__filter .checkbox input[type=checkbox]');
+        // code = $(element).attr('id');
+        // props[code] = $(element).is(':checked') ? $(element).val() : '';
+        let code = $(element).attr('id').replace(/_\d+$/g, '');
 
-      inputs.each(function (index, element) {
-        let code = $(element).find('[type=hidden]').data('code');
-        props[code] = $(element).find('[type=hidden]').val();
-        if ($('.filter-column_btn').is(":visible")) {
-          code = $(element).attr('id');
-          props[code] = $(element).is(':checked') ? $(element).val() : '';
+        if ($(element).is(':checked')) {
+          props[code] = $(element).val();
         }
-      });
-      checkboxes.each(function (index, element) {
-        let code = $(element).attr('id');
-        props[code] = $(element).is(':checked') ? '1' : '';
-      });
-      props['>=PROPERTY_PRICE'] = $('#input-with-keypress-0').val();
-      props['<=PROPERTY_PRICE'] = $('#input-with-keypress-1').val();
+      }
+    });
+    checkboxes.each(function (index, element) {
+      let code = $(element).attr('id');
+      props[code] = $(element).is(':checked') ? '1' : '';
+    });
+    props['>=PROPERTY_PRICE'] = $('#input-with-keypress-0').val();
+    props['<=PROPERTY_PRICE'] = $('#input-with-keypress-1').val();
 
-      let elSort = $('.ajax__sort');
-      let sortBy = elSort.closest('.dropdown').find('.dropdown-value').data('sort');
-      let sortOrder = elSort.closest('.dropdown').find('.dropdown-value').data('order');
-      sort.BY = sortBy;
-      sort.ORDER = sortOrder;
-    }
+    let elSort = $('.ajax__sort');
+    let sortBy = elSort.closest('.dropdown').find('.dropdown-value').data('sort');
+    let sortOrder = elSort.closest('.dropdown').find('.dropdown-value').data('order');
+    sort.BY = sortBy;
+    sort.ORDER = sortOrder;
+  }
 
+  $('html,body').stop().animate({scrollTop: $('section .content').offset().top}, 1000, function () {
     $.ajax({
       type: "POST",
       url: url,
@@ -163,22 +202,20 @@ function ajaxPagination() {
         sort: sort
       },
       success: function (data) {
-        $('html,body').stop().animate({scrollTop: $('section .content').offset().top}, 1000, function () {
-          let content = $(data).filter('.ajax__items');
-          let items = $('.ajax__items');
+        let content = $(data).filter('.ajax__items');
+        let items = $('.ajax__items');
 
-          let pagination = $(data).filter('.filter-bottom');
-          $('.filter-bottom').remove();
-          if (pagination.length) {
-            items.after(pagination);
-          }
+        let pagination = $(data).filter('.filter-bottom');
+        $('.filter-bottom').remove();
+        if (pagination.length) {
+          items.after(pagination);
+        }
 
-          items.replaceWith(content);
+        items.replaceWith(content);
 
-          initImgLazyLoad();
-          dotdotdotInit();
-          wowInit();
-        });
+        initImgLazyLoad();
+        dotdotdotInit();
+        wowInit();
       }
     });
   });
@@ -382,8 +419,13 @@ function catalogFilter() {
         let code = $(element).find('[type=hidden]').data('code');
         props[code] = $(element).find('[type=hidden]').val();
         if ($('.filter-fixed').is(":visible")) {
-          code = $(element).attr('id');
-          props[code] = $(element).is(':checked') ? $(element).val() : '';
+          // code = $(element).attr('id');
+          // props[code] = $(element).is(':checked') ? $(element).val() : '';
+          let code = $(element).attr('id').replace(/_\d+$/g, '');
+
+          if ($(element).is(':checked')) {
+            props[code] = $(element).val();
+          }
         }
       });
       checkboxes.each(function (index, element) {
@@ -495,8 +537,13 @@ function catalogFilter() {
       let code = $(element).find('[type=hidden]').data('code');
       props[code] = $(element).find('[type=hidden]').val();
       if ($('.filter-column_btn').is(":visible")) {
-        code = $(element).attr('id');
-        props[code] = $(element).is(':checked') ? $(element).val() : '';
+        // code = $(element).attr('id');
+        // props[code] = $(element).is(':checked') ? $(element).val() : '';
+        let code = $(element).attr('id').replace(/_\d+$/g, '');
+
+        if ($(element).is(':checked')) {
+          props[code] = $(element).val();
+        }
       }
     });
     checkboxes.each(function (index, element) {
@@ -562,7 +609,7 @@ function addBasket() {
           $('#modalBasket .label-wrap').html('');
 
           setTimeout(function () {
-            $('#modalBasket img.lazy').attr('data-src', res['element']['PREVIEW_PICTURE']).attr('src', res['element']['PREVIEW_PICTURE']).attr('alt', res['element']['NAME']);
+            $('#modalBasket img.lazy').attr('data-src', res['element']['PREVIEW_PICTURE']).attr('src', res['element']['PREVIEW_PICTURE']).attr('alt', res['element']['NAME']).addClass('loaded');
             if (res['element']['PROPERTIES']['NEW']['VALUE']) {
               $('#modalBasket .label-wrap').append('<span class="label label_small label_bg label_fiery-rose">Новинки</span>');
             }
@@ -806,7 +853,7 @@ function unSerialize(data) {
   let response = {};
   for (let k in data) {
     let newData = data[k].split('=');
-    response[newData[0]] = newData[1];
+    response[newData[0]] = decodeURIComponent(newData[1]);
   }
   return response;
 }

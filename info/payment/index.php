@@ -1,4 +1,5 @@
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
+$APPLICATION->SetPageProperty("description", "Условия оплаты и доставки ритуальных товаров и услуг ритуального агентства ГрандМемориа Казань");
 /**
  * @var $APPLICATION;
  */

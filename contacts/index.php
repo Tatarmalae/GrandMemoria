@@ -1,5 +1,6 @@
 <?php
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
+$APPLICATION->SetPageProperty("description", "Контакты ритуального агентства ГрандМемориа: телефон, электронная почта, адреса филиалов в Казани");
 /**
  * @var $APPLICATION ;
  */

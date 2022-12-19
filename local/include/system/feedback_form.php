@@ -10,7 +10,7 @@
                 </div>
             </div>
             <div class="feedback-form">
-                <form class="default-form" id="formFeedback" action="<?= SITE_AJAX_PATH ?>/forms/form_consultation.php" method="post" enctype="multipart/form-data">
+                <form class="default-form" id="formFeedback" action="<?= SITE_AJAX_PATH ?>/forms/form_consultation.php" method="post" enctype="multipart/form-data" data-metrika="form_besplat_consultacija">
                     <input type="hidden" name="theme" value="Получите бесплатную консультацию">
                     <input type="hidden" name="type" value="Получите бесплатную консультацию">
                     <div class="form-inputs">

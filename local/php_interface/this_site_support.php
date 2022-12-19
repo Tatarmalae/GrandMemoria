@@ -1,1 +1,1 @@
-Создание сайта: <a href="https://www.facebook.com/rustam.syubkaev" target="_blank">Rustam Syubkaev</a>
+Создание сайта: <a href="https://vk.com/russtik" target="_blank">Rustam Syubkaev</a>

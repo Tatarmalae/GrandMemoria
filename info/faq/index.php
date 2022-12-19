@@ -1,4 +1,5 @@
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
+$APPLICATION->SetPageProperty("description", "Часто задаваемые вопросы о похоронах, ритуальных товарах и принадлежностях агентства ГрандМемориа Казань");
 /**
  * @var $APPLICATION
  */

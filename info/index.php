@@ -1,4 +1,5 @@
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
+$APPLICATION->SetPageProperty("description", "Полезная информация для Посетителей сайта ГрандМемориа");
 /**
  * @var $APPLICATION
  */

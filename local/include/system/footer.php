@@ -93,12 +93,12 @@ use Bitrix\Main\Config\Option;
         <div class="footer-bottom">
             <div class="footer__row">
                 <div class="footer__column">
-                    <div class="footer__copyright">© <?= date('Y') ?> Гранд Мемориа Ритуал</div>
+                    <div class="footer__copyright">© <?= date('Y') ?> ГрандМемориа</div>
                 </div>
                 <div class="footer__column">
                     <div class="creator">
                         <div class="creator-text">Разработка сайта «
-                            <a href="https://www.instagram.com/k.pashukov/" target="_blank">k.pashukov</a>
+                            <a rel="nofollow" href="https://t.me/k_pashukov" target="_blank">k.pashukov</a>
                             »
                         </div>
                     </div>

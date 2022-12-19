@@ -53,7 +53,7 @@ $this->setFrameMode(true);
     <?php if (!empty($arResult['PROPERTIES']['PHOTO']['VALUE'])): ?>
         <div class="gallery-items gallery-items_size-4 items">
             <?php foreach ($arResult['PROPERTIES']['PHOTO']['VALUE'] as $key => $arItem): ?>
-                <a class="gallery-item item" href="#" data-fancybox="gallery" data-options="{&quot;src&quot; : &quot;<?= CFile::GetPath($arItem) ?>&quot; , &quot;caption&quot; : &quot;<?= $arResult['PROPERTIES']['PHOTO']['DESCRIPTION'][$key] ?>&quot;}">
+                <a class="gallery-item item" href="#" data-fancybox="gallery" data-options="{&quot;src&quot; : &quot;<?= CFile::GetPath($arItem) ?>&quot;}" data-caption="<?= $arResult['PROPERTIES']['PHOTO']['DESCRIPTION'][$key] ?>">
                     <div class="gallery-item__img img img-1by1">
                         <div class="gallery__zoom">
                             <div class="gallery__zoom-inner">

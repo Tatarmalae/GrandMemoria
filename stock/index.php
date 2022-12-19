@@ -1,4 +1,5 @@
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
+$APPLICATION->SetPageProperty("description", "Акции и скидки до 20% на памятники и похороны в ритуальном агентстве ГрандМемориа. Доставка по Казани и Татарстану от 0₽");
 /**
  * @var $APPLICATION
  */

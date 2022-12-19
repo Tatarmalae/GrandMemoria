@@ -18,7 +18,6 @@ $this->setFrameMode(true);
         <h2>По заданным параметрам, ничего не найдено</h2>
     </div>
 <?php else: ?>
-    <?php $this->EndViewTarget() ?>
     <div class="catalog-items items ajax__items" data-type="column" data-view="border" data-wow="not">
         <?php foreach ($arResult["ITEMS"] as $arItem): ?>
             <?php

@@ -1,4 +1,5 @@
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
+$APPLICATION->SetPageProperty("description", "Рассрочка на памятники до 12 месяцев с первоначальным взносом 30% в агентстве ГрандМемориа Казань");
 /**
  * @var $APPLICATION;
  */

@@ -1,4 +1,5 @@
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
+$APPLICATION->SetPageProperty("description", "Статьи ритуального агентства ГрандМемориа о ритуальных товарах и услугах, традициях, обычаях похорон. Полезная информация.");
 /**
  * @var $APPLICATION
  */
@@ -156,10 +157,14 @@ if ($request->isAjaxRequest()) {
         "SHARE_HIDE" => "N",
         "SHARE_TEMPLATE" => "share",
         "SHARE_HANDLERS" => [
-            0 => "vk",
-            1 => "twitter",
-            2 => "facebook",
-            3 => "ok",
+            // 0 => "ok",
+            // 1 => "twitter",
+            // 2 => "facebook",
+            3 => "whatsapp",
+            4 => "telegram",
+            5 => "viber",
+            6 => "vk",
+            7 => "link",
         ],
         "SHARE_SHORTEN_URL_LOGIN" => "",
         "SHARE_SHORTEN_URL_KEY" => "",

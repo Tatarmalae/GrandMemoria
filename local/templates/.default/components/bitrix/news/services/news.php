@@ -70,6 +70,51 @@ use Dev\Catalog;
 ); ?>
 <?php $this->SetViewTarget('after_parent_sect') ?>
 <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/components/adv.php", [], ["SHOW_BORDER" => true]); ?>
+<?php $APPLICATION->IncludeComponent(
+    "bitrix:catalog.section.list",
+    "services",
+    [
+        "ADD_SECTIONS_CHAIN" => "N",
+        "CACHE_FILTER" => "N",
+        "CACHE_GROUPS" => "Y",
+        "CACHE_TIME" => "36000000",
+        "CACHE_TYPE" => "A",
+        "COUNT_ELEMENTS" => "N",
+        "COUNT_ELEMENTS_FILTER" => "CNT_ACTIVE",
+        "FILTER_NAME" => "sectionsFilter",
+        "IBLOCK_ID" => "12",
+        "IBLOCK_TYPE" => "catalog",
+        "SECTION_CODE" => "",
+        "SECTION_FIELDS" => [
+            "ID",
+            "CODE",
+            "XML_ID",
+            "NAME",
+            "SORT",
+            "DESCRIPTION",
+            "PICTURE",
+            "DETAIL_PICTURE",
+            "IBLOCK_TYPE_ID",
+            "IBLOCK_ID",
+            "IBLOCK_CODE",
+            "IBLOCK_EXTERNAL_ID",
+            "DATE_CREATE",
+            "CREATED_BY",
+            "TIMESTAMP_X",
+            "MODIFIED_BY",
+            "",
+        ],
+        "SECTION_ID" => "",
+        "SECTION_URL" => "",
+        "SECTION_USER_FIELDS" => [
+            "",
+            "",
+        ],
+        "SHOW_PARENT_NAME" => "Y",
+        "TOP_DEPTH" => "2",
+        "VIEW_MODE" => "LINE",
+    ]
+); ?>
 <?php
 try {
     $seo = Catalog::getIBlock($arParams['IBLOCK_ID']);

@@ -3,7 +3,9 @@
  * @var $APPLICATION
  */
 
-use Bitrix\Main\Localization\Loc,
+
+use Bitrix\Main\Application,
+    Bitrix\Main\Localization\Loc,
     Bitrix\Main\Page\Asset;
 
 Loc::loadMessages(__FILE__);
@@ -25,7 +27,7 @@ Asset::getInstance()->addString('<link rel="mask-icon" href="/favicon/safari-pin
 Asset::getInstance()->addString('<link rel="manifest" href="/site.webmanifest" color="#FFF">', true, 'BEFORE_CSS');
 /*FONTS*/
 Asset::getInstance()->addString('<link rel="preconnect" href="https://fonts.gstatic.com">', true, 'BEFORE_CSS');
-Asset::getInstance()->addString('<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&amp;display=swap" rel="stylesheet">', true, 'BEFORE_CSS');
+// Asset::getInstance()->addString('<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&amp;display=swap" rel="stylesheet">', true, 'BEFORE_CSS');
 /*CSS*/
 Asset::getInstance()->addCss(SITE_STYLE_PATH . "/css/main.min.css", true);
 Asset::getInstance()->addCss(SITE_STYLE_PATH . "/css/backend.css", true);
@@ -35,10 +37,26 @@ Asset::getInstance()->addJs(SITE_STYLE_PATH . "/js/main.min.js");
 Asset::getInstance()->addJs(SITE_STYLE_PATH . "/js/backend.js");
 // if (!CSite::InDir('/catalog/')) {
     $curPage = $APPLICATION->GetCurPage(false);
-    $canonical = $_SERVER["REQUEST_SCHEME"] . '://' . $_SERVER["HTTP_HOST"] . $curPage;
+    $request = Application::getInstance()->getContext()->getRequest();
+    $canonical = 'http' . ($request->isHttps() == 1 ? 's' : '') . '://' . $_SERVER["HTTP_HOST"] . $curPage;
     Asset::getInstance()->addString('<link rel="canonical" href="' . $canonical . '" />');
 // }
 ?>
+<?php //see https://github.com/typekit/webfontloader?>
+<script data-skip-moving='true'>
+    WebFontConfig = {
+        google: {
+            families: ['Rubik:400,500,700&display=swap']
+        }
+    };
+
+    (function (d) {
+        let wf = d.createElement('script'), s = d.scripts[0];
+        wf.src = ('https:' === document.location.protocol ? 'https' : 'http') + '://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js';
+        wf.async = true;
+        s.parentNode.insertBefore(wf, s);
+    })(document);
+</script>
 <style>
     .layer,
     .megamenu {

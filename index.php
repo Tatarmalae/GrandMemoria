@@ -1,10 +1,10 @@
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
+$APPLICATION->SetPageProperty("description", "Официальный сайт агентства ГрандМемориа Казань");
 /**
  * @var $APPLICATION
  */
-$APPLICATION->SetTitle("Ритуальные услуги в Казани - Grand Memoria (Мемория), ИП Мелузов Е.А.");
+$APPLICATION->SetTitle("Ритуальное агентство ГрандМемориа Казань");
 ?>
-
 <?php
 global $arrFilterFaq;
 $arrFilterFaq = [

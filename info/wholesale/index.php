@@ -1,4 +1,5 @@
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
+$APPLICATION->SetPageProperty("description", "Информация об оптовых продажах гранита и мрамора со склада с гранитными и мраморными плитами. Оставить заявку. Телефон. Полезная информация.");
 /**
  * @var $APPLICATION;
  */

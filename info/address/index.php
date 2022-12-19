@@ -1,4 +1,5 @@
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
+$APPLICATION->SetPageProperty("description", "Полный список моргов и кладбищ Казани: адреса, телефоны, режим работы. Полезная информация.");
 /**
  * @var $APPLICATION
  */

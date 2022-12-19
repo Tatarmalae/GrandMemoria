@@ -1,4 +1,5 @@
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
+$APPLICATION->SetPageProperty("description", "Фотогалерея выполненных нами работ по изготовлению памятников. Более 500 фотографий изготовленных памятников.");
 /**
  * @var $APPLICATION
  */

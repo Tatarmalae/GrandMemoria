@@ -1,2 +1,18 @@
 User-agent: *
+Allow: /bitrix/
+Allow: /local/
+Allow: /upload/
+Disallow: /info/articles/
+Disallow: /*?
+
+
+Clean-param: PAGEN_1&type&clear_cache&type&etext&bitrix_include_areas&back_url_admin&sphrase_id&galleryCard&how&q&_ym_status-check&fbclid&_ym_lang&utm_source&sphrase_id&yadordid&yadclid
+
+Host: https://grandmemoria.ru
+
+
+User-agent: MSNBot
+Disallow: /
+
+User-agent: Slurp
 Disallow: /

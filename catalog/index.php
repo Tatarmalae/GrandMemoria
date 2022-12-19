@@ -1,4 +1,5 @@
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
+$APPLICATION->SetPageProperty("description", "Ритуальные товары и принадлежности для похорон от 500 ₽ в агентстве ГрандМемориа Казань");
 /**
  * @var $APPLICATION
  */
@@ -44,7 +45,7 @@ $APPLICATION->SetTitle("Каталог товаров");
         "DETAIL_SHOW_POPULAR" => "N",
         "DETAIL_SHOW_SLIDER" => "N",
         "DETAIL_SHOW_VIEWED" => "N",
-        "DETAIL_STRICT_SECTION_CHECK" => "N",
+        "DETAIL_STRICT_SECTION_CHECK" => "Y",
         "DETAIL_USE_COMMENTS" => "N",
         "DETAIL_USE_VOTE_RATING" => "N",
         "DISABLE_INIT_JS_IN_COMPONENT" => "N",
@@ -159,7 +160,7 @@ $APPLICATION->SetTitle("Каталог товаров");
         "USE_ELEMENT_COUNTER" => "Y",
         "USE_ENHANCED_ECOMMERCE" => "N",
         "USE_FILTER" => "N",
-        "USE_MAIN_ELEMENT_SECTION" => "N",
+        "USE_MAIN_ELEMENT_SECTION" => "Y",
         "USE_PRICE_COUNT" => "N",
         "USE_PRODUCT_QUANTITY" => "N",
         "USE_STORE" => "N",

@@ -1,4 +1,5 @@
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
+$APPLICATION->SetPageProperty("description", "Представлены цены на комплекты на захоронение и на кремацию в Казани. 3 самых востребованных пакета: минимальный, средний, максимальный.");
 /**
  * @var $APPLICATION
  */

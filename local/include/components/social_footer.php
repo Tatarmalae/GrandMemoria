@@ -26,7 +26,7 @@ if (count($arResult['ITEMS']) == 0) return;
     <div class="footer__contacts">
         <?php foreach ($arResult['ITEMS'] as $key => $item): ?>
             <div class="footer__contacts-item">
-                <a class="footer__contacts-link" href="<?= !empty($item['PROPERTIES']['LINK']['VALUE']) ? $item['PROPERTIES']['LINK']['VALUE'] : '#' ?>" target="_blank">
+                <a rel="nofollow" class="footer__contacts-link" href="<?= !empty($item['PROPERTIES']['LINK']['VALUE']) ? $item['PROPERTIES']['LINK']['VALUE'] : '#' ?>" target="_blank">
                     <span>
                         <?= file_get_contents($_SERVER['DOCUMENT_ROOT'] . CFile::GetPath($item['PROPERTIES']['ICO']['VALUE'])) ?>
                     </span>

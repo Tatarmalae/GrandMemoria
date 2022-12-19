@@ -1,4 +1,5 @@
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
+$APPLICATION->SetPageProperty("description", "Отзывы о ритуальном агентстве ГрандМемориа Казань");
 /**
  * @var $APPLICATION
  */

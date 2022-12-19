@@ -8,12 +8,19 @@ class CASDiblockTools {
 		$xml = '';
 		if ($BID>0 && is_array($arWhat) && !empty($arWhat)) {
 			if (in_array('forms', $arWhat)) {
-				$xml .= '<form_element>';
-				$xml .=		'<![CDATA['.array_pop(CUserOptions::GetOption('form', 'form_element_'.$BID, true)).']]>';
-				$xml .= '</form_element>'."\n";
-				$xml .= '<form_section>';
-				$xml .=		'<![CDATA['.array_pop(CUserOptions::GetOption('form', 'form_section_'.$BID, true)).']]>';
-				$xml .= '</form_section>'."\n";
+				$element = CUserOptions::GetOption('form', 'form_element_'.$BID, null);
+				if (!empty($element) && is_array($element)) {
+					$xml .= '<form_element>';
+					$xml .=		'<![CDATA['.array_pop($element).']]>';
+					$xml .= '</form_element>'."\n";
+				}
+				unset($element);
+				$section = CUserOptions::GetOption('form', 'form_section_'.$BID, null);
+				if (!empty($section) && is_array($section)) {
+					$xml .= '<form_section>';
+					$xml .=		'<![CDATA['.array_pop($section).']]>';
+					$xml .= '</form_section>'."\n";
+				}
 			}
 		}
 		return $xml;
@@ -62,7 +69,7 @@ class CASDiblockTools {
 						continue;
 					}
 					if (in_array($k, $arCData) && trim($v) !== '') {
-						$v = '<![CDATA['.$v.']]>';;
+						$v = '<![CDATA['.$v.']]>';
 					}
 					$xml .= "\t\t\t".'<'.mb_strtolower($k).'>'.$v.'</'.mb_strtolower($k).'>'."\n";
 				}
@@ -129,7 +136,8 @@ class CASDiblockTools {
 			if ($xml->Load($xmlPath)) {
 				if ($node = $xml->SelectNodes('/asd_iblock_props/props/')) {
 					foreach ($node->children() as $child) {
-						$arProp = array_pop($child->__toArray());
+						$childData = $child->__toArray();
+						$arProp = array_pop($childData);
 						$arFields = array('IBLOCK_ID' => $BID);
 						foreach ($arProp as $code => $v) {
 							$arFields[mb_strtoupper($code)] = isset($v[0]['#']['cdata-section']) && is_array($v[0]['#']['cdata-section']) ? $v[0]['#']['cdata-section'][0]['#'] : $v[0]['#'];
@@ -145,7 +153,8 @@ class CASDiblockTools {
 				}
 				if ($node = $xml->SelectNodes('/asd_iblock_props/enums/')) {
 					foreach ($node->children() as $child) {
-						$arProp = array_pop($child->__toArray());
+						$childData = $child->__toArray();
+						$arProp = array_pop($childData);
 						$arFields = array('IBLOCK_ID' => $BID);
 						foreach ($arProp as $code => $v) {
 							$arFields[mb_strtoupper($code)] = isset($v[0]['#']['cdata-section']) && is_array($v[0]['#']['cdata-section']) ? $v[0]['#']['cdata-section'][0]['#'] : $v[0]['#'];

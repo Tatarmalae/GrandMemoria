@@ -7,7 +7,7 @@ use Dev\FormReviews;
 $obForm = new FormReviews(35);
 
 $arFields = $_POST;
-if ($_FILES) {
+if ($_FILES['file']['size'][0] > 0) {
     $arFields['FILES'] = $_FILES;
 }
 $type = $arFields['type'];

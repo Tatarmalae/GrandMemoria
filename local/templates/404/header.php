@@ -8,6 +8,7 @@
 <head>
     <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/head.php", [], ["SHOW_BORDER" => false]); ?>
     <?php $APPLICATION->ShowHead(); ?>
+    <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/scripts_head.php", [], ["SHOW_BORDER" => false]); ?>
 </head>
 <body>
 <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/scripts_after_body.php", [], ["SHOW_BORDER" => false]); ?>

@@ -1,4 +1,5 @@
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
+$APPLICATION->SetPageProperty("description", "Информация о ритуальном агентстве ГрандМемориа: ключевые направления, преимущества, история, собственное производство, галерея, адреса.");
 /**
  * @var $APPLICATION
  */

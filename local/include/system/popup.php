@@ -76,7 +76,7 @@
                             <h2 class="static">Заказать звонок</h2>
                             <p>Оставьте свои данные, и мы свяжемся с вами в ближайшее время.</p>
                             <div class="modal-form">
-                                <form class="default-form" id="formCall" action="<?= SITE_AJAX_PATH ?>/forms/form_callback.php" method="post" enctype="multipart/form-data">
+                                <form class="default-form" id="formCall" action="<?= SITE_AJAX_PATH ?>/forms/form_callback.php" method="post" enctype="multipart/form-data" data-metrika="zakazzvonkatop">
                                     <input type="hidden" name="theme" value="">
                                     <input type="hidden" name="type" value="Заказать звонок">
                                     <div class="form-inputs">
@@ -226,7 +226,7 @@
                             <h2 class="static">Задать вопрос</h2>
                             <p>Напишите нам, мы с удовольствием вам поможем.</p>
                             <div class="modal-form">
-                                <form class="default-form" id="formQuestion" action="<?= SITE_AJAX_PATH ?>/forms/form_faq.php" method="post" enctype="multipart/form-data">
+                                <form class="default-form" id="formQuestion" action="<?= SITE_AJAX_PATH ?>/forms/form_faq.php" method="post" enctype="multipart/form-data" data-metrika="form_zadat_vopros">
                                     <input type="hidden" name="type" value="Задать вопрос">
                                     <div class="form-inputs">
                                         <div class="form-input">
@@ -387,7 +387,7 @@
                             <h2 class="static">Купить в 1 клик</h2>
                             <p>Оставьте свои данные, и мы свяжемся с вами в ближайшее время.</p>
                             <div class="modal-form">
-                                <form class="default-form" id="formBuyOneClick" action="<?= SITE_AJAX_PATH ?>/forms/form_one_click.php" method="post" enctype="multipart/form-data">
+                                <form class="default-form" id="formBuyOneClick" action="<?= SITE_AJAX_PATH ?>/forms/form_one_click.php" method="post" enctype="multipart/form-data" data-metrika="form_kupit_v_1_klik">
                                     <input type="hidden" name="theme" value="">
                                     <input type="hidden" name="type" value="Купить в 1 клик">
                                     <div class="form-inputs">
@@ -456,7 +456,7 @@
                             <h2 class="static">Расчет рассрочки на памятник</h2>
                             <p>Оставьте свои данные, и мы свяжемся с вами в ближайшее время.</p>
                             <div class="modal-form">
-                                <form class="default-form" id="formInstallmentPlan" action="<?= SITE_AJAX_PATH ?>/forms/form_installment_plan.php" method="post" enctype="multipart/form-data">
+                                <form class="default-form" id="formInstallmentPlan" action="<?= SITE_AJAX_PATH ?>/forms/form_installment_plan.php" method="post" enctype="multipart/form-data" data-metrika="form_raschet_rassrochki_pamatnik">
                                     <input type="hidden" name="theme" value="">
                                     <input type="hidden" name="type" value="Расчет рассрочки">
                                     <div class="form-inputs">
@@ -531,7 +531,7 @@
                             <h2 class="static">Оформить заказ</h2>
                             <p>Оставьте свои данные, и мы свяжемся с вами в ближайшее время.</p>
                             <div class="modal-form">
-                                <form class="default-form" id="formCheckout" action="<?= SITE_AJAX_PATH ?>/forms/form_checkout.php" method="post" enctype="multipart/form-data">
+                                <form class="default-form" id="formCheckout" action="<?= SITE_AJAX_PATH ?>/forms/form_checkout.php" method="post" enctype="multipart/form-data" data-metrika="form_oformit-zakaz_korzina">
                                     <input type="hidden" name="theme" value="">
                                     <input type="hidden" name="type" value="Оформить заказ">
                                     <div class="form-inputs">
@@ -606,7 +606,7 @@
                             <h2 class="static">Написать нам</h2>
                             <p>Директор лично читает письма и принимает решения.</p>
                             <div class="modal-form">
-                                <form class="default-form file__form" id="formCommunication" action="<?= SITE_AJAX_PATH ?>/forms/form_communication.php" method="post" enctype="multipart/form-data">
+                                <form class="default-form file__form" id="formCommunication" action="<?= SITE_AJAX_PATH ?>/forms/form_communication.php" method="post" enctype="multipart/form-data" data-metrika="form_napisat_nam">
                                     <input type="hidden" name="theme" value="">
                                     <input type="hidden" name="type" value="Написать нам">
                                     <div class="form-inputs">
@@ -709,7 +709,7 @@
                             <h2 class="static">Оставить отзыв</h2>
                             <p>Поделитесь отзывам о нашей работе</p>
                             <div class="modal-form">
-                                <form class="default-form file__form" id="formReviews" action="<?= SITE_AJAX_PATH ?>/forms/form_reviews.php" method="post" enctype="multipart/form-data">
+                                <form class="default-form file__form" id="formReviews" action="<?= SITE_AJAX_PATH ?>/forms/form_reviews.php" method="post" enctype="multipart/form-data" data-metrika="form_ostavit_otzyv">
                                     <input type="hidden" name="theme" value="">
                                     <input type="hidden" name="type" value="Оставить отзыв">
                                     <div class="form-inputs">
@@ -812,7 +812,7 @@
                             <h2 class="static">Получить акционное предложение</h2>
                             <p>Оставьте свои данные, и мы свяжемся с вами в ближайшее время.</p>
                             <div class="modal-form">
-                                <form class="default-form" id="formStock" action="<?= SITE_AJAX_PATH ?>/forms/form_stock.php" method="post" enctype="multipart/form-data">
+                                <form class="default-form" id="formStock" action="<?= SITE_AJAX_PATH ?>/forms/form_stock.php" method="post" enctype="multipart/form-data" data-metrika="form_poluchit_akcionnoe_predlozhenie">
                                     <input type="hidden" name="theme" value="">
                                     <input type="hidden" name="type" value="Получить акционное предложение">
                                     <div class="form-inputs">
@@ -883,6 +883,35 @@
                 </a>
                 <div class="modal-success">
                     <h2 class="static">Расчет похорон отправлен</h2>
+                    <p>Спасибо! Мы свяжемся с вами в ближайшее время.</p>
+                    <div class="more-btn">
+                        <button class="btn btn-blue big" type="button" data-dismiss="modal">
+                            <span class="btn__text">
+                                <span>Вернуться к просмотру</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade is-success" id="modalSuccess" tabindex="-1" role="dialog" aria-labelledby="modalSuccess">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <button class="modal-close" type="button" data-dismiss="modal" aria-label="Close">
+                <svg class="icon__close-modal" width="48" height="48">
+                    <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
+                </svg>
+            </button>
+            <div class="modal-body">
+                <a class="logo-link" href="<?= SITE_DIR ?>">
+                    <div class="logo">
+                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
+                    </div>
+                </a>
+                <div class="modal-success">
+                    <h2 class="static">Заявка отправлена</h2>
                     <p>Спасибо! Мы свяжемся с вами в ближайшее время.</p>
                     <div class="more-btn">
                         <button class="btn btn-blue big" type="button" data-dismiss="modal">
