@@ -38,7 +38,7 @@ function forms() {
     let elem = $(this);
     grecaptcha.ready(function () {
       grecaptcha.execute('6LfeqZAjAAAAAHGhBFymI3eBTUARhrgckwVaSDlJ', {action: 'send_form'}).then(function (token) {
-        elem.closest('form').find('.g-recaptcha-response').val(token);
+        elem.closest('form').find('input[name=g-recaptcha-response]').val(token);
         let url = elem.attr('action');
         let data = elem.serialize();
         let id_metrika = 88060052;
