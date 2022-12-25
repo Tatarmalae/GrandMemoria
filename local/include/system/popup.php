@@ -110,6 +110,11 @@
                                             </span>
                                         </button>
                                     </div>
+                                    <div class="form-captcha">
+                                        Этот сайт защищен с помощью reCAPTCHA и соответствует
+                                        <a rel="nofollow" href="https://policies.google.com/privacy" target="_blank">Политике конфиденциальности</a> и
+                                        <a rel="nofollow" href="https://policies.google.com/terms" target="_blank">Условиям использования</a> Google.
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -184,6 +189,11 @@
                                                 <span>Отправить</span>
                                             </span>
                                         </button>
+                                    </div>
+                                    <div class="form-captcha">
+                                        Этот сайт защищен с помощью reCAPTCHA и соответствует
+                                        <a rel="nofollow" href="https://policies.google.com/privacy" target="_blank">Политике конфиденциальности</a> и
+                                        <a rel="nofollow" href="https://policies.google.com/terms" target="_blank">Условиям использования</a> Google.
                                     </div>
                                 </form>
                             </div>
@@ -271,6 +281,11 @@
                                             </span>
                                         </button>
                                     </div>
+                                    <div class="form-captcha">
+                                        Этот сайт защищен с помощью reCAPTCHA и соответствует
+                                        <a rel="nofollow" href="https://policies.google.com/privacy" target="_blank">Политике конфиденциальности</a> и
+                                        <a rel="nofollow" href="https://policies.google.com/terms" target="_blank">Условиям использования</a> Google.
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -346,6 +361,11 @@
                                             </span>
                                         </button>
                                     </div>
+                                    <div class="form-captcha">
+                                        Этот сайт защищен с помощью reCAPTCHA и соответствует
+                                        <a rel="nofollow" href="https://policies.google.com/privacy" target="_blank">Политике конфиденциальности</a> и
+                                        <a rel="nofollow" href="https://policies.google.com/terms" target="_blank">Условиям использования</a> Google.
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -414,6 +434,11 @@
                                                 <span>Отправить</span>
                                             </span>
                                         </button>
+                                    </div>
+                                    <div class="form-captcha">
+                                        Этот сайт защищен с помощью reCAPTCHA и соответствует
+                                        <a rel="nofollow" href="https://policies.google.com/privacy" target="_blank">Политике конфиденциальности</a> и
+                                        <a rel="nofollow" href="https://policies.google.com/terms" target="_blank">Условиям использования</a> Google.
                                     </div>
                                 </form>
                             </div>
@@ -490,6 +515,11 @@
                                             </span>
                                         </button>
                                     </div>
+                                    <div class="form-captcha">
+                                        Этот сайт защищен с помощью reCAPTCHA и соответствует
+                                        <a rel="nofollow" href="https://policies.google.com/privacy" target="_blank">Политике конфиденциальности</a> и
+                                        <a rel="nofollow" href="https://policies.google.com/terms" target="_blank">Условиям использования</a> Google.
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -564,6 +594,11 @@
                                                 <span>Отправить</span>
                                             </span>
                                         </button>
+                                    </div>
+                                    <div class="form-captcha">
+                                        Этот сайт защищен с помощью reCAPTCHA и соответствует
+                                        <a rel="nofollow" href="https://policies.google.com/privacy" target="_blank">Политике конфиденциальности</a> и
+                                        <a rel="nofollow" href="https://policies.google.com/terms" target="_blank">Условиям использования</a> Google.
                                     </div>
                                 </form>
                             </div>
@@ -668,6 +703,11 @@
                                             </span>
                                         </button>
                                     </div>
+                                    <div class="form-captcha">
+                                        Этот сайт защищен с помощью reCAPTCHA и соответствует
+                                        <a rel="nofollow" href="https://policies.google.com/privacy" target="_blank">Политике конфиденциальности</a> и
+                                        <a rel="nofollow" href="https://policies.google.com/terms" target="_blank">Условиям использования</a> Google.
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -771,6 +811,11 @@
                                             </span>
                                         </button>
                                     </div>
+                                    <div class="form-captcha">
+                                        Этот сайт защищен с помощью reCAPTCHA и соответствует
+                                        <a rel="nofollow" href="https://policies.google.com/privacy" target="_blank">Политике конфиденциальности</a> и
+                                        <a rel="nofollow" href="https://policies.google.com/terms" target="_blank">Условиям использования</a> Google.
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -845,6 +890,11 @@
                                                 <span>Отправить</span>
                                             </span>
                                         </button>
+                                    </div>
+                                    <div class="form-captcha">
+                                        Этот сайт защищен с помощью reCAPTCHA и соответствует
+                                        <a rel="nofollow" href="https://policies.google.com/privacy" target="_blank">Политике конфиденциальности</a> и
+                                        <a rel="nofollow" href="https://policies.google.com/terms" target="_blank">Условиям использования</a> Google.
                                     </div>
                                 </form>
                             </div>
