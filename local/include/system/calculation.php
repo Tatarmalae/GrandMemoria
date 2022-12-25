@@ -144,6 +144,7 @@ try {
                                         <form class="default-form" id="formCalculationResult" action="<?= SITE_AJAX_PATH ?>/forms/form_calculation.php" method="post" enctype="multipart/form-data" data-metrika="form_calculator">
                                             <input type="hidden" name="theme" value="Расчет похорон">
                                             <input type="hidden" name="type" value="Расчет похорон">
+                                            <input type="hidden" name="g-recaptcha-response" value="">
                                             <div class="form-inputs">
                                                 <div class="form-input">
                                                     <input class="form-control phone-mask" type="tel" id="calculationResultPhone" placeholder="" name="phone">

@@ -79,6 +79,7 @@
                                 <form class="default-form" id="formCall" action="<?= SITE_AJAX_PATH ?>/forms/form_callback.php" method="post" enctype="multipart/form-data" data-metrika="zakazzvonkatop">
                                     <input type="hidden" name="theme" value="">
                                     <input type="hidden" name="type" value="Заказать звонок">
+                                    <input type="hidden" name="g-recaptcha-response" value="">
                                     <div class="form-inputs">
                                         <div class="form-input">
                                             <input class="form-control" id="callName" placeholder="" name="name"/>
@@ -159,6 +160,7 @@
                                 <form class="default-form" id="formConsultation" action="<?= SITE_AJAX_PATH ?>/forms/form_consultation.php" method="post" enctype="multipart/form-data">
                                     <input type="hidden" name="theme" value="">
                                     <input type="hidden" name="type" value="Получить консультацию">
+                                    <input type="hidden" name="g-recaptcha-response" value="">
                                     <div class="form-inputs">
                                         <div class="form-input">
                                             <input class="form-control" id="consultationName" placeholder="" name="name"/>
@@ -238,6 +240,7 @@
                             <div class="modal-form">
                                 <form class="default-form" id="formQuestion" action="<?= SITE_AJAX_PATH ?>/forms/form_faq.php" method="post" enctype="multipart/form-data" data-metrika="form_zadat_vopros">
                                     <input type="hidden" name="type" value="Задать вопрос">
+                                    <input type="hidden" name="g-recaptcha-response" value="">
                                     <div class="form-inputs">
                                         <div class="form-input">
                                             <input class="form-control" id="questionName" placeholder="" name="name"/>
@@ -330,6 +333,7 @@
                                 <form class="default-form" id="formInstallment" action="<?= SITE_AJAX_PATH ?>/forms/form_installment.php" method="post" enctype="multipart/form-data">
                                     <input type="hidden" name="theme" value="">
                                     <input type="hidden" name="type" value="Оформить рассрочку">
+                                    <input type="hidden" name="g-recaptcha-response" value="">
                                     <div class="form-inputs">
                                         <div class="form-input">
                                             <input class="form-control" id="installmentName" placeholder="" name="name"/>
@@ -410,6 +414,7 @@
                                 <form class="default-form" id="formBuyOneClick" action="<?= SITE_AJAX_PATH ?>/forms/form_one_click.php" method="post" enctype="multipart/form-data" data-metrika="form_kupit_v_1_klik">
                                     <input type="hidden" name="theme" value="">
                                     <input type="hidden" name="type" value="Купить в 1 клик">
+                                    <input type="hidden" name="g-recaptcha-response" value="">
                                     <div class="form-inputs">
                                         <div class="form-input">
                                             <input class="form-control phone-mask" type="tel" id="buyOneClickPhone" placeholder="" name="phone"/>
@@ -484,6 +489,7 @@
                                 <form class="default-form" id="formInstallmentPlan" action="<?= SITE_AJAX_PATH ?>/forms/form_installment_plan.php" method="post" enctype="multipart/form-data" data-metrika="form_raschet_rassrochki_pamatnik">
                                     <input type="hidden" name="theme" value="">
                                     <input type="hidden" name="type" value="Расчет рассрочки">
+                                    <input type="hidden" name="g-recaptcha-response" value="">
                                     <div class="form-inputs">
                                         <div class="form-input">
                                             <input class="form-control" id="installmentPlanName" placeholder="" name="name"/>
@@ -564,6 +570,7 @@
                                 <form class="default-form" id="formCheckout" action="<?= SITE_AJAX_PATH ?>/forms/form_checkout.php" method="post" enctype="multipart/form-data" data-metrika="form_oformit-zakaz_korzina">
                                     <input type="hidden" name="theme" value="">
                                     <input type="hidden" name="type" value="Оформить заказ">
+                                    <input type="hidden" name="g-recaptcha-response" value="">
                                     <div class="form-inputs">
                                         <div class="form-input">
                                             <input class="form-control" id="checkoutName" placeholder="" name="name"/>
@@ -644,6 +651,7 @@
                                 <form class="default-form file__form" id="formCommunication" action="<?= SITE_AJAX_PATH ?>/forms/form_communication.php" method="post" enctype="multipart/form-data" data-metrika="form_napisat_nam">
                                     <input type="hidden" name="theme" value="">
                                     <input type="hidden" name="type" value="Написать нам">
+                                    <input type="hidden" name="g-recaptcha-response" value="">
                                     <div class="form-inputs">
                                         <div class="form-input">
                                             <input class="form-control" id="communicationName" placeholder="" name="name"/>
@@ -752,6 +760,7 @@
                                 <form class="default-form file__form" id="formReviews" action="<?= SITE_AJAX_PATH ?>/forms/form_reviews.php" method="post" enctype="multipart/form-data" data-metrika="form_ostavit_otzyv">
                                     <input type="hidden" name="theme" value="">
                                     <input type="hidden" name="type" value="Оставить отзыв">
+                                    <input type="hidden" name="g-recaptcha-response" value="">
                                     <div class="form-inputs">
                                         <div class="form-input">
                                             <input class="form-control" id="reviewsName" placeholder="" name="name"/>
@@ -860,6 +869,7 @@
                                 <form class="default-form" id="formStock" action="<?= SITE_AJAX_PATH ?>/forms/form_stock.php" method="post" enctype="multipart/form-data" data-metrika="form_poluchit_akcionnoe_predlozhenie">
                                     <input type="hidden" name="theme" value="">
                                     <input type="hidden" name="type" value="Получить акционное предложение">
+                                    <input type="hidden" name="g-recaptcha-response" value="">
                                     <div class="form-inputs">
                                         <div class="form-input">
                                             <input class="form-control" id="stockName" placeholder="" name="name"/>
