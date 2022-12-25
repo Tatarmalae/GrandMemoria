@@ -5,7 +5,7 @@ use Bitrix\Main\Diag\Debug;
 use Dev\FormCallback;
 
 $reCaptcha = (new Dev\ReCaptcha)->getData($_POST['g-recaptcha-response']);
-if ($reCaptcha['success'] == 'false' || $reCaptcha['action'] !== 'send_form' || floatval($reCaptcha['score']) < 0.5) {
+if (!$reCaptcha['success'] || $reCaptcha['action'] !== 'send_form' || floatval($reCaptcha['score']) < 0.5) {
     echo json_encode([
         'status' => 'error',
         'message' => 'Captcha Error',
