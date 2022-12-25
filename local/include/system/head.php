@@ -35,6 +35,7 @@ Asset::getInstance()->addCss(SITE_STYLE_PATH . "/css/backend.css", true);
 Asset::getInstance()->addJs(SITE_STYLE_PATH . "/js/separate-js/jquery.min.js");
 Asset::getInstance()->addJs(SITE_STYLE_PATH . "/js/main.min.js");
 Asset::getInstance()->addJs(SITE_STYLE_PATH . "/js/backend.js");
+Asset::getInstance()->addJs('https://www.google.com/recaptcha/api.js?render=6LfeqZAjAAAAAHGhBFymI3eBTUARhrgckwVaSDlJ');
 // if (!CSite::InDir('/catalog/')) {
     $curPage = $APPLICATION->GetCurPage(false);
     $request = Application::getInstance()->getContext()->getRequest();

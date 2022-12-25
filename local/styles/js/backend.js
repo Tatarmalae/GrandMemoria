@@ -35,91 +35,97 @@ function forms() {
 
   body.on('submit', 'form.default-form:not(.no__ajax)', function (event) {
     event.preventDefault();
-    let elem = $(this);
-    let url = elem.attr('action');
-    let data = elem.serialize();
-    let id_metrika = 88060052;
-    let metrika = elem.data('metrika');
-    if (elem.hasClass('file__form')) {
-      data = new FormData(elem[0]);
-      $.ajaxSetup({
-        cache: false,
-        contentType: false,
-        processData: false,
-      });
-    }
-
-    // Дополнение данными, если находимся на странице "Расчет похорон"
-    let calculation = $('.calculation');
-    if (
-      elem.is('[id=formCalculationResult]')
-      && calculation.length
-      && elem.find('input[name=theme]:hidden').val() === 'Расчет похорон'
-    ) {
-      data = unSerialize(data);
-      data.result = calculation.find('.calculation-result').html();
-    }
-
-    // Дополнение данными, если находимся на странице калькулятора рассрочки
-    let calc = $('.calculator');
-    if (
-      elem.is('[id=formInstallmentPlan]')
-      && calc.length
-      && elem.find('input[name=theme]:hidden').val() === 'Калькулятор рассрочки'
-    ) {
-      data = unSerialize(data);
-      data.SUM = calc.find('span.calc-sum').text() + ' руб.';
-      data.COUNT = calc.find('span.calc-time').text() + ' мес.';
-      data.TOTAL = calc.find('span.calc-generalSum').text() + ' руб.';
-      data.FIRST_PAYMENT_PER = calc.find('span.calc-contributionPercent').text() + '%';
-      data.FIRST_PAYMENT_RUB = calc.find('span.calc-contributionRuble').text() + ' руб.';
-      data.MONTHLY_PAYMENT = calc.find('span.calc-payment').text() + ' руб.';
-    }
-
-    // Дополнение данными, если находимся в корзине
-    if ($('.basket-wrap').length && $('[name=installment]').is(':checked')) {
-      data = unSerialize(data);
-      data.INSTALLMENT = 1;
-    }
-
-    $.ajax({
-      type: "POST",
-      url: url,
-      data: data,
-      dataType: "json",
-      beforeSend: function () {
-      },
-      success: function (res) {
-        if (res['status'] === 'ok') {
-          if (typeof metrika !== 'undefined') {
-            ym(id_metrika, 'reachGoal', metrika);
-          }
-          if (res['form'] === 'calculation') {
-            elem.trigger('reset');
-            formValidationSuccess();
-          } else {
-            if (elem.parents(".modal").length) {
-              elem.parents(".modal").addClass("is-success");
-            } else {
-              $("#modalSuccess").modal("show");
-            }
-
-            elem.trigger('reset');
-            elem.find('.form-control').removeClass('is-focus');
-
-            setTimeout((function () {
-              $(".modal").modal("hide")
-            }), 3e3);
-
-            elem.parents(".modal").find('input[name=theme]').val('');
-          }
-          if (res['reload'] === 'ok') {
-            setTimeout((function () {
-              window.location.reload();
-            }), 3e3 + 100);
-          }
+    grecaptcha.ready(function () {
+      grecaptcha.execute('6LfeqZAjAAAAAHGhBFymI3eBTUARhrgckwVaSDlJ', {action: 'send_form'}).then(function (token) {
+        let elem = $(this);
+        elem.closest('form').prepend('<input type="hidden" name="g-recaptcha-response" value="' + token + '">');
+        //elem.find("#recaptchaResponse").val(token);
+        let url = elem.attr('action');
+        let data = elem.serialize();
+        let id_metrika = 88060052;
+        let metrika = elem.data('metrika');
+        if (elem.hasClass('file__form')) {
+          data = new FormData(elem[0]);
+          $.ajaxSetup({
+            cache: false,
+            contentType: false,
+            processData: false,
+          });
         }
-      }
+
+        // Дополнение данными, если находимся на странице "Расчет похорон"
+        let calculation = $('.calculation');
+        if (
+          elem.is('[id=formCalculationResult]')
+          && calculation.length
+          && elem.find('input[name=theme]:hidden').val() === 'Расчет похорон'
+        ) {
+          data = unSerialize(data);
+          data.result = calculation.find('.calculation-result').html();
+        }
+
+        // Дополнение данными, если находимся на странице калькулятора рассрочки
+        let calc = $('.calculator');
+        if (
+          elem.is('[id=formInstallmentPlan]')
+          && calc.length
+          && elem.find('input[name=theme]:hidden').val() === 'Калькулятор рассрочки'
+        ) {
+          data = unSerialize(data);
+          data.SUM = calc.find('span.calc-sum').text() + ' руб.';
+          data.COUNT = calc.find('span.calc-time').text() + ' мес.';
+          data.TOTAL = calc.find('span.calc-generalSum').text() + ' руб.';
+          data.FIRST_PAYMENT_PER = calc.find('span.calc-contributionPercent').text() + '%';
+          data.FIRST_PAYMENT_RUB = calc.find('span.calc-contributionRuble').text() + ' руб.';
+          data.MONTHLY_PAYMENT = calc.find('span.calc-payment').text() + ' руб.';
+        }
+
+        // Дополнение данными, если находимся в корзине
+        if ($('.basket-wrap').length && $('[name=installment]').is(':checked')) {
+          data = unSerialize(data);
+          data.INSTALLMENT = 1;
+        }
+
+        $.ajax({
+          type: "POST",
+          url: url,
+          data: data,
+          dataType: "json",
+          beforeSend: function () {
+          },
+          success: function (res) {
+            if (res['status'] === 'ok') {
+              if (typeof metrika !== 'undefined') {
+                ym(id_metrika, 'reachGoal', metrika);
+              }
+              if (res['form'] === 'calculation') {
+                elem.trigger('reset');
+                formValidationSuccess();
+              } else {
+                if (elem.parents(".modal").length) {
+                  elem.parents(".modal").addClass("is-success");
+                } else {
+                  $("#modalSuccess").modal("show");
+                }
+
+                elem.trigger('reset');
+                elem.find('.form-control').removeClass('is-focus');
+
+                setTimeout((function () {
+                  $(".modal").modal("hide")
+                }), 3e3);
+
+                elem.parents(".modal").find('input[name=theme]').val('');
+              }
+              if (res['reload'] === 'ok') {
+                setTimeout((function () {
+                  window.location.reload();
+                }), 3e3 + 100);
+              }
+            }
+          }
+        });
+      });
     });
   });
 }
@@ -805,7 +811,7 @@ function deleteCookie(name) {
   });
 }
 
-//Склонятор слов  число, слова - "минута", "минуты", "минут"
+//Склонятор слов число, слова - "минута", "минуты", "минут"
 function declension(num, expressions) {
   let result,
     count;

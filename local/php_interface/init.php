@@ -28,6 +28,7 @@ try {
         '\Dev\FormReviews' => SITE_USER_CLASS_PATH . '/classFormReviews.php',
         '\Dev\FormStock' => SITE_USER_CLASS_PATH . '/classFormStock.php',
         '\Dev\FormCalculation' => SITE_USER_CLASS_PATH . '/classFormCalculation.php',
+        '\Dev\ReCaptcha' => SITE_USER_CLASS_PATH . '/classReCaptcha.php',
     ]);
 } catch (LoaderException $e) {
     die($e->getMessage());
