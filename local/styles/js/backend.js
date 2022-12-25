@@ -35,11 +35,10 @@ function forms() {
 
   body.on('submit', 'form.default-form:not(.no__ajax)', function (event) {
     event.preventDefault();
+    let elem = $(this);
     grecaptcha.ready(function () {
       grecaptcha.execute('6LfeqZAjAAAAAHGhBFymI3eBTUARhrgckwVaSDlJ', {action: 'send_form'}).then(function (token) {
-        let elem = $(this);
         elem.closest('form').prepend('<input type="hidden" name="g-recaptcha-response" value="' + token + '">');
-        //elem.find("#recaptchaResponse").val(token);
         let url = elem.attr('action');
         let data = elem.serialize();
         let id_metrika = 88060052;
