@@ -29,7 +29,7 @@ $this->EndViewTarget();
 </article>
 <?php if ($arParams["USE_SHARE"] == "Y"): ?>
     <div class="article-socials">
-        <h4>Поделиться в соц. сетях:</h4>
+        <span class="h4">Поделиться в соц. сетях:</span>
         <noindex>
             <div class="socials socials_big">
                 <?php

@@ -38,7 +38,7 @@ if (count($arResult['ITEMS']) == 0) return;
                                     </div>
                                 </div>
                                 <div class="team-item__content">
-                                    <h4><?= $item['NAME'] ?></h4>
+                                    <span class="h4"><?= $item['NAME'] ?></span>
                                     <?php if (!empty($item['PREVIEW_TEXT'])): ?>
                                         <p><?= $item['PREVIEW_TEXT'] ?></p>
                                     <?php endif ?>

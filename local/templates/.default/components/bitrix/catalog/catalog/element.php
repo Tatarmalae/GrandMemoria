@@ -303,6 +303,10 @@ $APPLICATION->IncludeComponent(
 unset($arrFilterSimilar);
 ?>
 
+<?php if (!empty($sectionProps['UF_STOCK_SLIDER'])): ?>
+    <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/components/stock_slider.php", ["STOCK_SLIDER" => $sectionProps['UF_STOCK_SLIDER']], ["SHOW_BORDER" => true]); ?>
+<?php endif ?>
+
 <?php
 global $arrFilterAlso;
 $arrFilterAlso = [

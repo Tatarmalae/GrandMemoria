@@ -4,6 +4,9 @@ $APPLICATION->SetPageProperty("description", "Ритуальные услуги 
  * @var $APPLICATION
  */
 $APPLICATION->SetTitle("Ритуальные услуги");
+$arrFilterCremation = [
+    "!ID" => CREMATION,
+];
 ?>
 <?php $APPLICATION->IncludeComponent(
     "bitrix:news",
@@ -133,7 +136,8 @@ $APPLICATION->SetTitle("Ритуальные услуги");
         "SORT_ORDER2" => "ASC",
         "STRICT_SECTION_CHECK" => "N",
         "USE_CATEGORIES" => "N",
-        "USE_FILTER" => "N",
+        "USE_FILTER" => "Y",
+        "FILTER_NAME" => "arrFilterCremation",
         "USE_PERMISSIONS" => "N",
         "USE_RATING" => "N",
         "USE_RSS" => "N",

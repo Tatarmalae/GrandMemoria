@@ -57,7 +57,7 @@ try {
                     <div class="rating-item item">
                         <a class="rating-more" href="/reviews/">
                             <div class="rating-more__content">
-                                <h5>Смотреть отзывы</h5>
+                                <span class="h5">Смотреть отзывы</span>
                                 <div class="slider-btn slider-btn_white slider-btn_next">
                                     <svg class="icon__slider-next" width="32" height="32">
                                         <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#slider-next"></use>

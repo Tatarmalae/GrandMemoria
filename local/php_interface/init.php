@@ -8,6 +8,7 @@ define("SITE_STYLE_PATH", "/local/styles");
 define("SITE_INCLUDE_PATH", "/local/include");
 define("SITE_USER_CLASS_PATH", "/local/php_interface/user_class");
 define("SITE_AJAX_PATH", "/local/ajax");
+define("CREMATION", "41");
 
 try {
     Loader::registerAutoLoadClasses(null, [

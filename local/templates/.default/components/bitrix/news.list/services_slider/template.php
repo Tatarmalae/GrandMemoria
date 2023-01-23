@@ -37,7 +37,7 @@ $this->setFrameMode(true);
                                     </div>
                                 </div>
                                 <div class="services-item__content">
-                                    <h4><?= $arItem['NAME'] ?></h4>
+                                    <span class="h4"><?= $arItem['NAME'] ?></span>
                                     <?php if (!empty($arItem['PROPERTIES']['PRICE']['VALUE'])): ?>
                                         <div class="price price_small">
                                             <span class="price-now"><?= $arItem['PROPERTIES']['PRICE']['VALUE'] ?> ₽</span>

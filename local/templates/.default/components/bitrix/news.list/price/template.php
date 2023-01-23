@@ -42,7 +42,7 @@ $this->setFrameMode(true);
                     ?>
                     <div class="tariffs-item item" id="<?= $this->GetEditAreaId($arItem['ID']); ?>">
                         <div class="box">
-                            <h4><?= $arItem['NAME'] ?></h4>
+                            <span class="h4"><?= $arItem['NAME'] ?></span>
                             <?php if (!empty($arItem['PREVIEW_TEXT'])): ?>
                                 <span class="tariffs-item__price">
                                     <?= $arItem['PREVIEW_TEXT'] ?>

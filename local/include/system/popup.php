@@ -27,7 +27,7 @@
                                     </div>
                                     <div class="catalog-item__content">
                                         <span class="label label_small label_fiery-rose">В наличии</span>
-                                        <h4></h4>
+                                        <span class="h4"></span>
                                         <div class="price price_small">
                                             <span class="price-now"></span>
                                             <s class="price-old"></s>

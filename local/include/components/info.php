@@ -33,7 +33,7 @@ if (count($arResult['ITEMS']) == 0) return;
                         <div class="information-item__icon">
                             <img src="<?= CFile::GetPath($item['PROPERTIES']['ICO']['VALUE']) ?>" alt="ico">
                         </div>
-                        <h4><?= $item['NAME'] ?></h4>
+                        <span class="h4"><?= $item['NAME'] ?></span>
                         <?php if (!empty($item['PREVIEW_TEXT'])): ?>
                             <p><?= $item['PREVIEW_TEXT'] ?></p>
                         <?php endif ?>

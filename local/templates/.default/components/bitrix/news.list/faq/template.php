@@ -39,7 +39,7 @@ $request = Application::getInstance()->getContext()->getRequest();
         <div class="accordion box" id="<?= $this->GetEditAreaId($arItem['ID']); ?>">
             <div class="box__inner">
                 <div class="accordion-title">
-                    <h4><?= $arItem['NAME'] ?></h4>
+                    <span class="h4"><?= $arItem['NAME'] ?></span>
                     <?php if (!empty($arItem['IBLOCK_SECTION']['NAME'])): ?>
                         <span class="label label_small label_marengo">
                             <?= $arItem['IBLOCK_SECTION']['NAME'] ?>
@@ -59,7 +59,7 @@ $request = Application::getInstance()->getContext()->getRequest();
                         <div class="accordion-article">
                             <?= $arItem['~PREVIEW_TEXT'] ?>
                             <?php if (!empty($arItem['PROPERTIES']['LINKS']['VALUE'])): ?>
-                                <h5>Ссылки по теме:</h5>
+                                <span class="h5">Ссылки по теме:</span>
                                 <div class="article-links">
                                     <?php foreach ($arItem['PROPERTIES']['LINKS']['VALUE'] as $key => $link): ?>
                                         <div class="article-links__item">

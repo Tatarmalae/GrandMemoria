@@ -51,9 +51,9 @@ $installment = true;
                             </div>
                             <div class="basket-card__right">
                                 <div class="basket-card__column">
-                                    <h5>
+                                    <span class="h5">
                                         <a href="<?= $item['DETAIL_PAGE_URL'] ?>"><?= $item['NAME'] ?></a>
-                                    </h5>
+                                    </span>
                                 </div>
                                 <div class="basket-card__column">
                                     <span class="basket-label">Кол–во:</span>
@@ -109,7 +109,7 @@ $installment = true;
                             <label for="basketCheck">
                                 <span class="checkbox__box"></span>
                                 <div class="checkbox-content">
-                                    <h5>Оформить рассрочку</h5>
+                                    <span class="h5">Оформить рассрочку</span>
                                     <span>Ваши товары доступны в рассрочку</span>
                                 </div>
                             </label>

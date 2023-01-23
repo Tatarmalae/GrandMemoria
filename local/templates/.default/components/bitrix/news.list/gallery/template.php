@@ -79,7 +79,7 @@ $this->setFrameMode(true);
                                                 </div>
                                             </div>
                                             <div class="gallery-item__content">
-                                                <h4><?= $arItem['NAME'] ?></h4>
+                                                <span class="h4"><?= $arItem['NAME'] ?></span>
                                                 <?php if (!empty($arItem['PROPERTIES']['PRODUCT']['VALUE'])): ?>
                                                     <div class="more-btn">
                                                         <a class="btn btn-blue big" href="<?= $arItem['PROPERTIES']['PRODUCT']['VALUE']  ?>">

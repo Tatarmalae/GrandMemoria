@@ -24,7 +24,7 @@ $this->setFrameMode(true);
                         <big><?= $element['PROPERTIES']['VALUE']['VALUE'] ?></big> <?= $element['PROPERTIES']['VALUE']['DESCRIPTION'] ?>
                     </span>
                 <?php endif ?>
-                <h4><?= $element['NAME'] ?></h4>
+                <span class="h4"><?= $element['NAME'] ?></span>
                 <p><?= $element['DETAIL_TEXT'] ?></p>
             </div>
         <?php endforeach ?>
@@ -50,7 +50,7 @@ $this->setFrameMode(true);
                                     <img src="<?= CFile::GetPath($element['PROPERTIES']['ICO']['VALUE']) ?>" alt="ico">
                                 </div>
                             <?php endif ?>
-                            <h4><?= $element['NAME'] ?></h4>
+                            <span class="h4"><?= $element['NAME'] ?></span>
                             <p><?= $element['PREVIEW_TEXT'] ?></p>
                         </div>
                     </div>

@@ -62,7 +62,7 @@ if (count($arResult['ITEMS']) == 0) return;
                                 <div class="types-item__icon">
                                     <img src="<?= CFile::GetPath($item['PROPERTIES']['ICO']['VALUE']) ?>" alt="ico">
                                 </div>
-                                <h4><?= $item['NAME'] ?></h4>
+                                <span class="h4"><?= $item['NAME'] ?></span>
                                 <?php if (!empty($item['PROPERTIES']['PRICE']['VALUE'])): ?>
                                     <span class="label label_big label_fiery-rose">
                                         <?= number_format($item['PROPERTIES']['PRICE']['VALUE'], 0, ' ', ' ') ?> ₽

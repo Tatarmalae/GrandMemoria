@@ -54,11 +54,11 @@ $this->setFrameMode(true);
                                     <span class="label label_small label_fiery-rose">
                                         В наличии
                                     </span>
-                                    <h4>
+                                    <span class="h4">
                                         <a href="<?= $arItem['DETAIL_PAGE_URL'] ?>">
                                             <?= $arItem['NAME'] ?>
                                         </a>
-                                    </h4>
+                                    </span>
                                     <div class="price price_small">
                                         <span class="price-now">от <?= number_format($arItem['PROPERTIES']['PRICE']['VALUE'], 0, ' ', ' ') ?> ₽</span>
                                         <?php if (!empty($arItem['PROPERTIES']['OLD_PRICE']['VALUE'])): ?>

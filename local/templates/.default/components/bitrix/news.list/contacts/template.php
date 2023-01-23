@@ -103,7 +103,7 @@ $arAddress = [];
                                 <img src="<?= SITE_STYLE_PATH ?>/img/content/contacts/taxi.svg" alt="taxi">
                             </div>
                             <div class="contacts-taxi__content">
-                                <h5>Вызвать такси</h5>
+                                <span class="h5">Вызвать такси</span>
                                 <?php if (!empty($arItem['PROPERTIES']['TAXI']['DESCRIPTION'])): ?>
                                     <p><?= $arItem['PROPERTIES']['TAXI']['DESCRIPTION'] ?></p>
                                 <?php endif; ?>

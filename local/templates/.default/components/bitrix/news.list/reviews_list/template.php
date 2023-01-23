@@ -33,11 +33,11 @@ if (count($arResult["ITEMS"]) == 0) return;
                                 <div class="box">
                                     <div class="reviews-item__top">
                                         <div class="reviews-item__top-info">
-                                            <h4>
+                                            <span class="h4">
                                                 <a href="#" data-toggle="modal" data-target="#modalReviewsItem_<?= $key ?>">
                                                     <?= $arItem['PROPERTIES']['NAME']['VALUE'] ?>
                                                 </a>
-                                            </h4>
+                                            </span>
                                             <?php if (!empty($arItem['DATE_ACTIVE_FROM'])): ?>
                                                 <time datetime="<?= $arItem['DATE_ACTIVE_FROM'] ?>">
                                                     <?= $arItem['DATE_ACTIVE_FROM'] ?>
@@ -132,7 +132,7 @@ if (count($arResult["ITEMS"]) == 0) return;
                                         <?php endif ?>
                                         <div class="reviews-item__top">
                                             <div class="reviews-item__top-info">
-                                                <h4><?= $arItem['PROPERTIES']['NAME']['VALUE'] ?></h4>
+                                                <span class="h4"><?= $arItem['PROPERTIES']['NAME']['VALUE'] ?></span>
                                                 <?php if (!empty($arItem['DATE_ACTIVE_FROM'])): ?>
                                                     <time datetime="<?= $arItem['DATE_ACTIVE_FROM'] ?>">
                                                         <?= $arItem['DATE_ACTIVE_FROM'] ?>

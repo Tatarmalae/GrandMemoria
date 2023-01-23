@@ -41,18 +41,18 @@
     <div class="results-links ajax__items">
         <?php foreach ($arResult["SEARCH"] as $arItem): ?>
             <div class="results-link">
-                <h4>
+                <span class="h4">
                     <a href="<?= $arItem["URL"] ?>">
                         <?= $arItem["TITLE_FORMATED"] ?>
                     </a>
-                </h4>
+                </span>
                 <p><?= $arItem["BODY_FORMATED"] ?></p>
             </div>
         <?php endforeach; ?>
     </div>
 <?php else: ?>
     <div class="results-empty">
-        <p>К сожалению на ваш поисковой запрос не чего не найдено</p>
+        <p>К сожалению на ваш поисковый запрос не чего не найдено</p>
     </div>
     <?php $this->SetViewTarget('after_parent_sect'); ?>
 

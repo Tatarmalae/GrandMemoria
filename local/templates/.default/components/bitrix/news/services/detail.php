@@ -388,10 +388,23 @@ unset($arrFilterGallery);
                 </div>
             </div>
             <?php
+            $dbPropertyOtherServices = CIBlockElement::getProperty($arParams['IBLOCK_ID'], $ElementID, [], ['CODE' => 'OTHER_SERVICES']);
+            $arOtherServiceIDS = [];
+            while ($ob = $dbPropertyOtherServices->GetNext()) {
+                if (empty($ob['VALUE'])) continue;
+                $arOtherServiceIDS[] = $ob['VALUE'];
+            }
+
             global $arrFilterServices;
-            $arrFilterServices = [
-                '!ID' => $ElementID,
-            ];
+            if(!empty($arOtherServiceIDS)){
+                $arrFilterServices = [
+                    '=ID' => $arOtherServiceIDS,
+                ];
+            } else {
+                $arrFilterServices = [
+                    '!ID' => [$ElementID, CREMATION],
+                ];
+            }
             $APPLICATION->IncludeComponent(
                 "bitrix:news.list",
                 "",

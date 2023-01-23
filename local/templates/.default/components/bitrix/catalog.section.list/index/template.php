@@ -58,11 +58,11 @@ if (empty($arResult)) return;
                         </div>
                     </a>
                     <div class="catalog-item__content">
-                        <h4>
+                        <span class="h4">
                             <a href="<?= $sections['SECTION_PAGE_URL'] ?>">
                                 <?= $sections['NAME'] ?>
                             </a>
-                        </h4>
+                        </span>
                         <?php if (!empty($sections['ITEMS'])): ?>
                             <ul>
                                 <?php foreach ($sections['ITEMS'] as $item): ?>

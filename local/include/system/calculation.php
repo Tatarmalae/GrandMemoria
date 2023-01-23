@@ -47,7 +47,7 @@ try {
                     <div class="calculation-item<?= $keys == 0 ? ' calculation-item_active' : '' ?>">
                         <?php foreach ($arItems['ITEMS'] as $item): ?>
                             <?php if ($keys == 0): ?>
-                                <h4><?= $item['NAME'] ?></h4>
+                                <span class="h4"><?= $item['NAME'] ?></span>
                                 <div class="calculation-radio">
                                     <?php foreach ($item['ELEMENTS'] as $keyElem => $element): ?>
                                         <div class="calculation-radio__wrap">
@@ -64,7 +64,7 @@ try {
                                 </div>
                             <?php else: ?>
                                 <div class="calculation-group" data-type="type<?= implode('_', $item['UF_TYPE']) ?>">
-                                    <h4><?= $item['NAME'] ?></h4>
+                                    <span class="h4"><?= $item['NAME'] ?></span>
                                     <div class="calculation-items items" data-wow="not">
                                         <?php foreach ($item['ELEMENTS'] as $keyElem => $element): ?>
                                             <div class="item">
@@ -135,7 +135,7 @@ try {
                             <div class="calculation-finish items">
                                 <div class="item">
                                     <div class="calculation-result">
-                                        <h4>Информация о заказе</h4>
+                                        <span class="h4">Информация о заказе</span>
                                         <ul></ul>
                                     </div>
                                 </div>

@@ -50,7 +50,7 @@ if (count($arResult['ITEMS']) == 0) return;
                                                 <span class="label label_small label_marengo">
                                                     <?= FormatDate('f', MakeTimeStamp($item['ACTIVE_FROM'])) ?>
                                                 </span>
-                                                <h4><?= $item['NAME'] ?></h4>
+                                                <span class="h4"><?= $item['NAME'] ?></span>
                                                 <?php if (!empty($item['PREVIEW_TEXT'])): ?>
                                                     <p><?= $item['PREVIEW_TEXT'] ?></p>
                                                 <?php endif ?>
@@ -112,7 +112,7 @@ if (count($arResult['ITEMS']) == 0) return;
                                             <span class="label label_small label_marengo">
                                                 <?= FormatDate('f', MakeTimeStamp($item['ACTIVE_FROM'])) ?>
                                             </span>
-                                            <h4><?= $item['NAME'] ?></h4>
+                                            <span class="h4"><?= $item['NAME'] ?></span>
                                             <?php if (!empty($item['DETAIL_TEXT'])): ?>
                                                 <p><?= $item['DETAIL_TEXT'] ?></p>
                                             <?php endif ?>

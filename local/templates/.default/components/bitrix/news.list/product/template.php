@@ -11,6 +11,18 @@
 /** @var string $componentPath */
 /** @var CBitrixComponent $component */
 $this->setFrameMode(true);
+
+//Получаем кол-во товаров/2 для вставки слайдера с акциями посередине списка
+$place = (int)round(count($arResult["ITEMS"]) / 2);
+foreach ($arResult["ITEMS"] as $arItem) {
+    if ($place % 4 !== 0) {//Если не кратно 4, пропускаем пока не будет кратно. Необходимо, т.к. сетка по 4 товара.
+        $place++;
+    }
+}
+//Если товаров меньше или равно 4, то слайдер акций выводим после товаров
+if (count($arResult["ITEMS"]) <= 4) {
+    $place = count($arResult["ITEMS"]);
+}
 ?>
 <?php if (count($arResult["ITEMS"]) === 0): ?>
     <div class="catalog-items items">
@@ -19,7 +31,7 @@ $this->setFrameMode(true);
     </div>
 <?php else: ?>
     <div class="catalog-items items ajax__items" data-type="column" data-view="border" data-wow="not">
-        <?php foreach ($arResult["ITEMS"] as $arItem): ?>
+        <?php foreach ($arResult["ITEMS"] as $key => $arItem): ?>
             <?php
             $this->AddEditAction($arItem['ID'], $arItem['EDIT_LINK'], CIBlock::GetArrayByID($arItem["IBLOCK_ID"], "ELEMENT_EDIT"));
             $this->AddDeleteAction($arItem['ID'], $arItem['DELETE_LINK'], CIBlock::GetArrayByID($arItem["IBLOCK_ID"], "ELEMENT_DELETE"), ["CONFIRM" => GetMessage('CT_BNL_ELEMENT_DELETE_CONFIRM')]);
@@ -50,11 +62,11 @@ $this->setFrameMode(true);
                     <span class="label label_small label_fiery-rose">
                         В наличии
                     </span>
-                    <h4>
+                    <span class="h4">
                         <a href="<?= $arItem['DETAIL_PAGE_URL'] ?>">
                             <?= $arItem['NAME'] ?>
                         </a>
-                    </h4>
+                    </span>
                     <div class="price price_small">
                         <span class="price-now">от <?= number_format($arItem['PROPERTIES']['PRICE']['VALUE'], 0, ' ', ' ') ?> ₽</span>
                         <?php if (!empty($arItem['PROPERTIES']['OLD_PRICE']['VALUE'])): ?>
@@ -70,6 +82,12 @@ $this->setFrameMode(true);
                     </div>
                 </div>
             </div>
+            <?php if (
+                $key + 1 === $place
+                && !empty($arParams['STOCK_SLIDER'])
+            ): ?>
+                <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/components/stock_slider.php", ["STOCK_SLIDER" => $arParams['STOCK_SLIDER']], ["SHOW_BORDER" => true]); ?>
+            <?php endif; ?>
         <?php endforeach; ?>
     </div>
     <?php if ($arParams["DISPLAY_BOTTOM_PAGER"]): ?>

@@ -8,7 +8,7 @@
         <div class="calculator-wrap">
             <div class="calculator-items items">
                 <div class="calculator-item item">
-                    <h4>Рассчитайте сумму рассрочки:</h4>
+                    <span class="h4">Рассчитайте сумму рассрочки:</span>
                     <div class="calculator-slider">
                         <div class="calculator-slider__line">
                             <span class="calculator-slider__line-label">Стоимость памятника</span>

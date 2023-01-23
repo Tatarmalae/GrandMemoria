@@ -33,7 +33,7 @@ $this->setFrameMode(true);
                             <img src="<?= CFile::GetPath($element['PROPERTIES']['ICO']['VALUE']) ?>" alt="ico">
                         </div>
                     <?php endif ?>
-                    <h4><?= $element['NAME'] ?></h4>
+                    <span class="h4"><?= $element['NAME'] ?></span>
                     <p><?= $element['PREVIEW_TEXT'] ?></p>
                 </div>
             </div>
@@ -95,7 +95,7 @@ $this->setFrameMode(true);
                     </div>
                 </div>
                 <div class="payment-column item">
-                    <h4>Принимаем к оплате карты<br>MasterCard, Visa, МИР.</h4>
+                    <span class="h4">Принимаем к оплате карты<br>MasterCard, Visa, МИР.</span>
                     <div class="payment-cards">
                         <div class="payment-card">
                             <img src="<?= SITE_STYLE_PATH ?>/img/content/payment/mastercard.svg" alt="">
@@ -130,7 +130,7 @@ $this->setFrameMode(true);
                                     <img src="<?= CFile::GetPath($element['PROPERTIES']['ICO']['VALUE']) ?>" alt="ico">
                                 </div>
                             <?php endif ?>
-                            <h4><?= $element['NAME'] ?></h4>
+                            <span class="h4"><?= $element['NAME'] ?></span>
                             <p><?= $element['PREVIEW_TEXT'] ?></p>
                         </div>
                     </div>

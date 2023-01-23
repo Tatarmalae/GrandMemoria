@@ -48,7 +48,7 @@ $arAddress = [];
                                     <div class="slider-slide swiper-slide" id="<?= $this->GetEditAreaId($arItem['ID']); ?>">
                                         <div class="map-item item">
                                             <div class="box">
-                                                <h5><?= $arItem['NAME'] ?></h5>
+                                                <span class="h5"><?= $arItem['NAME'] ?></span>
                                                 <div class="map-addresses">
                                                     <?php if (!empty($arItem['PROPERTIES']['ADDRESS']['VALUE'])): ?>
                                                         <div class="map-address">

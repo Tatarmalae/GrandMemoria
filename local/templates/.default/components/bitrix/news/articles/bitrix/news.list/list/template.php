@@ -32,9 +32,9 @@
                                         <?= $arItem['IBLOCK_SECTION']['NAME'] ?>
                                     </span>
                                 <?php endif ?>
-                                <h4>
+                                <span class="h4">
                                     <?= $arItem['NAME'] ?>
-                                </h4>
+                                </span>
                                 <div class="more">
                                     <a class="more__link" href="<?= $arItem["DETAIL_PAGE_URL"] ?>">
                                         <span>Подробнее</span>

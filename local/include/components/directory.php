@@ -33,7 +33,7 @@ if (count($arResult['ITEMS']) == 0) return;
                             </div>
                         </div>
                         <div class="directions-item__content">
-                            <h5><?= $item['NAME'] ?></h5>
+                            <span class="h5"><?= $item['NAME'] ?></span>
                         </div>
                     </a>
                 <?php endforeach ?>

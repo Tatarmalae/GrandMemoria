@@ -23,7 +23,7 @@ $this->setFrameMode(true);
                             <img src="<?= CFile::GetPath($item['ICO']) ?>" alt="<?= $item['NAME'] ?>">
                         </div>
                     <?php endif ?>
-                    <h4><?= $item['NAME'] ?></h4>
+                    <span class="h4"><?= $item['NAME'] ?></span>
                     <?php if (!empty($item['DESCRIPTION'])): ?>
                         <p><?= $item['DESCRIPTION'] ?></p>
                     <?php endif ?>

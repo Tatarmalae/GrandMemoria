@@ -36,7 +36,7 @@ if (count($arResult['ITEMS']) == 0) return;
                             <div class="slider-slide swiper-slide">
                                 <div class="map-item item">
                                     <div class="box">
-                                        <h5>Офис №<?= $key + 1 ?></h5>
+                                        <span class="h5">Офис №<?= $key + 1 ?></span>
                                         <div class="map-addresses">
                                             <div class="map-address">
                                                 <svg class="icon__address" width="14" height="14">

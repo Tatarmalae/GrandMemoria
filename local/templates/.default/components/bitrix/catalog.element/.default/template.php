@@ -212,7 +212,7 @@ $this->EndViewTarget();
         <?php /*<div class="product-fixed">
             <div class="product-fixed__inner">
                 <div class="product-fixed__content">
-                    <h4><?= $arResult['NAME'] ?></h4>
+                    <span class="h4"><?= $arResult['NAME'] ?></span>
                     <div class="price price_small">
                         <span class="price-now">от
                             <?= number_format($arResult['PROPERTIES']['PRICE']['VALUE'], 0, ' ', ' ') ?> ₽
@@ -238,7 +238,7 @@ $this->EndViewTarget();
     <div class="product-delivery">
         <div class="product-delivery__row">
             <div class="product-delivery__column">
-                <h5>Доставка:</h5>
+                <span class="h5">Доставка:</span>
                 <div class="product-delivery__item">
                     <span class="product-delivery__icon">
                         <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/product/delivery/1.svg" alt="" src="">
@@ -254,7 +254,7 @@ $this->EndViewTarget();
             </div>
             <?php if ($arParams['BENEFITS']): ?>
                 <div class="product-delivery__column">
-                    <h5>Преимущества:</h5>
+                    <span class="h5">Преимущества:</span>
                     <?php foreach ($arParams['BENEFITS'] as $benefit): ?>
                         <div class="product-delivery__item">
                             <?php if (!empty($benefit['PROPERTIES']['ICO']['VALUE'])): ?>
@@ -277,7 +277,7 @@ $this->EndViewTarget();
         <div class="product-char box">
             <?php if (!empty($arResult['DISPLAY_PROPERTIES']) || !empty($arResult['PROPERTIES']['OTHER_CHARS']['VALUE'])): ?>
                 <div class="product-char__item">
-                    <h4>Характеристики товара:</h4>
+                    <span class="h4">Характеристики товара:</span>
                     <div class="product-char__list">
                         <?php foreach ($arResult['DISPLAY_PROPERTIES'] as $prop): ?>
                             <div class="product-char__list-item">
@@ -296,7 +296,7 @@ $this->EndViewTarget();
             <?php endif ?>
             <?php if (!empty($arResult['PROPERTIES']['OTHER_SIZE']['VALUE'])): ?>
                 <div class="product-char__item">
-                    <h4><?= $arResult['PROPERTIES']['OTHER_SIZE']['NAME'] ?>:</h4>
+                    <span class="h4"><?= $arResult['PROPERTIES']['OTHER_SIZE']['NAME'] ?>:</span>
                     <div class="product-char__list">
                         <?php foreach ($arResult['PROPERTIES']['OTHER_SIZE']['VALUE'] as $size): ?>
                             <div class="product-char__list-item">
@@ -309,7 +309,7 @@ $this->EndViewTarget();
             <?php endif ?>
             <?php if (!empty($arResult['PROPERTIES']['ADDITION']['VALUE'])): ?>
                 <div class="product-char__item">
-                    <h4><?= $arResult['PROPERTIES']['ADDITION']['NAME'] ?>:</h4>
+                    <span class="h4"><?= $arResult['PROPERTIES']['ADDITION']['NAME'] ?>:</span>
                     <div class="product-char__list">
                         <?php foreach ($arResult['PROPERTIES']['ADDITION']['VALUE'] as $key => $addition): ?>
                             <div class="product-char__list-item">

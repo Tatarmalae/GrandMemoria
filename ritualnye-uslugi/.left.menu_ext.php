@@ -11,7 +11,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
  */
 
 try {
-    $arResult = Catalog::getElementList('15');
+    $arResult = Catalog::getElementList('15', '', [], null, ['!ID' => CREMATION]);
 } catch (Throwable $e) {
     Debug::dumpToFile($e->getMessage());
 }

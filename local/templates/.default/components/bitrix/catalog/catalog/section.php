@@ -24,8 +24,10 @@ $request = Application::getInstance()->getContext()->getRequest();
 if ($request->isAjaxRequest()) $APPLICATION->RestartBuffer();
 
 $section = '';
+$sectionProps = '';
 try {
     $section = Catalog::getSectionByCode($arParams["IBLOCK_ID"], $arResult["VARIABLES"]["SECTION_CODE"]);
+    $sectionProps = Catalog::getSectionProps($arParams['IBLOCK_ID'], $section['IBLOCK_SECTION_ID'] ?: $section['ID']);
     if ($section) {
         $section['COUNT_ROOT'] = (new CIBlockSection)->GetSectionElementsCount($section["ID"], ["CNT_ACTIVE" => "Y"]);
         $section['COUNT_ROOT'] = Utilities::getWord($section['COUNT_ROOT'], [
@@ -421,7 +423,8 @@ $APPLICATION->IncludeComponent(
 		"DISPLAY_NAME" => "Y",
 		"DISPLAY_PICTURE" => "Y",
 		"DISPLAY_PREVIEW_TEXT" => "Y",
-		"MESSAGE_404" => ""
+		"MESSAGE_404" => "",
+        "STOCK_SLIDER" => $sectionProps['UF_STOCK_SLIDER']
 	),
 	false
 );

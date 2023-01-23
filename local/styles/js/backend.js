@@ -301,9 +301,11 @@ function catalogFilter() {
     inputs.each(function (index, element) {
       let code = $(element).find('[type=hidden]').data('code');
       props[code] = $(element).find('[type=hidden]').val();
-      if ($('.filter-fixed').is(":visible")) {
-        code = $(element).attr('id');
-        props[code] = $(element).is(':checked') ? $(element).val() : '';
+      if ($('.filter-column_btn').is(":visible")) {
+        code = $(element).attr('id').replace(/_\d+$/g, '');
+        if ($(element).is(':checked')) {
+          props[code] = $(element).val();
+        }
       }
     });
     checkboxes.each(function (index, element) {
@@ -423,7 +425,7 @@ function catalogFilter() {
       inputs.each(function (index, element) {
         let code = $(element).find('[type=hidden]').data('code');
         props[code] = $(element).find('[type=hidden]').val();
-        if ($('.filter-fixed').is(":visible")) {
+        if ($('.filter-column_btn').is(":visible")) {
           // code = $(element).attr('id');
           // props[code] = $(element).is(':checked') ? $(element).val() : '';
           let code = $(element).attr('id').replace(/_\d+$/g, '');
@@ -472,7 +474,7 @@ function catalogFilter() {
         }
       });
     });
-  }, 500);
+  }, 1000);
 
   //Сбросить фильтр
   body.on('click', '.filter-fixed__clear', function () {
@@ -619,7 +621,7 @@ function addBasket() {
               $('#modalBasket .label-wrap').append('<span class="label label_small label_bg label_fiery-rose">Новинки</span>');
             }
 
-            $('#modalBasket h4').html(res['element']['NAME']);
+            $('#modalBasket span.h4').html(res['element']['NAME']);
 
             let price = number_format(res['element']['PROPERTIES']['PRICE']['VALUE'], 0, ' ', ' ') + ' ₽';
             $('#modalBasket .price-now').html(price);

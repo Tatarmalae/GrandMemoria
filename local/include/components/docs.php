@@ -35,7 +35,7 @@ if (count($arResult['ITEMS']) == 0) return;
                             <a class="docs-item item link-item" target="_blank" href="<?= CFile::GetPath($item['PROPERTIES']['FILE']['VALUE']) ?>">
                                 <div class="box">
                                     <div class="docs-item__inner">
-                                        <h5><?= $item['NAME'] ?></h5>
+                                        <span class="h5"><?= $item['NAME'] ?></span>
                                         <span class="docs-item__info"><?= strtoupper(pathinfo($file['FILE_NAME'], PATHINFO_EXTENSION)) ?>, <?= Dev\Utilities::formatBytes($file['FILE_SIZE']) ?></span>
                                         <span class="docs-item__icon">
                                             <svg class="icon__doc" width="24" height="24">

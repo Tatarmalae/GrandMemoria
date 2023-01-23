@@ -88,7 +88,7 @@ $this->setFrameMode(true);
                                     <?= $arItem['IBLOCK_SECTION']['NAME'] ?>
                                 </span>
                             <?php endif ?>
-                            <h4><?= $arItem['NAME'] ?></h4>
+                            <span class="h4"><?= $arItem['NAME'] ?></span>
                             <div class="more">
                                 <span class="more__link link-static">
                                     <span>Подробнее</span>

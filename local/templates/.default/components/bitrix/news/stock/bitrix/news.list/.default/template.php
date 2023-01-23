@@ -78,11 +78,11 @@ $this->setFrameMode(true);
                                 <?= $arItem['IBLOCK_SECTION']['NAME'] ?>
                             </span>
                         <?php endif ?>
-                        <h4>
+                        <span class="h4">
                             <a href="<?= $arItem['DETAIL_PAGE_URL'] ?>">
                                 <?= $arItem['NAME'] ?>
                             </a>
-                        </h4>
+                        </span>
                         <?php if (!empty($arItem['PREVIEW_TEXT'])): ?>
                             <?= $arItem['PREVIEW_TEXT'] ?>
                         <?php endif ?>
