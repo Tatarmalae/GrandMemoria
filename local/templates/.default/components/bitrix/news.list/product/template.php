@@ -86,7 +86,7 @@ if (count($arResult["ITEMS"]) <= 4) {
                 $key + 1 === $place
                 && !empty($arParams['STOCK_SLIDER'])
             ): ?>
-                <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/components/stock_slider.php", ["STOCK_SLIDER" => $arParams['STOCK_SLIDER']], ["SHOW_BORDER" => true]); ?>
+                <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/components/stock_slider.php", ['STOCK_SLIDER' => $arParams['STOCK_SLIDER'], 'SLIDER_CATALOG' => true], ['SHOW_BORDER' => true]); ?>
             <?php endif; ?>
         <?php endforeach; ?>
     </div>

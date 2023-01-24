@@ -21,7 +21,8 @@ if ($arParams['STOCK_SLIDER']) {
 }
 if (count($arResult['STOCK_SLIDER']) == 0) return;
 ?>
-<div class="poster poster--catalog">
+<div class="poster<?= $arParams['SLIDER_CATALOG'] ? ' poster--catalog' : '' ?>">
+    <?= !$arParams['SLIDER_CATALOG'] ? '<div class="content">' : '' ?>
     <div class="poster-wrap">
         <div class="swiper-container poster-slider">
             <div class="slider-wrap swiper-wrapper">
@@ -63,4 +64,5 @@ if (count($arResult['STOCK_SLIDER']) == 0) return;
             </div>
         </div>
     </div>
+    <?= !$arParams['SLIDER_CATALOG'] ? '</div>' : '' ?>
 </div>
