@@ -4,6 +4,7 @@ $APPLICATION->SetPageProperty("description", "Ритуальные услуги 
  * @var $APPLICATION
  */
 $APPLICATION->SetTitle("Ритуальные услуги");
+global $arrFilterCremation;
 $arrFilterCremation = [
     "!ID" => CREMATION,
 ];
@@ -152,4 +153,5 @@ $arrFilterCremation = [
     ],
     false
 ); ?>
+<?php unset($arrFilterCremation); ?>
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>

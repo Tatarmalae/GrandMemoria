@@ -223,7 +223,12 @@ use Bitrix\Main\Config\Option;
 
         <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/components/adv.php", [], ["SHOW_BORDER" => true]); ?>
 
-        <?php $APPLICATION->IncludeComponent(
+        <?php
+        global $arrFilterCremation;
+        $arrFilterCremation = [
+            "!ID" => CREMATION,
+        ];
+        $APPLICATION->IncludeComponent(
             "bitrix:news.list",
             "services_index",
             [
@@ -275,7 +280,8 @@ use Bitrix\Main\Config\Option;
                     25 => "USER_NAME",
                     26 => "",
                 ],
-                "FILTER_NAME" => "",
+                "USE_FILTER" => "Y",
+                "FILTER_NAME" => "arrFilterCremation",
                 "HIDE_LINK_WHEN_NO_DETAIL" => "N",
                 "IBLOCK_ID" => "15",
                 "IBLOCK_TYPE" => "content",
@@ -312,7 +318,9 @@ use Bitrix\Main\Config\Option;
                 "COMPONENT_TEMPLATE" => "services_index",
             ],
             false
-        ); ?>
+        );
+        unset($arrFilterCremation);
+        ?>
 
         <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/rating.php", [
             "TITLE" => "Рейтинг отзывов",
