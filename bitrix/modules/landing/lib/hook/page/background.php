@@ -1,11 +1,11 @@
 <?php
 namespace Bitrix\Landing\Hook\Page;
 
-use \Bitrix\Landing\Field;
-use \Bitrix\Landing\File;
-use \Bitrix\Landing\Manager;
-use \Bitrix\Landing\PublicAction;
-use \Bitrix\Main\Localization\Loc;
+use Bitrix\Landing\Field;
+use Bitrix\Landing\File;
+use Bitrix\Landing\Manager;
+use Bitrix\Landing\PublicAction;
+use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Page\Asset;
 
 Loc::loadMessages(__FILE__);
@@ -20,7 +20,8 @@ class Background extends \Bitrix\Landing\Hook\Page
 	{
 		return array(
 			'USE' => new Field\Checkbox('USE', array(
-				'title' => Loc::getMessage('LANDING_HOOK_BG_USE')
+				'title' => Loc::getMessage('LANDING_HOOK_BG_USE'),
+				'help' => Loc::getMessage('LANDING_HOOK_BG_DESCRIPTION'),
 			)),
 			'PICTURE' => new Field\Hidden('PICTURE', array(
 				'title' => Loc::getMessage('LANDING_HOOK_BG_PICTURE'),
@@ -43,7 +44,8 @@ class Background extends \Bitrix\Landing\Hook\Page
 			)),
 			'POSITION' => new Field\Select('POSITION', array(
 				'title' => Loc::getMessage('LANDING_HOOK_BG_POSITION'),
-				'help' => Loc::getMessage('LANDING_HOOK_BG_POSITION_HELP_2'),
+				'help' => Loc::getMessage('LANDING_HOOK_BG_POSITION_HELP_3'),
+				'htmlHelp' => true,
 				'options' => array(
 					'center' => Loc::getMessage('LANDING_HOOK_BG_POSITION_CENTER_2'),
 					'repeat' => Loc::getMessage('LANDING_HOOK_BG_POSITION_REPEAT_2'),
@@ -69,7 +71,7 @@ class Background extends \Bitrix\Landing\Hook\Page
 	 * Description of Hook, if you want.
 	 * @return string
 	 */
-	public function getDescription()
+	public function getDescription(): string
 	{
 		return Loc::getMessage('LANDING_HOOK_BG_DESCRIPTION');
 	}
@@ -121,14 +123,11 @@ class Background extends \Bitrix\Landing\Hook\Page
 		 * for web form backward compatibility.
 		 */
 
-		if ($picture)
+		if ($picture && is_numeric($picture) && (int)$picture > 0)
 		{
-			if ($picture > 0)
-			{
-				$picture = \htmlspecialcharsbx(
-					\Bitrix\Landing\File::getFilePath($picture)
-				);
-			}
+			$picture = \htmlspecialcharsbx(
+				File::getFilePath((int)$picture)
+			);
 		}
 
 		if ($picture)
@@ -143,6 +142,21 @@ class Background extends \Bitrix\Landing\Hook\Page
 							background-size: cover;
 							background-position: center;
 							background-repeat: no-repeat;
+						}
+						.bx-ios.bx-touch body:before {
+							content: "";
+							background-image: url("' . $picture . '");
+							background-position: center;
+							background-size: cover;
+							position: fixed;
+							left: 0;
+							right: 0;
+							top: 0;
+							bottom: 0;
+							z-index: -1;
+						}
+						.bx-ios.bx-touch body {
+							background-image: none;
 						}
 					</style>'
 				);

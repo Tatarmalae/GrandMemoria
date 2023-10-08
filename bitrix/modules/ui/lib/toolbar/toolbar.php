@@ -10,6 +10,9 @@ class Toolbar
 {
 	private $id;
 	private $filter;
+	private $beforeTitleHtml;
+	private $afterTitleHtml;
+	private $underTitleHtml;
 	private $titleMinWidth;
 	private $titleMaxWidth;
 	private $favoriteStar = true;
@@ -164,6 +167,46 @@ class Toolbar
 	public function getFilter()
 	{
 		return $this->filter;
+	}
+
+	public function addBeforeTitleHtml(string $html)
+	{
+		$this->beforeTitleHtml = $html;
+	}
+
+	public function getBeforeTitleHtml(): ?string
+	{
+		return $this->beforeTitleHtml;
+	}
+
+	public function addAfterTitleHtml(string $html)
+	{
+		$this->afterTitleHtml = $html;
+	}
+
+	public function getAfterTitleHtml(): ?string
+	{
+		return $this->afterTitleHtml;
+	}
+
+	public function addUnderTitleHtml(string $html)
+	{
+		$this->underTitleHtml = $html;
+	}
+
+	public function getUnderTitleHtml(): ?string
+	{
+		return $this->underTitleHtml;
+	}
+
+	public function addRightCustomHtml(string $html)
+	{
+		$this->rightCustomHtml = $html;
+	}
+
+	public function getRightCustomHtml(): ?string
+	{
+		return $this->rightCustomHtml;
 	}
 
 	/**

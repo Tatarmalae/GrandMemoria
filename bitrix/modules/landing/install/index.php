@@ -27,6 +27,13 @@ class Landing extends \CModule
 
 	public $docRoot = '';
 	public $eventsData = [
+		'crm' => [
+			'onAfterCrmCompanyAdd' => ['\Bitrix\Landing\Connector\Crm', 'onAfterCompanyChange'],
+			'onAfterCrmCompanyUpdate' => ['\Bitrix\Landing\Connector\Crm', 'onAfterCompanyChange']
+		],
+		'iblock' => [
+			'onAfterIBlockSectionDelete' => ['\Bitrix\Landing\Connector\Iblock', 'onAfterIBlockSectionDelete']
+		],
 		'intranet' => [
 			'onBuildBindingMenu' => ['\Bitrix\Landing\Connector\Intranet', 'onBuildBindingMenu']
 		],
@@ -36,7 +43,8 @@ class Landing extends \CModule
 		'main' => [
 			'onBeforeSiteDelete' => ['\Bitrix\Landing\Site', 'onBeforeMainSiteDelete'],
 			'onSiteDelete' => ['\Bitrix\Landing\Site', 'onMainSiteDelete'],
-			'onUserConsentProviderList' => ['\Bitrix\Landing\Site\Cookies', 'onUserConsentProviderList']
+			'onUserConsentProviderList' => ['\Bitrix\Landing\Site\Cookies', 'onUserConsentProviderList'],
+			'OnAfterFileDeleteDuplicate' => ['\Bitrix\Landing\Update\Block\DuplicateImages', 'onAfterFileDeleteDuplicate'],
 		],
 		'mobile' => [
 			'onMobileMenuStructureBuilt' => ['\Bitrix\Landing\Connector\Mobile', 'onMobileMenuStructureBuilt']
@@ -52,6 +60,9 @@ class Landing extends \CModule
 			'onRestApplicationConfigurationEntity' => ['\Bitrix\Landing\Transfer\AppConfiguration', 'getEntityList'],
 			'onRestApplicationConfigurationImport' => ['\Bitrix\Landing\Transfer\AppConfiguration', 'onEventImportController'],
 			'onRestApplicationConfigurationFinish' => ['\Bitrix\Landing\Transfer\AppConfiguration', 'onFinish']
+		],
+		'seo' => [
+			'onExtensionInstall' => ['\Bitrix\Landing\Hook\Page\PixelFb', 'changeBusinessPixel'],
 		],
 		'socialnetwork' => [
 			'onFillSocNetFeaturesList' => ['\Bitrix\Landing\Connector\SocialNetwork', 'onFillSocNetFeaturesList'],
@@ -151,8 +162,7 @@ class Landing extends \CModule
 
 		// db
 		$errors = $DB->runSQLBatch(
-			$this->docRoot.'/bitrix/modules/landing/install/db/'.
-			mb_strtolower($DB->type) . '/install.sql'
+			$this->docRoot.'/bitrix/modules/landing/install/db/mysql/install.sql'
 		);
 		if ($errors !== false)
 		{
@@ -165,8 +175,7 @@ class Landing extends \CModule
 
 		// full text
 		$errors = $DB->runSQLBatch(
-			$this->docRoot.'/bitrix/modules/landing/install/db/'.
-			mb_strtolower($DB->type) . '/install_ft.sql'
+			$this->docRoot.'/bitrix/modules/landing/install/db/mysql/install_ft.sql'
 		);
 		if ($errors === false)
 		{
@@ -208,9 +217,11 @@ class Landing extends \CModule
 		);
 		\CAgent::addAgent(
 			'Bitrix\Landing\Agent::sendRestStatistic();',
-			$this->MODULE_ID,
-			'N',
-			86400
+			$this->MODULE_ID
+		);
+		\CAgent::addAgent(
+			'Bitrix\Landing\Agent::clearTempFiles();',
+			$this->MODULE_ID
 		);
 
 		// rights
@@ -223,6 +234,9 @@ class Landing extends \CModule
 			$this->setOptions();
 		}
 		$this->setSiteTemplates();
+
+		// route handlers
+		$this->setRouteHandlers();
 
 		return true;
 	}
@@ -338,45 +352,23 @@ class Landing extends \CModule
 	private function setRouteHandlers()
 	{
 		\Bitrix\Main\UrlPreview\Router::setRouteHandler(
-			'/knowledge/#siteCode#/',
+			'/knowledge/#knowledgeCode#/',
 			'landing',
 			'\Bitrix\Landing\Landing\UrlPreview',
 			[
-				'siteCode' => '$siteCode',
-				'scope' => 'knowledge'
+				'knowledgeCode' => '$knowledgeCode',
+				'scope' => 'knowledge',
+				'allowSlashes' => 'N'
 			]
 		);
 		\Bitrix\Main\UrlPreview\Router::setRouteHandler(
-			'/knowledge/#siteCode#/#pageCode#/',
+			'/knowledge/group/#knowledgeCode#/',
 			'landing',
 			'\Bitrix\Landing\Landing\UrlPreview',
 			[
-				'siteCode' => '$siteCode',
-				'pageCode' => '$pageCode',
-				'scope' => 'knowledge'
-			]
-		);
-		\Bitrix\Main\UrlPreview\Router::setRouteHandler(
-			'/knowledge/#siteCode#/#folderCode#/#pageCode#/',
-			'landing',
-			'\Bitrix\Landing\Landing\UrlPreview',
-			[
-				'siteCode' => '$siteCode',
-				'folderCode' => '$folderCode',
-				'pageCode' => '$pageCode',
-				'scope' => 'knowledge'
-			]
-		);
-		\Bitrix\Main\UrlPreview\Router::setRouteHandler(
-			'/knowledge/#siteCode#/#folderCode#/#pageCode#/#additionalCode#/',
-			'landing',
-			'\Bitrix\Landing\Landing\UrlPreview',
-			[
-				'siteCode' => '$siteCode',
-				'folderCode' => '$folderCode',
-				'pageCode' => '$pageCode',
-				'additionalCode' => '$additionalCode',
-				'scope' => 'group'
+				'knowledgeCode' => '$knowledgeCode',
+				'scope' => 'group',
+				'allowSlashes' => 'N'
 			]
 		);
 	}
@@ -559,8 +551,7 @@ class Landing extends \CModule
 		if (isset($arParams['savedata']) && !$arParams['savedata'])
 		{
 			$errors = $DB->runSQLBatch(
-				$this->docRoot.'/bitrix/modules/landing/install/db/'.
-				mb_strtolower($DB->type) . '/uninstall.sql'
+				$this->docRoot.'/bitrix/modules/landing/install/db/mysql/uninstall.sql'
 			);
 		}
 		if ($errors !== false)
@@ -594,9 +585,6 @@ class Landing extends \CModule
 
 		// templates
 		$this->setSiteTemplates(false);
-
-		// route handlers
-		$this->setRouteHandlers();
 
 		// delete files finaly
 		if (isset($arParams['savedata']) && !$arParams['savedata'])

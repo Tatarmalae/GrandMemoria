@@ -1,4 +1,4 @@
-import {Dom, Tag, Text, Type} from 'main.core';
+import {Dom, Tag, Text, Type, Runtime} from 'main.core';
 import {BaseField} from 'landing.ui.field.basefield';
 import {DateTimeField} from 'landing.ui.field.datetimefield';
 import {fetchEventsFromOptions} from 'landing.ui.component.internal';
@@ -37,6 +37,11 @@ type ItemOptions = {
 
 export class DefaultValueField extends BaseField
 {
+	static isListField(field: CrmField): boolean
+	{
+		return Type.isArray(field.items);
+	}
+
 	constructor(options)
 	{
 		super(options);
@@ -55,7 +60,7 @@ export class DefaultValueField extends BaseField
 			left: [
 				{
 					id: 'selectField',
-					text: Loc.getMessage('LANDING_FIELDS_SELECT_FIELD_BUTTON_TITLE'),
+					text: Loc.getMessage('LANDING_DEFAULT_VALUE_ADD_FIELD'),
 					onClick: this.onSelectFieldButtonClick,
 				},
 			],
@@ -93,9 +98,10 @@ export class DefaultValueField extends BaseField
 		if (crmField)
 		{
 			const displayedValue = (() => {
-				if (crmField.type === 'list')
+				if (DefaultValueField.isListField(crmField))
 				{
-					const item = crmField.items.find((currentItem) => {
+					const fieldItems = this.getFieldItems(crmField);
+					const item = fieldItems.find((currentItem) => {
 						return currentItem.ID === options.value;
 					});
 
@@ -103,6 +109,13 @@ export class DefaultValueField extends BaseField
 					{
 						return item.VALUE;
 					}
+					
+					if (Type.isArrayFilled(fieldItems))
+					{
+						return fieldItems[0].VALUE;
+					}
+
+					return Loc.getMessage('LANDING_DEFAULT_VALUE_FIELD_DEFAULT_VALUE');
 				}
 
 				if (crmField.type === 'checkbox')
@@ -259,6 +272,21 @@ export class DefaultValueField extends BaseField
 		this.emit('onChange', {skipPrepare: true});
 	}
 
+	getAllowedCategories(): Array<string>
+	{
+		const schemeId = this.options.formOptions.document.scheme;
+		const scheme = this.options.dictionary.document.schemes.find((item) => {
+			return String(schemeId) === String(item.id);
+		});
+
+		if (Type.isPlainObject(scheme))
+		{
+			return Runtime.clone(scheme.entities);
+		}
+
+		return [];
+	}
+
 	onSelectFieldButtonClick(event: MouseEvent)
 	{
 		event.preventDefault();
@@ -267,10 +295,13 @@ export class DefaultValueField extends BaseField
 			.getInstance({isLeadEnabled: this.options.isLeadEnabled})
 			.show({
 				isLeadEnabled: this.options.isLeadEnabled,
+				allowedCategories: this.getAllowedCategories(),
 				allowedTypes: [
 					'string',
 					'list',
+					'enumeration',
 					'checkbox',
+					'boolean',
 					'radio',
 					'text',
 					'integer',
@@ -281,8 +312,35 @@ export class DefaultValueField extends BaseField
 				],
 			})
 			.then((selectedFields) => {
+				this.options.crmFields = FieldsPanel.getInstance().getOriginalCrmFields();
 				this.onFieldsSelect(selectedFields);
 			});
+	}
+
+	/**
+	 * @private
+	 */
+	getFieldItems(field): ?Array<any>
+	{
+		if (field.entity_field_name === 'STAGE_ID')
+		{
+			if (
+				Type.isPlainObject(this.options.formOptions.document)
+				&& Type.isPlainObject(this.options.formOptions.document.deal)
+			)
+			{
+				const categoryId = Text.toNumber(
+					this.options.formOptions.document.deal.category,
+				);
+
+				if (categoryId > 0)
+				{
+					return field.itemsByCategory[categoryId];
+				}
+			}
+		}
+
+		return field.items;
 	}
 
 	createItemForm(options = {}): FormSettingsForm
@@ -295,11 +353,14 @@ export class DefaultValueField extends BaseField
 					|| options.field.type === 'bool'
 				)
 				{
-					const valueItem = form.fields[0].items.find((item) => {
+					const valueItem = this.getFieldItems(form.fields[0]).find((item) => {
 						return item.value === value.value;
 					});
 
-					value.label = valueItem.name;
+					if (valueItem)
+					{
+						value.label = valueItem.name;
+					}
 				}
 				else
 				{
@@ -310,14 +371,14 @@ export class DefaultValueField extends BaseField
 			},
 		});
 
-		if (options.field.type === 'list')
+		if (DefaultValueField.isListField(options.field))
 		{
 			form.addField(
 				new BX.Landing.UI.Field.Dropdown({
 					selector: 'value',
 					title: Loc.getMessage('LANDING_FORM_SETTINGS_DEFAULT_VALUE_VALUE_FIELD_TITLE'),
 					content: options.value,
-					items: options.field.items.map((item) => {
+					items: this.getFieldItems(options.field).map((item) => {
 						return {name: item.VALUE, value: item.ID};
 					}),
 				}),
@@ -337,8 +398,8 @@ export class DefaultValueField extends BaseField
 					title: Loc.getMessage('LANDING_FORM_SETTINGS_DEFAULT_VALUE_VALUE_FIELD_TITLE'),
 					content: options.value,
 					items: [
-						{name: Loc.getMessage('LANDING_DEFAULT_VALUE_FIELD_CHECKBOX_YES'), value: 'Y'},
 						{name: Loc.getMessage('LANDING_DEFAULT_VALUE_FIELD_CHECKBOX_NO'), value: 'N'},
+						{name: Loc.getMessage('LANDING_DEFAULT_VALUE_FIELD_CHECKBOX_YES'), value: 'Y'},
 					],
 				}),
 			);

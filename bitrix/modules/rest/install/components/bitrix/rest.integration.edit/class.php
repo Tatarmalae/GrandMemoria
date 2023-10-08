@@ -10,6 +10,7 @@ use Bitrix\Main\Engine\Contract\Controllerable;
 use Bitrix\Main\Localization\LanguageTable;
 use Bitrix\Main\ModuleManager;
 use Bitrix\Rest\Engine\Access;
+use Bitrix\Rest\Engine\Access\HoldEntity;
 use Bitrix\Main\Loader;
 use Bitrix\Rest\Preset\Data\Element;
 use Bitrix\Rest\Preset\Provider;
@@ -111,7 +112,7 @@ class RestIntegrationEditComponent extends CBitrixComponent implements Controlle
 			throw new SystemException(Loc::getMessage('REST_INTEGRATION_EDIT_ERROR_ACCESS_DENIED'));
 		}
 
-		if ($presetData['REQUIRED_MODULES'])
+		if (isset($presetData['REQUIRED_MODULES']) && $presetData['REQUIRED_MODULES'])
 		{
 			foreach ($presetData['REQUIRED_MODULES'] as $val)
 			{
@@ -134,9 +135,9 @@ class RestIntegrationEditComponent extends CBitrixComponent implements Controlle
 			$result['TITLE'] = $presetData['TITLE'];
 			$result['ELEMENT_CODE'] = $presetData['ELEMENT_CODE'];
 			$result['DESCRIPTION'] = $presetData['DESCRIPTION'];
-			$result['DESCRIPTION_FULL'] = $presetData['DESCRIPTION_FULL'];
+			$result['DESCRIPTION_FULL'] = $presetData['DESCRIPTION_FULL'] ?? null;
 
-			if ($presetData['OPTIONS']['QUERY_NEEDED'] !== 'D')
+			if (!isset($presetData['OPTIONS']['QUERY_NEEDED']) || $presetData['OPTIONS']['QUERY_NEEDED'] !== 'D')
 			{
 				$result['QUERY_NEEDED'] = $presetData['OPTIONS']['QUERY_NEEDED'];
 				$result['ERROR_MESSAGE'][] = Loc::getMessage(
@@ -215,7 +216,7 @@ class RestIntegrationEditComponent extends CBitrixComponent implements Controlle
 			}
 			$blockList[] = 'BOT';
 		}
-		if ($presetData['OPTIONS']['QUERY_NEEDED'] !== 'D')
+		if (!isset($presetData['OPTIONS']['QUERY_NEEDED']) || $presetData['OPTIONS']['QUERY_NEEDED'] !== 'D')
 		{
 			$blockList[] = 'INCOMING';
 		}
@@ -229,18 +230,6 @@ class RestIntegrationEditComponent extends CBitrixComponent implements Controlle
 		}
 		if ($presetData['OPTIONS']['APPLICATION_NEEDED'] !== 'D')
 		{
-			$result['APPLICATION_LANG'] = [];
-			$dbRes = LanguageTable::getList(
-				[
-					'order' => ['DEF' => 'DESC', 'NAME' => 'ASC'],
-					'filter' => ['=ACTIVE' => 'Y'],
-					'select' => ['LID', 'NAME']
-				]
-			);
-			while ($lang = $dbRes->fetch())
-			{
-				$result['APPLICATION_LANG'][$lang['LID']] = $lang['NAME'];
-			}
 			$blockList[] = 'APPLICATION';
 
 			$result['ALLOW_ZIP_APPLICATION'] = \Bitrix\Main\ModuleManager::isModuleInstalled("bitrix24");
@@ -251,7 +240,31 @@ class RestIntegrationEditComponent extends CBitrixComponent implements Controlle
 		}
 		$result['BLOCK_LIST'] = $blockList;
 
-		$result['SCOPE_NEEDED'] = $presetData['OPTIONS']['SCOPE_NEEDED'] !== 'D' ? 'Y' : 'N';
+		$result['SCOPE_NEEDED'] = (!isset($presetData['OPTIONS']['SCOPE_NEEDED']) || $presetData['OPTIONS']['SCOPE_NEEDED'] !== 'D') ? 'Y' : 'N';
+
+		if ($presetData['OPTIONS']['APPLICATION_NEEDED'] !== 'D' || $presetData['OPTIONS']['WIDGET_NEEDED'] !== 'D')
+		{
+			$result['LANG_LIST_AVAILABLE'] = [];
+			$dbRes = LanguageTable::getList(
+				[
+					'order' => [
+						'DEF' => 'DESC',
+						'NAME' => 'ASC',
+					],
+					'filter' => [
+						'=ACTIVE' => 'Y',
+					],
+					'select' => [
+						'LID',
+						'NAME',
+					],
+				]
+			);
+			while ($lang = $dbRes->fetch())
+			{
+				$result['LANG_LIST_AVAILABLE'][$lang['LID']] = $lang['NAME'];
+			}
+		}
 
 		/* Set title */
 		if ($this->arParams['SET_TITLE'])
@@ -272,6 +285,21 @@ class RestIntegrationEditComponent extends CBitrixComponent implements Controlle
 		$result['LANG_LIST'] = $this->getLanguageList();
 		$result['URI_METHOD_INFO'] = Provider::URI_METHOD_INFO . '?lang=' . $lang . '&method=';
 		$result['URI_EXAMPLE_DOWNLOAD'] = Provider::URI_EXAMPLE_DOWNLOAD . '?encode=' . SITE_CHARSET . '&type=';
+
+		if (
+				(
+					!empty($result['PASSWORD_DATA_PASSWORD'])
+					&& HoldEntity::is(HoldEntity::TYPE_WEBHOOK, $result['PASSWORD_DATA_PASSWORD'])
+				)
+				|| (
+					!empty($result['APPLICATION_DATA_CLIENT_ID'])
+					&& HoldEntity::is(HoldEntity::TYPE_APP, $result['APPLICATION_DATA_CLIENT_ID'])
+				)
+		)
+		{
+			$result['ERROR_MESSAGE'][] = Loc::getMessage('REST_INTEGRATION_EDIT_HOLD_DUE_TO_OVERLOAD');
+		}
+
 		$this->arResult = $result;
 
 		return true;
@@ -289,8 +317,8 @@ class RestIntegrationEditComponent extends CBitrixComponent implements Controlle
 		else
 		{
 			$dbSites = \CSite::getList(
-				$by = 'sort',
-				$order = 'asc',
+				'sort',
+				'asc',
 				[
 					'DEFAULT' => 'Y',
 					'ACTIVE' => 'Y'
@@ -434,13 +462,13 @@ class RestIntegrationEditComponent extends CBitrixComponent implements Controlle
 				$saveData = [
 					'ELEMENT_CODE' => $presetData['ELEMENT_CODE'],
 					'TITLE' => $presetData['TITLE'],
-					'PASSWORD_ID' => $presetData['WEBHOOK']['ID'],
+					'PASSWORD_ID' => $presetData['WEBHOOK']['ID'] ?? null,
 					'SCOPE' => $presetData['OPTIONS']['SCOPE'],
 					'QUERY' => $this->prepareQuery(null, $presetData['OPTIONS']['QUERY']),
-					'OUTGOING_EVENTS' => $presetData['OPTIONS']['OUTGOING_EVENTS'],
-					'OUTGOING_NEEDED' => $presetData['OPTIONS']['OUTGOING_NEEDED'],
-					'WIDGET_LIST' => $presetData['OPTIONS']['WIDGET_LIST'],
-					'WIDGET_NEEDED' => $presetData['OPTIONS']['WIDGET_NEEDED'],
+					'OUTGOING_EVENTS' => $presetData['OPTIONS']['OUTGOING_EVENTS']  ?? null,
+					'OUTGOING_NEEDED' => $presetData['OPTIONS']['OUTGOING_NEEDED'] ?? null,
+					'WIDGET_LIST' => $presetData['OPTIONS']['WIDGET_LIST'] ?? null,
+					'WIDGET_NEEDED' => $presetData['OPTIONS']['WIDGET_NEEDED'] ?? null,
 				];
 
 				$data = Provider::saveIntegration($saveData, $saveData['ELEMENT_CODE']);

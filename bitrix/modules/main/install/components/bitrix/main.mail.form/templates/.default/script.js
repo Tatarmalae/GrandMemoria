@@ -63,24 +63,9 @@
 
 		if (!event.defaultPrevented && event.returnValue !== false)
 		{
-			this.hideError();
 			BX.addClass(button, 'ui-btn-wait');
 			button.disabled = true;
 			button.offsetHeight; // hack to show loader
-
-			for (var i = 0, copyChecked = -1; i < this.fields.length; i++)
-			{
-				if (this.fields[i].params.copy)
-				{
-					copyChecked = Math.max(copyChecked, BX(this.fields[i].fieldId+'_copy').checked);
-				}
-			}
-
-			if (copyChecked >= 0)
-			{
-				BX.userOptions.save('main.mail.form', 'copy_to_sender', null, copyChecked);
-				BX.userOptions.send();
-			}
 
 			if (this.options.submitAjax)
 			{
@@ -110,12 +95,17 @@
 	BXMainMailForm.prototype.showError = function (html)
 	{
 		var errorNode = BX.findChildByClassName(this.formWrapper, 'main-mail-form-error', true);
-		BX.adjust(errorNode, {
-			html: html,
-			style: {
-				display: 'block'
-			}
+
+		var alert = new BX.UI.Alert({
+			text: html,
+			inline: true,
+			closeBtn: true,
+			animate: true,
+			color: BX.UI.Alert.Color.DANGER,
 		});
+
+		errorNode.innerHTML = '';
+		errorNode.append(alert.getContainer());
 
 		this.initScrollable();
 		if (this.__scrollable)
@@ -131,16 +121,6 @@
 		}
 	};
 
-	BXMainMailForm.prototype.hideError = function ()
-	{
-		var errorNode = BX.findChildByClassName(this.formWrapper, 'main-mail-form-error', true);
-		BX.adjust(errorNode, {
-			style: {
-				display: 'none'
-			}
-		});
-	};
-
 	BXMainMailForm.prototype.init = function()
 	{
 		var form = this;
@@ -154,7 +134,7 @@
 
 		this.postForm = LHEPostForm.getHandler(this.formId+'_editor');
 		this.editor = BXHtmlEditor.Get(this.formId+'_editor');
-		this.editor.config.autoLink = false;
+		// this.editor.config.autoLink = false;
 		this.editorInited = false;
 
 		this.timestamp = (new Date).getTime();
@@ -501,18 +481,72 @@
 			{
 				BX.onCustomEvent(field.form, 'MailForm:field:setMenuExt', [field.form, field]);
 
-				BX.PopupMenu.destroy(field.fieldId+'-menu-ext');
-				BX.PopupMenu.show(
-					field.fieldId+'-menu-ext',
-					this, field.__menuExt,
+				const result = [];
+				field.__menuExt.forEach(function(item) {
+					if ((item.text === undefined) || (item.value === null))
 					{
-						className: 'main-mail-form-field-value-menu-ext-content',
-						offsetTop: -8,
-						offsetLeft: 13,
-						angle: true,
-						closeByEsc: true
+						return;
 					}
-				);
+
+					if (item.items.length === 0)
+					{
+						result.push({
+							id: item.value,
+							entityId: item.text,
+							title: item.text,
+							customData: {
+								field: item.value,
+							},
+							tabs: ['recents']
+						});
+						return;
+					}
+
+					result.push({
+						id: item.value,
+						entityId: item.text,
+						title: item.text,
+						tabs: ['recents'],
+						children: item.items.map((children) => {
+							if ((children.value === undefined) || (children.text === undefined))
+							{
+								return;
+							}
+
+							return {
+								supertitle: item.text,
+								id: children.value,
+								entityId: children.text,
+								title: children.text,
+								customData: {
+									field: children.value,
+								},
+								tabs: ['recents'],
+							}
+						})
+					});
+				});
+
+				const dialog = new BX.UI.EntitySelector.Dialog({
+					targetNode: this,
+					width: 500,
+					height: 300,
+					multiple: false,
+					dropdownMode: true,
+					showAvatars: false,
+					compactView: true,
+					enableSearch: true,
+					items: result,
+					events: {
+						'Item:onBeforeSelect': (event) => {
+							event.preventDefault();
+
+							field.insert(event.getData().item.id);
+						},
+					}
+				});
+
+				dialog.show();
 			});
 		}
 	}
@@ -938,23 +972,6 @@
 			}
 		);
 
-		var toolbarButton = BX.findChildByClassName(field.params.__row, 'feed-add-post-form-editor-btn', true);
-
-		var toogleToolbar = function(show)
-		{
-			show = show ? true : false;
-
-			editor.toolbar[show?'Show':'Hide']();
-			BX[show?'addClass':'removeClass'](toolbarButton, 'feed-add-post-form-btn-active');
-			BX[show?'removeClass':'addClass'](field.params.__row, 'main-mail-form-editor-no-toolbar');
-		};
-
-		toogleToolbar(editor.toolbar.shown);
-		BX.bind(toolbarButton, 'click', function()
-		{
-			toogleToolbar(!editor.toolbar.shown);
-		});
-
 		// append original message quote
 		var quoteButton = BX.findChildByClassName(field.form.htmlForm, 'main-mail-form-quote-button', true);
 		var quoteHandler = function()
@@ -966,13 +983,7 @@
 				field.setValue(editor.GetContent(), {quote: true, signature: false});
 				editor.Focus(false);
 
-				var height0, height1;
-
-				height0 = quoteButton.parentNode.offsetHeight;
-				BX.hide(quoteButton, 'inline-block');
-				height1 = quoteButton.parentNode.offsetHeight;
-
-				editor.ResizeSceleton(0, editor.config.height+height0-height1);
+				BX.hide(quoteButton.parentNode.parentNode || quoteButton.parentNode)
 			}
 		};
 		BX.bind(quoteButton, 'click', quoteHandler);
@@ -989,12 +1000,17 @@
 		BX.addCustomEvent(editor, 'OnSetViewAfter', modeHandler);
 
 		// wysiwyg -> code inline-attachments parser
-		postForm.parser.disk_file.regexp = /(bxacid):(n?\d+)/ig;
-		editor.phpParser.AddBxNode('disk_file', {
+		if (postForm.parser)
+		{
+			postForm.parser.disk_file.regexp = /(bxacid):(n?\d+)/ig;
+		}
+		editor.phpParser.AddBxNode('diskfile0', {
 			Parse: function (params, bxid)
 			{
 				var node = editor.GetIframeDoc().getElementById(bxid) || BX.findChild(field.quoteNode, {attr: {id: bxid}}, true);
-				if (node)
+				var params = editor.GetBxTag(bxid);
+
+				if (node && params)
 				{
 					var dummy = document.createElement('DIV');
 
@@ -1008,7 +1024,7 @@
 						node.setAttribute('data-bx-orig-src', node.getAttribute('src'));
 						node.setAttribute('src', image);
 
-						return dummy.innerHTML.replace(image, 'bxacid:'+params.value);
+						return dummy.innerHTML.replace(image, 'bxacid:'+params.fileId);
 					}
 
 					return dummy.innerHTML;
@@ -1027,7 +1043,7 @@
 
 				for (i in editor.bxTags)
 				{
-					if (editor.bxTags[i].params && editor.bxTags[i].params.value == result)
+					if (editor.bxTags[i].fileId && editor.bxTags[i].fileId == result)
 					{
 						var node = editor.GetIframeDoc().getElementById(editor.bxTags[i].id);
 						if (node && node.parentNode)
@@ -1254,7 +1270,7 @@
 				var matches = nodeList[i].getAttribute(types[name])
 					? nodeList[i].getAttribute(types[name]).match(regex)
 					: false;
-				if (matches && postForm.arFiles['disk_file'+matches[1]])
+				if (matches)
 				{
 					nodeList[i].removeAttribute('id');
 					nodeList[i].setAttribute(
@@ -1262,10 +1278,7 @@
 						nodeList[i].getAttribute(types[name]).replace(regex, '')
 					);
 
-					editor.SetBxTag(nodeList[i], {'tag': 'disk_file', params: {'value': matches[1]}});
-
-					postForm.monitoringSetStatus('disk_file', matches[1], true);
-					postForm.monitoringStart();
+					editor.SetBxTag(nodeList[i], {'tag': 'diskfile0', fileId: matches[1]});
 				}
 			}
 		}

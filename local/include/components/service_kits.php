@@ -60,7 +60,7 @@ if (count($arResult['ITEMS']) == 0) return;
                         <div class="box">
                             <div class="box__inner">
                                 <div class="types-item__icon">
-                                    <img src="<?= CFile::GetPath($item['PROPERTIES']['ICO']['VALUE']) ?>" alt="ico">
+                                    <img src="<?= CFile::GetPath($item['PROPERTIES']['ICO']['VALUE']) ?>" width="80" height="80" alt="ico">
                                 </div>
                                 <span class="h4"><?= $item['NAME'] ?></span>
                                 <?php if (!empty($item['PROPERTIES']['PRICE']['VALUE'])): ?>

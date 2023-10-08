@@ -355,6 +355,19 @@ class Agreement
 		$text = ($this->isAgreementTextHtml ? $text : nl2br($text));
 		$sanitizer = new \CBXSanitizer;
 		$sanitizer->setLevel(\CBXSanitizer::SECURE_LEVEL_MIDDLE);
+		$sanitizer->allowAttributes([
+			'target' => [
+				'tag' => function ($tag)
+				{
+					return $tag === 'a';
+				},
+				'content' => function ($tag)
+				{
+					return true;
+				},
+			]
+		]);
+
 		return $sanitizer->sanitizeHtml($text);
 	}
 
@@ -418,7 +431,7 @@ class Agreement
 		$text = $this->isCustomType() ? $this->data['LABEL_TEXT'] : $this->intl->getLabelText();
 		$text = Text::replace($text, $this->replace);
 
-		if ($this->data['USE_URL'] !== 'Y')
+		if ($this->data['USE_URL'] !== 'Y' || !$this->data['URL'])
 		{
 			return str_replace('%', '', $text);
 		}

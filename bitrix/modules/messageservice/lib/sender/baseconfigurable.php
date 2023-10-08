@@ -6,10 +6,16 @@ use Bitrix\MessageService\Sender\Result\MessageStatus;
 use Bitrix\Main\Result;
 use Bitrix\Main\Context;
 use Bitrix\Main\Config\Option;
+use Bitrix\MessageService\Providers;
 
 abstract class BaseConfigurable extends Base
 {
 	protected $options;
+
+	protected Providers\DemoManager $demoManager;
+	protected Providers\Registrar $registrar;
+	protected Providers\OptionManager $optionManager;
+	protected Providers\TemplateManager $templateManager;
 
 	public function isConfigurable()
 	{
@@ -38,26 +44,6 @@ abstract class BaseConfigurable extends Base
 	public function isConfirmed()
 	{
 		return $this->isRegistered();
-	}
-
-	/**
-	 * Get default From.
-	 * @return null|string
-	 */
-	public function getDefaultFrom()
-	{
-		$fromList = $this->getFromList();
-		$from = isset($fromList[0]) ? $fromList[0]['id'] : null;
-		//Try to find alphanumeric from
-		foreach ($fromList as $item)
-		{
-			if (!preg_match('#^[0-9]+$#', $item['id']))
-			{
-				$from = $item['id'];
-				break;
-			}
-		}
-		return $from;
 	}
 
 	/**
@@ -110,7 +96,7 @@ abstract class BaseConfigurable extends Base
 	/**
 	 * @return string
 	 */
-	public function getManageUrl()
+	public function getManageUrl(): string
 	{
 		if (defined('ADMIN_SECTION') && ADMIN_SECTION === true)
 		{
@@ -221,42 +207,25 @@ abstract class BaseConfigurable extends Base
 
 	/**
 	 * @return array
-	 * @throws \Bitrix\Main\ArgumentNullException
-	 * @throws \Bitrix\Main\ArgumentOutOfRangeException
 	 */
-	protected function getOptions()
+	protected function getOptions(): array
 	{
-		if ($this->options === null)
-		{
-			$providerId = $this->getId();
-			$providerType = mb_strtolower($this->getType());
-			$optionsString = Option::get('messageservice', 'sender.'.$providerType.'.'.$providerId);
-			$this->options = unserialize($optionsString, ['allowed_classes' => false]);
+		$this->optionManager ??= new Providers\Base\Option($this->getType(), $this->getId());
 
-			if (!is_array($this->options))
-			{
-				$this->options = array();
-			}
-		}
-		return $this->options;
+		return $this->optionManager->getOptions();
 	}
 
 	/**
 	 * @param $optionName
 	 * @param $optionValue
 	 * @return $this
-	 * @throws \Bitrix\Main\ArgumentNullException
-	 * @throws \Bitrix\Main\ArgumentOutOfRangeException
 	 * @internal param array $options
 	 */
-	protected function setOption($optionName, $optionValue)
+	protected function setOption($optionName, $optionValue): BaseConfigurable
 	{
-		$options = $this->getOptions();
-		if (!isset($options[$optionName]) || $options[$optionName] !== $optionValue)
-		{
-			$options[$optionName] = $optionValue;
-			$this->setOptions($options);
-		}
+		$this->optionManager ??= new Providers\Base\Option($this->getType(), $this->getId());
+		$this->optionManager->setOption($optionName, $optionValue);
+
 		return $this;
 	}
 
@@ -264,30 +233,64 @@ abstract class BaseConfigurable extends Base
 	 * @param $optionName
 	 * @param mixed $defaultValue
 	 * @return mixed|null
-	 * @throws \Bitrix\Main\ArgumentNullException
-	 * @throws \Bitrix\Main\ArgumentOutOfRangeException
 	 */
 	protected function getOption($optionName, $defaultValue = null)
 	{
-		$options = $this->getOptions();
-		return isset($options[$optionName]) ? $options[$optionName] : $defaultValue;
+		$this->optionManager ??= new Providers\Base\Option($this->getType(), $this->getId());
+
+		return $this->optionManager->getOption($optionName, $defaultValue);
 	}
 
 	/**
 	 * @return bool
-	 * @throws \Bitrix\Main\ArgumentNullException
 	 */
-	public function clearOptions()
+	public function clearOptions(): bool
 	{
-		$this->options = array();
-		$providerId = $this->getId();
-		$providerType = mb_strtolower($this->getType());
-		Option::delete('messageservice', array('name' => 'sender.'.$providerType.'.'.$providerId));
+		$this->optionManager ??= new Providers\Base\Option($this->getType(), $this->getId());
+		$this->optionManager->clearOptions();
+
 		return true;
 	}
 
 	public function getConfigComponentTemplatePageName(): string
 	{
 		return static::getId();
+	}
+
+	/**
+	 * Can message be created from template only
+	 *
+	 * @return bool
+	 */
+	public function isTemplatesBased(): bool
+	{
+		return false;
+	}
+
+	/**
+	 *
+	 * List of available templates for templates-based senders
+	 * Should return array of templates like this:
+	 *
+	 * [
+	 * 		['ID' => '1', 'TITLE' => 'Template 1', 'PREVIEW' => 'Message created from template 1'],
+	 * 		['ID' => '2', 'TITLE' => 'Template 2', 'PREVIEW' => 'Message created from template 2'],
+	 * ]
+	 *
+	 * @param array|null $context Context for context-dependant templates
+	 *
+	 * @return array
+	 */
+	public function getTemplatesList(array $context = null): array
+	{
+		return [];
+	}
+
+	/**
+	 * Prepare template for save in message headers
+	 */
+	public function prepareTemplate($templateData)
+	{
+		return $templateData;
 	}
 }

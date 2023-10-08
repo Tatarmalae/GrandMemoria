@@ -2,12 +2,17 @@
 namespace Bitrix\MessageService\Sender;
 
 use Bitrix\Main;
+use Bitrix\Main\Event;
+use Bitrix\Main\EventResult;
 use Bitrix\MessageService\Internal\Entity\MessageTable;
 use Bitrix\MessageService\Message;
 use Bitrix\MessageService\MessageType;
+use Bitrix\Main\ORM\Data\AddResult;
 
 class SmsManager
 {
+	public const ON_MESSAGE_SUCCESSFULLY_SENT_EVENT = 'OnMessageSuccessfullySent';
+
 	private static $senders;
 
 	/**
@@ -19,14 +24,6 @@ class SmsManager
 		{
 			self::$senders = [];
 
-			if (Sms\SmsRu::isSupported())
-			{
-				self::$senders[] = new Sms\SmsRu();
-			}
-			if (Sms\SmsAssistentBy::isSupported())
-			{
-				self::$senders[] = new Sms\SmsAssistentBy();
-			}
 			if (Sms\Twilio::isSupported())
 			{
 				self::$senders[] = new Sms\Twilio();
@@ -51,6 +48,40 @@ class SmsManager
 			{
 				self::$senders[] = new Sms\SmscUa();
 			}
+			if (Sms\ISmsCenter::isSupported())
+			{
+				self::$senders[] = new Sms\ISmsCenter();
+			}
+
+			$sender = new Sms\SmsRu();
+			if (Sms\SmsRu::isSupported() || $sender->isRegistered())
+			{
+				self::$senders[] = $sender;
+			}
+
+			$sender = new Sms\SmsAssistentBy();
+			if (Sms\SmsAssistentBy::isSupported() || $sender->isRegistered())
+			{
+				self::$senders[] = $sender;
+			}
+
+			$sender = new Sms\SmsEdnaru();
+			if (Sms\SmsEdnaru::isSupported() || $sender->isRegistered())
+			{
+				self::$senders[] = $sender;
+			}
+
+			$sender = new Sms\Ednaru();
+			if (Sms\Ednaru::isSupported() || $sender->isRegistered())
+			{
+				self::$senders[] = $sender;
+			}
+
+			$sender = new Sms\EdnaruImHpx();
+			if (Sms\EdnaruImHpx::isSupported() || $sender->isRegistered())
+			{
+				self::$senders[] = $sender;
+			}
 
 			self::fireSendersEvent();
 		}
@@ -59,20 +90,21 @@ class SmsManager
 
 	private static function fireSendersEvent()
 	{
-		foreach (Main\EventManager::getInstance()->findEventHandlers(
-			'messageservice', 'onGetSmsSenders'
-		) as $event
-		)
+		$event = new Event('messageservice', 'onGetSmsSenders');
+		$event->send();
+		foreach ($event->getResults() as $result)
 		{
-			$result = (array) ExecuteModuleEventEx($event);
-			foreach ($result as $sender)
+			if ($result->getType() === EventResult::ERROR)
+			{
+				continue;
+			}
+			$resultData = $result->getParameters();
+			foreach ($resultData as $sender)
 			{
 				if (
 					$sender instanceof Base
-					&&
-					$sender->getType() === MessageType::SMS
-					&&
-					$sender::isSupported()
+					&& $sender->getType() === MessageType::SMS
+					&& $sender::isSupported()
 				)
 				{
 					self::$senders[] = $sender;
@@ -105,6 +137,7 @@ class SmsManager
 			$info[] = array(
 				'id' => $sender->getId(),
 				'type' => $sender->getType(),
+				'isTemplatesBased' => ($sender->isConfigurable() && $sender->isTemplatesBased()),
 				'name' => $sender->getName(),
 				'shortName' => $sender->getShortName(),
 				'canUse' => $sender->canUse()
@@ -135,8 +168,18 @@ class SmsManager
 	 */
 	public static function getDefaultSender()
 	{
-		$senders = static::getSenders();
-		return $senders[0];
+		$region = \Bitrix\Main\Application::getInstance()->getLicense()->getRegion();
+
+		if ($region === 'ru')
+		{
+			return static::getSenderById(\Bitrix\MessageService\Sender\Sms\SmsRu::ID);
+		}
+		if ($region === 'by')
+		{
+			return static::getSenderById(\Bitrix\MessageService\Sender\Sms\SmsAssistentBy::ID);
+		}
+
+		return static::getSenders()[0];
 	}
 
 	/**
@@ -174,6 +217,26 @@ class SmsManager
 	}
 
 	/**
+	 * @return BaseConfigurable[]
+	 */
+	public static function getRegisteredSenderList(): array
+	{
+		$senderList = [];
+		foreach (static::getSenders() as $sender)
+		{
+			if (
+				$sender instanceof BaseConfigurable
+				&& $sender->isRegistered()
+			)
+			{
+				$senderList[] = $sender;
+			}
+		}
+
+		return $senderList;
+	}
+
+	/**
 	 * @param array $messageFields
 	 * @param Base|null $sender
 	 * @return Message
@@ -184,6 +247,12 @@ class SmsManager
 		if (!$sender && !isset($messageFields['SENDER_ID']))
 		{
 			$sender = static::getUsableSender();
+		}
+
+		if ($sender === null)
+		{
+			$message = new Message($sender);
+			$message->setError(new Main\Error('There are no registered SMS providers.'));
 		}
 
 		if (isset($messageFields['MESSAGE_TO']))
@@ -199,7 +268,7 @@ class SmsManager
 		$message->setType(MessageType::SMS);
 
 		$sender = $message->getSender();
-		if (!$message->getFrom() && $sender instanceof BaseConfigurable)
+		if ($sender && !$message->getFrom())
 		{
 			$message->setFrom($sender->getDefaultFrom());
 		}
@@ -208,21 +277,86 @@ class SmsManager
 	}
 
 	/**
-	 * @param array $messageFields
-	 * @param Base|null $sender
-	 * @return Main\Entity\AddResult
-	 * @throws Main\ArgumentTypeException
+	 * @param string $eventName
+	 * @param array $fields
+	 * @return array<int, Message>
 	 */
-	public static function sendMessage(array $messageFields, Base $sender = null)
+	public static function createMessageListByTemplate(string $eventName, array $fields = []): array
 	{
-		$message = static::createMessage($messageFields, $sender);
-		return $message->send();
+		$messageList = [];
+		$event = new Main\Sms\Event($eventName, $fields);
+		$templateMessageListResult = $event->createMessageList();
+		if (!$templateMessageListResult->isSuccess())
+		{
+			return $messageList;
+		}
+
+		$templateMessages = $templateMessageListResult->getData();
+		$sender = isset($fields['SENDER_ID']) ? static::getSenderById($fields['SENDER_ID']) : static::getUsableSender();
+
+		/** @var \Bitrix\Main\SMS\Message $templateMessage */
+		foreach($templateMessages as $templateMessage)
+		{
+			$message = Message::createFromFields(
+				[
+					'MESSAGE_FROM' => $fields['DEFAULT_FROM'] ?? $sender->getDefaultFrom(),
+					'MESSAGE_TO' => $templateMessage->getReceiver(),
+					'MESSAGE_BODY' => $templateMessage->getText(),
+				],
+				$sender
+			);
+			$message->setType(MessageType::SMS);
+			$messageList[] = $message;
+		}
+
+		return $messageList;
 	}
 
 	/**
 	 * @param array $messageFields
 	 * @param Base|null $sender
-	 * @return Main\Entity\AddResult
+	 * @return AddResult
+	 * @throws Main\ArgumentTypeException
+	 */
+	public static function sendMessage(array $messageFields, Base $sender = null)
+	{
+		if (!$sender && isset($messageFields['SENDER_ID']))
+		{
+			$sender = static::getSenderById($messageFields['SENDER_ID']);
+
+			if ($sender === null)
+			{
+				return (new AddResult())->addError(new Main\Error('Incorrect sender id.'));
+			}
+		}
+		$message = static::createMessage($messageFields, $sender);
+
+		if ($message->getError() !== null)
+		{
+			return (new AddResult())->addError($message->getError());
+		}
+
+		$result = $message->send();
+
+		if ($result->isSuccess())
+		{
+			(new Event(
+				'messageservice',
+				static::ON_MESSAGE_SUCCESSFULLY_SENT_EVENT,
+				[
+					'ID' => $result->getId(),
+					'ADDITIONAL_FIELDS' => $messageFields['ADDITIONAL_FIELDS'] ?? [],
+				]
+			))->send();
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @param array $messageFields
+	 * @param Base|null $sender
+	 * @return Result\SendMessage
 	 * @throws Main\ArgumentTypeException
 	 */
 	public static function sendMessageDirectly(array $messageFields, Base $sender = null)

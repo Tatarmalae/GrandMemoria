@@ -29,7 +29,7 @@ if (count($arResult['ITEMS']) == 0) return;
                 <?php foreach ($arResult['ITEMS'] as $arItem): ?>
                     <div class="adv-item item">
                         <div class="adv-item__icon">
-                            <img src="<?= SITE_STYLE_PATH ?>/img/content/adv/icon.svg" alt="<?= $arItem['NAME'] ?>">
+                            <img src="<?= SITE_STYLE_PATH ?>/img/content/adv/icon.svg" width="32" height="32" alt="<?= $arItem['NAME'] ?>">
                         </div>
                         <p><?= $arItem['NAME'] ?></p>
                     </div>

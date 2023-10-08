@@ -25,7 +25,7 @@ if (count($arResult['ITEMS']) == 0) return;
             <div class="adv-info__left">
                 <a class="logo-link" href="<?= SITE_DIR ?>">
                     <div class="logo">
-                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
+                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" width="280" height="115" alt="<?= SITE_SERVER_NAME ?>"/>
                     </div>
                 </a>
             </div>

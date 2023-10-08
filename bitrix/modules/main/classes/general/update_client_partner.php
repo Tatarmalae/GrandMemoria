@@ -1,4 +1,4 @@
-<?
+<?php
 /**********************************************************************/
 /**    DO NOT MODIFY THIS FILE                                       **/
 /**    MODIFICATION OF THIS FILE WILL ENTAIL SITE FAILURE            **/
@@ -169,7 +169,6 @@ class CUpdateClientPartner
 			return True;
 	}
 
-
 	public static function loadModule4Wizard($moduleId, $lang = false)
 	{
 		$errorMessage = "";
@@ -237,7 +236,6 @@ class CUpdateClientPartner
 			return "STP";
 		}
 	}
-
 
 	public static function LoadModuleNoDemand($moduleId, &$strError, $stableVersionsOnly = "Y", $lang = false)
 	{
@@ -1518,7 +1516,7 @@ class CUpdateClientPartner
 		return "U";
 	}
 
-	private function loadFile($requestedUrl, $realSize, $outputFilename, $timeout, &$errorMessage)
+	private static function loadFile($requestedUrl, $realSize, $outputFilename, $timeout, &$errorMessage)
 	{
 		$timeout = intval($timeout);
 		$startTime = 0;
@@ -1878,6 +1876,18 @@ class CUpdateClientPartner
 				$strError_tmp = "[RV01] ".GetMessage("SUPZ_NO_QSTRING").". ";
 		}
 
+		if (CModule::IncludeModule("rest") && !\Bitrix\Rest\OAuthService::getEngine()->isRegistered())
+		{
+			try
+			{
+				\Bitrix\Rest\OAuthService::register();
+				\Bitrix\Rest\OAuthService::getEngine()->getClient()->getApplicationList();
+			}
+			catch(\Bitrix\Main\SystemException $e)
+			{
+			}
+		}
+
 		if ($strError_tmp == '')
 		{
 			$strQuery .= "&coupon=".UrlEncode($coupon)."&query_type=coupon";
@@ -1955,7 +1965,7 @@ class CUpdateClientPartner
 		CUpdateClientPartner::AddMessage2Log("Run updater '".$updaterName."'", "CSURUS1");
 
 		$updater = new CUpdater();
-		$updater->Init($updaterPath, $DBType, $updaterName, $updateDirFrom, $moduleID, US_CALL_TYPE);
+		$updater->Init($updaterPath, 'mysql', $updaterName, $updateDirFrom, $moduleID, US_CALL_TYPE);
 
 		$errorMessage = "";
 
@@ -2165,7 +2175,6 @@ class CUpdateClientPartner
 		return $content;
 	}
 
-
 	/** Проверяет на ошибки ответ сервера $strServerOutput **/
 	/** и парсит в массив $arRes                           **/
 	public static function __ParseServerData(&$strServerOutput, &$arRes, &$strError)
@@ -2240,7 +2249,7 @@ class CUpdateClientPartner
 
 	public static function __GetFooPath()
 	{
-		$db = CLang::GetList($by="", $order="", array("ACTIVE" => "Y"));
+		$db = CLang::GetList("", "", array("ACTIVE" => "Y"));
 		$cnt = 0;
 		while ($ar = $db->Fetch())
 			$cnt++;

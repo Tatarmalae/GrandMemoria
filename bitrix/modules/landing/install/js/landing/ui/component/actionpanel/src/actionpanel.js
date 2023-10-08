@@ -1,3 +1,5 @@
+import 'ui.design-tokens';
+
 import {Cache, Dom, Tag, Text, Type} from 'main.core';
 import {EventEmitter} from 'main.core.events';
 
@@ -39,6 +41,11 @@ export class ActionPanel extends EventEmitter
 		if (Type.isDomNode(this.options.renderTo))
 		{
 			Dom.append(this.getLayout(), this.options.renderTo);
+		}
+
+		if (Type.isPlainObject(this.options.style))
+		{
+			Dom.style(this.getLayout(), this.options.style);
 		}
 	}
 

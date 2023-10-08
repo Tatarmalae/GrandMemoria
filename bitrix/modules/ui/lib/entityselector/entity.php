@@ -10,6 +10,7 @@ class Entity implements \JsonSerializable
 	protected $dynamicLoad = false;
 	protected $dynamicSearch = false;
 	protected $provider;
+	protected $filters = [];
 
 	public function __construct(array $options)
 	{
@@ -47,18 +48,37 @@ class Entity implements \JsonSerializable
 		{
 			$entity->setProvider($provider);
 
+			$filters = [];
+			if (isset($entityOptions['filters']) && is_array($entityOptions['filters']))
+			{
+				$filters = Configuration::getFilters($entity->getId(), $entityOptions['filters']);
+			}
+
+			if (empty($filters))
+			{
+				return $entity;
+			}
+
+			foreach ($filters as $filter)
+			{
+				if ($filter instanceof BaseFilter && $filter->isAvailable())
+				{
+					$entity->addFilter($filter);
+				}
+			}
+
 			return $entity;
 		}
 
 		return null;
 	}
 
-	public function getId()
+	public function getId(): string
 	{
 		return $this->id;
 	}
 
-	public function getOptions()
+	public function getOptions(): array
 	{
 		return $this->options;
 	}
@@ -68,48 +88,62 @@ class Entity implements \JsonSerializable
 		return $this->provider;
 	}
 
-	public function setProvider(BaseProvider $provider)
+	public function setProvider(BaseProvider $provider): self
 	{
 		$this->provider = $provider;
+
+		return $this;
 	}
 
-	public function isSearchable()
+	public function getFilters(): array
+	{
+		return $this->filters;
+	}
+
+	public function addFilter(BaseFilter $filter): self
+	{
+		$this->filters[] = $filter;
+
+		return $this;
+	}
+
+	public function isSearchable(): bool
 	{
 		return $this->searchable;
 	}
 
-	public function setSearchable(bool $flag = true)
+	public function setSearchable(bool $flag = true): self
 	{
 		$this->searchable = $flag;
 
 		return $this;
 	}
 
-	public function hasDynamicSearch()
+	public function hasDynamicSearch(): bool
 	{
 		return $this->dynamicSearch;
 	}
 
-	public function setDynamicSearch(bool $flag = true)
+	public function setDynamicSearch(bool $flag = true): self
 	{
 		$this->dynamicSearch = $flag;
 
 		return $this;
 	}
 
-	public function hasDynamicLoad()
+	public function hasDynamicLoad(): bool
 	{
 		return $this->dynamicLoad;
 	}
 
-	public function setDynamicLoad(bool $flag = true)
+	public function setDynamicLoad(bool $flag = true): self
 	{
 		$this->dynamicLoad = $flag;
 
 		return $this;
 	}
 
-	public function jsonSerialize()
+	public function jsonSerialize(): array
 	{
 		return [
 			'id' => $this->getId(),

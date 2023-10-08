@@ -13,7 +13,9 @@ return [
 	],
 	'rel' => [
 		'main.polyfill.core',
+		'ui.fonts.opensans',
 		'ui.vue',
+		'main.core.events',
 	],
 	'skip_core' => true,
 ];

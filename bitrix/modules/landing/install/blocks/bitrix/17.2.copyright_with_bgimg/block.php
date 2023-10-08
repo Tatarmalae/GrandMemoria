@@ -5,7 +5,7 @@
 			<div class="row">
 				<div class="col-md-4 d-flex align-items-center text-center text-md-left g-mb-20 g-mb-0--md">
 					<div class="landing-block-node-copy landing-semantic-text-image-medium w-100 g-font-size-13 g-color-white mb-0 js-animation fadeInLeft">
-						&copy; 2020 All rights reserved.
+						&copy; 2022 All rights reserved.
 					</div>
 				</div>
 
@@ -14,8 +14,8 @@
 						Support 24/7
 					</div>
 					<a class="landing-block-node-phone-link landing-semantic-link-image-medium g-font-size-22 g-mt-5 g-font-weight-700 g-color-white js-animation fadeInLeft"
-						href="tel:#PHONE1#">
-						#PHONE1#
+						href="tel:#crmPhone1">
+						#crmPhoneTitle1
 					</a>
 				</div>
 

@@ -205,6 +205,7 @@ this.BX = this.BX || {};
 	      landing.currentBlock = block;
 	      return landing_pageobject.PageObject.getInstance().view().then(function (iframe) {
 	        landing.currentArea = iframe.contentDocument.body.querySelector("[data-landing=\"".concat(entry[state].lid, "\"]"));
+	        landing.insertBefore = entry[state].insertBefore;
 	        return landing.onAddBlock(entry[state].code, entry.block, true);
 	      });
 	    });
@@ -275,7 +276,7 @@ this.BX = this.BX || {};
 	    }
 
 	    return highlight$8(card.node);
-	  }).catch(function () {});
+	  })["catch"](function () {});
 	}
 
 	var _BX$Landing$Utils$9 = BX.Landing.Utils,
@@ -305,6 +306,40 @@ this.BX = this.BX || {};
 	    return scrollTo$9(card.node).then(highlight$9.bind(null, card.node)).then(function () {
 	      return block.removeCard(entry.selector, true);
 	    });
+	  });
+	}
+
+	/**
+	 * History entry action for add node.
+	 * @param {string} state State code.
+	 * @param {object} entry History entry.
+	 * @return {Promise}
+	 */
+	function addNode(state, entry) {
+	  var _this = this;
+
+	  // entry.block === null >> designer mode
+	  return new Promise(function (resolve, reject) {
+	    var tags = (entry.redo || {}).tags || (entry.undo || {}).tags || [];
+	    top.BX.onCustomEvent(_this, 'Landing:onHistoryAddNode', [tags]);
+	    resolve();
+	  });
+	}
+
+	/**
+	 * History entry action for remove node.
+	 * @param {string} state State code.
+	 * @param {object} entry History entry.
+	 * @return {Promise}
+	 */
+	function removeNode(state, entry) {
+	  var _this = this;
+
+	  // entry.block === null >> designer mode
+	  return new Promise(function (resolve, reject) {
+	    var tags = (entry.redo || {}).tags || (entry.undo || {}).tags || [];
+	    top.BX.onCustomEvent(_this, 'Landing:onHistoryRemoveNode', [tags]);
+	    resolve();
 	  });
 	}
 
@@ -341,7 +376,12 @@ this.BX = this.BX || {};
 
 	    elements.forEach(function (element) {
 	      element.className = entry[state].className;
-	      element.style = entry[state].style;
+
+	      if (entry[state].style) {
+	        element.style = entry[state].style;
+	      } else {
+	        element.removeAttribute('style');
+	      }
 	    });
 	    return block;
 	  }).then(function (block) {
@@ -385,6 +425,26 @@ this.BX = this.BX || {};
 	    return scrollTo$b(block.node).then(function () {
 	      void highlight$a(block.node);
 	      block.updateBlockState(BX.clone(entry[state]), true);
+	    });
+	  });
+	}
+
+	var _BX$Landing$Utils$c = BX.Landing.Utils,
+	    scrollTo$c = _BX$Landing$Utils$c.scrollTo,
+	    highlight$b = _BX$Landing$Utils$c.highlight;
+	/**
+	 * @param {string} state
+	 * @param {object} entry
+	 * @return {Promise}
+	 */
+
+	function updateContent(state, entry) {
+	  return BX.Landing.PageObject.getInstance().blocks().then(function (blocks) {
+	    var block = blocks.get(entry.block);
+	    block.forceInit();
+	    return scrollTo$c(block.node).then(function () {
+	      void highlight$b(block.node);
+	      return block.updateContent(entry[state]);
 	    });
 	  });
 	}
@@ -468,9 +528,24 @@ this.BX = this.BX || {};
 	    redo: removeCard.bind(null, REDO)
 	  }));
 	  history.registerCommand(new Command({
+	    id: 'addNode',
+	    undo: removeNode.bind(null, UNDO),
+	    redo: addNode.bind(null, REDO)
+	  }));
+	  history.registerCommand(new Command({
+	    id: 'removeNode',
+	    undo: addNode.bind(null, UNDO),
+	    redo: removeNode.bind(null, REDO)
+	  }));
+	  history.registerCommand(new Command({
 	    id: 'updateBlockState',
 	    undo: updateBlockState.bind(null, UNDO),
 	    redo: updateBlockState.bind(null, REDO)
+	  }));
+	  history.registerCommand(new Command({
+	    id: 'updateContent',
+	    undo: updateContent.bind(null, UNDO),
+	    redo: updateContent.bind(null, REDO)
 	  }));
 	  return Promise.resolve(history);
 	}
@@ -559,7 +634,7 @@ this.BX = this.BX || {};
 	    history.position = Math.min(main_core.Text.toNumber(landingData.position), history.stack.length - 1);
 	    history.state = landingData.state;
 	    return history;
-	  }).catch(function () {
+	  })["catch"](function () {
 	    return history;
 	  });
 	}
@@ -674,9 +749,9 @@ this.BX = this.BX || {};
 	        return command[state](entry).then(function () {
 	          history.commandState = RESOLVED;
 	          return history;
-	        }).catch(function () {
+	        })["catch"](function () {
 	          history.commandState = RESOLVED;
-	          return history[state === UNDO ? 'undo' : 'redo']();
+	          return offset(history, offsetValue);
 	        });
 	      }
 	    }
@@ -902,7 +977,7 @@ this.BX = this.BX || {};
 	        }
 
 	        return Promise.reject();
-	      }).then(onUpdate).catch(function () {});
+	      }).then(onUpdate)["catch"](function () {});
 	    }
 	    /**
 	     * Handles storage event
@@ -963,7 +1038,10 @@ this.BX = this.BX || {};
 	  addCard: addCard,
 	  removeCard: removeCard,
 	  editStyle: editStyle,
-	  updateBlockState: updateBlockState
+	  updateBlockState: updateBlockState,
+	  addNode: addNode,
+	  removeNode: removeNode,
+	  updateContent: updateContent
 	});
 
 	exports.History = History;

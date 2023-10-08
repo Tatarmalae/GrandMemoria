@@ -1,6 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable class-methods-use-this */
-import {Type, Dom, Text, Runtime, Event} from 'main.core';
+import {Type, Dom, Text, Runtime, Event, Tag} from 'main.core';
+import 'ui.icons.service';
+import {AdditionalFilter} from './additional-filter';
 
 export class Presets
 {
@@ -344,6 +346,9 @@ export class Presets
 		if (!isPinned)
 		{
 			const pinnedPresetId = this.getPinnedPresetId();
+			const presetData = this.getPreset(pinnedPresetId);
+			presetData.ADDITIONAL = [];
+
 			const pinnedPresetNode = this.getPinnedPresetNode();
 			const clear = false;
 			const applyPreset = true;
@@ -401,7 +406,7 @@ export class Presets
 		const input = this.getPresetInput(presetNode);
 
 		BX.addClass(presetNode, this.parent.settings.classPresetNameEdit);
-		input.focus();
+		input.select();
 		// noinspection SillyAssignmentJS
 		input.value = BX.util.htmlspecialcharsback(input.value);
 		Event.bind(input, 'input', BX.delegate(this._onPresetNameInput, this));
@@ -525,6 +530,8 @@ export class Presets
 
 		this.parent.getSearch().updatePreset(preset);
 		this.updatePresetFields(preset, noValues);
+
+		BX.onCustomEvent('BX.Main.Filter:onApplyPreset', [presetId]);
 	}
 
 
@@ -581,6 +588,11 @@ export class Presets
 	{
 		let result = true;
 
+		if (Type.isStringFilled(field.ADDITIONAL_FILTER))
+		{
+			return false;
+		}
+
 		if (field.TYPE === this.parent.types.STRING)
 		{
 			if (field.VALUE && field.VALUE.length)
@@ -620,6 +632,7 @@ export class Presets
 		if (
 			field.TYPE === this.parent.types.CUSTOM_ENTITY
 			|| field.TYPE === this.parent.types.DEST_SELECTOR
+			|| field.TYPE === this.parent.types.ENTITY_SELECTOR
 		)
 		{
 			if (BX.type.isPlainObject(field.VALUES))
@@ -954,6 +967,11 @@ export class Presets
 				break;
 			}
 
+			case this.parent.types.ENTITY_SELECTOR: {
+				control = this.parent.getFields().createEntitySelector(fieldData);
+				break;
+			}
+
 			case this.parent.types.CUSTOM: {
 				control = this.parent.getFields().createCustom(fieldData);
 				break;
@@ -966,6 +984,25 @@ export class Presets
 
 			default: {
 				break;
+			}
+		}
+
+		if (this.parent.getParam('ENABLE_ADDITIONAL_FILTERS'))
+		{
+			const additionalFilterInstance = AdditionalFilter.getInstance();
+			const button = additionalFilterInstance.getAdditionalFilterButton({
+				fieldId: fieldData.NAME,
+				enabled: fieldData.ADDITIONAL_FILTER_ALLOWED,
+			});
+			Dom.append(button, control);
+			if (!fieldData.ADDITIONAL_FILTER_ALLOWED)
+			{
+				BX.Dom.addClass(control, 'main-ui-filter-additional-filters-hide');
+			}
+
+			if (Type.isStringFilled(fieldData.ADDITIONAL_FILTER))
+			{
+				additionalFilterInstance.initAdditionalFilter(control, fieldData.ADDITIONAL_FILTER);
 			}
 		}
 

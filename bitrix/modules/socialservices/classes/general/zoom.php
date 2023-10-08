@@ -88,18 +88,17 @@ class CSocServZoom extends CSocServAuth
 	{
 		global $APPLICATION;
 
-		CSocServAuthManager::SetUniqueKey();
 		if (defined('BX24_HOST_NAME') && IsModuleInstalled('bitrix24'))
 		{
 			$redirect_uri = static::CONTROLLER_URL . '/redirect.php';
 			$backurl = $APPLICATION->GetCurPageParam('', ['logout', 'auth_service_error', 'auth_service_id', 'backurl']);
 			$state = $this->getEntityOAuth()->GetRedirectURI() .
-				urlencode('?state=' . JWT::urlsafeB64Encode('backurl=' . $backurl . '&check_key=' . $_SESSION['UNIQUE_KEY']));
+				urlencode('?state=' . JWT::urlsafeB64Encode('backurl=' . $backurl . '&check_key=' . \CSocServAuthManager::getUniqueKey()));
 		}
 		else
 		{
 			$state = 'site_id=' . SITE_ID . '&backurl=' .
-				urlencode($APPLICATION->GetCurPageParam('check_key=' . $_SESSION['UNIQUE_KEY'], ['logout', 'auth_service_error', 'auth_service_id', 'backurl'])) .
+				urlencode($APPLICATION->GetCurPageParam('check_key=' . \CSocServAuthManager::getUniqueKey(), ['logout', 'auth_service_error', 'auth_service_id', 'backurl'])) .
 				(isset($arParams['BACKURL']) ? '&redirect_url=' . urlencode($arParams['BACKURL']) : '');
 
 			$redirect_uri = $this->getEntityOAuth()->GetRedirectURI();
@@ -294,7 +293,7 @@ class CSocServZoom extends CSocServAuth
 			window.close();
 		</script>
 		<?php
-		die();
+		CMain::FinalActions();
 	}
 
 	public function setUser($userId)
@@ -538,7 +537,9 @@ class CSocServZoom extends CSocServAuth
 	}
 
 	/**
-	 * Notifies Zoom that we comply with the user’s data policy after the user uninstalls Bitrix24 app.
+	 * Notifies Zoom that we comply with the user's data policy after the user uninstalls Bitrix24 app.
+	 *
+	 * @deprecated by Zoom since August 7, 2021.
 	 *
 	 * @param array $payload
 	 *
@@ -601,7 +602,6 @@ class CZoomInterface extends CSocServOAuthTransport
 			'?client_id=' . $this->appID .
 			'&redirect_uri=' . urlencode($redirect_uri) .
 			'&response_type=' . 'code' .
-			'&scope=' . $this->getScopeEncode() .
 			'&response_mode=' . 'form_post' .
 			($state <> '' ? '&state=' . JWT::urlsafeB64Encode($state) : '');
 	}
@@ -822,6 +822,13 @@ class CZoomInterface extends CSocServOAuthTransport
 		return $requestResult->getData();
 	}
 
+	/**
+	 * @deprecated by Zoom since August 7, 2021.
+	 * @param array $params
+	 *
+	 * @return Result
+	 * @throws ArgumentException
+	 */
 	public function sendComplianceNotify(array $params): Result
 	{
 		$requestParams = [

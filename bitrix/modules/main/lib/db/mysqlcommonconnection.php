@@ -11,6 +11,7 @@ abstract class MysqlCommonConnection extends Connection
 	const INDEX_SPATIAL = 'SPATIAL';
 
 	protected $engine = "";
+	protected int $transactionLevel = 0;
 
 	/**
 	 * @inheritDoc
@@ -18,7 +19,7 @@ abstract class MysqlCommonConnection extends Connection
 	public function __construct(array $configuration)
 	{
 		parent::__construct($configuration);
-		$this->engine = isset($configuration['engine']) ? $configuration['engine'] : "";
+		$this->engine = $configuration['engine'] ?? '';
 	}
 
 	/**
@@ -52,15 +53,19 @@ abstract class MysqlCommonConnection extends Connection
 	 */
 	public function getIndexName($tableName, array $columns, $strict = false)
 	{
-		if (!is_array($columns) || count($columns) <= 0)
+		if (empty($columns))
+		{
 			return null;
+		}
 
 		$tableName = preg_replace("/[^a-z0-9_]+/i", "", $tableName);
 		$tableName = trim($tableName);
 
 		$rs = $this->query("SHOW INDEX FROM `".$this->getSqlHelper()->forSql($tableName)."`");
 		if (!$rs)
+		{
 			return null;
+		}
 
 		$indexes = array();
 		while ($ar = $rs->fetch())
@@ -68,24 +73,7 @@ abstract class MysqlCommonConnection extends Connection
 			$indexes[$ar["Key_name"]][$ar["Seq_in_index"] - 1] = $ar["Column_name"];
 		}
 
-		$columnsList = implode(",", $columns);
-		foreach ($indexes as $indexName => $indexColumns)
-		{
-			ksort($indexColumns);
-			$indexColumnList = implode(",", $indexColumns);
-			if ($strict)
-			{
-				if ($indexColumnList === $columnsList)
-					return $indexName;
-			}
-			else
-			{
-				if (mb_substr($indexColumnList, 0, mb_strlen($columnsList)) === $columnsList)
-					return $indexName;
-			}
-		}
-
-		return null;
+		return static::findIndex($indexes, $columns, $strict);
 	}
 
 	/**
@@ -131,7 +119,7 @@ abstract class MysqlCommonConnection extends Connection
 
 			$sqlFields[] = $this->getSqlHelper()->quote($realColumnName)
 				. ' ' . $this->getSqlHelper()->getColumnTypeByField($field)
-				. ' NOT NULL' // null for oracle if is not primary
+				. ($field->isNullable() ? '' : ' NOT NULL') // null for oracle if is not primary
 				. (in_array($columnName, $autoincrement, true) ? ' AUTO_INCREMENT' : '')
 			;
 		}
@@ -160,17 +148,7 @@ abstract class MysqlCommonConnection extends Connection
 	}
 
 	/**
-	 * Creates index on column(s)
-	 * @api
-	 *
-	 * @param string          $tableName     Name of the table.
-	 * @param string          $indexName     Name of the new index.
-	 * @param string|string[] $columnNames   Name of the column or array of column names to be included into the index.
-	 * @param string[]        $columnLengths Array of column names and maximum length for them.
-	 * @param null            $indexType
-	 *
-	 * @return Result
-	 * @throws SqlQueryException
+	 * @inheritDoc
 	 */
 	public function createIndex($tableName, $indexName, $columnNames, $columnLengths = null, $indexType = null)
 	{
@@ -203,10 +181,10 @@ abstract class MysqlCommonConnection extends Connection
 		$indexTypeSql = '';
 
 		if ($indexType !== null
-			&& in_array(mb_strtoupper($indexType), [static::INDEX_UNIQUE, static::INDEX_FULLTEXT, static::INDEX_SPATIAL], true)
+			&& in_array(strtoupper($indexType), [static::INDEX_UNIQUE, static::INDEX_FULLTEXT, static::INDEX_SPATIAL], true)
 		)
 		{
-			$indexTypeSql = mb_strtoupper($indexType);
+			$indexTypeSql = strtoupper($indexType);
 		}
 
 		$sql = 'CREATE '.$indexTypeSql.' INDEX '.$sqlHelper->quote($indexName).' ON '.$sqlHelper->quote($tableName)
@@ -232,7 +210,7 @@ abstract class MysqlCommonConnection extends Connection
 	}
 
 	/*********************************************************
-	 * Transaction
+	 * Transactions
 	 *********************************************************/
 
 	/**
@@ -240,7 +218,16 @@ abstract class MysqlCommonConnection extends Connection
 	 */
 	public function startTransaction()
 	{
-		$this->query("START TRANSACTION");
+		if ($this->transactionLevel == 0)
+		{
+			$this->query("START TRANSACTION");
+		}
+		else
+		{
+			$this->query("SAVEPOINT TRANS{$this->transactionLevel}");
+		}
+
+		$this->transactionLevel++;
 	}
 
 	/**
@@ -248,15 +235,33 @@ abstract class MysqlCommonConnection extends Connection
 	 */
 	public function commitTransaction()
 	{
-		$this->query("COMMIT");
+		$this->transactionLevel--;
+
+		if ($this->transactionLevel == 0)
+		{
+			// commits all nested transactions
+			$this->query("COMMIT");
+		}
 	}
 
 	/**
 	 * @inheritDoc
+	 * @throws TransactionException
 	 */
 	public function rollbackTransaction()
 	{
-		$this->query("ROLLBACK");
+		$this->transactionLevel--;
+
+		if ($this->transactionLevel == 0)
+		{
+			$this->query("ROLLBACK");
+		}
+		else
+		{
+			$this->query("ROLLBACK TO SAVEPOINT TRANS{$this->transactionLevel}");
+
+			throw new TransactionException('Nested rollbacks are unsupported.');
+		}
 	}
 
 	/*********************************************************
@@ -293,7 +298,7 @@ abstract class MysqlCommonConnection extends Connection
 		$unique = \CMain::GetServerUniqID();
 
 		//64 characters max for mysql 5.7+
-		return $unique.md5($name);
+		return md5($unique).md5($name);
 	}
 
 	/*********************************************************
@@ -301,11 +306,18 @@ abstract class MysqlCommonConnection extends Connection
 	 *********************************************************/
 
 	/**
+	 * @inheritDoc
+	 */
+	public function getType()
+	{
+		return "mysql";
+	}
+
+	/**
 	 * Sets default storage engine for all consequent CREATE TABLE statements and all other relevant DDL.
 	 * Storage engine read from .settings.php file. It is 'engine' key of the 'default' from the 'connections'.
 	 *
 	 * @return void
-	 * @throws \Bitrix\Main\Db\SqlQueryException
 	 */
 	public function setStorageEngine()
 	{
@@ -327,7 +339,6 @@ abstract class MysqlCommonConnection extends Connection
 	 * Returns max packet length to send to or receive from the database server.
 	 *
 	 * @return int
-	 * @throws \Bitrix\Main\Db\SqlQueryException
 	 */
 	public function getMaxAllowedPacket()
 	{

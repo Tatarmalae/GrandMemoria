@@ -2,6 +2,7 @@
 namespace Bitrix\Landing\Copy\Integration;
 
 use Bitrix\Landing;
+use Bitrix\Landing\Folder;
 use Bitrix\Landing\Site\Type;
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\Copy\Container;
@@ -141,13 +142,18 @@ class GroupStepper extends Stepper
 		$siteId = ($queueOption['siteId'] ?: 0);
 		$copiedSiteId = ($queueOption['copiedSiteId'] ?: 0);
 		$pageMapIds = array_filter(($queueOption['pageMapIds'] ?: []));
+		$folderMapIds = array_filter(($queueOption['folderMapIds'] ?: []));
+		$folderIndexIds = array_filter(($queueOption['folderIndexIds'] ?: []));
 		$blockMapIds = array_filter(($queueOption['blockMapIds'] ?: []));
 
 		if ($pageMapIds)
 		{
-			$this->updateFolderIds($pageMapIds);
+			if ($folderMapIds)
+			{
+				$this->updateFolderIds($copiedSiteId, $folderMapIds);
+				$this->updateFolderIndexes($folderMapIds, $folderIndexIds, $pageMapIds);
+			}
 			$this->updateBlockIds($pageMapIds, $blockMapIds);
-
 			$this->updateCopiedSite($siteId, $copiedSiteId, $pageMapIds);
 		}
 
@@ -159,27 +165,53 @@ class GroupStepper extends Stepper
 		Landing\Rights::clearContextUserId();
 	}
 
-	private function updateFolderIds(array $pageMapIds): void
+	private function updateFolderIds(int $siteId, array $folderMapIds): void
 	{
-		foreach ($pageMapIds as $pageId => $copiedPageId)
+		\Bitrix\Landing\Landing::disableCheckUniqueAddress();
+
+		$res = Landing\Landing::getList([
+			'select' => [
+				'ID', 'FOLDER_ID'
+			],
+			'filter' => [
+				'SITE_ID' => $siteId,
+				'FOLDER_ID' => array_keys($folderMapIds)
+			]
+		]);
+		while ($row = $res->fetch())
 		{
-			$copiedLandingInstance = Landing\Landing::createInstance($copiedPageId);
-			$folderId = $copiedLandingInstance->getFolderId();
-			if (array_key_exists($folderId, $pageMapIds))
+			if (isset($folderMapIds[$row['FOLDER_ID']]))
 			{
-				Landing\Landing::update($pageId, [
-					'FOLDER_ID' => $pageMapIds[$folderId],
+				Landing\Landing::update($row['ID'], [
+					'FOLDER_ID' => $folderMapIds[$row['FOLDER_ID']]
 				]);
 			}
+		}
+
+		\Bitrix\Landing\Landing::enableCheckUniqueAddress();
+	}
+
+	private function updateFolderIndexes(array $folderMapIds, array $folderIndexIds, array $pageMapIds): void
+	{
+		foreach ($folderMapIds as $oldFolderId => $newFolderId)
+		{
+			Folder::update($newFolderId, [
+				'INDEX_ID' => $pageMapIds[ $folderIndexIds[$oldFolderId] ] ?? null
+			]);
 		}
 	}
 
 	private function updateBlockIds(array $pageMapIds, array $blockMapIds): void
 	{
+		ksort($pageMapIds);
+		ksort($blockMapIds);
+
+		Landing\Landing::setEditMode();
+
 		foreach ($pageMapIds as $pageId => $copiedPageId)
 		{
-			$landingMapIds['#landing'.$pageId] = '#landing'.$copiedPageId;
-			unset($landingMapIds[$pageId]);
+			$pageMapIds['#landing'.$pageId] = '#landing'.$copiedPageId;
+			unset($pageMapIds[$pageId]);
 		}
 		foreach ($blockMapIds as $blockId => $copiedBlockId)
 		{
@@ -321,7 +353,7 @@ class GroupStepper extends Stepper
 	protected function getOptionData($optionName)
 	{
 		$option = Option::get(static::$moduleId, $optionName);
-		$option = ($option !== "" ? unserialize($option) : []);
+		$option = ($option !== "" ? unserialize($option, ['allowed_classes' => false]) : []);
 		return (is_array($option) ? $option : []);
 	}
 

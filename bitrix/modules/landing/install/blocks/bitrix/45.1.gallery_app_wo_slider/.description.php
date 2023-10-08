@@ -22,8 +22,10 @@ return array(
 		'.landing-block-node-card-img' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_45.1.GALLERY_APP_WO_SLIDER_NODES_LANDINGBLOCKNODECARDIMG'),
 			'type' => 'img',
+			'useInDesigner' => false,
 			'dimensions' => array('width' => 960, 'height' => 960),
-			'allowInlineEdit' => false,
+			'disableLink' => true,
+			'create2xByDefault' => false,
 		),
 		'.landing-block-node-card-title' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_45.1.GALLERY_APP_WO_SLIDER_NODES_LANDINGBLOCKNODECARDTITLE'),

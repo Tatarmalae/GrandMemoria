@@ -9,9 +9,7 @@
 	var data = BX.Landing.Utils.data;
 	var offsetTop = BX.Landing.Utils.offsetTop;
 	var offsetLeft = BX.Landing.Utils.offsetLeft;
-	var bind = BX.Landing.Utils.bind;
-	var unbind = BX.Landing.Utils.unbind;
-	
+
 	/**
 	 * Implements interface for works with dropdown
 	 *
@@ -29,9 +27,19 @@
 		this.layout.classList.add("landing-ui-field-dropdown");
 		this.popup = null;
 		this.input.addEventListener("click", this.onInputClick.bind(this));
+		this.classForTextNode = options.classForTextNode;
 		document.addEventListener("click", this.onDocumentClick.bind(this));
 		var rootWindow = BX.Landing.PageObject.getRootWindow();
 		rootWindow.document.addEventListener("click", this.onDocumentClick.bind(this));
+
+		if (options.hint)
+		{
+			var header = this.layout.querySelector('.landing-ui-field-header');
+			if (header)
+			{
+				BX.Dom.append(top.BX.UI.Hint.createNode(options.hint), header);
+			}
+		}
 
 		if (BX.type.isPlainObject(this.items))
 		{
@@ -41,13 +49,24 @@
 			}, this);
 		}
 
-		setTextContent(this.input, this.items[0].name);
-		data(this.input, "value", this.items[0].value);
+		if (BX.Type.isArrayFilled(this.items))
+		{
+			setTextContent(this.input, this.items[0].name, this.classForTextNode);
+			data(this.input, "value", this.items[0].value);
+		}
+		else
+		{
+			setTextContent(this.input, BX.Landing.Loc.getMessage("LANDING_DROPDOWN_NOT_FILLED"));
+			data(this.input, "value", "");
+		}
 
 		if (this.content !== "")
 		{
+			setTimeout(() => {
+				this.emit("onInit", this.items[this.content]);
+			}, 0);
+
 			this.setValue(this.content);
-			this.onMouseWheel = this.onMouseWheel.bind(this);
 		}
 	};
 
@@ -58,30 +77,68 @@
 		onInputClick: function(event)
 		{
 			event.stopPropagation();
-			if (!this.popup || (this.popupRoot && !this.popupRoot.contains(this.popup.popupWindow.popupContainer)))
+			if (
+				!this.popup
+				|| (!this.contentRoot && this.popupRoot && !this.popupRoot.contains(this.popup.popupWindow.popupContainer))
+			)
 			{
+				var menuItems = [];
+				this.items.forEach(function(item) {
+					if (item.hidden !== true)
+					{
+						menuItems.push(item);
+					}
+				})
+				var mahHeight;
+				if (this.options.maxHeight)
+				{
+					mahHeight = this.options.maxHeight;
+				}
+				else
+				{
+					mahHeight = 196;
+				}
+				menuItems = menuItems.map(function(item) {
+					if (item.delimiter)
+					{
+						return {
+							delimiter: item.delimiter,
+						}
+					}
+					return {
+						html: item.html,
+						text: !item.html ? escapeText(item.name) : undefined,
+						onclick: function() {
+							this.onItemClick(item)
+						}.bind(this),
+						className: item.className,
+					}
+				}, this);
 				this.popup = new BX.PopupMenuWindow({
 					id: "dropdown_" + (+new Date()),
 					bindElement: this.input,
-					items: this.items.map(function(item) {
-						return {
-							text: item.html ? item.html : escapeText(item.name),
-							onclick: function() {
-								this.onItemClick(item)
-							}.bind(this)
-						}
-					}, this),
+					bindOptions: {
+						forceBindPosition: true
+					},
+					targetContainer: this.contentRoot,
+					maxHeight: mahHeight,
+					items: menuItems,
 					events: {
 						onPopupClose: function() {
 							this.input.classList.remove("landing-ui-active");
 							this.layout.classList.remove("landing-ui-active");
 						}.bind(this)
-					}
+					},
+					className: this.options.className,
+					angle: true,
 				});
 
-				this.popupRoot = this.layout.parentElement.parentElement.parentElement;
-				this.popupRoot.appendChild(this.popup.popupWindow.popupContainer);
-				this.popupRoot.style.position = "relative";
+				if (!this.contentRoot)
+				{
+					this.popupRoot = this.layout.parentElement.parentElement.parentElement;
+					this.popupRoot.appendChild(this.popup.popupWindow.popupContainer);
+					this.popupRoot.style.position = "relative";
+				}
 			}
 
 			this.layout.classList.add("landing-ui-active");
@@ -96,30 +153,27 @@
 				this.popup.show();
 			}
 
-			this.popup.layout.menuContainer.style.maxHeight = "calc((36px * 5) + 16px)";
-			this.popup.popupWindow.contentContainer.style.overflowX = "hidden";
-
-			bind(this.popup.popupWindow.popupContainer, "mouseover", this.onMouseOver.bind(this));
-			bind(this.popup.popupWindow.popupContainer, "mouseleave", this.onMouseLeave.bind(this));
-
 			var rect = this.input.getBoundingClientRect();
-			var left = offsetLeft(this.input, this.popupRoot);
-			var top = offsetTop(this.input, this.popupRoot);
-			this.popup.popupWindow.popupContainer.style.top = top + rect.height + "px";
-			this.popup.popupWindow.popupContainer.style.left = left + "px";
+			if (!this.contentRoot)
+			{
+				var left = offsetLeft(this.input, this.popupRoot);
+				var top = offsetTop(this.input, this.popupRoot);
+				this.popup.popupWindow.popupContainer.style.top = top + rect.height + "px";
+				this.popup.popupWindow.popupContainer.style.left = left + "px";
+			}
 			this.popup.popupWindow.popupContainer.style.width = rect.width + "px";
 		},
 
 
 		onItemClick: function(item)
 		{
-			setTextContent(this.input, item.name);
+			setTextContent(this.input, item.name, this.classForTextNode);
 			data(this.input, "value", item.value);
 			this.popup.close();
 			this.onChangeHandler(item.value, this.items, this.postfix, this.property);
 			this.onValueChangeHandler(this);
 			BX.fireEvent(this.input, "input");
-			this.emit('onChange');
+			this.emit("onChange", item);
 		},
 
 		/**
@@ -134,17 +188,27 @@
 				return value;
 			}
 
-			return this.items[0].value;
+			if (BX.Type.isArrayFilled(this.items))
+			{
+				return this.items[0].value;
+			}
 		},
 
-		setValue: function(value)
+		setValue: function(value, preventEvent)
 		{
 			this.items.forEach(function(item) {
 				// noinspection EqualityComparisonWithCoercionJS
 				if (value == item.value)
 				{
-					setTextContent(this.input, item.name);
+					setTextContent(this.input, item.name, this.classForTextNode);
 					data(this.input, "value", item.value);
+
+					if (preventEvent)
+					{
+						setTimeout(() => {
+							this.emit("onInit", item);
+						}, 0);
+					}
 				}
 			}, this);
 		},
@@ -165,48 +229,6 @@
 			if (this.popup)
 			{
 				this.popup.close();
-			}
-		},
-
-		/**
-		 * Handles mouse over event
-		 */
-		onMouseOver: function()
-		{
-			var mouseEvent = "onwheel" in window ? "wheel" : "mousewheel";
-			bind(this.popup.popupWindow.popupContainer, mouseEvent, this.onMouseWheel);
-			bind(this.popup.popupWindow.popupContainer, "touchmove", this.onMouseWheel);
-		},
-
-
-		/**
-		 * Handles mouse leave event
-		 */
-		onMouseLeave: function()
-		{
-			var mouseEvent = "onwheel" in window ? "wheel" : "mousewheel";
-			unbind(this.popup.popupWindow.popupContainer, mouseEvent, this.onMouseWheel);
-			unbind(this.popup.popupWindow.popupContainer, "touchmove", this.onMouseWheel);
-		},
-
-
-		/**
-		 * Handle mouse wheel event
-		 * @param event
-		 */
-		onMouseWheel: function(event)
-		{
-			event.stopPropagation();
-			event.preventDefault();
-
-			if (this.popup)
-			{
-				var delta = BX.Landing.UI.Panel.Content.getDeltaFromEvent(event);
-				var scrollTop = this.popup.popupWindow.contentContainer.scrollTop;
-
-				requestAnimationFrame(function() {
-					this.popup.popupWindow.contentContainer.scrollTop = scrollTop - delta.y;
-				}.bind(this));
 			}
 		}
 	};

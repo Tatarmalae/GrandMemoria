@@ -1,6 +1,7 @@
 <?php
 namespace Bitrix\Landing;
 
+use Bitrix\Landing\Hook\Page;
 use \Bitrix\Landing\Internals\HookDataTable as HookData;
 use \Bitrix\Main\Event;
 use \Bitrix\Main\EventResult;
@@ -32,6 +33,11 @@ class Hook
 	 * Namespace of repoitory of common hooks (relative current).
 	 */
 	const HOOKS_NAMESPACE = '\\Hook\\Page\\';
+
+	/**
+	 * Handler for copy event
+	 */
+	protected const HOOKS_ON_COPY_HANDLER = 'onCopy';
 
 	/**
 	 * Hook codes which contains file ids.
@@ -72,38 +78,38 @@ class Hook
 	 * @param boolean $asIs Return row as is.
 	 * @return array
 	 */
-	public static function getData($id, $type, $asIs = false)
+	public static function getData($id, $type, $asIs = false): array
 	{
 		$data = [];
-		$id = intval($id);
+		$id = (int)$id;
 
 		if (!is_string($type))
 		{
 			return $data;
 		}
 
-		$res = HookData::getList(array(
-			'select' => array(
+		$res = HookData::getList([
+			'select' => [
 				'ID', 'HOOK', 'CODE', 'VALUE'
-			),
-			'filter' => array(
+			],
+			'filter' => [
 				'ENTITY_ID' => $id,
 				'=ENTITY_TYPE' => $type,
 				'=PUBLIC' => self::$editMode ? 'N' : 'Y'
-			),
-			'order' => array(
+			],
+			'order' => [
 				'ID' => 'asc'
-			)
-		));
+			]
+		]);
 		while ($row = $res->fetch())
 		{
 			if (!isset($data[$row['HOOK']]))
 			{
-				$data[$row['HOOK']] = array();
+				$data[$row['HOOK']] = [];
 			}
 			if (mb_strpos($row['VALUE'], 'serialized#') === 0)
 			{
-				$row['VALUE'] = unserialize(mb_substr($row['VALUE'], 11));
+				$row['VALUE'] = unserialize(mb_substr($row['VALUE'], 11), ['allowed_classes' => false]);
 			}
 			$data[$row['HOOK']][$row['CODE']] = $asIs ? $row : $row['VALUE'];
 		}
@@ -116,7 +122,7 @@ class Hook
 	 * @param int $id Entity id.
 	 * @param string $type Entity type.
 	 * @param array $data Data array (optional).
-	 * @return \Bitrix\Landing\Hook\Page[]
+	 * @return Page[]
 	 */
 	protected static function getList($id, $type, array $data = array())
 	{
@@ -217,7 +223,7 @@ class Hook
 	/**
 	 * Get hooks for site.
 	 * @param int $id Site id.
-	 * @return \Bitrix\Landing\Hook\Page[]
+	 * @return Page[]
 	 */
 	public static function getForSite($id)
 	{
@@ -241,7 +247,7 @@ class Hook
 	/**
 	 * Get hooks for landing.
 	 * @param int $id Landing id.
-	 * @return \Bitrix\Landing\Hook\Page[]
+	 * @return Page[]
 	 */
 	public static function getForLanding($id)
 	{
@@ -282,10 +288,33 @@ class Hook
 	 */
 	protected static function copy($from, $to, $type, $publication = false)
 	{
-		$from = intval($from);
-		$to = intval($to);
+
+		$from = (int)$from;
+		$to = (int)$to;
 		$data = self::getData($from, $type);
 		$existData = [];
+
+		$classDir = self::HOOKS_PAGE_DIR;
+		$classNamespace = self::HOOKS_NAMESPACE;
+		$excludedHooks = \Bitrix\Landing\Site\Type::getExcludedHooks();
+
+		// first read all hooks in base dir
+		foreach (self::getClassesFromDir($classDir) as $class)
+		{
+			if (in_array($class, $excludedHooks, true))
+			{
+				continue;
+			}
+			$classFull = __NAMESPACE__  . $classNamespace . $class;
+			if (method_exists($classFull, self::HOOKS_ON_COPY_HANDLER))
+			{
+				$handler = self::HOOKS_ON_COPY_HANDLER;
+				if ($preparedData = $classFull::$handler($data[$class], $from, $type, $publication))
+				{
+					$data[$class] = $preparedData;
+				}
+			}
+		}
 
 		// collect exist data
 		if ($data)
@@ -399,6 +428,124 @@ class Hook
 	public static function publicationLanding($lid)
 	{
 		self::copy($lid, $lid, self::ENTITY_TYPE_LANDING, true);
+	}
+
+	/**
+	 * In disable autobulication option we must skip hooks, then required page publication.
+	 * @param $siteId
+	 * @return void
+	 */
+	public static function publicationSiteWithSkipNeededPublication($siteId): void
+	{
+		self::publicationWithSkipNeededPublication($siteId, self::ENTITY_TYPE_SITE);
+	}
+
+	/**
+	 * In disable autobulication option we must skip hooks, then required page publication.
+	 * @param $landingId
+	 * @return void
+	 */
+	public static function publicationLandingWithSkipNeededPublication($landingId): void
+	{
+		self::publicationWithSkipNeededPublication($landingId, self::ENTITY_TYPE_LANDING);
+	}
+
+	protected static function publicationWithSkipNeededPublication($id, $type): void
+	{
+		$editModeBack = self::$editMode;
+		self::$editMode = false;
+		$publicData = self::getData($id, $type, true);
+		self::$editMode = $editModeBack;
+
+		if ($type === self::ENTITY_TYPE_SITE)
+		{
+			self::publicationSite($id);
+		}
+		if ($type === self::ENTITY_TYPE_LANDING)
+		{
+			self::publicationLanding($id);
+		}
+		$data = self::getData($id, $type, true);
+
+		// return previously public values
+		$needClearCache = false;
+		foreach (self::getList($id, $type) as $hook)
+		{
+			if ($hook->isNeedPublication())
+			{
+				$fieldsToDelete = [];
+				if (isset($publicData[$hook->getCode()]))
+				{
+					foreach ($data[$hook->getCode()] as $fieldCode => $field)
+					{
+						if (!isset($publicData[$hook->getCode()][$fieldCode]))
+						{
+							$fieldsToDelete[$fieldCode] = $field;
+						}
+						elseif ($publicData[$hook->getCode()][$fieldCode]['VALUE'] !== $field['VALUE'])
+						{
+							$needClearCache = true;
+							HookData::update($field['ID'],
+								[
+									'VALUE' => $field['VALUE'],
+								]
+							);
+						}
+					}
+				}
+				else
+				{
+					$fieldsToDelete = $data[$hook->getCode()];
+				}
+
+				// del if not exists in public
+				if (!empty($fieldsToDelete))
+				{
+					$needClearCache = true;
+					foreach ($fieldsToDelete as $fieldCode => $field)
+					{
+						$res = HookData::getList([
+							'select' => ['ID'],
+							'filter' => [
+								'ENTITY_ID' => $id,
+								'=ENTITY_TYPE' => $type,
+								'=HOOK' => $hook->getCode(),
+								'=CODE' => $fieldCode,
+								'=PUBLIC' => 'Y'
+							]
+						]);
+						if ($row = $res->fetch())
+						{
+							HookData::delete($row['ID']);
+						}
+					}
+				}
+			}
+		}
+
+		// drop public cache
+		if ($needClearCache)
+		{
+			if ($type === self::ENTITY_TYPE_SITE)
+			{
+				$landings = Landing::getList([
+					'select' => ['ID'],
+					'filter' => [
+						'SITE_ID' => $id,
+						'=PUBLIC' => 'Y',
+						'=DELETED' => 'N',
+					],
+				]);
+				while ($landing = $landings->fetch())
+				{
+					Landing::update($landing['ID'], ['PUBLIC' => 'N']);
+				}
+			}
+			if ($type === self::ENTITY_TYPE_LANDING)
+			{
+				Landing::update($id, ['PUBLIC' => 'N']);
+			}
+		}
 	}
 
 	/**
@@ -589,9 +736,8 @@ class Hook
 	 * @param array $data Data array.
 	 * @return void
 	 */
-	public static function saveForSite($id, array $data)
+	public static function saveForSite(int $id, array $data): void
 	{
-		$id = intval($id);
 		$check = Site::getList([
 			'select' => [
 				'ID'
@@ -602,7 +748,14 @@ class Hook
 		])->fetch();
 		if ($check)
 		{
+			$editModeBack = self::$editMode;
+			self::$editMode = true;
 			self::saveData($id, self::ENTITY_TYPE_SITE, $data);
+			if (Manager::getOption('public_hook_on_save') === 'Y')
+			{
+				self::publicationSiteWithSkipNeededPublication($id);
+			}
+			self::$editMode = $editModeBack;
 		}
 	}
 
@@ -612,9 +765,8 @@ class Hook
 	 * @param array $data Data array.
 	 * @return void
 	 */
-	public static function saveForLanding($id, array $data)
+	public static function saveForLanding(int $id, array $data): void
 	{
-		$id = intval($id);
 		$check = Landing::getList([
 			'select' => [
 				'ID'
@@ -625,8 +777,15 @@ class Hook
 		])->fetch();
 		if ($check)
 		{
+			$editModeBack = self::$editMode;
+			self::$editMode = true;
 			self::saveData($id, self::ENTITY_TYPE_LANDING, $data);
 			self::indexContent($id, self::ENTITY_TYPE_LANDING);
+			if (Manager::getOption('public_hook_on_save') === 'Y')
+			{
+				self::publicationLandingWithSkipNeededPublication($id);
+			}
+			self::$editMode = $editModeBack;
 		}
 	}
 

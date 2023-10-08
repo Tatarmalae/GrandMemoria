@@ -74,17 +74,19 @@ $this->setFrameMode(true);
 
 <?php $this->SetViewTarget('after_parent_sect'); ?>
 
-<?php if (!empty($arResult[1]['ELEMENTS'])): ?>
+<?php if (!empty($arResult[1]['ELEMENTS'])): \Dev\Utilities::DH($arResult[1]['ELEMENTS']['PREVIEW_TEXT']);?>
     <section class="payment">
         <div class="content">
             <div class="payment-wrap items">
                 <div class="payment-column item">
                     <h2><?= $arResult[1]['NAME'] ?></h2>
-                    <div class="payment-contacts">
-                        <p>
-                            <?= current($arResult[1]['ELEMENTS']['PREVIEW_TEXT']) ?>
-                        </p>
-                    </div>
+                    <?php if (!empty($arResult[1]['ELEMENTS']['PREVIEW_TEXT'])): ?>
+                        <div class="payment-contacts">
+                            <p>
+                                <?= current($arResult[1]['ELEMENTS']['PREVIEW_TEXT']) ?>
+                            </p>
+                        </div>
+                    <?php endif ?>
                     <div class="payment-items">
                         <?php foreach ($arResult[1]['ELEMENTS'] as $element): ?>
                             <div class="payment-item">

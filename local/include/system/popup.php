@@ -986,36 +986,15 @@
     </div>
 </div>
 <div class="modal fade" id="modalGallery" tabindex="-1" role="dialog" aria-labelledby="modalGalleryLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <button class="modal-close" type="button" data-dismiss="modal" aria-label="Close">
-                <svg class="icon__close-modal" width="48" height="48">
-                    <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#close-modal"></use>
-                </svg>
-            </button>
-            <div class="modal-body">
-                <a class="logo-link" href="<?= SITE_DIR ?>">
-                    <div class="logo">
-                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
-                    </div>
-                </a>
-                <div class="modal-scroll">
-                    <div class="modal-scroll__inner">
-                        <div class="modal-gallery">
-                            <div class="modal-gallery__img">
-                                <div class="gallery-item">
-                                    <div class="gallery-item__img img img-16by9">
-                                        <div class="img__inner object-fit">
-                                            <img class="lazy" data-src="<?= SITE_STYLE_PATH ?>/img/content/gallery/5.jpg" alt=""/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="modal-dialog" role="document"></div>
+</div>
+<div class="modal fade" id="modalGalleryAbout" tabindex="-1" role="dialog" aria-labelledby="modalGalleryAboutLabel">
+    <div class="modal-dialog" role="document"></div>
+</div>
+<div class="modal fade" id="modalReviewsItem" tabindex="-1" role="dialog" aria-labelledby="modalReviewsItemLabel">
+    <div class="modal-dialog" role="document"></div>
+</div>
+<div class="modal fade" id="modalHistoryItem" tabindex="-1" role="dialog" aria-labelledby="modalHistoryItemLabel">
+    <div class="modal-dialog" role="document"></div>
 </div>
 <div class="overlay"></div>

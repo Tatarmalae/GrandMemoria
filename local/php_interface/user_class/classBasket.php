@@ -54,7 +54,10 @@ class Basket
      */
     public static function getBasket(): array
     {
-        if (count($_SESSION[self::$sessionName]) > 0) {
+        if (
+            is_countable($_SESSION[self::$sessionName])
+            && count($_SESSION[self::$sessionName]) > 0
+        ) {
             return $_SESSION[self::$sessionName];
         } else {
             return [];
@@ -67,6 +70,9 @@ class Basket
      */
     public static function getCount(): int
     {
+        if (!is_countable($_SESSION[self::$sessionName])) {
+            return 0;
+        }
         return count($_SESSION[self::$sessionName]) ?? 0;
     }
 

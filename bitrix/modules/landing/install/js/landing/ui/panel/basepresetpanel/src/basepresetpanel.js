@@ -8,6 +8,7 @@ import {PageObject} from 'landing.pageobject';
 import {SidebarButton} from 'landing.ui.button.sidebarbutton';
 import PresetCategory from './preset-category/preset-category';
 import Preset from './preset/preset';
+import {Loader} from 'main.loader';
 import ContentWrapper from './content-wrapper/content-wrapper';
 
 import './css/style.css';
@@ -73,12 +74,16 @@ export class BasePresetPanel extends Content
 	getSaveButton(): BaseButton
 	{
 		return this.cache.remember('saveButton', () => {
-			return new BaseButton('save_settings', {
+			const button = new BaseButton('save_settings', {
 				text: Loc.getMessage('BLOCK_SAVE'),
 				onClick: this.onSaveClick,
-				className: 'landing-ui-button-content-save',
+				className: 'ui-btn ui-btn-success',
 				attrs: {title: Loc.getMessage('LANDING_TITLE_OF_SLIDER_SAVE')},
 			});
+
+			Dom.removeClass(button.layout, 'landing-ui-button');
+
+			return button;
 		});
 	}
 
@@ -114,17 +119,36 @@ export class BasePresetPanel extends Content
 	// eslint-disable-next-line
 	onSidebarButtonClick(event: BaseEvent)
 	{
-		this.sidebarButtons.getActive().deactivate();
+		const activeButton = this.sidebarButtons.getActive();
+		if (activeButton)
+		{
+			activeButton.deactivate();
+		}
+
 		event.getTarget().activate();
 
-		this.clearContent();
+		Dom.addClass(this.content, 'landing-ui-panel-base-preset-fade');
+		this.showContentLoader();
 
-		const content = this.getContent(event.getTarget().id);
-		if (content)
-		{
-			content.subscribe('onChange', this.onChange);
-			Dom.append(content.getLayout(), this.content);
-		}
+		void this.getContent(event.getTarget().id)
+			.then((content) => {
+				if (content)
+				{
+					setTimeout(() => {
+						Dom.removeClass(this.content, 'landing-ui-panel-base-preset-fade');
+						this.clearContent();
+						this.hideContentLoader();
+						content.subscribe('onChange', this.onChange);
+						Dom.append(content.getLayout(), this.content);
+					}, 300);
+				}
+				else
+				{
+					Dom.removeClass(this.content, 'landing-ui-panel-base-preset-fade');
+					this.clearContent();
+					this.hideContentLoader();
+				}
+			});
 	}
 
 	onChange(event: BaseEvent)
@@ -133,7 +157,7 @@ export class BasePresetPanel extends Content
 	}
 
 	// eslint-disable-next-line
-	getContent(id: string): ?ContentWrapper
+	getContent(id: string): Promise<ContentWrapper>
 	{
 		throw new Error('Must be implemented in child class');
 	}
@@ -280,6 +304,10 @@ export class BasePresetPanel extends Content
 			category.setPresets(presets);
 
 			Dom.append(category.getLayout(), this.content);
+
+			this.getPresets().forEach((preset) => {
+				preset.getTextCrop().init();
+			});
 		});
 	}
 
@@ -340,6 +368,27 @@ export class BasePresetPanel extends Content
 		}
 	}
 
+	getContentLoader(): Loader
+	{
+		return this.cache.remember('contentLoader', () => {
+			return new Loader({
+				target: this.body,
+				offset: {
+					left: '130px',
+				},
+			});
+		});
+	}
+
+	showContentLoader()
+	{
+		void this.getContentLoader().show();
+	}
+
+	hideContentLoader()
+	{
+		void this.getContentLoader().hide();
+	}
 }
 
 export {

@@ -75,6 +75,8 @@
 	        state: 'error'
 	      });
 	      delete currentImage.lazyloadCallback;
+	    } else {
+	      currentImage.src = BLANK_IMAGE;
 	    }
 	  };
 
@@ -92,6 +94,10 @@
 	  lazyloadObserver = new IntersectionObserver(function (entries, observer) {
 	    entries.forEach(function (entry) {
 	      var currentImage = entry.target;
+
+	      if (currentImage.classList.contains(ERROR)) {
+	        return true;
+	      }
 
 	      if (entry.isIntersecting) {
 	        if (currentImage.classList.contains(HIDDEN)) {
@@ -124,9 +130,9 @@
 	  });
 	}
 
-	ui_vue.Vue.directive('bx-lazyload', {
+	ui_vue.BitrixVue.directive('bx-lazyload', {
 	  bind: function bind(element, bindings) {
-	    if (babelHelpers.typeof(bindings.value) === 'object' && typeof bindings.value.callback === 'function') {
+	    if (babelHelpers["typeof"](bindings.value) === 'object' && typeof bindings.value.callback === 'function') {
 	      element.lazyloadCallback = bindings.value.callback;
 	    }
 

@@ -1,7 +1,11 @@
+import 'ui.design-tokens';
+import 'ui.fonts.opensans';
+
 import {EventEmitter} from 'main.core.events';
 import {Cache, Dom, Tag, Text, Type} from 'main.core';
 import type {Options} from 'crm.form';
 import {Loc} from 'landing.loc';
+import {TextCrop} from 'ui.textcrop';
 
 import './css/preset.css';
 
@@ -36,23 +40,26 @@ export default class Preset extends EventEmitter
 		this.setEventNamespace('BX.Landing.UI.Panel.BasePresetPanel.Preset');
 
 		this.options = {...defaultOptions, ...options};
-		if (Loc.getMessage('LANGUAGE_ID') !== 'ru')
-		{
-			this.options.items = this.options.items.filter((item) => {
-				return item !== 'vk';
-			});
-		}
-
 		this.cache = new Cache.MemoryCache();
+	}
+
+	getTextCrop(): TextCrop
+	{
+		return this.cache.remember('textCrop', () => {
+			return new TextCrop({
+				rows: 2,
+				target: this.getDescriptionNode(),
+			});
+		});
 	}
 
 	getIconNode(): HTMLDivElement
 	{
 		return this.cache.remember('iconNode', () => {
 			return Tag.render`
-				<div 
-					class="landing-ui-panel-preset-icon" 
-					style="background-image: url(${this.options.icon})"
+				<div
+					class="landing-ui-panel-preset-icon"
+					style="background-image: url(${this.options.icon}?v2)"
 				></div>
 			`;
 		});
@@ -62,8 +69,8 @@ export default class Preset extends EventEmitter
 	{
 		return this.cache.remember('titleNode', () => {
 			return Tag.render`
-				<div 
-					class="landing-ui-panel-preset-text-title" 
+				<div
+					class="landing-ui-panel-preset-text-title"
 					title="${Text.encode(this.options.title)}"
 				>${this.options.title}</div>
 			`;
@@ -74,7 +81,7 @@ export default class Preset extends EventEmitter
 	{
 		return this.cache.remember('descriptionNode', () => {
 			return Tag.render`
-				<div 
+				<div
 					class="landing-ui-panel-preset-text-description"
 					title="${Text.encode(this.options.description)}"
 				>${this.options.description}</div>
@@ -90,6 +97,11 @@ export default class Preset extends EventEmitter
 	deactivate()
 	{
 		Dom.removeClass(this.getLayout(), 'landing-ui-panel-preset-active');
+	}
+
+	isActive(): boolean
+	{
+		return Dom.hasClass(this.getLayout(), 'landing-ui-panel-preset-active');
 	}
 
 	getSoonLabel(): HTMLDivElement
@@ -108,7 +120,11 @@ export default class Preset extends EventEmitter
 		return this.cache.remember('layout', () => {
 			const onLayoutClick = (event: MouseEvent) => {
 				event.preventDefault();
-				this.activate();
+				if (this.options.openable)
+				{
+					this.activate();
+				}
+
 				this.emit('onClick');
 			};
 
@@ -117,7 +133,7 @@ export default class Preset extends EventEmitter
 
 			return Tag.render`
 				<div class="landing-ui-panel-preset${additionalClass}${disabledClass}" onclick="${onLayoutClick}">
-					${Type.isStringFilled(this.options.icon) && this.getIconNode()}
+					${Type.isStringFilled(this.options.icon) ? this.getIconNode() : ''}
 					<div class="landing-ui-panel-preset-text">
 						${Type.isStringFilled(this.options.title) ? this.getTitleNode() : ''}
 						${Type.isStringFilled(this.options.description) ? this.getDescriptionNode() : ''}

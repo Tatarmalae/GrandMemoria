@@ -20,6 +20,8 @@ use Bitrix\Main\UI\Extension;
 
 Extension::load(
 	[
+		'ui.design-tokens',
+		'ui.fonts.opensans',
 		'ui.buttons',
 		'ui.alerts',
 		'ui.viewer',
@@ -43,6 +45,7 @@ $arParamsApp = [
 	'CODE' => $arResult['APP']['CODE'],
 	'VERSION' => $arResult['APP']['VER'],
 	'IFRAME' => $arParams['IFRAME'],
+	'SILENT_INSTALL' => $arResult['APP']['SILENT_INSTALL'],
 	'REDIRECT_PRIORITY' => $arResult['REDIRECT_PRIORITY'],
 	'FROM' => $arResult['ANALYTIC_FROM'],
 ];
@@ -72,14 +75,17 @@ if ($arResult['CAN_INSTALL'])
 			// buttons for installed apps
 			if ($arResult['APP']['BY_SUBSCRIPTION'] === 'Y')
 			{
-				$buttonList[] = [
-					'TAGS' => [
-						'href' => $arResult['SUBSCRIPTION_BUY_URL'],
-						'target' => '_blank',
-						'class' => 'ui-btn ui-btn-md ui-btn-primary ui-btn-round',
-					],
-					'TEXT' => GetMessage('MARKETPLACE_APP_PROLONG'),
-				];
+				if ($arResult['APP']['APP_STATUS']['PAYMENT_NOTIFY'] === 'Y')
+				{
+					$buttonList[] = [
+						'TAGS' => [
+							'href' => $arResult['SUBSCRIPTION_BUY_URL'],
+							'target' => '_blank',
+							'class' => 'ui-btn ui-btn-md ui-btn-primary ui-btn-round',
+						],
+						'TEXT' => GetMessage('MARKETPLACE_APP_PROLONG'),
+					];
+				}
 			}
 			elseif (
 				$arResult['APP']['FREE'] === 'N'
@@ -134,23 +140,6 @@ if ($arResult['CAN_INSTALL'])
 						'class' => 'ui-btn ui-btn-md ui-btn-primary ui-btn-round',
 					],
 					'TEXT' => GetMessage('MARKETPLACE_APP_UPDATE_BUTTON')
-				];
-			}
-
-			//delete
-			if ($arResult['ADMIN'])
-			{
-				$buttonList[] = [
-					'TAGS' => [
-						'href' => 'javascript:void(0)',
-						'onclick' => 'BX.rest.Marketplace.uninstallConfirm(\''
-									. CUtil::JSEscape($arResult['APP']['CODE'])
-									. '\',\''
-									. CUtil::JSEscape($arResult['ANALYTIC_FROM'])
-									. '\');',
-						'class' => 'ui-btn ui-btn-md ui-btn-light-border ui-btn-round',
-					],
-					'TEXT' => GetMessage('MARKETPLACE_APP_DELETE')
 				];
 			}
 		}
@@ -317,6 +306,23 @@ if ($arResult['CAN_INSTALL'])
 			];
 		}
 	}
+}
+
+//delete
+if ($arResult['APP']['ACTIVE'] === 'Y' && $arResult['ADMIN'])
+{
+	$buttonList[] = [
+		'TAGS' => [
+			'href' => 'javascript:void(0)',
+			'onclick' => 'BX.rest.Marketplace.uninstallConfirm(\''
+				. CUtil::JSEscape($arResult['APP']['CODE'])
+				. '\',\''
+				. CUtil::JSEscape($arResult['ANALYTIC_FROM'])
+				. '\');',
+			'class' => 'ui-btn ui-btn-md ui-btn-light-border ui-btn-round',
+		],
+		'TEXT' => GetMessage('MARKETPLACE_APP_DELETE'),
+	];
 }
 ?>
 <div class="mp-detail" id="detail_cont">

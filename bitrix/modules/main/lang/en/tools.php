@@ -204,7 +204,7 @@ $MESS["COUNTRY_164"] = "Korea (North)";
 $MESS["COUNTRY_165"] = "Lebanon";
 $MESS["COUNTRY_166"] = "Lesotho";
 $MESS["COUNTRY_167"] = "Libya";
-$MESS["COUNTRY_168"] = "Malvides";
+$MESS["COUNTRY_168"] = "Maldives";
 $MESS["COUNTRY_169"] = "Marshall Islands";
 $MESS["COUNTRY_170"] = "Niger";
 $MESS["COUNTRY_171"] = "Oman";
@@ -276,7 +276,6 @@ $MESS["COUNTRY_236"] = "Montenegro";
 $MESS["MAIN_MAILTO"] = "Send message";
 $MESS["MAIN_F_TIMESTAMP"] = "Modified";
 $MESS["AJAX_WAIT"] = "Loading...";
-$MESS["HTTP_CLIENT_ERROR_CONNECT"] = "Error connecting to %HOST%:%PORT%. Error code: \"%ERRNO%\", error description: \"%ERRSTR%\"";
 $MESS["TOOLS_TRIAL_EXP"] = "Trial period of the product has expired. You can purchase the full version of the product on the site <a href=\"https://www.bitrix24.com/prices/self-hosted.php\">www.bitrix24.com</a>.";
 $MESS["expire_mess1"] = "<font class=\"tablebodytext\"><font color=\"#FF0000\">
 		Trial period of the product has expired.
@@ -288,8 +287,6 @@ $MESS["expire_mess2"] = "Your free 30-day trial period is over. You are welcome 
 If you have a commercial license key, please use it to <a href=\"/bitrix/coupon_activation.php?lang=en\" target=\"_blank\">activate and unblock</a> your product copy.";
 $MESS["main_tools_menu_left"] = "Section menu";
 $MESS["main_tools_menu_top"] = "Main menu";
-$MESS["ABC_LOWER"] = "q";
-$MESS["ABC_UPPER"] = "Q";
 $MESS["MONTH_1"] = "January";
 $MESS["MONTH_2"] = "February";
 $MESS["MONTH_3"] = "March";

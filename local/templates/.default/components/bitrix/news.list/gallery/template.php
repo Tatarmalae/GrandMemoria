@@ -47,15 +47,15 @@ $this->setFrameMode(true);
         $this->AddEditAction($arItem['ID'], $arItem['EDIT_LINK'], CIBlock::GetArrayByID($arItem["IBLOCK_ID"], "ELEMENT_EDIT"));
         $this->AddDeleteAction($arItem['ID'], $arItem['DELETE_LINK'], CIBlock::GetArrayByID($arItem["IBLOCK_ID"], "ELEMENT_DELETE"), ["CONFIRM" => GetMessage('CT_BNL_ELEMENT_DELETE_CONFIRM')]);
         ?>
-        <a id="<?= $this->GetEditAreaId($arItem['ID']); ?>" class="gallery-item item" href="#" data-toggle="modal" data-target="#modalGallery_<?= $key ?>">
+        <a id="<?= $this->GetEditAreaId($arItem['ID']); ?>" class="gallery-item item modal-ajax" href="#" data-toggle="modal" data-target="#modalGallery" data-key="<?= $key ?>">
             <div class="gallery-item__img img img-1by1">
                 <div class="img__inner object-fit">
                     <img class="lazy" src="" data-src="<?= CFile::GetPath($arItem['PREVIEW_PICTURE']['ID']) ?>" alt="<?= $arItem['NAME'] ?>">
                 </div>
             </div>
         </a>
-        <div class="modal fade" id="modalGallery_<?= $key ?>" tabindex="-1" role="dialog" aria-labelledby="modalGalleryLabel">
-            <div class="modal-dialog" role="document">
+        <div style="display:none; opacity; 0">
+            <div class="modal-dialog_<?= $key ?>" role="document">
                 <div class="modal-content">
                     <button class="modal-close" type="button" data-dismiss="modal" aria-label="Close">
                         <svg class="icon__close-modal" width="48" height="48">
@@ -82,7 +82,7 @@ $this->setFrameMode(true);
                                                 <span class="h4"><?= $arItem['NAME'] ?></span>
                                                 <?php if (!empty($arItem['PROPERTIES']['PRODUCT']['VALUE'])): ?>
                                                     <div class="more-btn">
-                                                        <a class="btn btn-blue big" href="<?= $arItem['PROPERTIES']['PRODUCT']['VALUE']  ?>">
+                                                        <a class="btn btn-blue big" href="<?= $arItem['PROPERTIES']['PRODUCT']['VALUE'] ?>">
                                                             <span class="btn__text">
                                                                 <span data-text="Перейти к товару">Перейти к товару</span>
                                                             </span>

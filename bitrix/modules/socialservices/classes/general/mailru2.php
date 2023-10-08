@@ -71,17 +71,16 @@ class CSocServMailRu2 extends CSocServAuth
 	{
 		global $APPLICATION;
 
-		CSocServAuthManager::SetUniqueKey();
 		if (IsModuleInstalled('bitrix24') && defined('BX24_HOST_NAME'))
 		{
 			$redirect_uri = static::CONTROLLER_URL . "/redirect.php";
-			$state = $this->getEntityOAuth()->GetRedirectURI() . "?check_key=" . $_SESSION["UNIQUE_KEY"] . "&state=";
+			$state = $this->getEntityOAuth()->GetRedirectURI() . "?check_key=" . \CSocServAuthManager::getUniqueKey() . "&state=";
 			$backurl = $APPLICATION->GetCurPageParam('', array("logout", "auth_service_error", "auth_service_id", "backurl"));
 			$state .= urlencode("state=" . urlencode("backurl=" . urlencode($backurl) . (isset($arParams['BACKURL']) ? '&redirect_url=' . urlencode($arParams['BACKURL']) : '')));
 		}
 		else
 		{
-			$state = 'site_id=' . SITE_ID . '&backurl=' . urlencode($APPLICATION->GetCurPageParam('check_key=' . $_SESSION["UNIQUE_KEY"], array("logout", "auth_service_error", "auth_service_id", "backurl"))) . (isset($arParams['BACKURL']) ? '&redirect_url=' . urlencode($arParams['BACKURL']) : '');
+			$state = 'site_id=' . SITE_ID . '&backurl=' . urlencode($APPLICATION->GetCurPageParam('check_key=' . \CSocServAuthManager::getUniqueKey(), array("logout", "auth_service_error", "auth_service_id", "backurl"))) . (isset($arParams['BACKURL']) ? '&redirect_url=' . urlencode($arParams['BACKURL']) : '');
 			$redirect_uri = $this->getEntityOAuth()->GetRedirectURI();
 		}
 
@@ -190,7 +189,7 @@ class CSocServMailRu2 extends CSocServAuth
 		$url = ($APPLICATION->GetCurDir() == "/login/") ? "" : $APPLICATION->GetCurDir();
 		$aRemove = array("logout", "auth_service_error", "auth_service_id", "code", "error_reason", "error", "error_description", "check_key", "current_fieldset");
 
-		if (isset($_REQUEST["state"]))
+		if (isset($_REQUEST["state"]) && $bSuccess)
 		{
 			$arState = array();
 			parse_str($_REQUEST["state"], $arState);
@@ -243,7 +242,7 @@ class CSocServMailRu2 extends CSocServAuth
 			window.close();
 		</script>
 		<?
-		die();
+		CMain::FinalActions();
 	}
 
 	public function setUser($userId)
@@ -290,12 +289,13 @@ class CMailRu2Interface extends CSocServOAuthTransport
 
 	public function GetAuthUrl($redirect_uri, $state = '')
 	{
-		return self::AUTH_URL .
-			"?client_id=" . $this->appID .
-			"&redirect_uri=" . urlencode($redirect_uri) .
-			"&scope=" . $this->getScopeEncode() .
-			"&response_type=" . "code" .
-			($state <> '' ? '&state=' . urlencode($state) : '');
+		return self::AUTH_URL
+			."?client_id=".$this->appID
+			."&redirect_uri=".urlencode($redirect_uri)
+			."&scope=".$this->getScopeEncode()
+			."&response_type="."code"
+			.($state <> '' ? '&state='.urlencode($state) : '')
+			.'&prompt_force=1';
 	}
 
 	public function getResult()

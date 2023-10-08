@@ -55,5 +55,11 @@
 }
 
 .landing-filter-action-link {
-	margin-left: 12px;
+	margin-right: 12px;
+}
+
+#landing-create-element, #landing-recycle-bin {
+	font-size: 14px;
+	font-weight: 600;
+	text-transform: none;
 }

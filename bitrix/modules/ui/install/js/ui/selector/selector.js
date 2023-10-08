@@ -348,6 +348,11 @@ BX.UI.Selector.prototype.openDialogPromiseRejected = function(reason)
 
 BX.UI.Selector.prototype.openContainer = function()
 {
+	if(this.popups.container)
+	{
+		this.popups.container.destroy();
+	}
+
 	this.popups.container = new BX.PopupWindow({
 		id: 'bx-selector-dialog-' + this.id + '-container',
 		bindElement: this.getPopupBind(),
@@ -1854,7 +1859,7 @@ BX.UI.Selector.prototype.drawTreeLeafItem = function(params)
 			}),
 			BX.create('DIV', {
 				attrs: {
-					style: (leafItem.avatar ? "background:url('" + leafItem.avatar + "') no-repeat center center; background-size: cover;" : "")
+					style: (leafItem.avatar ? "background:url('" + encodeURI(leafItem.avatar) + "') no-repeat center center; background-size: cover;" : "")
 				},
 				props: {
 					className: this.getRenderInstance().class.treeLeafAvatar
@@ -1898,10 +1903,9 @@ BX.UI.Selector.prototype.openTreeItem = function(params)
 
 BX.UI.Selector.prototype.getTreeItemRelation = function(params)
 {
-	var
-		categoryId = params.categoryId; // departmentId
+	var categoryId = params.categoryId; // departmentId
 
-	if (typeof this.treeItemLoaded[categoryId] != 'undefined')
+	if (!BX.type.isUndefined(this.treeItemLoaded[categoryId]))
 	{
 		return false;
 	}
@@ -1909,6 +1913,7 @@ BX.UI.Selector.prototype.getTreeItemRelation = function(params)
 	params.callback = this.getTreeItemRelationCallback.bind(this);
 	params.entityType = params.entityType.toUpperCase();
 	params.selectorId = this.id;
+	params.allowSearchSelf = (BX.type.isNotEmptyObject(this.entities['USERS']) && this.entities['USERS'].options.allowSearchSelf);
 
 	BX.onCustomEvent(this, 'BX.UI.SelectorManager:getTreeItemRelation', [ params ]);
 };
@@ -2081,7 +2086,7 @@ BX.UI.Selector.prototype.drawItem = function(params)
 			children: [
 				BX.create('IMG', {
 					attrs: {
-						src: item.avatar,
+						src: encodeURI(item.avatar),
 						'bx-lm-item-id': item.id,
 						'bx-lm-item-type': entityType.toLowerCase()
 					},

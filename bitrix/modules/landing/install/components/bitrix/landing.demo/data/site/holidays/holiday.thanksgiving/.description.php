@@ -4,8 +4,6 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 	die();
 }
 
-$buttons = \Bitrix\Landing\Hook\Page\B24button::getButtons();
-$buttons = array_keys($buttons);
 
 return array(
 	//	'code' => 'holiday.thanksgiving',
@@ -24,13 +22,12 @@ Send your Thanksgiving wishes with special Bitrix24 Thanksgiving Template. Your 
 	)),
 	'fields' => array(
 		'ADDITIONAL_FIELDS' => array(
-			'B24BUTTON_CODE' => $buttons[0],
 			'VIEW_USE' => 'N',
 			'VIEW_TYPE' => 'no',
 			'UP_SHOW' => 'Y',
 			'THEME_CODE' => 'real-estate',
-			'THEMEFONTS_CODE' => 'g-font-montserrat',
-			'THEMEFONTS_CODE_H' => 'g-font-montserrat',
+			'THEMEFONTS_CODE' => 'Montserrat',
+			'THEMEFONTS_CODE_H' => 'Montserrat',
 			'THEMEFONTS_SIZE' => '1',
 			'THEMEFONTS_USE' => 'Y',
 			'SETTINGS_HIDE_NOT_AVAILABLE' => 'L',

@@ -11,7 +11,7 @@ if (!$USER->CanDoOperation('fileman_view_all_settings'))
 
 function isValidLang($lang)
 {
-	$rsLang = CLanguage::GetList($by="sort", $order="desc");
+	$rsLang = CLanguage::GetList("sort", "desc");
 	$is_valid_lang = false;
 	while ($arLang = $rsLang->Fetch())
 	{
@@ -27,7 +27,7 @@ function isValidLang($lang)
 if ($REQUEST_METHOD=="GET" && $USER->CanDoOperation('fileman_edit_all_settings') && $RestoreDefaults <> '' && check_bitrix_sessid())
 {
 	COption::RemoveOption("fileman");
-	$z = CGroup::GetList($v1="id",$v2="asc", array("ACTIVE" => "Y", "ADMIN" => "N"));
+	$z = CGroup::GetList("id", "asc", array("ACTIVE" => "Y", "ADMIN" => "N"));
 	while($zr = $z->Fetch())
 		$APPLICATION->DelGroupRight($module_id, array($zr["ID"]));
 }
@@ -304,7 +304,7 @@ if($REQUEST_METHOD == "POST" && $Update <> '' && $USER->CanDoOperation('fileman_
 	}
 	$addError = false;
 
-	$siteList_ID = unserialize($mSiteList);
+	$siteList_ID = unserialize($mSiteList, ['allowed_classes' => false]);
 
 	if(isset($dif_settings))
 	{
@@ -465,7 +465,7 @@ if($USER->isAdmin())
 	$aTabs[] = $rightsTab;
 }
 	$siteList = array();
-	$rsSites = CSite::GetList($by="sort", $order="asc", Array());
+	$rsSites = CSite::GetList();
 	$i = 0;
 	while($arRes = $rsSites->Fetch())
 	{
@@ -532,17 +532,11 @@ if($USER->isAdmin())
 
 	<select name="default_edit">
 		<option value="text"><?= GetMessage('FILEMAN_OPTION_EDITOR_TEXT')?></option>
-		<option value="php"<?if(COption::GetOptionString($module_id, "default_edit", "text")=="php")echo " selected"?>><?= GetMessage('FILEMAN_OPTION_EDITOR_PHP')?></option>
-		<option value="html"<?if(COption::GetOptionString($module_id, "default_edit", "text")=="html")echo " selected"?>><?= GetMessage('FILEMAN_OPTION_EDITOR_HTML')?></option>
+		<option value="php"<?if(COption::GetOptionString($module_id, "default_edit")=="php")echo " selected"?>><?= GetMessage('FILEMAN_OPTION_EDITOR_PHP')?></option>
+		<option value="html"<?if(COption::GetOptionString($module_id, "default_edit")=="html")echo " selected"?>><?= GetMessage('FILEMAN_OPTION_EDITOR_HTML')?></option>
 	</select>
 	</td>
 </tr>
-	<? if (COption::GetOptionString('main', 'distributive6', 'N') != 'Y'):?>
-	<tr>
-		<td valign="top"><label for="show_inc_icons"><?= GetMessage('FILEMAN_OPTION_MENU_SHOW_INC')?></label></td>
-		<td><input type="checkbox" name="show_inc_icons" id="show_inc_icons" size="5" value="Y" <?if(COption::GetOptionString($module_id, "show_inc_icons", "Y")=="Y")echo " checked"?>></td>
-	</tr>
-	<?endif;?>
 	<? if ($USER->CanDoOperation('edit_php')):?>
 	<tr>
 		<td>
@@ -1761,7 +1755,7 @@ function InitEventForType(id)
 		<td>
 <?
 $arGroups = explode(",", COption::GetOptionString('fileman', 'default_edit_groups', ''));
-$gr = CGroup::GetList(($v1="sort"), ($v2="asc"), array("ACTIVE"=>"Y", "ADMIN"=>"N", "ANONYMOUS"=>"N"));
+$gr = CGroup::GetList("sort", "asc", array("ACTIVE"=>"Y", "ADMIN"=>"N", "ANONYMOUS"=>"N"));
 $sOptions = '';
 $sSel = '';
 while($group = $gr->Fetch())

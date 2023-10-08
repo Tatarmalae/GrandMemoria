@@ -1,85 +1,71 @@
 <?php
+
 /**
  * Bitrix Framework
  * @package bitrix
  * @subpackage main
- * @copyright 2001-2013 Bitrix
+ * @copyright 2001-2022 Bitrix
  */
 
+use Bitrix\Main;
 use Bitrix\Main\Session\Legacy\HealerEarlySessionStart;
 
 require_once(__DIR__."/bx_root.php");
 require_once(__DIR__."/start.php");
 
-$application = \Bitrix\Main\Application::getInstance();
-$application->initializeExtendedKernel(array(
+$application = Main\HttpApplication::getInstance();
+$application->initializeExtendedKernel([
 	"get" => $_GET,
 	"post" => $_POST,
 	"files" => $_FILES,
 	"cookie" => $_COOKIE,
 	"server" => $_SERVER,
 	"env" => $_ENV
-));
+]);
+
+if (defined('SITE_ID'))
+{
+	define('LANG', SITE_ID);
+}
+
+$context = $application->getContext();
+$context->initializeCulture(defined('LANG') ? LANG : null, defined('LANGUAGE_ID') ? LANGUAGE_ID : null);
+
+// needs to be after culture initialization
+$application->start();
+
+// constants for compatibility
+$culture = $context->getCulture();
+define('SITE_CHARSET', $culture->getCharset());
+define('FORMAT_DATE', $culture->getFormatDate());
+define('FORMAT_DATETIME', $culture->getFormatDatetime());
+define('LANG_CHARSET', SITE_CHARSET);
+
+$site = $context->getSiteObject();
+if (!defined('LANG'))
+{
+	define('LANG', ($site ? $site->getLid() : $context->getLanguage()));
+}
+define('SITE_DIR', ($site ? $site->getDir() : ''));
+define('SITE_SERVER_NAME', ($site ? $site->getServerName() : ''));
+define('LANG_DIR', SITE_DIR);
+
+if (!defined('LANGUAGE_ID'))
+{
+	define('LANGUAGE_ID', $context->getLanguage());
+}
+define('LANG_ADMIN_LID', LANGUAGE_ID);
+
+if (!defined('SITE_ID'))
+{
+	define('SITE_ID', LANG);
+}
+
+/** @global $lang */
+$lang = $context->getLanguage();
 
 //define global application object
 $GLOBALS["APPLICATION"] = new CMain;
-
-if(defined("SITE_ID"))
-	define("LANG", SITE_ID);
-
-if(defined("LANG"))
-{
-	if(defined("ADMIN_SECTION") && ADMIN_SECTION===true)
-		$db_lang = CLangAdmin::GetByID(LANG);
-	else
-		$db_lang = CLang::GetByID(LANG);
-
-	$arLang = $db_lang->Fetch();
-
-	if(!$arLang)
-	{
-		throw new \Bitrix\Main\SystemException("Incorrect site: ".LANG.".");
-	}
-}
-else
-{
-	$arLang = $GLOBALS["APPLICATION"]->GetLang();
-	define("LANG", $arLang["LID"]);
-}
-
-if($arLang["CULTURE_ID"] == '')
-{
-	throw new \Bitrix\Main\SystemException("Culture not found, or there are no active sites or languages.");
-}
-
-$lang = $arLang["LID"];
-if (!defined("SITE_ID"))
-	define("SITE_ID", $arLang["LID"]);
-define("SITE_DIR", $arLang["DIR"]);
-define("SITE_SERVER_NAME", $arLang["SERVER_NAME"]);
-define("SITE_CHARSET", $arLang["CHARSET"]);
-define("FORMAT_DATE", $arLang["FORMAT_DATE"]);
-define("FORMAT_DATETIME", $arLang["FORMAT_DATETIME"]);
-define("LANG_DIR", $arLang["DIR"]);
-define("LANG_CHARSET", $arLang["CHARSET"]);
-define("LANG_ADMIN_LID", $arLang["LANGUAGE_ID"]);
-define("LANGUAGE_ID", $arLang["LANGUAGE_ID"]);
-
-$culture = \Bitrix\Main\Localization\CultureTable::getByPrimary($arLang["CULTURE_ID"], ["cache" => ["ttl" => CACHED_b_lang]])->fetchObject();
-
-$context = $application->getContext();
-$context->setLanguage(LANGUAGE_ID);
-$context->setCulture($culture);
-
-$request = $context->getRequest();
-if (!$request->isAdminSection())
-{
-	$context->setSite(SITE_ID);
-}
-
-$application->start();
-
-$GLOBALS["APPLICATION"]->reinitPath();
 
 if (!defined("POST_FORM_ACTION_URI"))
 {
@@ -91,7 +77,7 @@ $GLOBALS["ALL_LANG_FILES"] = [];
 IncludeModuleLangFile(__DIR__."/tools.php");
 IncludeModuleLangFile(__FILE__);
 
-error_reporting(COption::GetOptionInt("main", "error_reporting", E_COMPILE_ERROR|E_ERROR|E_CORE_ERROR|E_PARSE) & ~E_STRICT & ~E_DEPRECATED);
+error_reporting(COption::GetOptionInt("main", "error_reporting", E_COMPILE_ERROR | E_ERROR | E_CORE_ERROR | E_PARSE) & ~E_STRICT & ~E_DEPRECATED & ~E_WARNING & ~E_NOTICE);
 
 if(!defined("BX_COMP_MANAGED_CACHE") && COption::GetOptionString("main", "component_managed_cache_on", "Y") <> "N")
 {
@@ -103,19 +89,18 @@ require_once(__DIR__."/filter_tools.php");
 
 define('BX_AJAX_PARAM_ID', 'bxajaxid');
 
-/*ZDUyZmZM2M4MzM5NDRmNjhjNDdhM2M4NzVhY2FlODg3NzM0NTI=*/$GLOBALS['____1807052325']= array(base64_decode(''.'ZGVmaW5l'));if(!function_exists(__NAMESPACE__.'\\___970331849')){function ___970331849($_1220109836){static $_1519410971= false; if($_1519410971 == false) $_1519410971=array('RU5'.'DT0RF','WQ==');return base64_decode($_1519410971[$_1220109836]);}};class CBXFeatures{ public static function IsFeatureEnabled($_1133646919){ return true;} public static function IsFeatureEditable($_1133646919){ return true;} public static function SetFeatureEnabled($_1133646919, $_656054808= true){} public static function SaveFeaturesSettings($_471786075, $_940709408){} public static function GetFeaturesList(){ return array();} public static function InitiateEditionsSettings($_967565136){} public static function ModifyFeaturesSettings($_967565136, $_1757494090){} public static function IsFeatureInstalled($_1133646919){ return true;}} $GLOBALS['____1807052325'][0](___970331849(0), ___970331849(1));/**/			//Do not remove this
-
-//component 2.0 template engines
-$GLOBALS["arCustomTemplateEngines"] = [];
-
-/**
- * Defined in dbconn.php
- * @param string $DBType
- */
+/*ZDUyZmZODQ1YzZjMTA4MDM5ZDM4YWVhM2YyZGE2MzAyYTIyYmU=*/$GLOBALS['____1746959323']= array(base64_decode('ZGVmaW'.'5l'));if(!function_exists(__NAMESPACE__.'\\___75341592')){function ___75341592($_1847039831){static $_1629140991= false; if($_1629140991 == false) $_1629140991=array('R'.'U5D'.'T0RF',''.'WQ'.'==');return base64_decode($_1629140991[$_1847039831]);}};class CBXFeatures{ public static function IsFeatureEnabled($_1779704923){ return true;} public static function IsFeatureEditable($_1779704923){ return true;} public static function SetFeatureEnabled($_1779704923, $_540547243= true){} public static function SaveFeaturesSettings($_744778532, $_1278822295){} public static function GetFeaturesList(){ return array();} public static function InitiateEditionsSettings($_1985128407){} public static function ModifyFeaturesSettings($_1985128407, $_498073640){} public static function IsFeatureInstalled($_1779704923){ return true;}} $GLOBALS['____1746959323'][0](___75341592(0), ___75341592(1));/**/			//Do not remove this
 
 require_once(__DIR__."/autoload.php");
-require_once(__DIR__."/classes/general/menu.php");
-require_once(__DIR__."/classes/mysql/usertype.php");
+
+// Component 2.0 template engines
+$GLOBALS['arCustomTemplateEngines'] = [];
+
+// User fields manager
+$GLOBALS['USER_FIELD_MANAGER'] = new CUserTypeManager;
+
+// todo: remove global
+$GLOBALS['BX_MENU_CUSTOM'] = CMenuCustom::getInstance();
 
 if(file_exists(($_fname = __DIR__."/classes/general/update_db_updater.php")))
 {
@@ -150,7 +135,10 @@ header("X-Powered-CMS: Bitrix Site Manager (".(LICENSE_KEY == "DEMO"? "DEMO" : m
 if (COption::GetOptionString("main", "update_devsrv", "") == "Y")
 	header("X-DevSrv-CMS: Bitrix");
 
-define("BX_CRONTAB_SUPPORT", defined("BX_CRONTAB"));
+if (!defined("BX_CRONTAB_SUPPORT"))
+{
+	define("BX_CRONTAB_SUPPORT", defined("BX_CRONTAB"));
+}
 
 //agents
 if(COption::GetOptionString("main", "check_agents", "Y") == "Y")
@@ -214,7 +202,7 @@ if(
 	$compositeSessionManager = $application->getCompositeSessionManager();
 	$compositeSessionManager->destroy();
 
-	$application->getSession()->setId(md5(uniqid(rand(), true)));
+	$application->getSession()->setId(Main\Security\Random::getString(32));
 	$compositeSessionManager->start();
 
 	$GLOBALS["USER"] = new CUser;
@@ -229,7 +217,9 @@ elseif (($currTime - $kernelSession['SESS_TIME']) > 60)
 	$kernelSession['SESS_TIME'] = $currTime;
 }
 if(!isset($kernelSession["BX_SESSION_SIGN"]))
+{
 	$kernelSession["BX_SESSION_SIGN"] = bitrix_sess_sign();
+}
 
 //session control from security module
 if(
@@ -258,6 +248,9 @@ if (isset($kernelSession['BX_ADMIN_LOAD_AUTH']))
 	define('ADMIN_SECTION_LOAD_AUTH', 1);
 	unset($kernelSession['BX_ADMIN_LOAD_AUTH']);
 }
+
+$bRsaError = false;
+$USER_LID = false;
 
 if(!defined("NOT_CHECK_PERMISSIONS") || NOT_CHECK_PERMISSIONS!==true)
 {
@@ -293,7 +286,6 @@ if(!defined("NOT_CHECK_PERMISSIONS") || NOT_CHECK_PERMISSIONS!==true)
 	//Only POST is accepted
 	if(isset($_POST["AUTH_FORM"]) && $_POST["AUTH_FORM"] <> '')
 	{
-		$bRsaError = false;
 		if(COption::GetOptionString('main', 'use_encrypted_auth', 'N') == 'Y')
 		{
 			//possible encrypted user password
@@ -312,12 +304,12 @@ if(!defined("NOT_CHECK_PERMISSIONS") || NOT_CHECK_PERMISSIONS!==true)
 			}
 		}
 
-		if($bRsaError == false)
+		if (!$bRsaError)
 		{
 			if(!defined("ADMIN_SECTION") || ADMIN_SECTION !== true)
+			{
 				$USER_LID = SITE_ID;
-			else
-				$USER_LID = false;
+			}
 
 			if($_POST["TYPE"] == "AUTH")
 			{
@@ -334,10 +326,6 @@ if(!defined("NOT_CHECK_PERMISSIONS") || NOT_CHECK_PERMISSIONS!==true)
 			elseif($_POST["TYPE"] == "CHANGE_PWD")
 			{
 				$arAuthResult = $GLOBALS["USER"]->ChangePassword($_POST["USER_LOGIN"], $_POST["USER_CHECKWORD"], $_POST["USER_PASSWORD"], $_POST["USER_CONFIRM_PASSWORD"], $USER_LID, $_POST["captcha_word"], $_POST["captcha_sid"], true, $_POST["USER_PHONE_NUMBER"], $_POST["USER_CURRENT_PASSWORD"]);
-			}
-			elseif(COption::GetOptionString("main", "new_user_registration", "N") == "Y" && $_POST["TYPE"] == "REGISTRATION" && (!defined("ADMIN_SECTION") || ADMIN_SECTION !== true))
-			{
-				$arAuthResult = $GLOBALS["USER"]->Register($_POST["USER_LOGIN"], $_POST["USER_NAME"], $_POST["USER_LAST_NAME"], $_POST["USER_PASSWORD"], $_POST["USER_CONFIRM_PASSWORD"], $_POST["USER_EMAIL"], $USER_LID, $_POST["captcha_word"], $_POST["captcha_sid"], false, $_POST["USER_PHONE_NUMBER"]);
 			}
 
 			if($_POST["TYPE"] == "AUTH" || $_POST["TYPE"] == "OTP")
@@ -356,10 +344,10 @@ if(!defined("NOT_CHECK_PERMISSIONS") || NOT_CHECK_PERMISSIONS!==true)
 		}
 		$GLOBALS["APPLICATION"]->SetAuthResult($arAuthResult);
 	}
-	elseif(!$GLOBALS["USER"]->IsAuthorized())
+	elseif(!$GLOBALS["USER"]->IsAuthorized() && isset($_REQUEST['bx_hit_hash']))
 	{
 		//Authorize by unique URL
-		$GLOBALS["USER"]->LoginHitByHash();
+		$GLOBALS["USER"]->LoginHitByHash($_REQUEST['bx_hit_hash']);
 	}
 }
 
@@ -374,16 +362,16 @@ if(defined("BX_CHECK_SHORT_URI") && BX_CHECK_SHORT_URI && CBXShortUri::CheckUri(
 }
 
 //application password scope control
-if(($applicationID = $GLOBALS["USER"]->GetParam("APPLICATION_ID")) !== null)
+if(($applicationID = $GLOBALS["USER"]->getContext()->getApplicationId()) !== null)
 {
-	$appManager = \Bitrix\Main\Authentication\ApplicationManager::getInstance();
+	$appManager = Main\Authentication\ApplicationManager::getInstance();
 	if($appManager->checkScope($applicationID) !== true)
 	{
-		$event = new \Bitrix\Main\Event("main", "onApplicationScopeError", Array('APPLICATION_ID' => $applicationID));
+		$event = new Main\Event("main", "onApplicationScopeError", Array('APPLICATION_ID' => $applicationID));
 		$event->send();
 
-		CHTTP::SetStatus("403 Forbidden");
-		die();
+		$context->getResponse()->setStatus("403 Forbidden");
+		$application->end();
 	}
 }
 
@@ -391,7 +379,7 @@ if(($applicationID = $GLOBALS["USER"]->GetParam("APPLICATION_ID")) !== null)
 if(!defined("ADMIN_SECTION") || ADMIN_SECTION !== true)
 {
 	$siteTemplate = "";
-	if(is_string($_REQUEST["bitrix_preview_site_template"]) && $_REQUEST["bitrix_preview_site_template"] <> "" && $GLOBALS["USER"]->CanDoOperation('view_other_settings'))
+	if(isset($_REQUEST["bitrix_preview_site_template"]) && is_string($_REQUEST["bitrix_preview_site_template"]) && $_REQUEST["bitrix_preview_site_template"] <> "" && $GLOBALS["USER"]->CanDoOperation('view_other_settings'))
 	{
 		//preview of site template
 		$signer = new Bitrix\Main\Security\Sign\Signer();
@@ -423,6 +411,12 @@ if(!defined("ADMIN_SECTION") || ADMIN_SECTION !== true)
 	define("SITE_TEMPLATE_ID", $siteTemplate);
 	define("SITE_TEMPLATE_PATH", getLocalPath('templates/'.SITE_TEMPLATE_ID, BX_PERSONAL_ROOT));
 }
+else
+{
+	// prevents undefined constants
+	define('SITE_TEMPLATE_ID', '.default');
+	define('SITE_TEMPLATE_PATH', '/bitrix/templates/.default');
+}
 
 //magic parameters: show page creation time
 if(isset($_GET["show_page_exec_time"]))
@@ -453,12 +447,35 @@ if($GLOBALS["USER"]->IsAuthorized())
 //magic cache
 \Bitrix\Main\Composite\Engine::shouldBeEnabled();
 
+// should be before proactive filter on OnBeforeProlog
+$userPassword = $_POST["USER_PASSWORD"] ?? null;
+$userConfirmPassword = $_POST["USER_CONFIRM_PASSWORD"] ?? null;
+
 foreach(GetModuleEvents("main", "OnBeforeProlog", true) as $arEvent)
+{
 	ExecuteModuleEventEx($arEvent);
+}
+
+if (!defined("NOT_CHECK_PERMISSIONS") || NOT_CHECK_PERMISSIONS !== true)
+{
+	//Register user from authorization html form
+	//Only POST is accepted
+	if (isset($_POST["AUTH_FORM"]) && $_POST["AUTH_FORM"] != '' && $_POST["TYPE"] == "REGISTRATION")
+	{
+		if (!$bRsaError)
+		{
+			if(COption::GetOptionString("main", "new_user_registration", "N") == "Y" && (!defined("ADMIN_SECTION") || ADMIN_SECTION !== true))
+			{
+				$arAuthResult = $GLOBALS["USER"]->Register($_POST["USER_LOGIN"], $_POST["USER_NAME"], $_POST["USER_LAST_NAME"], $userPassword, $userConfirmPassword, $_POST["USER_EMAIL"], $USER_LID, $_POST["captcha_word"], $_POST["captcha_sid"], false, $_POST["USER_PHONE_NUMBER"]);
+				$GLOBALS["APPLICATION"]->SetAuthResult($arAuthResult);
+			}
+		}
+	}
+}
 
 if((!defined("NOT_CHECK_PERMISSIONS") || NOT_CHECK_PERMISSIONS!==true) && (!defined("NOT_CHECK_FILE_PERMISSIONS") || NOT_CHECK_FILE_PERMISSIONS!==true))
 {
-	$real_path = $request->getScriptFile();
+	$real_path = $context->getRequest()->getScriptFile();
 
 	if(!$GLOBALS["USER"]->CanDoFileOperation('fm_view_file', array(SITE_ID, $real_path)) || (defined("NEED_AUTH") && NEED_AUTH && !$GLOBALS["USER"]->IsAuthorized()))
 	{

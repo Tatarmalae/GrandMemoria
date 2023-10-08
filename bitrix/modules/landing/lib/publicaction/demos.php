@@ -57,9 +57,10 @@ class Demos
 		$className = \CBitrixComponent::includeComponentClass($componentName);
 		$demoCmp = new $className;
 		$demoCmp->initComponent($componentName);
-		$demoCmp->arParams = array(
-			'TYPE' => mb_strtoupper($type)
-		);
+		$demoCmp->arParams = [
+			'TYPE' => mb_strtoupper($type),
+			'SKIP_REMOTE' => 'Y',
+		];
 
 		if ($page)
 		{
@@ -483,10 +484,10 @@ class Demos
 			{
 				$row['DATE_MODIFY'] = (string) $row['DATE_MODIFY'];
 			}
-			$row['MANIFEST'] = unserialize($row['MANIFEST']);
+			$row['MANIFEST'] = unserialize($row['MANIFEST'], ['allowed_classes' => false]);
 			if ($row['LANG'])
 			{
-				$row['LANG'] = unserialize($row['LANG']);
+				$row['LANG'] = unserialize($row['LANG'], ['allowed_classes' => false]);
 			}
 			$data[] = $row;
 		}

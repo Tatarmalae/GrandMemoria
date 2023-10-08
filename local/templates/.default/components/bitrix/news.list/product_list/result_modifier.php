@@ -9,9 +9,9 @@
 use Bitrix\Main\Diag\Debug;
 use Dev\Catalog;
 
-if (is_array($arParams['~SORT_ORDER1'])) {
+if (is_array($arParams['SORT_ORDER_USER'])) {
     $tmp = [];
-    foreach ($arParams['~SORT_ORDER1'] as $arParam) {
+    foreach ($arParams['SORT_ORDER_USER'] as $arParam) {
         try {
             $tmp[] = Catalog::getElementByID($arParam);
         } catch (Throwable $e) {

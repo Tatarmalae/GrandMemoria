@@ -353,8 +353,8 @@ while($db_res = $rsData->NavNext(true, "a_"))
 		case "IBLOCK_EDIT":
 		case "IBLOCK_DELETE":
 			$elementLink = CIBlock::GetAdminElementListLink($a_ITEM_ID, array('filter_section'=>-1));
-			parse_str($elementLink);
-			if (empty($type))
+			parse_str($elementLink, $elementInfo);
+			if (empty($elementInfo["type"]))
 			{
 				$a_ITEM_ID = GetMessage("MAIN_EVENTLOG_IBLOCK_DELETE");
 			}
@@ -455,9 +455,22 @@ $oFilter->Begin();
 </tr>
 <tr>
 	<td><?echo GetMessage("MAIN_EVENTLOG_SEVERITY")?>:</td>
-	<td><?echo SelectBoxMFromArray("find_severity[]", array(
-			"REFERENCE"    => array("SECURITY", "ERROR", "WARNING", "INFO", "DEBUG"),
-			"REFERENCE_ID" => array("SECURITY", "ERROR", "WARNING", "INFO", "DEBUG"),
+	<td><?
+		$severity = [
+			CEventLog::SEVERITY_SECURITY,
+			CEventLog::SEVERITY_EMERGENCY,
+			CEventLog::SEVERITY_ALERT,
+			CEventLog::SEVERITY_CRITICAL,
+			CEventLog::SEVERITY_ERROR,
+			CEventLog::SEVERITY_WARNING,
+			CEventLog::SEVERITY_NOTICE,
+			CEventLog::SEVERITY_INFO,
+			CEventLog::SEVERITY_DEBUG,
+			'UNKNOWN',
+		];
+		echo SelectBoxMFromArray("find_severity[]", array(
+			"REFERENCE" => $severity,
+			"REFERENCE_ID" => $severity,
 		), $find_severity, GetMessage("MAIN_ALL"))?></td>
 </tr>
 <tr>
@@ -477,9 +490,7 @@ $oFilter->Begin();
 </tr>
 <?
 $arSiteDropdown = array("reference" => array(), "reference_id" => array());
-$v1 = "sort";
-$v2 = "asc";
-$rs = CSite::GetList($v1, $v2);
+$rs = CSite::GetList();
 while ($ar = $rs->Fetch())
 {
 	$arSiteDropdown["reference_id"][] = $ar["ID"];

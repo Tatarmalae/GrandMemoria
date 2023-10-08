@@ -106,6 +106,7 @@ if(typeof BX.UI.EntitySchemeElement === "undefined")
 		this._name = "";
 		this._type = "";
 		this._title = "";
+		this._hint = "";
 		this._originalTitle = "";
 		this._optionFlags = 0;
 		this._options = {};
@@ -162,8 +163,10 @@ if(typeof BX.UI.EntitySchemeElement === "undefined")
 			);
 
 			//region Titles
+			var hint = BX.prop.getString(this._settings, "hint", "");
 			var title = BX.prop.getString(this._settings, "title", "");
 			var originalTitle = BX.prop.getString(this._settings, "originalTitle", "");
+			var lockText = BX.prop.getString(this._settings, 'lockText', '');
 
 			if(title !== "" && originalTitle === "")
 			{
@@ -174,8 +177,10 @@ if(typeof BX.UI.EntitySchemeElement === "undefined")
 				title = originalTitle;
 			}
 
+			this._hint = hint;
 			this._title = title;
 			this._originalTitle = originalTitle;
+			this._lockText = lockText;
 			//endregion
 
 			this._optionFlags = BX.prop.getInteger(this._settings, "optionFlags", 0);
@@ -216,6 +221,14 @@ if(typeof BX.UI.EntitySchemeElement === "undefined")
 		getType: function()
 		{
 			return this._type;
+		},
+		getHint: function()
+		{
+			return this._hint;
+		},
+		getLockText: function ()
+		{
+			return this._lockText;
 		},
 		getTitle: function()
 		{
@@ -356,6 +369,24 @@ if(typeof BX.UI.EntitySchemeElement === "undefined")
 		getDataArrayParam: function(name, defaultval)
 		{
 			return BX.prop.getArray(this._data, name, defaultval);
+		},
+		getInnerConfig: function()
+		{
+			var innerConfig = this.getDataObjectParam("innerConfig", {});
+
+			var isInnerConfigValid = (
+				BX.Type.isPlainObject(innerConfig)
+				&& innerConfig.hasOwnProperty("type")
+				&& BX.Type.isStringFilled(innerConfig["type"])
+				&& innerConfig.hasOwnProperty("controller")
+				&& BX.Type.isStringFilled(innerConfig["controller"])
+				&& innerConfig.hasOwnProperty("statusType")
+				&& BX.Type.isStringFilled(innerConfig["statusType"])
+				&& innerConfig.hasOwnProperty("itemsConfig")
+				&& BX.Type.isPlainObject(innerConfig["itemsConfig"])
+			);
+
+			return (isInnerConfigValid) ? innerConfig : null;
 		},
 		getElements: function()
 		{

@@ -67,6 +67,10 @@ $arComponentParameters = Array(
 			'TYPE' => 'CHECKBOX'
 		),
 		'VARIABLE_ALIASES' => Array(
+			'page' => Array(
+				'NAME' => getMessage('LANDING_CMP_PAR_VAR_PAGE'),
+				'DEFAULT' => 'page'
+			),
 			'site_show' => Array(
 				'NAME' => getMessage('LANDING_CMP_PAR_VAR_SITE'),
 				'DEFAULT' => 'site_show'
@@ -87,21 +91,13 @@ $arComponentParameters = Array(
 				'NAME' => getMessage('LANDING_CMP_PAR_VAR_DOMAIN_EDIT'),
 				'DEFAULT' => 'domain_edit'
 			),
-			'domains' => Array(
-				'NAME' => getMessage('LANDING_CMP_PAR_VAR_DOMAIN'),
-				'DEFAULT' => 'domains'
-			),
-			'roles' => Array(
-				'NAME' => getMessage('LANDING_CMP_PAR_VAR_ROLES'),
-				'DEFAULT' => 'rights'
-			),
 			'role_edit' => Array(
 				'NAME' => getMessage('LANDING_CMP_PAR_VAR_ROLE_EDIT'),
-				'DEFAULT' => 'right_edit'
+				'DEFAULT' => 'role_edit'
 			),
-			'sites' => Array(
-				'NAME' => getMessage('LANDING_CMP_PAR_VAR_SITES'),
-				'DEFAULT' => 'sites'
+			'folder_edit' => Array(
+				'NAME' => getMessage('LANDING_CMP_PAR_VAR_FOLDER_EDIT'),
+				'DEFAULT' => 'folder_edit'
 			)
 		),
 		'SEF_MODE' => Array(
@@ -118,6 +114,26 @@ $arComponentParameters = Array(
 			'site_edit' => array(
 				'NAME' => getMessage('LANDING_CMP_PAR_SM_SITE_EDIT'),
 				'DEFAULT' => 'site/edit/#site_edit#/',
+				'VARIABLES' => array('site_edit')
+			),
+			'site_design' => array(
+				'NAME' => getMessage('LANDING_CMP_PAR_SM_SITE_DESIGN'),
+				'DEFAULT' => 'site/design/#site_edit#/',
+				'VARIABLES' => array('site_edit')
+			),
+			'site_settings' => [
+				'NAME' => getMessage('LANDING_CMP_PAR_SM_SITE_SETTINGS'),
+				'DEFAULT' => 'site/settings/#site_edit#/',
+				'VARIABLES' => ['site_edit']
+			],
+			'site_master' => array(
+				'NAME' => getMessage('LANDING_CMP_PAR_SM_SITE_MASTER'),
+				'DEFAULT' => 'site/master/#site_edit#/',
+				'VARIABLES' => array('site_edit')
+			),
+			'site_contacts' => array(
+				'NAME' => getMessage('LANDING_CMP_PAR_SM_SITE_CONTACTS'),
+				'DEFAULT' => 'site/contacts/#site_edit#/',
 				'VARIABLES' => array('site_edit')
 			),
 			'site_domain' => array(
@@ -140,15 +156,25 @@ $arComponentParameters = Array(
 				'DEFAULT' => 'site/#site_show#/edit/#landing_edit#/',
 				'VARIABLES' => array('site_show', 'landing_edit')
 			),
+			'landing_design' => array(
+				'NAME' => getMessage('LANDING_CMP_PAR_SM_LANDING_DESIGN'),
+				'DEFAULT' => 'site/#site_show#/design/#landing_edit#/',
+				'VARIABLES' => array('site_show', 'landing_edit')
+			),
 			'landing_view' => array(
 				'NAME' => getMessage('LANDING_CMP_PAR_SM_LANDING_VIEW'),
 				'DEFAULT' => 'site/#site_show#/view/#landing_edit#/',
 				'VARIABLES' => array('site_show', 'landing_edit')
 			),
+			'landing_settings' => [
+				'NAME' => getMessage('LANDING_CMP_PAR_SM_LANDING_SETTINGS'),
+				'DEFAULT' => 'site/#site_show#/settings/#landing_edit#/',
+				'VARIABLES' => ['site_show', 'landing_edit']
+			],
 			'domains' => array(
 				'NAME' => getMessage('LANDING_CMP_PAR_SM_DOMAINS'),
 				'DEFAULT' => 'domains/',
-				'VARIABLES' => array('domains')
+				'VARIABLES' => array()
 			),
 			'domain_edit' => array(
 				'NAME' => getMessage('LANDING_CMP_PAR_SM_DOMAIN_EDIT'),
@@ -158,12 +184,17 @@ $arComponentParameters = Array(
 			'roles' => array(
 				'NAME' => getMessage('LANDING_CMP_PAR_SM_ROLES'),
 				'DEFAULT' => 'roles/',
-				'VARIABLES' => array('roles')
+				'VARIABLES' => array()
 			),
 			'role_edit' => array(
 				'NAME' => getMessage('LANDING_CMP_PAR_SM_ROLE_EDIT'),
 				'DEFAULT' => 'role/edit/#role_edit#/',
 				'VARIABLES' => array('role_edit')
+			),
+			'folder_edit' => array(
+				'NAME' => getMessage('LANDING_CMP_PAR_SM_FOLDER_EDIT'),
+				'DEFAULT' => 'folder/edit/#folder_edit#/',
+				'VARIABLES' => array('folder_edit')
 			)
 		)
 	)

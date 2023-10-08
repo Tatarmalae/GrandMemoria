@@ -22,6 +22,7 @@ return [
 			'name' => Loc::getMessage('LANDING_BLOCK_MENU_26-NAVBAR'),
 			'type' => 'text',
 			'allowInlineEdit' => false,
+			'useInDesigner' => false,
 		],
 	],
 	'menu' => [
@@ -48,20 +49,16 @@ return [
 	],
 	'style' => [
 		'block' => [
-			'type' => ['display', 'bg', 'border-color', 'header-on-scroll', 'header-position']
+			'type' => ['display', 'bg', 'border-colors', 'header-on-scroll', 'header-position']
 		],
 		'nodes' => [
 			'.landing-block-node-navbar' => [
 				'name' => Loc::getMessage('LANDING_BLOCK_MENU_26-NAVBAR'),
-				'type' => ['navbar-bg-color'],
+				'type' => ['navbar-bg-color', 'navbar-collapse-bg', 'hamburger-size', 'hamburger-animation'],
 			],
 			'.landing-block-node-menu-container' => [
 				'name' => Loc::getMessage('LANDING_BLOCK_MENU_26-NAVBAR'),
 				'type' => ['background-color', 'font-size'],
-			],
-			'.landing-block-node-hamburger' => [
-				'name' => Loc::getMessage('LANDING_BLOCK_MENU_26-HAMBURGER'),
-				'type' => ['hamburger-size'],
 			],
 			'.landing-block-node-hamburger-text' => [
 				'name' => Loc::getMessage('LANDING_BLOCK_MENU_26-HAMBURGER'),

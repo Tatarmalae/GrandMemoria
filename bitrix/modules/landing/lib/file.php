@@ -8,22 +8,22 @@ class File
 	/**
 	 * Entity type site.
 	 */
-	const ENTITY_TYPE_SITE  = 'S';
+	public const ENTITY_TYPE_SITE  = 'S';
 
 	/**
 	 * Entity type landing.
 	 */
-	const ENTITY_TYPE_LANDING = 'L';
+	public const ENTITY_TYPE_LANDING = 'L';
 
 	/**
 	 * Entity type block.
 	 */
-	const ENTITY_TYPE_BLOCK = 'B';
+	public const ENTITY_TYPE_BLOCK = 'B';
 
 	/**
 	 * Entity type asset.
 	 */
-	const ENTITY_TYPE_ASSET = 'A';
+	public const ENTITY_TYPE_ASSET = 'A';
 
 	/**
 	 * Returns sanitized file name.
@@ -43,10 +43,11 @@ class File
 	 * Add new record.
 	 * @param int $fileId File id.
 	 * @param int $entityId Entity id.
-	 * @param int $entityType Entity type.
+	 * @param string $entityType Entity type.
+	 * @param bool $temp This is temporary file.
 	 * @return void
 	 */
-	protected static function add($fileId, $entityId, $entityType)
+	protected static function add(int $fileId, int $entityId, string $entityType, bool $temp = false): void
 	{
 		$res = FileTable::getList(array(
 			'select' => array(
@@ -63,7 +64,8 @@ class File
 			$res = FileTable::add(array(
 				'FILE_ID' => $fileId,
 				'ENTITY_ID' => $entityId,
-				'ENTITY_TYPE' => $entityType
+				'ENTITY_TYPE' => $entityType,
+				'TEMP' => $temp ? 'Y' : 'N'
 			));
 			$res->isSuccess();
 		}
@@ -145,51 +147,59 @@ class File
 	{
 		$deletedFiles = array();
 
-		$res = FileTable::getList(array(
-		  	'select' => array(
-		 		'ID', 'FILE_ID'
-		  	),
-	  		'filter' => array(
+		$res = FileTable::getList([
+		  	'select' => [
+		 		'ID', 'FILE_ID', 'ENTITY_ID', 'ENTITY_TYPE'
+		    ],
+	  		'filter' => [
 				'<FILE_ID' => 0
-			),
+		    ],
 			'limit' => $limit,
-			'order' => array(
+			'order' => [
 				'ID' => 'asc'
-			)
-		));
+			]
+		]);
 		while ($row = $res->fetch())
 		{
 			$row['FILE_ID'] *= -1;
 			FileTable::delete($row['ID']);
-			$deletedFiles[$row['FILE_ID']] = $row['FILE_ID'];
+			$deletedFiles[$row['FILE_ID']] =[
+				'FILE_ID' => $row['FILE_ID'],
+				'ENTITY_ID' => $row['ENTITY_ID'],
+				'ENTITY_TYPE' => $row['ENTITY_TYPE'],
+			];
 		}
 		if (!empty($deletedFiles))
 		{
 			// don't delete still used
-			$res = FileTable::getList(array(
-				'select' => array(
+			$res = FileTable::getList([
+				'select' => [
 					'FILE_ID'
-				),
-				'filter' => array(
-					'FILE_ID' => $deletedFiles
-				)
-			));
+				],
+				'filter' => [
+					'FILE_ID' => array_keys($deletedFiles)
+				]
+			]);
 			while ($row = $res->fetch())
 			{
 				unset($deletedFiles[$row['FILE_ID']]);
 			}
-			foreach ($deletedFiles as $fid)
+			foreach ($deletedFiles as $file)
 			{
-				$fileData = self::getFileArray($fid);
+				$fileData = self::getFileArray($file['FILE_ID']);
 				if ($fileData)
 				{
+					\Bitrix\Landing\Debug::logToFile(
+						"[lndgdbg] AGENT delete file {$file['FILE_ID']} with ORIG_NAME {$fileData['ORIGINAL_NAME']} for ENTITY {$file['ENTITY_TYPE']}_{$file['ENTITY_ID']}"
+					);
+
 					//@tmp log
 					Debug::log(
 						$fileData['SRC'],
-						'fileId: ' . $fid,
+						'fileId: ' . $file['FILE_ID'],
 						'LANDING_FILE_DELETE'
 					);
-					\CFile::delete($fid);
+					\CFile::delete($file);
 				}
 			}
 		}
@@ -199,13 +209,14 @@ class File
 	 * Add new record for Site.
 	 * @param int $id Site id.
 	 * @param int $fileId File id.
+	 * @param bool $temp This is temporary file.
 	 * @return void
 	 */
-	public static function addToSite($id, $fileId)
+	public static function addToSite(int $id, int $fileId, bool $temp = false): void
 	{
 		if ($fileId > 0 && $id > 0)
 		{
-			self::add($fileId, $id, self::ENTITY_TYPE_SITE);
+			self::add($fileId, $id, self::ENTITY_TYPE_SITE, $temp);
 		}
 	}
 
@@ -275,9 +286,10 @@ class File
 	 * Add new record(s) for Block.
 	 * @param int $blockId Block id.
 	 * @param int|array $fileId File id (or file ids).
+	 * @param bool $temp This is temporary file.
 	 * @return void
 	 */
-	public static function addToBlock($blockId, $fileId)
+	public static function addToBlock(int $blockId, $fileId, bool $temp = false): void
 	{
 		if ($blockId > 0)
 		{
@@ -289,7 +301,7 @@ class File
 			{
 				if ($fid > 0)
 				{
-					self::add($fid, $blockId, self::ENTITY_TYPE_BLOCK);
+					self::add($fid, $blockId, self::ENTITY_TYPE_BLOCK, $temp);
 				}
 			}
 		}
@@ -398,7 +410,7 @@ class File
 	 * @param int $fileId File id.
 	 * @return void
 	 */
-	public static function addToAsset($assetId, $fileId)
+	public static function addToAsset($assetId, $fileId): void
 	{
 		if ($fileId > 0 && $assetId > 0)
 		{
@@ -436,9 +448,9 @@ class File
 	/**
 	 * Mark file as "need rebuild", but not delete them. File will be exist until not created new file.
 	 * @param int|int[] $assetId Id of landing to which attached asset. If not set - will marked all.
-	 * @return void
+	 * @return bool
 	 */
-	public static function markAssetToRebuild($assetId = []): void
+	public static function markAssetToRebuild($assetId = []): bool
 	{
 		$filter = [
 			'=ENTITY_TYPE' => self::ENTITY_TYPE_ASSET
@@ -447,20 +459,25 @@ class File
 		{
 			$filter['ENTITY_ID'] = $assetId;
 		}
+
 		$res = FileTable::getList([
 			'select' => ['ID', 'ENTITY_ID'],
 			'filter' => $filter
 		]);
-		while ($row = $res->fetch())
+		$files = $res->fetchAll();
+		$result = true;
+		foreach ($files as $file)
 		{
 			$resUpdate = FileTable::update(
-				$row['ID'],
+				$file['ID'],
 				[
-					'ENTITY_ID' => -1 * abs($row['ENTITY_ID'])
+					'ENTITY_ID' => -1 * abs($file['ENTITY_ID'])
 				]
 			);
-			$resUpdate->isSuccess();
+			$result = $result && $resUpdate->isSuccess();
 		}
+
+		return count($files) > 0 ? $result : false;
 	}
 
 	/**
@@ -565,9 +582,9 @@ class File
 	/**
 	 * Gets core file path.
 	 * @param int $fileId File id.
-	 * @return string
+	 * @return string|null
 	 */
-	public static function getFilePath($fileId)
+	public static function getFilePath($fileId): ?string
 	{
 		$file = self::getFileArray($fileId);
 		if (isset($file['SRC']))

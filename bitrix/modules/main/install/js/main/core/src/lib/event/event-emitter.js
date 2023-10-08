@@ -1,5 +1,6 @@
 import Type from '../type';
 import Runtime from '../runtime';
+import Reflection from '../reflection';
 import BaseEvent from './base-event';
 import EventStore from './event-emitter/eventstore';
 import WarningStore from './event-emitter/warningstore';
@@ -45,16 +46,6 @@ export default class EventEmitter
 		}
 
 		this[targetProperty] = target;
-
-		setTimeout(() => {
-			if (this.getEventNamespace() === null)
-			{
-				console.warn(
-					'The instance of BX.Event.EventEmitter is supposed to have an event namespace. ' +
-					'Use emitter.setEventNamespace() to make events more unique.'
-				);
-			}
-		}, 500);
 	}
 
 	/**
@@ -148,10 +139,7 @@ export default class EventEmitter
 			throw new TypeError(`The "eventName" argument must be a string.`);
 		}
 
-		if (!Type.isFunction(listener))
-		{
-			throw new TypeError(`The "listener" argument must be of type Function. Received type ${typeof listener}.`);
-		}
+		listener = this.normalizeListener(listener);
 
 		options = Type.isPlainObject(options) ? options : {};
 		const fullEventName = this.resolveEventName(eventName, target, options.useGlobalNaming === true);
@@ -233,12 +221,7 @@ export default class EventEmitter
 
 		Object.keys(options).forEach((eventName) => {
 
-			const listener = options[eventName];
-			if (!Type.isFunction(listener))
-			{
-				throw new TypeError(`The "listener" argument must be of type Function. Received type ${typeof listener}.`);
-			}
-
+			const listener = EventEmitter.normalizeListener(options[eventName]);
 			eventName = EventEmitter.normalizeEventName(eventName);
 
 			if (aliases[eventName])
@@ -284,10 +267,7 @@ export default class EventEmitter
 			throw new TypeError(`The "eventName" argument must be a string.`);
 		}
 
-		if (!Type.isFunction(listener))
-		{
-			throw new TypeError(`The "listener" argument must be of type Function. Received type ${typeof listener}.`);
-		}
+		listener = this.normalizeListener(listener);
 
 		const fullEventName = this.resolveEventName(eventName, target);
 		const { eventsMap, onceMap } = eventStore.getOrAdd(target);
@@ -362,13 +342,7 @@ export default class EventEmitter
 			throw new TypeError(`The "eventName" argument must be a string.`);
 		}
 
-		if (!Type.isFunction(listener))
-		{
-			throw new TypeError(
-				`The "listener" argument must be of type Function. Received type ${typeof event}.`
-			);
-		}
-
+		listener = this.normalizeListener(listener);
 		options = Type.isPlainObject(options) ? options : {};
 
 		const fullEventName = this.resolveEventName(eventName, target, options.useGlobalNaming === true);
@@ -570,6 +544,14 @@ export default class EventEmitter
 	 */
 	emit(eventName: string, event?: BaseEvent | {[key: string]: any}): this
 	{
+		if (this.getEventNamespace() === null)
+		{
+			console.warn(
+				'The instance of BX.Event.EventEmitter is supposed to have an event namespace. ' +
+				'Use emitter.setEventNamespace() to make events more unique.'
+			);
+		}
+
 		EventEmitter.emit(this, eventName, event);
 
 		return this;
@@ -608,6 +590,14 @@ export default class EventEmitter
 	 */
 	emitAsync(eventName: string, event?: BaseEvent | {[key: string]: any}): Promise<Array>
 	{
+		if (this.getEventNamespace() === null)
+		{
+			console.warn(
+				'The instance of BX.Event.EventEmitter is supposed to have an event namespace. ' +
+				'Use emitter.setEventNamespace() to make events more unique.'
+			);
+		}
+
 		return EventEmitter.emitAsync(this, eventName, event);
 	}
 
@@ -1104,7 +1094,7 @@ export default class EventEmitter
 	 * @param {string} eventName
 	 * @returns {string}
 	 */
-	static normalizeEventName(eventName: string)
+	static normalizeEventName(eventName: string): string
 	{
 		if (!Type.isStringFilled(eventName))
 		{
@@ -1112,6 +1102,26 @@ export default class EventEmitter
 		}
 
 		return eventName.toLowerCase();
+	}
+
+	/**
+	 * @private
+	 */
+	static normalizeListener(listener: Function | string): Function
+	{
+		if (Type.isString(listener))
+		{
+			listener = Reflection.getClass(listener);
+		}
+
+		if (!Type.isFunction(listener))
+		{
+			throw new TypeError(
+				`The "listener" argument must be of type Function. Received type ${typeof listener}.`
+			);
+		}
+
+		return listener;
 	}
 
 	/**

@@ -18,6 +18,19 @@ Loc::loadMessages(__FILE__);
  * Class FinderDestTable
  * Is used to store and retrieve last used destinations in the destinations selector dialog
  * @package Bitrix\Main
+ *
+ * DO NOT WRITE ANYTHING BELOW THIS
+ *
+ * <<< ORMENTITYANNOTATION
+ * @method static EO_FinderDest_Query query()
+ * @method static EO_FinderDest_Result getByPrimary($primary, array $parameters = [])
+ * @method static EO_FinderDest_Result getById($id)
+ * @method static EO_FinderDest_Result getList(array $parameters = [])
+ * @method static EO_FinderDest_Entity getEntity()
+ * @method static \Bitrix\Main\EO_FinderDest createObject($setDefaultValues = true)
+ * @method static \Bitrix\Main\EO_FinderDest_Collection createCollection()
+ * @method static \Bitrix\Main\EO_FinderDest wakeUpObject($row)
+ * @method static \Bitrix\Main\EO_FinderDest_Collection wakeUpCollection($rows)
  */
 class FinderDestTable extends Main\UI\EntitySelector\EntityUsageTable
 {
@@ -117,7 +130,7 @@ class FinderDestTable extends Main\UI\EntitySelector\EntityUsageTable
 			return;
 		}
 
-		foreach (static::getCompatEntities() as $entityId => $entity)
+		foreach (Main\UI\EntitySelector\Converter::getCompatEntities() as $entityId => $entity)
 		{
 			if (preg_match('/'.$entity['pattern'].'/i', $data['CODE'], $matches))
 			{
@@ -139,7 +152,9 @@ class FinderDestTable extends Main\UI\EntitySelector\EntityUsageTable
 
 				$cache = new \CPHPCache;
 				$cache->cleanDir('/sonet/log_dest_sort/'.intval($userId / 100));
-				$cache->cleanDir('/ui_selector/dest_sort/'.intval($userId / 100));
+				$cache->cleanDir(\Bitrix\Main\UI\Selector\Entities::getCacheDir([
+					'userId' => $userId,
+				]));
 
 				return;
 			}

@@ -76,13 +76,13 @@ class ImportCsv
 			}
 		}
 
-		self::$documentRoot = rtrim(Translate\IO\Path::tidy(Main\Application::getDocumentRoot()), '/');
+		self::$documentRoot = \rtrim(Translate\IO\Path::tidy(Main\Application::getDocumentRoot()), '/');
 
 		self::$enabledLanguages = Translate\Config::getEnabledLanguages();
 
 		foreach (self::$enabledLanguages as $languageId)
 		{
-			self::$sourceEncoding[$languageId] = mb_strtolower(Main\Localization\Translation::getSourceEncoding($languageId));
+			self::$sourceEncoding[$languageId] = \mb_strtolower(Main\Localization\Translation::getSourceEncoding($languageId));
 		}
 
 		parent::__construct($name, $controller, $config);
@@ -203,9 +203,9 @@ class ImportCsv
 				}
 
 				if (
-					!is_array($csvRow) ||
+					!\is_array($csvRow) ||
 					empty($csvRow) ||
-					(count($csvRow) == 1 && ($csvRow[0] === null || $csvRow[0] === ''))
+					(\count($csvRow) == 1 && ($csvRow[0] === null || $csvRow[0] === ''))
 				)
 				{
 					continue;
@@ -255,26 +255,20 @@ class ImportCsv
 						continue;
 					}
 
-					$phrase = str_replace("\\\\", "\\", $csvRow[$langIndex]);
+					//$phrase = str_replace("\\\\", "\\", $csvRow[$langIndex]);
+					$phrase = $csvRow[$langIndex];
 
 					$encodingOut = self::$sourceEncoding[$languageId];
 
 					if (!empty($this->encodingIn) && $this->encodingIn !== $encodingOut)
 					{
-						$errorMessage = '';
-						$phrase = Main\Text\Encoding::convertEncoding($phrase, $this->encodingIn, $encodingOut, $errorMessage);
-
-						if (!$phrase && !empty($errorMessage))
-						{
-							$rowErrors[] = $errorMessage;
-							continue;
-						}
+						$phrase = Main\Text\Encoding::convertEncoding($phrase, $this->encodingIn, $encodingOut);
 					}
 
 					$checked = true;
 					if ($encodingOut === 'utf-8')
 					{
-						$validPhrase = preg_replace("/[^\x01-\x7F]/", '', $phrase);// remove ASCII characters
+						$validPhrase = \preg_replace("/[^\x01-\x7F]/", '', $phrase);// remove ASCII characters
 						if ($validPhrase !== $phrase)
 						{
 							$checked = Translate\Text\StringHelper::validateUtf8OctetSequences($phrase);
@@ -355,9 +349,21 @@ class ImportCsv
 					$langFile->setLangId($languageId);
 					$langFile->setOperatingEncoding(self::$sourceEncoding[$languageId]);
 
-					if (!$langFile->load() && $langFile->hasErrors())
+					if (!$langFile->loadTokens())
 					{
-						$this->addErrors($langFile->getErrors());
+						if (!$langFile->load() && $langFile->hasErrors())
+						{
+							foreach ($langFile->getErrors() as $error)
+							{
+								if ($error->getCode() !== 'EMPTY_CONTENT')
+								{
+									$this->addError($error);
+								}
+							}
+						}
+					}
+					if (\count($this->getErrors()) > 0)
+					{
 						continue;
 					}
 
@@ -417,7 +423,7 @@ class ImportCsv
 						// sort phrases by key
 						if (Translate\Config::needToSortPhrases())
 						{
-							if (in_array($languageId, Translate\Config::getNonSortPhraseLanguages()) === false)
+							if (\in_array($languageId, Translate\Config::getNonSortPhraseLanguages()) === false)
 							{
 								$langFile->sortPhrases();
 							}
@@ -501,10 +507,10 @@ class ImportCsv
 			$this->csvFile->moveFirst();
 			$rowHead = $this->csvFile->fetch();
 			if (
-				!is_array($rowHead) ||
-				empty($rowHead) ||
-				empty($rowHead[0]) ||
-				(count($rowHead) < 3)
+				!\is_array($rowHead)
+				|| empty($rowHead)
+				|| empty($rowHead[0])
+				|| (\count($rowHead) < 3)
 			)
 			{
 				continue;
@@ -514,10 +520,10 @@ class ImportCsv
 		}
 
 		if (
-			!is_array($rowHead) ||
-			empty($rowHead) ||
-			empty($rowHead[0]) ||
-			(count($rowHead) < 3)
+			!is_array($rowHead)
+			|| empty($rowHead)
+			|| empty($rowHead[0])
+			|| (count($rowHead) < 3)
 		)
 		{
 			$this->addError(new Main\Error(Loc::getMessage('TR_IMPORT_ERR_EMPTY_FIRST_ROW')));

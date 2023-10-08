@@ -11,7 +11,10 @@ return array(
 	'code' => 'store-instagram/footer',
 	'name' => Loc::getMessage('LANDING_DEMO_STORE_INSTAGRAM--FOOTER--NAME'),
 	'description' => Loc::getMessage('LANDING_DEMO_STORE_INSTAGRAM--FOOTER--NAME'),
-	'active' => true,
+	'active' => \LandingSiteDemoComponent::checkActive([
+		'ONLY_IN' => [],
+		'EXCEPT' => ['ru'],
+	]),
 	'preview' => '',
 	'preview2x' => '',
 	'preview3x' => '',
@@ -37,7 +40,7 @@ return array(
 			'nodes' => array(
 				'.landing-block-node-text' => array(
 					0 => '
-				<p>&copy 2018 All rights reserved.</p>
+				<p>&copy 2022 All rights reserved.</p>
 			',
 				),
 			),

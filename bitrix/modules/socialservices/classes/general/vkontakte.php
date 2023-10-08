@@ -39,19 +39,18 @@ class CSocServVKontakte extends CSocServAuth
 	{
 		global $APPLICATION;
 
-		CSocServAuthManager::SetUniqueKey();
 		if (IsModuleInstalled('bitrix24') && defined('BX24_HOST_NAME'))
 		{
 			$redirect_uri = self::CONTROLLER_URL . "/redirect.php";
 			// error, but this code is not working at all
 			$state = \CHTTP::URN2URI("/bitrix/tools/oauth/liveid.php") . "?state=";
-			$backurl = urlencode($APPLICATION->GetCurPageParam('check_key=' . $_SESSION["UNIQUE_KEY"], array("logout", "auth_service_error", "auth_service_id", "backurl")));
+			$backurl = urlencode($APPLICATION->GetCurPageParam('check_key=' . \CSocServAuthManager::getUniqueKey(), array("logout", "auth_service_error", "auth_service_id", "backurl")));
 			$state .= urlencode(urlencode("backurl=" . $backurl));
 		}
 		else
 		{
 			$backurl = $APPLICATION->GetCurPageParam(
-				'check_key=' . $_SESSION["UNIQUE_KEY"],
+				'check_key=' . \CSocServAuthManager::getUniqueKey(),
 				array("logout", "auth_service_error", "auth_service_id", "backurl")
 			);
 
@@ -147,6 +146,16 @@ class CSocServVKontakte extends CSocServAuth
 		$GLOBALS["APPLICATION"]->RestartBuffer();
 		$bSuccess = SOCSERV_AUTHORISATION_ERROR;
 
+		$stateUnpacked = base64_decode($_REQUEST['state'] ?? '');
+		if ($stateUnpacked)
+		{
+			parse_str($stateUnpacked, $stateParams);
+			if ($stateParams && is_array($stateParams))
+			{
+				$_REQUEST = array_merge($_REQUEST, $stateParams);
+			}
+		}
+
 		if ((isset($_REQUEST["code"]) && $_REQUEST["code"] <> '') && CSocServAuthManager::CheckUniqueKey())
 		{
 			if (IsModuleInstalled('bitrix24') && defined('BX24_HOST_NAME'))
@@ -170,7 +179,7 @@ class CSocServVKontakte extends CSocServAuth
 		$aRemove = array("logout", "auth_service_error", "auth_service_id", "code", "error_reason", "error", "error_description", "check_key", "current_fieldset");
 
 
-		if (isset($_REQUEST['backurl']) || isset($_REQUEST['redirect_url']))
+		if ($bSuccess === true && (isset($_REQUEST['backurl']) || isset($_REQUEST['redirect_url'])))
 		{
 			$parseUrl = parse_url(isset($_REQUEST['redirect_url']) ? $_REQUEST['redirect_url'] : $_REQUEST['backurl']);
 
@@ -215,7 +224,7 @@ if(window.opener)
 window.close();
 </script>
 ';
-		die();
+		CMain::FinalActions();
 	}
 
 	public function setUser($userId)
@@ -318,6 +327,11 @@ class CVKontakteOAuthInterface extends CSocServOAuthTransport
 
 	public function GetAuthUrl($redirect_uri, $state = '')
 	{
+		if ($state)
+		{
+			$state = base64_encode($state);
+		}
+
 		return self::AUTH_URL .
 		"?client_id=" . urlencode($this->appID) .
 		"&redirect_uri=" . urlencode($redirect_uri) .

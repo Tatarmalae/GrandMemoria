@@ -12,30 +12,30 @@ class RecentItem implements \JsonSerializable
 
 	public function __construct(array $options)
 	{
-		if (!empty($options['id']) && (is_string($options['id']) || is_int($options['id'])))
+		$id = $options['id'] ?? null;
+		if ((is_string($id) && $id !== '') || is_int($id))
 		{
-			$id = $options['id'];
-			$id = is_string($id) && (string)(int)$id === $id ? (int)$id : $id;
-
+			$id = (string)(int)$id === $id ? (int)$id : $id;
 			$this->id = $id;
 		}
 
-		if (!empty($options['entityId']) && is_string($options['entityId']))
+		$entityId = $options['entityId'] ?? null;
+		if (is_string($entityId) && $entityId !== '')
 		{
-			$this->entityId = $options['entityId'];
+			$this->entityId = strtolower($entityId);
 		}
 
-		if (!empty($options['loaded']) && is_bool($options['loaded']))
+		if (isset($options['loaded']) && is_bool($options['loaded']))
 		{
 			$this->setLoaded($options['loaded']);
 		}
 
-		if (!empty($options['available']) && is_bool($options['available']))
+		if (isset($options['available']) && is_bool($options['available']))
 		{
 			$this->setAvailable($options['available']);
 		}
 
-		if (!empty($options['lastUseDate']) && is_int($options['lastUseDate']))
+		if (isset($options['lastUseDate']) && is_int($options['lastUseDate']))
 		{
 			$this->setLastUseDate($options['lastUseDate']);
 		}
@@ -51,34 +51,40 @@ class RecentItem implements \JsonSerializable
 		return $this->entityId;
 	}
 
-	public function getLastUseDate()
+	public function getLastUseDate(): ?int
 	{
 		return $this->lastUseDate;
 	}
 
-	public function setLastUseDate(int $lastUseDate)
+	public function setLastUseDate(int $lastUseDate): self
 	{
 		$this->lastUseDate = $lastUseDate;
+
+		return $this;
 	}
 
-	public function isLoaded()
+	public function isLoaded(): bool
 	{
 		return $this->loaded;
 	}
 
-	public function setLoaded(bool $flag)
+	public function setLoaded(bool $flag): self
 	{
 		$this->loaded = $flag;
+
+		return $this;
 	}
 
-	public function isAvailable()
+	public function isAvailable(): bool
 	{
 		return $this->available;
 	}
 
-	public function setAvailable(bool $flag)
+	public function setAvailable(bool $flag): self
 	{
 		$this->available = $flag;
+
+		return $this;
 	}
 
 	public function jsonSerialize()

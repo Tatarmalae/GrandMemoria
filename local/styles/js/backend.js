@@ -6,17 +6,34 @@ $(document).ready(function () {
   ajaxTabs();
   ajaxPagination();
   forms();
+  ajaxModals();
   $(window).on('popstate', function (event) {
     let url = '';
+    let anim = true;
     // Проверяем данные внутри события, и если там наш pagination
     if (event.originalEvent.state && event.originalEvent.state['pagination']) {
       url = event.originalEvent.state['pagination'];
     } else {
       url = document.location.href.split("?")[0];
+      anim = false;
     }
-    loadPage(url);
+    loadPage(url, anim);
   });
 });
+
+//Модалки в циклах
+function ajaxModals() {
+  let body = $('body');
+
+  body.on('click', '.modal-ajax', function (event) {
+    event.preventDefault();
+    let target = $(this).data('target');
+    let key = $(this).data('key');
+    let data = $('.modal-dialog_' + key).html();
+
+    $(target).find('.modal-dialog').html(data).find('img.loading').removeClass('loading').addClass('loaded');
+  });
+}
 
 //Формы обратной связи
 function forms() {
@@ -149,7 +166,7 @@ function ajaxPagination() {
 }
 
 //Ajax-пагинация
-function loadPage(url) {
+function loadPage(url, anim = true) {
   let props = {};
   let tabs = $('.ajax__tabs');
   if (tabs.length) {
@@ -198,7 +215,37 @@ function loadPage(url) {
     sort.ORDER = sortOrder;
   }
 
-  $('html,body').stop().animate({scrollTop: $('section .content').offset().top}, 1000, function () {
+  if (anim) {
+    $('html').stop().animate({scrollTop: $('section .content').offset().top}, 1000, function () {
+      $.ajax({
+        type: "POST",
+        url: url,
+        data: {
+          props: props,
+          sort: sort
+        },
+        success: function (data) {
+          let content = $(data).filter('.ajax__items');
+          let items = $('.ajax__items');
+
+          let pagination = $(data).filter('.filter-bottom');
+          $('.filter-bottom').remove();
+          if (pagination.length) {
+            items.after(pagination);
+          }
+
+          items.replaceWith(content);
+
+          initImgLazyLoad();
+          if($(".poster-slider").length){
+            posterSlider();
+          }
+          dotdotdotInit();
+          wowInit();
+        }
+      });
+    });
+  } else {
     $.ajax({
       type: "POST",
       url: url,
@@ -219,11 +266,14 @@ function loadPage(url) {
         items.replaceWith(content);
 
         initImgLazyLoad();
+        if($(".poster-slider").length){
+          posterSlider();
+        }
         dotdotdotInit();
         wowInit();
       }
     });
-  });
+  }
 }
 
 //Ajax-tabs
@@ -277,6 +327,9 @@ function ajaxTabs() {
         items.replaceWith(content);
 
         initImgLazyLoad();
+        if($(".poster-slider").length){
+          posterSlider();
+        }
         dotdotdotInit();
         wowInit();
       }
@@ -342,6 +395,9 @@ function catalogFilter() {
         }
 
         initImgLazyLoad();
+        if($(".poster-slider").length){
+          posterSlider();
+        }
       }
     });
   });
@@ -397,6 +453,9 @@ function catalogFilter() {
         }
 
         initImgLazyLoad();
+        if($(".poster-slider").length){
+          posterSlider();
+        }
       }
     });
   });
@@ -471,6 +530,9 @@ function catalogFilter() {
           }
 
           initImgLazyLoad();
+          if($(".poster-slider").length){
+            posterSlider();
+          }
         }
       });
     });
@@ -526,6 +588,9 @@ function catalogFilter() {
         }
 
         initImgLazyLoad();
+        if($(".poster-slider").length){
+          posterSlider();
+        }
       }
     });
   });
@@ -587,6 +652,9 @@ function catalogFilter() {
         }
 
         initImgLazyLoad();
+        if($(".poster-slider").length){
+          posterSlider();
+        }
       }
     });
   });

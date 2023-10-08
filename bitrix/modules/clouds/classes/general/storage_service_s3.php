@@ -47,7 +47,7 @@ class CCloudStorageService_S3 extends CCloudStorageService
 		if($bVarsFromForm)
 			$arSettings = $_POST["SETTINGS"][$this->GetID()];
 		else
-			$arSettings = unserialize($arBucket["SETTINGS"]);
+			$arSettings = unserialize($arBucket["SETTINGS"], ['allowed_classes' => false]);
 
 		if(!is_array($arSettings))
 		{
@@ -73,7 +73,10 @@ class CCloudStorageService_S3 extends CCloudStorageService
 			<td>'.GetMessage("CLO_STORAGE_S3_EDIT_SECRET_KEY").':</td>
 			<td><input type="hidden" name="SETTINGS['.$htmlID.'][SECRET_KEY]" id="'.$htmlID.'SECRET_KEY" value="'.htmlspecialcharsbx($arSettings['SECRET_KEY']).'"><input type="text" size="55" name="'.$htmlID.'INP_SECRET_KEY" id="'.$htmlID.'INP_SECRET_KEY" value="'.htmlspecialcharsbx($arSettings['SECRET_KEY']).'" autocomplete="off" '.($arBucket['READ_ONLY'] === 'Y'? '"disabled"': '').' onchange="BX(\''.$htmlID.'SECRET_KEY\').value = this.value"></td>
 		</tr>
-
+		<tr id="SETTINGS_3_'.$htmlID.'" style="display:'.$show.'" class="settings-tr">
+			<td>'.GetMessage("CLO_STORAGE_S3_EDIT_USE_HTTPS").':</td>
+			<td><input type="hidden" name="SETTINGS['.$htmlID.'][USE_HTTPS]" id="'.$htmlID.'KEY" value="N"><input type="checkbox" name="SETTINGS['.$htmlID.'][USE_HTTPS]" id="'.$htmlID.'USE_HTTPS" value="Y" '.($arSettings['USE_HTTPS'] == 'Y'? 'checked="checked"': '').'></td>
+		</tr>
 		';
 		return $result;
 	}
@@ -91,6 +94,7 @@ class CCloudStorageService_S3 extends CCloudStorageService
 			"HOST" => is_array($arSettings)? trim($arSettings["HOST"]): '',
 			"ACCESS_KEY" => is_array($arSettings)? trim($arSettings["ACCESS_KEY"]): '',
 			"SECRET_KEY" => is_array($arSettings)? trim($arSettings["SECRET_KEY"]): '',
+			"USE_HTTPS" => is_array($arSettings) && $arSettings["USE_HTTPS"] == "Y"? "Y": "N",
 		);
 
 		if($arBucket["READ_ONLY"] !== "Y" && $result["HOST"] === '')
@@ -158,9 +162,6 @@ class CCloudStorageService_S3 extends CCloudStorageService
 	*/
 	function SignRequest($arSettings, $RequestMethod, $bucket, $RequestURI, $ContentType, $additional_headers, $params = "", $content = "")
 	{
-		static $search = array("+", "=", "%7E");
-		static $replace = array("%20", "%3D", "~");
-
 		if (is_resource($content))
 		{
 			$streamPosition = ftell($content);
@@ -180,11 +181,15 @@ class CCloudStorageService_S3 extends CCloudStorageService
 		$RequestTime = gmdate('Ymd', $Time).'T'.gmdate('His', $Time).'Z';
 		$additional_headers["x-amz-date"] = $RequestTime;
 
-		$CanonicalizedResource = $RequestURI <> ''? (string)str_replace($search, $replace, $RequestURI): "/";
+		do
+		{
+			$CanonicalizedResource = $RequestURI <> ''? str_replace('%2F', '/', $RequestURI): '/';
+		}
+		while (strpos($CanonicalizedResource, '%2F') !== false);
 
 		$CanonicalQuery = explode("&", ltrim($params, "?"));
 		sort($CanonicalQuery);
-		$CanonicalQueryString = implode("&", $CanonicalQuery);
+		$CanonicalQueryString = str_replace('%7E', '~', implode("&", $CanonicalQuery));
 
 		$CanonicalHeaders = /*.(array[string]string).*/ array();
 		foreach($additional_headers as $key => $value)
@@ -283,10 +288,13 @@ class CCloudStorageService_S3 extends CCloudStorageService
 		global $APPLICATION;
 		$this->status = 0;
 
-		$obRequest = new CHTTP;
+		$request = new Bitrix\Main\Web\HttpClient(array(
+			"redirect" => false,
+			"streamTimeout" => $this->streamTimeout,
+		));
 		if (isset($additional_headers["option-file-result"]))
 		{
-			$obRequest->fp = $additional_headers["option-file-result"];
+			$request->setOutputStream($additional_headers["option-file-result"]);
 		}
 
 		if(isset($additional_headers["Content-Type"]))
@@ -309,18 +317,16 @@ class CCloudStorageService_S3 extends CCloudStorageService
 			$additional_headers["x-amz-security-token"] = $arSettings["SESSION_TOKEN"];
 		}
 
-		$additional_headers["host"] = $this->GetRequestHost($bucket, $arSettings);
+		$host = $additional_headers["Host"] = $this->GetRequestHost($bucket, $arSettings);
 
 		foreach($this->SignRequest($arSettings, $verb, $bucket, $file_name, $ContentType, $additional_headers, $params, $content) as $key => $value)
 		{
-			$obRequest->additional_headers[$key] = $value;
+			$request->setHeader($key, $value);
 		}
 
 		foreach($additional_headers as $key => $value)
-			if(preg_match("/^(option-|host\$)/", $key) == 0)
-				$obRequest->additional_headers[$key] = $value;
-
-		$host = $additional_headers["host"];
+			if(!preg_match("/^option-/", $key))
+				$request->setHeader($key, $value);
 
 		$was_end_point = $this->new_end_point;
 		$this->new_end_point = '';
@@ -328,55 +334,60 @@ class CCloudStorageService_S3 extends CCloudStorageService
 		$this->status = 0;
 		$this->host = $host;
 		$this->verb = $verb;
-		$this->url =  $file_name.$params;
+		$this->url =  ($arSettings["USE_HTTPS"] === "Y"? "https": "http")."://".$host.$file_name.$params;
 		$this->headers = array();
 		$this->errno = 0;
 		$this->errstr = '';
 		$this->result = '';
 
-		$request = false;
+		$logRequest = false;
 		if (defined("BX_CLOUDS_TRACE") && $verb !== "GET" && $verb !== "HEAD")
 		{
 			$stime = microtime(1);
-			$request = array(
+			$logRequest = array(
 				"request_id" => md5((string)mt_rand()),
 				"portal" => (CModule::IncludeModule('replica')? getNameByDomain(): $_SERVER["HTTP_HOST"]),
-				"verb" => $verb,
-				"host" => $host,
-				"uri" => $file_name.$params
+				"verb" => $this->verb,
+				"url" => $this->url,
 			);
-			AddMessage2Log(json_encode($request), 'clouds', 20);
+			if (function_exists("getmypid"))
+				$logRequest["pid"] = getmypid();
+			AddMessage2Log(json_encode($logRequest), 'clouds', 20);
 		}
 
-		$obRequest->Query($verb, $host, 80, $file_name.$params, $content, '', $ContentType);
+		$request->setHeader("Content-type", $ContentType);
+		$request->query($this->verb, $this->url, $content);
 
-		if ($request)
+		$this->status = $request->getStatus();
+		foreach($request->getHeaders() as $key => $value)
 		{
-			$request["status"] = $obRequest->status;
-			$request["time"] = round(microtime(true) - $stime, 6);
-			$request["headers"] = $obRequest->headers;
-			AddMessage2Log(json_encode($request), 'clouds', 0);
+			$this->headers[$key] = $value;
+		}
+		$this->errstr = implode("\n", $request->getError());
+		$this->errno = $this->errstr? 255: 0;
+		$this->result = $request->getResult();
+
+		if ($logRequest)
+		{
+			$logRequest["status"] = $this->status;
+			$logRequest["time"] = round(microtime(true) - $stime, 6);
+			$logRequest["headers"] = $this->headers;
+			AddMessage2Log(json_encode($logRequest), 'clouds', 0);
 		}
 
-		$this->status = $obRequest->status;
-		$this->headers = $obRequest->headers;
-		$this->errno = $obRequest->errno;
-		$this->errstr = $obRequest->errstr;
-		$this->result = $obRequest->result;
-
-		if($obRequest->status == 200)
+		if($this->status == 200)
 		{
 			if(
 				isset($additional_headers["option-raw-result"])
 				|| isset($additional_headers["option--result"])
 			)
 			{
-				return $obRequest->result;
+				return $this->result;
 			}
-			elseif($obRequest->result != "")
+			elseif($this->result != "")
 			{
 				$obXML = new CDataXML;
-				$text = preg_replace("/<"."\\?XML.*?\\?".">/i", "", $obRequest->result);
+				$text = preg_replace("/<"."\\?XML.*?\\?".">/i", "", $this->result);
 				if($obXML->LoadString($text))
 				{
 					$arXML = $obXML->GetArray();
@@ -397,12 +408,12 @@ class CCloudStorageService_S3 extends CCloudStorageService
 			}
 		}
 		elseif(
-			$obRequest->status == 307  //Temporary redirect
-			&& isset($obRequest->headers["Location"])
+			$this->status == 307  //Temporary redirect
+			&& isset($this->headers["Location"])
 			&& $was_end_point === "" //No recurse yet
 		)
 		{
-			$this->new_end_point = $obRequest->headers["Location"];
+			$this->new_end_point = $this->headers["Location"];
 			return $this->SendRequest(
 				$arSettings,
 				$verb,
@@ -413,14 +424,24 @@ class CCloudStorageService_S3 extends CCloudStorageService
 				$additional_headers
 			);
 		}
-		elseif($obRequest->status > 0)
+		elseif($this->status > 0)
 		{
-			if($obRequest->result != "")
+			if($this->result != "")
 			{
 				$obXML = new CDataXML;
-				if($obXML->LoadString($obRequest->result))
+				if($obXML->LoadString($this->result))
 				{
 					$node = $obXML->SelectNodes("/Error/Message");
+					if (is_object($node))
+					{
+						$errorMessage = trim($node->textContent(), '.');
+						$e = new CApplicationException(GetMessage('CLO_STORAGE_S3_XML_ERROR', array(
+							'#errmsg#' => $errorMessage,
+						)));
+						$APPLICATION->ThrowException($e);
+						return false;
+					}
+					$node = $obXML->SelectNodes("/Error/Code");
 					if (is_object($node))
 					{
 						$errorMessage = trim($node->textContent(), '.');
@@ -500,6 +521,10 @@ class CCloudStorageService_S3 extends CCloudStorageService
 			}
 			else
 			{
+				if (defined("BX_CLOUDS_ERROR_DEBUG"))
+				{
+					AddMessage2Log($this);
+				}
 				return false;
 			}
 			break;
@@ -553,9 +578,17 @@ class CCloudStorageService_S3 extends CCloudStorageService
 			$APPLICATION->ResetException();
 			return true;
 		}
+		elseif (is_array($response))
+		{
+			return true;
+		}
 		else
 		{
-			return is_array($response);
+			if (defined("BX_CLOUDS_ERROR_DEBUG"))
+			{
+				AddMessage2Log($this);
+			}
+			return false;
 		}
 	}
 	/**
@@ -582,18 +615,27 @@ class CCloudStorageService_S3 extends CCloudStorageService
 		}
 		elseif(is_array($response))
 		{
-			return
+			if (
 				!isset($response["ListBucketResult"])
 				|| !is_array($response["ListBucketResult"])
 				|| !isset($response["ListBucketResult"]["#"])
 				|| !is_array($response["ListBucketResult"]["#"])
 				|| !isset($response["ListBucketResult"]["#"]["Contents"])
-				|| !is_array($response["ListBucketResult"]["#"]["Contents"]);
-		}
-		else
-		{
+				|| !is_array($response["ListBucketResult"]["#"]["Contents"])
+			)
+			{
+				return true;
+			}
+
 			return false;
 		}
+
+		if (defined("BX_CLOUDS_ERROR_DEBUG"))
+		{
+			AddMessage2Log($this);
+		}
+
+		return false;
 	}
 	/**
 	 * @param array[string]string $arBucket
@@ -629,19 +671,31 @@ class CCloudStorageService_S3 extends CCloudStorageService
 			$APPLICATION->ResetException();
 			return true;
 		}
+		elseif (is_array($response))
+		{
+			return true;
+		}
 		else
 		{
-			return is_array($response);
+			if (defined("BX_CLOUDS_ERROR_DEBUG"))
+			{
+				AddMessage2Log($this);
+			}
+			return false;
 		}
 	}
 	/**
 	 * @param array[string]string $arBucket
 	 * @param mixed $arFile
+	 * @param boolean $encoded
 	 * @return string
 	*/
-	function GetFileSRC($arBucket, $arFile)
+	function GetFileSRC($arBucket, $arFile, $encoded = true)
 	{
-		$proto = CMain::IsHTTPS()? "https": "http";
+		if ($arBucket["SETTINGS"]["USE_HTTPS"] === "Y")
+			$proto = "https";
+		else
+			$proto = CMain::IsHTTPS()? "https": "http";
 
 		if($arBucket["CNAME"] != "")
 		{
@@ -675,7 +729,14 @@ class CCloudStorageService_S3 extends CCloudStorageService
 			$URI = $pref."/".$URI;
 		}
 
-		return $proto."://$host/".CCloudUtil::URLEncode($URI, "UTF-8");
+		if ($encoded)
+		{
+			return $proto."://$host/".CCloudUtil::URLEncode($URI, "UTF-8", true);
+		}
+		else
+		{
+			return $proto."://$host/".$URI;
+		}
 	}
 	/**
 	 * @param array[string]string $arBucket
@@ -730,10 +791,11 @@ class CCloudStorageService_S3 extends CCloudStorageService
 				$filePath = "/".$arBucket["PREFIX"]."/".ltrim($filePath, "/");
 		}
 
+		$sourcePath = "/".$arBucket["BUCKET"]."/".($arBucket["PREFIX"]? $arBucket["PREFIX"]."/": "").($arFile["SUBDIR"]? $arFile["SUBDIR"]."/": "").$arFile["FILE_NAME"];
 		$additional_headers = array();
 		if($this->_public)
 			$additional_headers["x-amz-acl"] = "public-read";
-		$additional_headers["x-amz-copy-source"] = CCloudUtil::URLEncode("/".$arBucket["BUCKET"]."/".($arBucket["PREFIX"]? $arBucket["PREFIX"]."/": "").($arFile["SUBDIR"]? $arFile["SUBDIR"]."/": "").$arFile["FILE_NAME"], "UTF-8", true);
+		$additional_headers["x-amz-copy-source"] = CCloudUtil::URLEncode($sourcePath, "UTF-8", true);
 		$additional_headers["Content-Type"] = $arFile["CONTENT_TYPE"];
 
 		if (
@@ -769,7 +831,7 @@ class CCloudStorageService_S3 extends CCloudStorageService
 			&& !preg_match(BX_CLOUDS_COUNTERS_DEBUG, $filePath)
 		)
 		{
-			\CCloudsDebug::getInstance()->startAction(CCloudUtil::URLEncode($filePath, "UTF-8"));
+			\CCloudsDebug::getInstance()->startAction(CCloudUtil::URLEncode($filePath, "UTF-8", true));
 		}
 
 		if($this->status == 200)
@@ -800,6 +862,10 @@ class CCloudStorageService_S3 extends CCloudStorageService
 			if (!$fileSize)
 			{
 				$APPLICATION->ResetException();
+				if (defined("BX_CLOUDS_ERROR_DEBUG"))
+				{
+					AddMessage2Log($this);
+				}
 				return false;
 			}
 
@@ -840,6 +906,10 @@ class CCloudStorageService_S3 extends CCloudStorageService
 			else
 			{
 				$APPLICATION->ResetException();
+				if (defined("BX_CLOUDS_ERROR_DEBUG"))
+				{
+					AddMessage2Log($this);
+				}
 				return false;
 			}
 
@@ -856,7 +926,7 @@ class CCloudStorageService_S3 extends CCloudStorageService
 					'PUT',
 					$arBucket["BUCKET"],
 					CCloudUtil::URLEncode($filePath, "UTF-8", true),
-					'?partNumber='.($part_no + 1).'&uploadId='.urlencode($uploadId),
+					'?partNumber='.($part_no + 1).'&uploadId='.rawurlencode($uploadId),
 					'',
 					$additional_headers
 				);
@@ -881,6 +951,10 @@ class CCloudStorageService_S3 extends CCloudStorageService
 				else
 				{
 					$APPLICATION->ResetException();
+					if (defined("BX_CLOUDS_ERROR_DEBUG"))
+					{
+						AddMessage2Log($this);
+					}
 					return false;
 				}
 				$part_no++;
@@ -899,7 +973,7 @@ class CCloudStorageService_S3 extends CCloudStorageService
 				'POST',
 				$arBucket["BUCKET"],
 				CCloudUtil::URLEncode($filePath, "UTF-8", true),
-				'?uploadId='.urlencode($uploadId),
+				'?uploadId='.rawurlencode($uploadId),
 				"<CompleteMultipartUpload>".$data."</CompleteMultipartUpload>"
 			);
 
@@ -907,22 +981,23 @@ class CCloudStorageService_S3 extends CCloudStorageService
 			{
 				return $this->GetFileSRC($arBucket, $filePath);
 			}
+
 			$APPLICATION->ResetException();
+			if (defined("BX_CLOUDS_ERROR_DEBUG"))
+			{
+				AddMessage2Log($this);
+			}
 			return false;
 		}
 		else//if($this->status == 404)
 		{
 			$APPLICATION->ResetException();
+			if (defined("BX_CLOUDS_ERROR_DEBUG"))
+			{
+				AddMessage2Log($this);
+			}
 			return false;
 		}
-	}
-
-	function DownloadToFile($arBucket, $arFile, $filePath)
-	{
-		$io = CBXVirtualIo::GetInstance();
-		$obRequest = new CHTTP;
-		$obRequest->follow_redirect = true;
-		return $obRequest->Download($this->GetFileSRC($arBucket, $arFile), $io->GetPhysicalName($filePath));
 	}
 
 	function DeleteFile($arBucket, $filePath)
@@ -944,22 +1019,6 @@ class CCloudStorageService_S3 extends CCloudStorageService
 			$filePath
 		);
 
-		$status = $this->status;
-		if(
-			$this->status == 204
-			&& mb_strpos($filePath, '+') !== false
-			&& $this->FileExists($arBucket, str_replace('+', '%2B', $filePath))
-		)
-		{
-			$this->SendRequest(
-				$arBucket["SETTINGS"],
-				'DELETE',
-				$arBucket["BUCKET"],
-				str_replace('+', '%2B', $filePath)
-			);
-			$status = $this->status;
-		}
-
 		if (
 			defined("BX_CLOUDS_COUNTERS_DEBUG")
 			&& $this->status == 204
@@ -969,7 +1028,7 @@ class CCloudStorageService_S3 extends CCloudStorageService
 			\CCloudsDebug::getInstance()->startAction($filePath);
 		}
 
-		if($status == 204)
+		if($this->status == 204)
 		{
 			$APPLICATION->ResetException();
 			return true;
@@ -977,6 +1036,10 @@ class CCloudStorageService_S3 extends CCloudStorageService
 		else
 		{
 			$APPLICATION->ResetException();
+			if (defined("BX_CLOUDS_ERROR_DEBUG"))
+			{
+				AddMessage2Log($this);
+			}
 			return false;
 		}
 	}
@@ -996,7 +1059,7 @@ class CCloudStorageService_S3 extends CCloudStorageService
 		if($this->_public)
 			$additional_headers["x-amz-acl"] = "public-read";
 		$additional_headers["Content-Type"] = $arFile["type"];
-		$additional_headers["Content-Length"] = (array_key_exists("content", $arFile)? CUtil::BinStrlen($arFile["content"]): filesize($arFile["tmp_name"]));
+		$additional_headers["Content-Length"] = (array_key_exists("content", $arFile)? strlen($arFile["content"]): filesize($arFile["tmp_name"]));
 
 		if (
 			defined("BX_CLOUDS_COUNTERS_DEBUG")
@@ -1045,12 +1108,19 @@ class CCloudStorageService_S3 extends CCloudStorageService
 		}
 		elseif($this->status == 403)
 		{
-			AddMessage2Log($this);
+			if (defined("BX_CLOUDS_ERROR_DEBUG"))
+			{
+				AddMessage2Log($this);
+			}
 			return false;
 		}
 		else
 		{
 			$APPLICATION->ResetException();
+			if (defined("BX_CLOUDS_ERROR_DEBUG"))
+			{
+				AddMessage2Log($this);
+			}
 			return false;
 		}
 	}
@@ -1058,14 +1128,15 @@ class CCloudStorageService_S3 extends CCloudStorageService
 	function ListFiles($arBucket, $filePath, $bRecursive = false, $pageSize = 0, $pageMarker = '')
 	{
 		global $APPLICATION;
-		static $search = array("+", "%7E");
-		static $replace = array("%20", "~");
+		static $search = array("%7E");
+		static $replace = array("~");
 		$result = array(
 			"dir" => array(),
 			"file" => array(),
 			"file_size" => array(),
 			"file_mtime" => array(),
 			"file_hash" => array(),
+			"last_key" => "",
 		);
 
 		$filePath = trim($filePath, '/');
@@ -1090,8 +1161,8 @@ class CCloudStorageService_S3 extends CCloudStorageService
 				'GET',
 				$arBucket["BUCKET"],
 				'/',
-				'?'.($bRecursive? '': 'delimiter=%2F&').'prefix='.str_replace($search, $replace, urlencode($filePath))
-					.'&marker='.str_replace("+", "%20", urlencode($marker))
+				'?'.($bRecursive? '': 'delimiter=%2F&').'prefix='.str_replace($search, $replace, rawurlencode($filePath))
+					.'&marker='.rawurlencode($marker)
 			);
 
 			if(
@@ -1111,7 +1182,7 @@ class CCloudStorageService_S3 extends CCloudStorageService
 					foreach($response["ListBucketResult"]["#"]["CommonPrefixes"] as $a)
 					{
 						$dir_name = mb_substr(rtrim($a["#"]["Prefix"][0]["#"], "/"), mb_strlen($filePath));
-						$result["dir"][] = $APPLICATION->ConvertCharset(urldecode($dir_name), "UTF-8", LANG_CHARSET);
+						$result["dir"][] = $APPLICATION->ConvertCharset($dir_name, "UTF-8", LANG_CHARSET);
 					}
 				}
 
@@ -1130,6 +1201,7 @@ class CCloudStorageService_S3 extends CCloudStorageService
 							$result["file_size"][] = $a["#"]["Size"][0]["#"];
 							$result["file_mtime"][] = mb_substr($a["#"]["LastModified"][0]["#"], 0, 19);
 							$result["file_hash"][] = trim($a["#"]["ETag"][0]["#"], '"');
+							$result["last_key"] = $APPLICATION->ConvertCharset($file_name, "UTF-8", LANG_CHARSET);
 							$lastKey = $a["#"]["Key"][0]["#"];
 							if ($pageSize > 0 && count($result["file"]) >= $pageSize)
 							{
@@ -1166,12 +1238,64 @@ class CCloudStorageService_S3 extends CCloudStorageService
 			}
 			else
 			{
-				AddMessage2Log($this);
+				if (defined("BX_CLOUDS_ERROR_DEBUG"))
+				{
+					AddMessage2Log($this);
+				}
 				return false;
 			}
 		}
 
 		return $result;
+	}
+
+	public function GetFileInfo($arBucket, $filePath)
+	{
+		global $APPLICATION;
+
+		if($arBucket["PREFIX"] != "")
+		{
+			if(mb_substr($filePath, 0, mb_strlen($arBucket["PREFIX"]) + 2) != "/".$arBucket["PREFIX"]."/")
+				$filePath = "/".$arBucket["PREFIX"]."/".ltrim($filePath, "/");
+		}
+		$filePath = CCloudUtil::URLEncode($filePath, "UTF-8", true);
+
+		$this->SetLocation($arBucket["LOCATION"]);
+		$this->SendRequest(
+			$arBucket["SETTINGS"],
+			'HEAD',
+			$arBucket["BUCKET"],
+			$filePath
+		);
+
+		if($this->status == 200)
+		{
+			$result = [];
+			foreach ($this->headers as $name => $value)
+			{
+				$name = strtolower($name);
+				if ($name === 'content-length')
+				{
+					$result['size'] = $value;
+				}
+				elseif ($name === 'etag')
+				{
+					$result['hash'] = trim($value, '"');
+				}
+				elseif ($name === 'last-modified')
+				{
+					$ts = strtotime($value);
+					$result['mtime'] = mb_substr(gmdate('c', $ts), 0, 19);
+				}
+			}
+
+			return count($result) == 3 ? $result : null;
+		}
+		else
+		{
+			$APPLICATION->ResetException();
+			return false;
+		}
 	}
 
 	function InitiateMultipartUpload($arBucket, &$NS, $filePath, $fileSize, $ContentType)
@@ -1229,6 +1353,10 @@ class CCloudStorageService_S3 extends CCloudStorageService
 		}
 		else
 		{
+			if (defined("BX_CLOUDS_ERROR_DEBUG"))
+			{
+				AddMessage2Log($this);
+			}
 			return false;
 		}
 	}
@@ -1254,7 +1382,7 @@ class CCloudStorageService_S3 extends CCloudStorageService
 			'PUT',
 			$arBucket["BUCKET"],
 			$filePath,
-			'?partNumber='.($part_no + 1).'&uploadId='.urlencode($NS["UploadId"]),
+			'?partNumber='.($part_no + 1).'&uploadId='.rawurlencode($NS["UploadId"]),
 			$data
 		);
 
@@ -1268,6 +1396,11 @@ class CCloudStorageService_S3 extends CCloudStorageService
 					return true;
 				}
 			}
+		}
+
+		if (defined("BX_CLOUDS_ERROR_DEBUG"))
+		{
+			AddMessage2Log($this);
 		}
 		return false;
 	}
@@ -1317,7 +1450,7 @@ class CCloudStorageService_S3 extends CCloudStorageService
 			'POST',
 			$arBucket["BUCKET"],
 			$filePath,
-			'?uploadId='.urlencode($NS["UploadId"]),
+			'?uploadId='.rawurlencode($NS["UploadId"]),
 			"<CompleteMultipartUpload>".$data."</CompleteMultipartUpload>"
 		);
 
@@ -1338,7 +1471,18 @@ class CCloudStorageService_S3 extends CCloudStorageService
 			\CCloudsDebug::getInstance()->startAction($filePath);
 		}
 
-		return $this->status == 200;
+		if ($this->status == 200)
+		{
+			return true;
+		}
+		else
+		{
+			if (defined("BX_CLOUDS_ERROR_DEBUG"))
+			{
+				AddMessage2Log($this);
+			}
+			return false;
+		}
 	}
 	/**
 	 * @param array[string]string $arBucket
@@ -1363,7 +1507,7 @@ class CCloudStorageService_S3 extends CCloudStorageService
 				'DELETE',
 				$arBucket["BUCKET"],
 				$filePath,
-				'?uploadId='.urlencode($NS["UploadId"]),
+				'?uploadId='.rawurlencode($NS["UploadId"]),
 				''
 			);
 		}

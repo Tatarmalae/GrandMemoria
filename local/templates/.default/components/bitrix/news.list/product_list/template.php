@@ -60,6 +60,7 @@ $this->setFrameMode(true);
                                         </a>
                                     </span>
                                     <div class="price price_small">
+                                        <?php $arItem['PROPERTIES']['PRICE']['VALUE'] = str_replace('от', '', $arItem['PROPERTIES']['PRICE']['VALUE']);?>
                                         <span class="price-now">от <?= number_format($arItem['PROPERTIES']['PRICE']['VALUE'], 0, ' ', ' ') ?> ₽</span>
                                         <?php if (!empty($arItem['PROPERTIES']['OLD_PRICE']['VALUE'])): ?>
                                             <s class="price-old">от <?= number_format($arItem['PROPERTIES']['OLD_PRICE']['VALUE'], 0, ' ', ' ') ?> ₽</s>

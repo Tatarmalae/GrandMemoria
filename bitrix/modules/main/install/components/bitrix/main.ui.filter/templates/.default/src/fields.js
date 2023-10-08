@@ -6,6 +6,7 @@ import createNumberInputDecl from './fields/create-number-input-decl';
 import createLineDecl from './fields/create-line-decl';
 import createSelectDecl from './fields/create-select-decl';
 import {Field} from './field/field';
+import {AdditionalFilter} from './additional-filter';
 
 const errorMessages = new WeakMap();
 const errorMessagesTypes = new WeakMap();
@@ -121,6 +122,7 @@ export class Fields
 			name: fieldData.NAME,
 			type: fieldData.TYPE,
 			label: this.parent.getParam('ENABLE_LABEL') ? fieldData.LABEL : '',
+			icon: (this.parent.getParam('ENABLE_LABEL') && fieldData.ICON) ? fieldData.ICON : null,
 			dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
 			deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
 			content: [
@@ -161,6 +163,7 @@ export class Fields
 			name: fieldData.NAME,
 			type: fieldData.TYPE,
 			label: this.parent.getParam('ENABLE_LABEL') ? fieldData.LABEL : '',
+			icon: (this.parent.getParam('ENABLE_LABEL') && fieldData.ICON) ? fieldData.ICON : null,
 			dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
 			deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
 			content: [
@@ -201,7 +204,7 @@ export class Fields
 		return field;
 	}
 
-	createDestSelector(fieldData)
+	createCustomEntityFieldLayout(fieldData)
 	{
 		let field = {
 			block: 'main-ui-control-field',
@@ -211,6 +214,7 @@ export class Fields
 			name: fieldData.NAME,
 			type: fieldData.TYPE,
 			label: this.parent.getParam('ENABLE_LABEL') ? fieldData.LABEL : '',
+			icon: (this.parent.getParam('ENABLE_LABEL') && fieldData.ICON) ? fieldData.ICON : null,
 			dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
 			deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
 			content: {
@@ -300,12 +304,9 @@ export class Fields
 
 		const input = BX.Filter.Utils.getBySelector(field, '.main-ui-control-string[type="text"]');
 		BX.addClass(input, 'main-ui-square-search-item');
+		input.autocomplete = 'off';
 
-		Event.bind(input, 'focus', (event) => {
-			BX.fireEvent(event.currentTarget, 'click');
-		});
-
-
+		Event.bind(input, 'focus', BX.proxy(this._onCustomEntityInputFocus, this));
 		Event.bind(input, 'click', BX.proxy(this._onCustomEntityInputClick, this));
 
 		if (!this.bindDocument)
@@ -318,6 +319,12 @@ export class Fields
 		Event.bind(input, 'keydown', BX.proxy(this._onCustomEntityKeydown, this));
 		Event.bind(field, 'click', BX.proxy(this._onCustomEntityFieldClick, this));
 
+		return field;
+	}
+
+	createDestSelector(fieldData)
+	{
+		const field = this.createCustomEntityFieldLayout(fieldData);
 
 		BX.ready(BX.proxy(function() {
 			BX.Filter.DestinationSelector.create(
@@ -343,118 +350,38 @@ export class Fields
 		return field;
 	}
 
-	createCustomEntity(fieldData)
+	createEntitySelector(fieldData)
 	{
-		let field = {
-			block: 'main-ui-control-field',
-			mix: this.parent.getParam('ENABLE_LABEL') ? [this.parent.settings.classFieldWithLabel] : null,
-			deleteButton: true,
-			valueDelete: true,
-			name: fieldData.NAME,
-			type: fieldData.TYPE,
-			label: this.parent.getParam('ENABLE_LABEL') ? fieldData.LABEL : '',
-			dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
-			deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
-			content: {
-				block: 'main-ui-control-entity',
-				mix: 'main-ui-control',
-				attrs: {
-					'data-multiple': JSON.stringify(fieldData.MULTIPLE),
-				},
-				content: [],
-			},
-		};
+		const field = this.createCustomEntityFieldLayout(fieldData);
 
-		if ('_label' in fieldData.VALUES && !!fieldData.VALUES._label)
-		{
-			if (fieldData.MULTIPLE)
+		BX.Filter.EntitySelector.create(
+			fieldData.NAME,
 			{
-				let label = fieldData.VALUES._label ? fieldData.VALUES._label : [];
-
-				if (Type.isPlainObject(label))
-				{
-					label = Object.keys(label).map((key) => {
-						return label[key];
-					});
-				}
-
-				if (!Type.isArray(label))
-				{
-					label = [label];
-				}
-
-				let value = fieldData.VALUES._value ? fieldData.VALUES._value : [];
-				if (Type.isPlainObject(value))
-				{
-					value = Object.keys(value).map((key) => {
-						return value[key];
-					});
-				}
-
-				if (!Type.isArray(value))
-				{
-					value = [value];
-				}
-
-				label.forEach((currentLabel, index) => {
-					field.content.content.push({
-						block: 'main-ui-square',
-						tag: 'span',
-						name: currentLabel,
-						item: {_label: currentLabel, _value: value[index]},
-					});
-				});
-			}
-			else
-			{
-				field.content.content.push({
-					block: 'main-ui-square',
-					tag: 'span',
-					name: '_label' in fieldData.VALUES ? fieldData.VALUES._label : '',
-					item: fieldData.VALUES,
-				});
-			}
-		}
-
-		field.content.content.push(
-			{
-				block: 'main-ui-square-search',
-				tag: 'span',
-				content: {
-					block: 'main-ui-control-string',
-					name: `${fieldData.NAME}_label`,
-					tabindex: fieldData.TABINDEX,
-					type: 'text',
-					placeholder: fieldData.PLACEHOLDER || '',
-				},
-			},
-			{
-				block: 'main-ui-control-string',
-				name: fieldData.NAME,
-				type: 'hidden',
-				placeholder: fieldData.PLACEHOLDER || '',
-				value: '_value' in fieldData.VALUES ? fieldData.VALUES._value : '',
-				tabindex: fieldData.TABINDEX,
+				filter: this.parent,
+				isMultiple: fieldData.MULTIPLE,
+				addEntityIdToResult: fieldData.ADD_ENTITY_ID_TO_RESULT,
+				showDialogOnEmptyInput: fieldData.SHOW_DIALOG_ON_EMPTY_INPUT,
+				dialogOptions: fieldData.DIALOG_OPTIONS
 			},
 		);
 
+		this.parent.getEmitter().emit(
+			'init',
+			{
+				field: new Field({
+					parent: this.parent,
+					options: {...fieldData},
+					node: field,
+				}),
+			},
+		);
 
-		field = BX.decl(field);
-		const input = BX.Filter.Utils.getBySelector(field, '.main-ui-control-string[type="text"]');
-		BX.addClass(input, 'main-ui-square-search-item');
+		return field;
+	}
 
-		Event.bind(input, 'focus', BX.proxy(this._onCustomEntityInputFocus, this));
-		Event.bind(input, 'click', BX.proxy(this._onCustomEntityInputClick, this));
-
-		if (!this.bindDocument)
-		{
-			Event.bind(document, 'click', BX.proxy(this._onCustomEntityBlur, this));
-			document.addEventListener('focus', BX.proxy(this._onDocumentFocus, this), true);
-			this.bindDocument = true;
-		}
-
-		Event.bind(input, 'keydown', BX.proxy(this._onCustomEntityKeydown, this));
-		Event.bind(field, 'click', BX.proxy(this._onCustomEntityFieldClick, this));
+	createCustomEntity(fieldData)
+	{
+		const field = this.createCustomEntityFieldLayout(fieldData);
 
 		this.parent.getEmitter().emit(
 			'init',
@@ -642,6 +569,7 @@ export class Fields
 			type: fieldData.TYPE,
 			deleteButton: true,
 			label: this.parent.getParam('ENABLE_LABEL') ? fieldData.LABEL : '',
+			icon: (this.parent.getParam('ENABLE_LABEL') && fieldData.ICON) ? fieldData.ICON : null,
 			dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
 			deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
 			content: {
@@ -702,6 +630,7 @@ export class Fields
 			type: fieldData.TYPE,
 			deleteButton: true,
 			label: this.parent.getParam('ENABLE_LABEL') ? fieldData.LABEL : '',
+			icon: (this.parent.getParam('ENABLE_LABEL') && fieldData.ICON) ? fieldData.ICON : null,
 			dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
 			deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
 			content: {
@@ -738,6 +667,7 @@ export class Fields
 			type: fieldData.TYPE,
 			deleteButton: true,
 			label: this.parent.getParam('ENABLE_LABEL') ? fieldData.LABEL : '',
+			icon: (this.parent.getParam('ENABLE_LABEL') && fieldData.ICON) ? fieldData.ICON : null,
 			dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
 			deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
 			content: {
@@ -774,6 +704,7 @@ export class Fields
 			type: fieldData.TYPE,
 			mix: this.parent.getParam('ENABLE_LABEL') ? [this.parent.settings.classFieldWithLabel, 'main-ui-filter-date-group'] : ['main-ui-filter-date-group'],
 			label: this.parent.getParam('ENABLE_LABEL') ? fieldData.LABEL : '',
+			icon: (this.parent.getParam('ENABLE_LABEL') && fieldData.ICON) ? fieldData.ICON : null,
 			dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
 			deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
 			tabindex: 'TABINDEX' in fieldData ? fieldData.TABINDEX : '',
@@ -992,6 +923,15 @@ export class Fields
 						});
 					}
 
+					if (this.parent.getParam('ENABLE_ADDITIONAL_FILTERS'))
+					{
+						const button = AdditionalFilter.getInstance().getAdditionalFilterButton({
+							fieldId: fieldData.NAME,
+							enabled: fieldData.ADDITIONAL_FILTER_ALLOWED,
+						});
+						Dom.append(button, dateGroup);
+					}
+
 					Dom.insertAfter(dateGroup, group);
 					Dom.remove(group);
 				}
@@ -1001,7 +941,10 @@ export class Fields
 
 	createNumber(options)
 	{
-		const {numberTypes} = this.parent;
+		const {
+			numberTypes,
+			additionalNumberTypes,
+		} = this.parent;
 		const {ENABLE_LABEL} = this.parent.params;
 		const {
 			SUB_TYPE = {},
@@ -1009,6 +952,7 @@ export class Fields
 			TABINDEX = '',
 			VALUES = {_from: '', _to: ''},
 			LABEL = '',
+			ICON = null,
 			TYPE,
 		} = options;
 
@@ -1032,6 +976,7 @@ export class Fields
 			type: TYPE,
 			mix: classes,
 			label: ENABLE_LABEL ? LABEL : '',
+			icon: ENABLE_LABEL ? ICON : null,
 			dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
 			deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
 			tabindex: TABINDEX,
@@ -1042,7 +987,10 @@ export class Fields
 			content: [],
 		};
 
-		if (subType !== numberTypes.LESS)
+		if (
+			subType !== numberTypes.LESS
+			&& subType !== additionalNumberTypes.BEFORE_N
+		)
 		{
 			const from = {
 				block: 'main-ui-control-field',
@@ -1079,6 +1027,7 @@ export class Fields
 		if (
 			subType === numberTypes.RANGE
 			|| subType === numberTypes.LESS
+			|| subType === additionalNumberTypes.BEFORE_N
 		)
 		{
 			const to = {
@@ -1136,6 +1085,7 @@ export class Fields
 			TABINDEX = '',
 			ENABLE_TIME = false,
 			LABEL = '',
+			ICON = null,
 			TYPE,
 			VALUE_REQUIRED = false,
 			REQUIRED = false,
@@ -1161,6 +1111,7 @@ export class Fields
 			type: TYPE,
 			mix: classes,
 			label: ENABLE_LABEL ? LABEL : '',
+			icon: ENABLE_LABEL ? ICON : null,
 			dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
 			deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
 			tabindex: TABINDEX,
@@ -1354,11 +1305,8 @@ export class Fields
 					customDateDecl.VALUE.years = VALUES._year;
 				}
 
-				customDateDecl.mix = customDateDecl.filter((item) => {
-					return item !== 'main-ui-filter-wield-with-label';
-				});
-
 				const renderedField = this.createCustomDate(customDateDecl);
+				Dom.removeClass(renderedField, 'main-ui-filter-wield-with-label');
 
 				const buttons = [
 					...renderedField
@@ -1368,7 +1316,7 @@ export class Fields
 				buttons.forEach((button) => Dom.remove(button));
 
 				fieldGroup.content.push(renderedField);
-				fieldGroup.push('main-ui-filter-custom-date-group');
+				fieldGroup.mix.push('main-ui-filter-custom-date-group');
 			}
 		}
 

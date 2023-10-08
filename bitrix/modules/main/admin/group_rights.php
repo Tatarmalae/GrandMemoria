@@ -10,7 +10,7 @@ if($md->SHOW_SUPER_ADMIN_GROUP_RIGHTS != "Y")
 	$arFilter["ADMIN"] = "N";
 
 $arGROUPS = array();
-$z = CGroup::GetList($v1="sort", $v2="asc", $arFilter);
+$z = CGroup::GetList("sort", "asc", $arFilter);
 while($zr = $z->Fetch())
 {
 	$ar = array();
@@ -40,6 +40,8 @@ if (!function_exists("__GroupRightsShowRow"))
 
 	function __GetGroupRight($module_id, $groupID, $site_id_tmp, $arSites, $arGROUPS)
 	{
+		global $APPLICATION;
+
 		static $arRightsAll = array();
 		static $bInit = false;
 
@@ -60,7 +62,7 @@ if (!function_exists("__GroupRightsShowRow"))
 
 			if (!empty($arGroupId))
 			{
-				$arRightsAll = $GLOBALS["APPLICATION"]->GetUserRightArray($module_id, $arGroupId);
+				$arRightsAll = $APPLICATION->GetUserRightArray($module_id, $arGroupId);
 			}
 
 			$bInit = true;
@@ -142,7 +144,7 @@ $arSites = array(
 		"reference" => array()
 	);
 
-$rsSites = CSite::GetList($by="sort", $order="asc", Array("ACTIVE" => "Y"));
+$rsSites = CSite::GetList("sort", "asc", Array("ACTIVE" => "Y"));
 while ($arSite = $rsSites->GetNext())
 {
 	$arSites["reference_id"][] = $arSite["ID"];

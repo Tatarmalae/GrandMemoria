@@ -34,8 +34,3 @@ try {
 } catch (LoaderException $e) {
     die($e->getMessage());
 }
-
-EventManager::getInstance()->addEventHandler("main", "OnBeforeUserUpdate", [
-    '\Dev\Utilities',
-    'OnBeforeUserAddHandler',
-]);// Пример подключения статического метода класса в обработчике

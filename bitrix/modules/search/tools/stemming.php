@@ -7,27 +7,38 @@ function stemming_init($sLang="ru")
 	if($arStemFunc === false)
 	{
 		$arStemFunc = array();
-		$rsLanguages = CLanguage::GetList(($b=""), ($o=""));
+		$rsLanguages = CLanguage::GetList();
 		while($arLanguage = $rsLanguages->Fetch())
 			stemming_init($arLanguage["LID"]);
 	}
 
 	//Check if language was not used
-	if($sLang !== false && !isset($arStemFunc[$sLang]))
+	if ($sLang !== false && !isset($arStemFunc[$sLang]))
 	{
 		$stemming_function_suf = $sLang;
 
-		if(!function_exists("stemming_".$sLang))
+		if (!function_exists("stemming_".$sLang))
 		{
-			$strFileName=$_SERVER["DOCUMENT_ROOT"].BX_PERSONAL_ROOT."/php_interface/".$sLang."/search/stemming.php";
-			if(file_exists($strFileName))
-				@include($strFileName);
-			if(!function_exists("stemming_".$sLang))
+			$strFileName = $_SERVER["DOCUMENT_ROOT"].BX_PERSONAL_ROOT."/php_interface/".$sLang."/search/stemming.php";
+			if (file_exists($strFileName))
 			{
-				$strFileName=$_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/search/tools/".$sLang."/stemming.php";
-				if(file_exists($strFileName))
-					@include($strFileName);
-				if(!function_exists("stemming_".$sLang))
+				@include($strFileName);
+			}
+			if (!function_exists("stemming_".$sLang))
+			{
+				$strFileName = $_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/search/tools/".$sLang."/stemming.php";
+				if (file_exists($strFileName))
+				{
+					if (\Bitrix\Main\Localization\Translation::allowConvertEncoding())
+					{
+						\Bitrix\Main\Localization\StreamConverter::include($strFileName, $sLang);
+					}
+					else
+					{
+						@include($strFileName);
+					}
+				}
+				if (!function_exists("stemming_".$sLang))
 				{
 					$stemming_function_suf = "default";
 				}

@@ -28,6 +28,7 @@ class MemcacheSessionHandler extends AbstractSessionHandler
 			'className' => MemcacheConnection::class,
 			'host' => $options['host'] ?? '127.0.0.1',
 			'port' => (int)($options['port'] ?? 11211),
+			'connectionTimeout' => $options['connectionTimeout'] ?? 1,
 			'servers' => $options['servers'] ?? [],
 		]);
 
@@ -150,7 +151,7 @@ class MemcacheSessionHandler extends AbstractSessionHandler
 			$lockWait -= $waitStep;
 			if ($lockWait < 0)
 			{
-				$errorText = 'Unable to get session lock within 60 seconds.';
+				$errorText = '';
 				if ($lock !== 1)
 				{
 					$lockedUri = $this->connection->get($sid . $sessionId . ".lock");

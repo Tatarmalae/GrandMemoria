@@ -46,21 +46,19 @@ class CSearchMysql extends CSearchFullText
 	{
 		$DB = CDatabase::GetModuleConnection('search');
 
-		if(array_key_exists("SEARCHABLE_CONTENT", $arFields))
+		if (array_key_exists("SEARCHABLE_CONTENT", $arFields))
 		{
 			$text_md5 = md5($arFields["SEARCHABLE_CONTENT"]);
 			$rsText = $DB->Query("SELECT SEARCH_CONTENT_MD5 FROM b_search_content_text WHERE SEARCH_CONTENT_ID = ".$ID);
 			$arText = $rsText->Fetch();
-			if(!$arText || $arText["SEARCH_CONTENT_MD5"] !== $text_md5)
+			if (!$arText || $arText["SEARCH_CONTENT_MD5"] !== $text_md5)
 			{
-				$DB->Query("DELETE FROM b_search_content_text WHERE SEARCH_CONTENT_ID = ".$ID, false, "File: ".__FILE__."<br>Line: ".__LINE__);
-				$arText = array(
-					"ID" => 1,
-					"SEARCH_CONTENT_ID" => $ID,
-					"SEARCH_CONTENT_MD5" => $text_md5,
-					"SEARCHABLE_CONTENT" => $arFields["SEARCHABLE_CONTENT"]
-				);
-				$DB->Add("b_search_content_text", $arText, Array("SEARCHABLE_CONTENT"));
+				$DB->Query("
+					REPLACE INTO b_search_content_text
+					(SEARCH_CONTENT_ID, SEARCH_CONTENT_MD5, SEARCHABLE_CONTENT)
+					values
+					(".$ID.", '".$DB->ForSql($text_md5)."', '".$DB->ForSql($arFields["SEARCHABLE_CONTENT"])."')
+				");
 			}
 		}
 	}
@@ -164,7 +162,7 @@ class CSearchMysql extends CSearchFullText
 				SELECT
 					sct.SEARCH_CONTENT_ID
 					,scsite.SITE_ID
-					,".$query." RANK
+					,".$query." `RANK`
 				FROM
 					b_search_content_text sct
 					INNER JOIN b_search_content sc ON sc.ID = sct.SEARCH_CONTENT_ID
@@ -251,10 +249,10 @@ class CSearchMysql extends CSearchFullText
 				case "RANK":
 					if (!($this->flagsUseRatingSort & 0x02))
 						$this->flagsUseRatingSort = 0x01;
-					$arOrder[] = $key." ".$ord;
+					$arOrder[] = "`RANK` ".$ord;
 					break;
 				case "TITLE_RANK":
-					$arOrder[] = "RANK ".$ord;
+					$arOrder[] = "`RANK` ".$ord;
 					break;
 				case "CUSTOM_RANK":
 					$arOrder[] = $strSearchContentAlias.$key." ".$ord;
@@ -279,7 +277,7 @@ class CSearchMysql extends CSearchFullText
 			if (!$arOrder)
 			{
 				$arOrder[] = "CUSTOM_RANK DESC";
-				$arOrder[] = "RANK DESC";
+				$arOrder[] = "`RANK` DESC";
 				$arOrder[] = $strSearchContentAlias."DATE_CHANGE DESC";
 				$this->flagsUseRatingSort = 0x01;
 			}

@@ -24,7 +24,7 @@ if ($this->getComponent()->request('switch') == 'Y' && !$arResult['ERRORS'])
 
 // load
 Loc::loadMessages(__FILE__);
-Extension::load(['ui.common', 'ui.alerts']);
+Extension::load(['ui.common', 'ui.alerts', 'ui.fonts.opensans']);
 
 // errors
 if ($arResult['ERRORS'])
@@ -69,6 +69,7 @@ $actionUrl = $this->getComponent()->getUri([
 		array(
 			'TYPE' => $arParams['TYPE'],
 			'DRAFT_MODE' => 'Y',
+			'OLD_TILE' => 'Y',
 			'OVER_TITLE' => Loc::getMessage('LANDING_TPL_SELECT'),
 			'PAGE_URL_SITE' => str_replace('__id__', '#site_show#', $actionUrl)
 		),

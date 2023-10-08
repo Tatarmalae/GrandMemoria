@@ -23,7 +23,7 @@ class LandingSitesComponent extends LandingBaseComponent
 	/**
 	 * Count items per page.
 	 */
-	const COUNT_PER_PAGE = 11;
+	const COUNT_PER_PAGE = 12;
 
 	/**
 	 * Rights array of sites.
@@ -156,6 +156,36 @@ class LandingSitesComponent extends LandingBaseComponent
 	}
 
 	/**
+	 * Returns array of site ids with 'delete' locked.
+	 * @param array $ids Site ids.
+	 * @return array
+	 */
+	protected function getDeleteLocked(array $ids): array
+	{
+		$statuses = [];
+
+		if ($ids)
+		{
+			$res = \Bitrix\Landing\Lock::getList([
+				'select' => [
+					'SITE_ID' => 'ENTITY_ID'
+				],
+				'filter' => [
+					'ENTITY_ID' => $ids,
+					'=ENTITY_TYPE' => \Bitrix\Landing\Lock::ENTITY_TYPE_SITE,
+					'=LOCK_TYPE' => \Bitrix\Landing\Lock::LOCK_TYPE_DELETE
+				]
+			]);
+			while ($row = $res->fetch())
+			{
+				$statuses[] = $row['SITE_ID'];
+			}
+		}
+
+		return $statuses;
+	}
+
+	/**
 	 * Base executable method.
 	 * @return mixed
 	 */
@@ -174,12 +204,20 @@ class LandingSitesComponent extends LandingBaseComponent
 			$this->checkParam('OVER_TITLE', '');
 			$this->checkParam('TILE_MODE', 'list');
 			$this->checkParam('PAGE_URL_SITE', '');
+			$this->checkParam('PAGE_URL_SETTINGS', '');
 			$this->checkParam('PAGE_URL_SITE_EDIT', '');
+			$this->checkParam('PAGE_URL_SITE_DESI   GN', '');
+			$this->checkParam('PAGE_URL_SITE_CONTACTS', '');
 			$this->checkParam('PAGE_URL_LANDING_EDIT', '');
+			$this->checkParam('PAGE_URL_SITE_DOMAIN_EDIT', '');
 			$this->checkParam('PAGE_URL_SITE_DOMAIN_SWITCH', '');
 			$this->checkParam('DRAFT_MODE', 'N');
 			$this->checkParam('ACCESS_CODE', '');
 			$this->checkParam('~AGREEMENT', []);
+			$this->checkParam(
+				'PAGE_URL_SITE_EXPORT',
+				str_replace(-1, '#site_edit#', Transfer\Export\Site::getUrl($this->arParams['TYPE'], -1))
+			);
 
 			\Bitrix\Landing\Hook::setEditMode(true);
 
@@ -225,13 +263,32 @@ class LandingSitesComponent extends LandingBaseComponent
 				$filter[] = $this->getAdditionalAccessFilter($this->arParams['ACCESS_CODE']);
 			}
 			$this->arResult['EXPORT_DISABLED'] = Restriction\Manager::isAllowed('limit_sites_transfer') ? 'N' : 'Y';
+			$isAllowedExportByTariff = null;
+			if ($this->arResult['EXPORT_DISABLED'] !== 'Y')
+			{
+				$isAllowedExportByTariff = true;
+				Bitrix\Landing\Restriction\Manager::enableFeatureTmp('limit_sites_access_permissions');
+				if (
+					Rights::hasAdditionalRight(Rights::ADDITIONAL_RIGHTS['unexportable'], null, false, true)
+					&& !Rights::hasAdditionalRight(Rights::ADDITIONAL_RIGHTS['admin'], null, false, true)
+				)
+				{
+					$this->arResult['EXPORT_DISABLED'] = 'Y';
+				}
+				else
+				{
+					$this->arResult['EXPORT_DISABLED'] = 'N';
+				}
+				Bitrix\Landing\Restriction\Manager::disableFeatureTmp('limit_sites_access_permissions');
+			}
 			$this->arResult['SMN_SITES'] = $this->getSmnSites();
 			$this->arResult['IS_DELETED'] = LandingFilterComponent::isDeleted();
 			$this->arResult['SITES'] = $this->getSites([
 				'select' => [
 					'*',
 					'DOMAIN_NAME' => 'DOMAIN.DOMAIN',
-					'DOMAIN_PROVIDER' => 'DOMAIN.PROVIDER'
+					'DOMAIN_PROVIDER' => 'DOMAIN.PROVIDER',
+					'DOMAIN_PREV' => 'DOMAIN.PREV_DOMAIN'
 				],
 				'filter' => $filter,
 				'order' => [
@@ -240,6 +297,9 @@ class LandingSitesComponent extends LandingBaseComponent
 				'navigation' => $this::COUNT_PER_PAGE
 			]);
 			$this->arResult['NAVIGATION'] = $this->getLastNavigation();
+			$this->arResult['DELETE_LOCKED'] = $this->getDeleteLocked(
+				array_keys($this->arResult['SITES'])
+			);
 
 			// detect preview of sites and set rights
 			$rights = Rights::getOperationsForSite(
@@ -272,6 +332,7 @@ class LandingSitesComponent extends LandingBaseComponent
 				$item['ACCESS_SETTINGS'] = 'Y';
 				$item['ACCESS_PUBLICATION'] = 'Y';
 				$item['ACCESS_DELETE'] = 'Y';
+				$item['ACCESS_SITE_NEW'] = $this->arResult['ACCESS_SITE_NEW'];
 				if (isset($rights[$item['ID']]))
 				{
 					$currRights = $rights[$item['ID']];
@@ -292,6 +353,14 @@ class LandingSitesComponent extends LandingBaseComponent
 						$item['ACCESS_DELETE'] = 'N';
 					}
 				}
+
+				//can export
+				$item['ACCESS_EXPORT'] = 'Y';
+				if ($isAllowedExportByTariff && $this->arResult['EXPORT_DISABLED'] === 'Y')
+				{
+					$item['ACCESS_EXPORT'] = 'N';
+				}
+
 				if (!$item['LANDING_ID_INDEX'])
 				{
 					$landing = $this->getLandings(array(
@@ -330,17 +399,22 @@ class LandingSitesComponent extends LandingBaseComponent
 					$item['PREVIEW'] = '';
 					if (isset($siteUrls[$item['ID']]))
 					{
-						$item['PUBLIC_URL'] = $this->getTimestampUrl($siteUrls[$item['ID']]);
+						$item['PUBLIC_URL'] = $siteUrls[$item['ID']];
 					}
 					if ($item['PUBLIC_URL'])
 					{
-						if ($item['DOMAIN_ID'] > 0 && $pictureFromCloud && $item['TYPE'] != 'SMN')
+						if ($item['DOMAIN_ID'] > 0 && $pictureFromCloud && $item['TYPE'] !== 'SMN')
 						{
-							$item['PREVIEW'] = $item['PUBLIC_URL'] . '/preview.jpg';
+							$item['PREVIEW'] = $landingNull->getPreview($item['LANDING_ID_INDEX'], true);
+							$item['CLOUD_PREVIEW'] = $item['PUBLIC_URL'] . '/preview.jpg';
 						}
 						else if ($item['LANDING_ID_INDEX'])
 						{
 							$item['PREVIEW'] = $landingNull->getPreview($item['LANDING_ID_INDEX'], true);
+						}
+						else
+						{
+							$item['PREVIEW'] = Manager::getUrlFromFile('/bitrix/images/landing/nopreview.jpg');
 						}
 					}
 				}

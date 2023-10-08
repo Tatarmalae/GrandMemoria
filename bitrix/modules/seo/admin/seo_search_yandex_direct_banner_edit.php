@@ -19,9 +19,9 @@ use Bitrix\Seo\Engine;
 use Bitrix\Seo\Adv;
 use Bitrix\Main\Text\HtmlFilter;
 
-Loc::loadMessages(dirname(__FILE__).'/../../main/tools.php');
-Loc::loadMessages(dirname(__FILE__).'/seo_search.php');
-Loc::loadMessages(dirname(__FILE__).'/seo_adv.php');
+Loc::loadMessages(__DIR__.'/../../main/tools.php');
+Loc::loadMessages(__DIR__.'/seo_search.php');
+Loc::loadMessages(__DIR__.'/seo_adv.php');
 
 if (!$USER->CanDoOperation('seo_tools'))
 {
@@ -150,7 +150,7 @@ $bShowAuto = $ID > 0 && $bAllowUpdate && IsModuleInstalled("catalog");
 if($ID <= 0)
 {
 	$host = str_replace(array(':80', ':443'), '', $request->getHttpHost());
-	$errors = null;
+	$errors = [];
 	$host = \CBXPunycode::ToUnicode($host, $errors);
 
 	$banner = array(

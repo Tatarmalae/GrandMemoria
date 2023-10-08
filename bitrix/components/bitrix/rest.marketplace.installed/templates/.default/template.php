@@ -19,7 +19,11 @@ $bodyClass = $APPLICATION->getPageProperty('BodyClass', false);
 $bodyClasses = 'pagetitle-toolbar-field-view no-hidden no-background no-all-paddings';
 $APPLICATION->setPageProperty('BodyClass', trim(sprintf('%s %s', $bodyClass, $bodyClasses)));
 
-\Bitrix\Main\UI\Extension::load(array("ui.alerts"));
+\Bitrix\Main\UI\Extension::load([
+	'ui.design-tokens',
+	'ui.fonts.opensans',
+	'ui.alerts',
+]);
 
 if (!$arResult['SLIDER'])
 {
@@ -151,23 +155,25 @@ if (!$arResult['SLIDER'])
 							{
 								?>
 								<? if ($app['STATUS'] === \Bitrix\Rest\AppTable::STATUS_SUBSCRIPTION):?>
-									<a
-										class="ui-btn ui-btn-sm ui-btn-primary ui-btn-round<?=(!$app['REST_ACCESS']) ? ' ui-btn-disabled':''?>"
-										<? if ($app['REST_ACCESS']):?>
-											<? if ($arResult['POPUP_BUY_SUBSCRIPTION_PRIORITY']):?>
-												onclick="BX.rest.Marketplace.buySubscription(this, <?=CUtil::PhpToJSObject($arParamsApp)?>);"
-												href="javascript:void(0)"
+									<? if ($app['APP_STATUS']['PAYMENT_NOTIFY'] === 'Y'):?>
+										<a
+											class="ui-btn ui-btn-sm ui-btn-primary ui-btn-round<?=(!$app['REST_ACCESS']) ? ' ui-btn-disabled':''?>"
+											<? if ($app['REST_ACCESS']):?>
+												<? if ($arResult['POPUP_BUY_SUBSCRIPTION_PRIORITY']):?>
+													onclick="BX.rest.Marketplace.buySubscription(this, <?=CUtil::PhpToJSObject($arParamsApp)?>);"
+													href="javascript:void(0)"
+												<? else:?>
+													href="<?=$arResult['SUBSCRIPTION_BUY_URL']?>"
+													target="_blank"
+												<? endif;?>
 											<? else:?>
-												href="<?=$arResult['SUBSCRIPTION_BUY_URL']?>"
-												target="_blank"
+												onclick="top.BX.UI.InfoHelper.show('<?=$app['REST_ACCESS_HELPER_CODE']?>');"
+												href="javascript:void(0)"
 											<? endif;?>
-										<? else:?>
-											onclick="top.BX.UI.InfoHelper.show('<?=$app['REST_ACCESS_HELPER_CODE']?>');"
-											href="javascript:void(0)"
-										<? endif;?>
-									>
-										<?=GetMessage('MARKETPLACE_APP_PROLONG')?>
-									</a>
+										>
+											<?=GetMessage('MARKETPLACE_APP_PROLONG')?>
+										</a>
+									<? endif;?>
 								<? elseif (is_array($app["PRICE"]) && !empty($app["PRICE"])):?>
 									<a
 										class="ui-btn ui-btn-sm ui-btn-primary ui-btn-round"
@@ -273,11 +279,9 @@ if (!$arResult['SLIDER'])
 							?>
 
 							<?if ($app["ACTIVE"] == "Y" && $arResult['ADMIN']):?>
-								<? if($app['TYPE'] !== \Bitrix\Rest\AppTable::TYPE_CONFIGURATION):?>
-									<button class="ui-btn ui-btn-sm ui-btn-light-border ui-btn-round" onclick="BX.rest.Marketplace.uninstallConfirm('<?=CUtil::JSEscape($app["CODE"])?>')">
-										<?=GetMessage("MARKETPLACE_DELETE_BUTTON")?>
-									</button>
-								<? endif;?>
+								<button class="ui-btn ui-btn-sm ui-btn-light-border ui-btn-round" onclick="BX.rest.Marketplace.uninstallConfirm('<?=CUtil::JSEscape($app["CODE"])?>')">
+									<?=GetMessage("MARKETPLACE_DELETE_BUTTON")?>
+								</button>
 
 								<button class="ui-btn ui-btn-sm ui-btn-link ui-btn-round"
 										onclick="BX.rest.Marketplace.setRights('<?=CUtil::JSEscape($app["ID"])?>');">

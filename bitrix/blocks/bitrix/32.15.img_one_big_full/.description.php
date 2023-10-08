@@ -15,7 +15,9 @@ return [
 		'.landing-block-img' => [
 			'name' => Loc::getMessage('LANDING_BLOCK_32_15_IMG'),
 			'type' => 'img',
+			'useInDesigner' => false,
 			'dimensions' => ['width' => 1110],
+			'create2xByDefault' => false,
 		],
 		'.landing-block-title' => [
 			'name' => Loc::getMessage('LANDING_BLOCK_32_15_TITLE'),
@@ -28,16 +30,16 @@ return [
 	],
 	'style' => [
 		'block' => [
-			'type' => ['block-default-wo-background', 'animation', 'background-color', 'background-gradient'],
+			'type' => ['block-default-wo-background', 'animation', 'background-color'],
 		],
 		'nodes' => [
 			'.landing-block-container' => [
 				'name' => Loc::getMessage('LANDING_BLOCK_32_15_BLOCK'),
-				'type' => ['container']
+				'type' => ['container', 'animation']
 			],
 			'.landing-block-img' => [
 				'name' => Loc::getMessage('LANDING_BLOCK_32_15_IMG'),
-				'type' => ['background-overlay', 'height-vh']
+				'type' => ['background-overlay', 'height-vh', 'background-size']
 			],
 			'.landing-block-text-container' => [
 				'name' => Loc::getMessage('LANDING_BLOCK_32_15_ELEMENTS'),

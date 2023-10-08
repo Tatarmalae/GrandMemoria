@@ -14,7 +14,7 @@ use Bitrix\Seo\SitemapIndex;
 use Bitrix\Seo\SitemapRuntime;
 use Bitrix\Seo\SitemapRuntimeTable;
 
-Loc::loadMessages(dirname(__FILE__).'/seo_sitemap.php');
+Loc::loadMessages(__DIR__.'/seo_sitemap.php');
 
 if (!$USER->CanDoOperation('seo_tools'))
 {
@@ -51,7 +51,7 @@ if(!is_array($arSitemap))
 }
 else
 {
-	$arSitemap['SETTINGS'] = unserialize($arSitemap['SETTINGS']);
+	$arSitemap['SETTINGS'] = unserialize($arSitemap['SETTINGS'], ['allowed_classes' => false]);
 
 	$arSitemapSettings = array(
 		'SITE_ID' => $arSitemap['SITE_ID'],

@@ -9,6 +9,22 @@ use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\UserAccessTable;
 use Bitrix\Main\UserFieldTable;
 
+/**
+ * Class UserFieldPermissionTable
+ *
+ * DO NOT WRITE ANYTHING BELOW THIS
+ *
+ * <<< ORMENTITYANNOTATION
+ * @method static EO_UserFieldPermission_Query query()
+ * @method static EO_UserFieldPermission_Result getByPrimary($primary, array $parameters = [])
+ * @method static EO_UserFieldPermission_Result getById($id)
+ * @method static EO_UserFieldPermission_Result getList(array $parameters = [])
+ * @method static EO_UserFieldPermission_Entity getEntity()
+ * @method static \Bitrix\Main\UserField\Access\Permission\UserFieldPermission createObject($setDefaultValues = true)
+ * @method static \Bitrix\Main\UserField\Access\Permission\EO_UserFieldPermission_Collection createCollection()
+ * @method static \Bitrix\Main\UserField\Access\Permission\UserFieldPermission wakeUpObject($row)
+ * @method static \Bitrix\Main\UserField\Access\Permission\EO_UserFieldPermission_Collection wakeUpCollection($rows)
+ */
 class UserFieldPermissionTable extends AccessPermissionTable
 {
 	private const PERMISSION_ALLOWED = 1;
@@ -122,6 +138,7 @@ class UserFieldPermissionTable extends AccessPermissionTable
 		$query->addSelect('USER_FIELD_ID');
 		$query->addFilter('=ENTITY_TYPE_ID', $entityTypeID);
 		$query->addFilter('=VALUE', self::PERMISSION_ALLOWED);
+		$query->whereNotNull('FIELD_NAME');
 
 		$dbResult = $query->exec();
 

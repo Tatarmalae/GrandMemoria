@@ -51,14 +51,22 @@ class Link extends \Bitrix\Landing\Node
 	}
 
 	/**
-	 * Save data for this node.
+	 * Save data for this node. Returns affected content for the selector.
 	 * @param \Bitrix\Landing\Block $block Block instance.
 	 * @param string $selector Selector.
 	 * @param array $data Data array.
-	 * @return void
+	 * @return array
 	 */
-	public static function saveNode(\Bitrix\Landing\Block $block, $selector, array $data)
+	public static function saveNode(\Bitrix\Landing\Block $block, $selector, array $data): array
 	{
+		$result = [];
+		$manifest = $block->getManifest();
+		$globalSkipContent = false;
+		if ($manifest['nodes'][$selector]['skipContent'] ?? false)
+		{
+			$globalSkipContent = true;
+		}
+
 		$doc = $block->getDom();
 		$resultList = $doc->querySelectorAll($selector);
 		$isIframe = self::isFrame();
@@ -70,7 +78,8 @@ class Link extends \Bitrix\Landing\Node
 			$query = (isset($value['query']) && is_string($value['query'])) ? trim($value['query']) : '';
 			$target = (isset($value['target']) && is_string($value['target'])) ? trim(mb_strtolower($value['target'])) : '';
 			$attrs = isset($value['attrs']) ? (array)$value['attrs'] : array();
-			$skipContent = isset($value['skipContent']) ? (boolean)$value['skipContent'] : false;
+			$skipContent = $globalSkipContent || (isset($value['skipContent']) ? (boolean)$value['skipContent'] : false);
+			$result[$pos]['attrs'] = [];
 
 			if ($query)
 			{
@@ -92,14 +101,19 @@ class Link extends \Bitrix\Landing\Node
 				)
 				{
 					$text = \htmlspecialcharsbx($text);
+					$result[$pos]['content'] = $text;
 					$resultList[$pos]->setInnerHTML($text);
 				}
+
 				if ($href != '')
 				{
+					$result[$pos]['attrs']['href'] = $href;
 					$resultList[$pos]->setAttribute('href', $href);
 				}
+
 				if (self::isAllowedTarget($target))
 				{
+					$result[$pos]['attrs']['target'] = $target;
 					$resultList[$pos]->setAttribute('target', $target);
 				}
 
@@ -110,19 +124,22 @@ class Link extends \Bitrix\Landing\Node
 					{
 						if ($val && in_array($code, $allowedAttrs))
 						{
+							$result[$pos]['attrs'][$code] = $val;
 							$resultList[$pos]->setAttribute($code, $val);
 						}
 					}
 				}
 				else
 				{
-					foreach ($allowedAttrs as $code => $attr)
+					foreach ($allowedAttrs as $attr)
 					{
 						$resultList[$pos]->removeAttribute($attr);
 					}
 				}
 			}
 		}
+
+		return $result;
 	}
 
 	/**

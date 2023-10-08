@@ -83,28 +83,19 @@ class CacheEngineFiles
 	 */
 	private static function unlink($fileName)
 	{
-		if (self::$lockHandles[$fileName])
+		if (isset(self::$lockHandles[$fileName]) && self::$lockHandles[$fileName])
 		{
 			fclose(self::$lockHandles[$fileName]);
 			unset(self::$lockHandles[$fileName]);
 		}
 
-		//This checks for Zend Server CE in order to suppress warnings
-		if (function_exists('accelerator_reset'))
+		if (file_exists($fileName))
 		{
 			@chmod($fileName, BX_FILE_PERMISSIONS);
 			if (@unlink($fileName))
 				return true;
 		}
-		else
-		{
-			if (file_exists($fileName))
-			{
-				@chmod($fileName, BX_FILE_PERMISSIONS);
-				if (unlink($fileName))
-					return true;
-			}
-		}
+
 		return false;
 	}
 
@@ -517,12 +508,7 @@ class CacheEngineFiles
 		if ($deleteFromQueue)
 		{
 			$con = Main\Application::getConnection();
-			$con->queryExecute("
-				DELETE FROM b_cache_tag
-				WHERE SITE_ID = '".$con->getSqlHelper()->forSql($ar["SITE_ID"])."'
-				AND CACHE_SALT = '".$con->getSqlHelper()->forSql($ar["CACHE_SALT"])."'
-				AND RELATIVE_PATH = '".$con->getSqlHelper()->forSql($ar["RELATIVE_PATH"])."'
-			");
+			$con->queryExecute("DELETE FROM b_cache_tag WHERE ID = ".intval($ar["ID"]));
 		}
 	}
 
@@ -540,7 +526,7 @@ class CacheEngineFiles
 		$etime = time() + 2;
 		if ($count > 0)
 		{
-			$rs = $con->query("SELECT SITE_ID, CACHE_SALT, RELATIVE_PATH, TAG from b_cache_tag WHERE TAG='*'", 0, $count);
+			$rs = $con->query("SELECT * from b_cache_tag WHERE TAG='*'", 0, $count);
 			while ($ar = $rs->fetch())
 			{
 				static::deleteOneDir($etime, $ar);

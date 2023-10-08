@@ -1,10 +1,11 @@
 <section class="landing-block g-pt-30 g-pb-30">
-	<div class="container-fluid g-px-30">
+	<div class="landing-block-slider container-fluid g-px-30" data-slider-autoplay="1" data-slider-slides-show="3" data-slider-arrows="3" data-slider-dots="0" data-slider-animation="1">
 		<div class="js-carousel g-pos-rel g-mx-minus-15 row"
 			 data-infinite="true"
 			 data-autoplay="true"
 			 data-slides-show="3"
-			 data-arrows-classes="u-arrow-v1 g-absolute-centered--y g-width-45 g-height-45 g-font-size-40 g-color-white g-bg-primary"
+			 data-pagi-classes="u-carousel-indicators-v1 g-absolute-centered--x g-pt-20"
+			 data-arrows-classes="u-arrow-v1 g-absolute-centered--y g-width-45 g-height-45 g-font-size-40 g-transition-0_2 g-transition--ease-in g-color-white g-bg-primary g-opacity-0_8--hover"
 			 data-arrow-left-classes="fa fa-angle-left g-left-minus-15"
 			 data-arrow-right-classes="fa fa-angle-right g-right-minus-15"
 			 data-responsive='[{
@@ -50,12 +51,12 @@
 						<h2 class="landing-block-node-card-title landing-semantic-title-image-small text-uppercase g-line-height-1 g-font-weight-700 g-font-size-40 g-color-white g-mb-10">
 							Dance courses
 						</h2>
-						<div class="landing-block-node-card-text landing-semantic-text-image-medium g-color-white-opacity-0_8 g-mb-30" data-auto-font-scale>
+						<div class="landing-block-node-card-text landing-semantic-text-image-medium g-color-white-opacity-0_8 g-mb-30">
 							<p>Curabitur eget tortor sed urna
-								faucibus iaculis id et nulla.</p>
+								faucibus iaculis id et nulla sed fringilla quam.</p>
 						</div>
 						<div class="landing-block-node-card-button-container">
-							<a class="landing-block-node-card-button landing-semantic-link-image-medium btn g-btn-type-solid g-btn-size-sm g-btn-px-l text-uppercase g-btn-primary g-bg-transparent--hover rounded-0 g-py-15"
+							<a class="landing-block-node-card-button landing-semantic-link-image-medium btn g-btn-type-solid g-btn-size-sm g-btn-px-l text-uppercase g-btn-primary rounded-0"
 							   href="#">Learn More</a>
 						</div>
 					</header>
@@ -83,12 +84,12 @@
 						<h2 class="landing-block-node-card-title landing-semantic-title-image-small text-uppercase g-line-height-1 g-font-weight-700 g-font-size-40 g-color-white g-mb-10">
 							Creative photos
 						</h2>
-						<div class="landing-block-node-card-text landing-semantic-text-image-medium g-color-white-opacity-0_8 g-mb-30" data-auto-font-scale>
+						<div class="landing-block-node-card-text landing-semantic-text-image-medium g-color-white-opacity-0_8 g-mb-30">
 							<p>Curabitur eget tortor sed urna
-								faucibus iaculis id et nulla.</p>
+								faucibus iaculis id et nulla sed fringilla quam.</p>
 						</div>
 						<div class="landing-block-node-card-button-container">
-							<a class="landing-block-node-card-button landing-semantic-link-image-medium btn g-btn-type-solid g-btn-size-sm g-btn-px-l text-uppercase g-btn-primary g-bg-transparent--hover rounded-0 g-py-15"
+							<a class="landing-block-node-card-button landing-semantic-link-image-medium btn g-btn-type-solid g-btn-size-sm g-btn-px-l text-uppercase g-btn-primary rounded-0"
 							   href="#">Learn More</a>
 						</div>
 					</header>
@@ -116,12 +117,12 @@
 						<h2 class="landing-block-node-card-title landing-semantic-title-image-small text-uppercase g-line-height-1 g-font-weight-700 g-font-size-40 g-color-white g-mb-10">
 							Art for all
 						</h2>
-						<div class="landing-block-node-card-text landing-semantic-text-image-medium g-color-white-opacity-0_8 g-mb-30" data-auto-font-scale>
+						<div class="landing-block-node-card-text landing-semantic-text-image-medium g-color-white-opacity-0_8 g-mb-30">
 							<p>Curabitur eget tortor sed urna
-								faucibus iaculis id et nulla.</p>
+								faucibus iaculis id et nulla sed fringilla quam.</p>
 						</div>
 						<div class="landing-block-node-card-button-container">
-							<a class="landing-block-node-card-button landing-semantic-link-image-medium btn g-btn-type-solid g-btn-size-sm g-btn-px-l text-uppercase g-btn-primary g-bg-transparent--hover rounded-0 g-py-15"
+							<a class="landing-block-node-card-button landing-semantic-link-image-medium btn g-btn-type-solid g-btn-size-sm g-btn-px-l text-uppercase g-btn-primary rounded-0"
 							   href="#">Learn More</a>
 						</div>
 					</header>
@@ -149,12 +150,12 @@
 						<h2 class="landing-block-node-card-title landing-semantic-title-image-small text-uppercase g-line-height-1 g-font-weight-700 g-font-size-40 g-color-white g-mb-10">
 							Painting
 						</h2>
-						<div class="landing-block-node-card-text landing-semantic-text-image-medium g-color-white-opacity-0_8 g-mb-30" data-auto-font-scale>
+						<div class="landing-block-node-card-text landing-semantic-text-image-medium g-color-white-opacity-0_8 g-mb-30">
 							<p>Curabitur eget tortor sed urna
-								faucibus iaculis id et nulla.</p>
+								faucibus iaculis id et nulla sed fringilla quam.</p>
 						</div>
 						<div class="landing-block-node-card-button-container">
-							<a class="landing-block-node-card-button landing-semantic-link-image-medium btn g-btn-type-solid g-btn-size-sm g-btn-px-l text-uppercase g-btn-primary g-bg-transparent--hover rounded-0 g-py-15"
+							<a class="landing-block-node-card-button landing-semantic-link-image-medium btn g-btn-type-solid g-btn-size-sm g-btn-px-l text-uppercase g-btn-primary rounded-0"
 							   href="#">Learn More</a>
 						</div>
 					</header>
@@ -182,12 +183,12 @@
 						<h2 class="landing-block-node-card-title landing-semantic-title-image-small text-uppercase g-line-height-1 g-font-weight-700 g-font-size-40 g-color-white g-mb-10">
 							Courses for elderly
 						</h2>
-						<div class="landing-block-node-card-text landing-semantic-text-image-medium g-color-white-opacity-0_8 g-mb-30" data-auto-font-scale>
+						<div class="landing-block-node-card-text landing-semantic-text-image-medium g-color-white-opacity-0_8 g-mb-30">
 							<p>Curabitur eget tortor sed urna
-								faucibus iaculis id et nulla.</p>
+								faucibus iaculis id et nulla sed fringilla quam.</p>
 						</div>
 						<div class="landing-block-node-card-button-container">
-							<a class="landing-block-node-card-button landing-semantic-link-image-medium btn g-btn-type-solid g-btn-size-sm g-btn-px-l text-uppercase g-btn-primary g-bg-transparent--hover rounded-0 g-py-15"
+							<a class="landing-block-node-card-button landing-semantic-link-image-medium btn g-btn-type-solid g-btn-size-sm g-btn-px-l text-uppercase g-btn-primary rounded-0"
 							   href="#">Learn More</a>
 						</div>
 					</header>

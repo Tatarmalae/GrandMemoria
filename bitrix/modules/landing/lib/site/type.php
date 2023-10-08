@@ -51,6 +51,20 @@ class Type
 	}
 
 	/**
+	 * Detects site type forms and returns it.
+	 * @param $siteCode
+	 * @return string|null
+	 */
+	public static function getSiteTypeForms($siteCode)
+	{
+		if (preg_match('#^/' . self::PSEUDO_SCOPE_CODE_FORMS . '[\d]*/$#', $siteCode))
+		{
+			return self::PSEUDO_SCOPE_CODE_FORMS;
+		}
+		return null;
+	}
+
+	/**
 	 * Set global scope.
 	 * @param string $scope Scope code.
 	 * @param array $params Additional params.
@@ -85,6 +99,17 @@ class Type
 	{
 		self::$scopeInit = false;
 		self::$currentScopeClass = null;
+	}
+
+	/**
+	 * Returns true if scope is public.
+	 * @param string|null $scope Scope code.
+	 * @return bool
+	 */
+	public static function isPublicScope(?string $scope = null): bool
+	{
+		$scope = $scope ? mb_strtoupper($scope) : self::getCurrentScopeId();
+		return !($scope === 'KNOWLEDGE' || $scope === 'GROUP');
 	}
 
 	/**

@@ -10,7 +10,7 @@
 
 .ui-form-label {
 	display: block;
-	font: 13px "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font: 13px var(--ui-font-family-primary, var(--ui-font-family-helvetica));
 	color: rgba(82, 92, 105, .85);
 	flex-shrink: 0;
 	margin-bottom: 10px;
@@ -57,6 +57,7 @@
 .ui-form-section {
 	background-color: #f8f9fa;
 	margin-bottom: 0;
+	border-radius: var(--ui-form-section-border-radius);
 }
 
 .ui-form-section > .ui-form-row {
@@ -75,6 +76,7 @@
 .ui-form-section > .ui-form-row > .ui-form-label {
 	width: 140px;
 	margin-bottom: 0;
+	padding-right: 20px;
 }
 
 .ui-form-section > .ui-form-row > .ui-form-label > .ui-ctl-label-text {
@@ -131,6 +133,11 @@
 .ui-form .ui-btn + .ui-btn {
 	margin-left: 0;
 	margin-top: 10px;
+}
+
+.ui-form .ui-button-panel .ui-btn + .ui-btn {
+	margin-left: 12px;
+	margin-top: 0;
 }
 
 .ui-form-line > .ui-form-row .ui-btn + .ui-btn,

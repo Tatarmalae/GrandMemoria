@@ -2,7 +2,8 @@
 $MESS["LANDING_TPL_ACTION_ADD"] = "Новий";
 $MESS["LANDING_TPL_ACTION_SELECT"] = "Обрати";
 $MESS["LANDING_TPL_ACTION_VIEW"] = "Редагування";
-$MESS["LANDING_TPL_DESIGNED_BY"] = "Зроблено у студії &laquo;#DESIGNER#&raquo;";
+$MESS["LANDING_TPL_CREATE_EMPTY"] = "Порожній шаблон";
+$MESS["LANDING_TPL_DESIGN_BY"] = "Дизайн #DESIGNER#";
 $MESS["LANDING_TPL_EMPTY_REPO_EXPIRED"] = "Ліцензія вашого продукту закінчилася";
 $MESS["LANDING_TPL_EMPTY_REPO_EXPIRED_LINK"] = "Будь ласка, #LINK1#продовжіть ліцензію#LINK2#";
 $MESS["LANDING_TPL_EMPTY_REPO_SERVICE"] = "Сервіс демо-шаблонів тимчасово недоступний. Будь ласка, спробуйте ще раз пізніше або зверніться в технічну підтримку.";

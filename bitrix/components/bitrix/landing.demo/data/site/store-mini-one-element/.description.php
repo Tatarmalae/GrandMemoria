@@ -8,8 +8,6 @@ use \Bitrix\Main\Localization\Loc;
 
 Loc::loadLanguageFile(__FILE__);
 
-$buttons = \Bitrix\Landing\Hook\Page\B24button::getButtons();
-$buttons = array_keys($buttons);
 
 return array(
 	'code' => 'store-mini-one-element/',
@@ -19,13 +17,12 @@ return array(
 	'sort' => 20,
 	'fields' =>array(
 			'ADDITIONAL_FIELDS' =>array(
-					'B24BUTTON_CODE' => $buttons[0],
 					'VIEW_USE' => 'N',
 					'VIEW_TYPE' => 'no',
 					'UP_SHOW' => 'Y',
 					'THEME_CODE' => 'event',
-					'THEMEFONTS_CODE' => 'g-font-open-sans',
-					'THEMEFONTS_CODE_H' => 'g-font-cormorant-infant',
+					'THEMEFONTS_CODE' => 'Open Sanss',
+					'THEMEFONTS_CODE_H' => 'Cormorant Infant',
 					'THEMEFONTS_SIZE' => '1.14286',
 					'THEMEFONTS_USE' => 'Y',
 				),

@@ -1,5 +1,4 @@
-<?
-global $DBType;
+<?php
 
 define("SOCSERV_AUTHORISATION_ERROR", 1);
 define("SOCSERV_REGISTRATION_DENY", 2);
@@ -10,7 +9,7 @@ require_once __DIR__.'/autoload.php';
 $arJSDescription = array(
 	'js' => '/bitrix/js/socialservices/ss_timeman.js',
 	'css' => '/bitrix/js/socialservices/css/ss.css',
-	'rel' => array('popup', 'ajax', 'fx', 'ls', 'date', 'json'),
+	'rel' => ['ui.design-tokens', 'popup', 'ajax', 'fx', 'ls', 'date', 'json'],
 	'lang' => '/bitrix/modules/socialservices/lang/'.LANGUAGE_ID.'/js_socialservices.php'
 	);
 
@@ -48,7 +47,7 @@ class CSocServEventHandlers
 		);
 	}
 
-	function FormatEvent_Data($arFields, $arParams, $bMail = false)
+	public static function FormatEvent_Data($arFields, $arParams, $bMail = false)
 	{
 		$arResult = array(
 			"EVENT" => $arFields,
@@ -72,7 +71,14 @@ class CSocServEventHandlers
 
 		$title = "";
 
-		$arEventParams = unserialize($arFields["~PARAMS"] <> '' ? $arFields["~PARAMS"] : $arFields["PARAMS"]);
+		$arEventParams = unserialize($arFields["~PARAMS"] <> '' ? $arFields["~PARAMS"] : $arFields["PARAMS"], ['allowed_classes' => [
+			\Bitrix\Main\Type\DateTime::class,
+			\Bitrix\Main\Type\Date::class,
+			\Bitrix\Main\Web\Uri::class,
+			\DateTime::class,
+			\DateTimeZone::class,
+		]]);
+
 		if (
 			in_array($arFields["ENTITY_TYPE"], array(SONET_SUBSCRIBE_ENTITY_GROUP, SONET_SUBSCRIBE_ENTITY_USER))
 			&& is_array($arEventParams)
@@ -123,7 +129,14 @@ class CSocServEventHandlers
 			'LOGIN' => $arFields['~CREATED_BY_LOGIN'],
 		);
 		$arResult['CREATED_BY']['TOOLTIP_FIELDS'] = CSocNetLog::FormatEvent_FillTooltip($arFieldsTooltip, $arParams);
-		$twitInfo = unserialize($arFields['~PARAMS']);
+		$twitInfo = unserialize($arFields['~PARAMS'], ['allowed_classes' => [
+			\Bitrix\Main\Type\DateTime::class,
+			\Bitrix\Main\Type\Date::class,
+			\Bitrix\Main\Web\Uri::class,
+			\DateTime::class,
+			\DateTimeZone::class,
+		]]);
+
 		$arResult["EVENT_FORMATTED"] = array(
 			"TITLE" => $arFields["TITLE"],
 			"TITLE_24" => "",
@@ -191,10 +204,9 @@ class CSocServEventHandlers
 		return $arResult;
 	}
 
-	function GetEntity_Data($arFields, $bMail)
+	public static function GetEntity_Data($arFields, $bMail)
 	{
 		$arEntity = array();
-		$arEventParams = unserialize($arFields["~PARAMS"] <> '' ? $arFields["~PARAMS"] : $arFields["PARAMS"]);
 
 		global $arProviders;
 
@@ -226,7 +238,7 @@ class CSocServEventHandlers
 		return $arEntity;
 	}
 
-	function FormatComment_Data($arFields, $arParams, $bMail = false, $arLog = array())
+	public static function FormatComment_Data($arFields, $arParams, $bMail = false, $arLog = array())
 	{
 		$arResult = array(
 			"EVENT_FORMATTED"	=> array(),
@@ -307,10 +319,14 @@ class CSocServEventHandlers
 		return $arResult;
 	}
 
-	function OnTimeManShow()
+	public static function OnTimeManShow()
 	{
 		if(COption::GetOptionString("socialservices", "allow_send_user_activity", "Y") == 'Y')
 			CJSCore::Init(array('socserv_timeman'));
 	}
+
+	public static function OnUserLogout(&$arParams)
+	{
+		CSocServAuthManager::UnsetAuthorizedServiceId();
+	}
 }
-?>

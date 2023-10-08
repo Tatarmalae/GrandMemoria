@@ -7,6 +7,7 @@ class SearchQuery implements \JsonSerializable
 	protected $query = '';
 	protected $cacheable = true;
 	protected $dynamicSearchEntities = [];
+	protected $rawQuery = '';
 
 	public function __construct(array $options)
 	{
@@ -24,14 +25,19 @@ class SearchQuery implements \JsonSerializable
 		{
 			$this->setDynamicSearchEntities($options['dynamicSearchEntities']);
 		}
+
+		if (isset($options['query']) && is_string($options['query']))
+		{
+			$this->setRawQuery($options['query']);
+		}
 	}
 
-	public function getQueryWords()
+	public function getQueryWords(): array
 	{
 		return $this->queryWords;
 	}
 
-	public function getQuery()
+	public function getQuery(): string
 	{
 		return $this->query;
 	}
@@ -48,7 +54,7 @@ class SearchQuery implements \JsonSerializable
 		}
 	}
 
-	public function isCacheable()
+	public function isCacheable(): bool
 	{
 		return $this->cacheable;
 	}
@@ -79,5 +85,15 @@ class SearchQuery implements \JsonSerializable
 			'queryWords' => $this->getQueryWords(),
 			'cacheable' => $this->isCacheable()
 		];
+	}
+
+	public function getRawQuery(): string
+	{
+		return $this->rawQuery;
+	}
+
+	protected function setRawQuery(string $rawQuery): void
+	{
+		$this->rawQuery = $rawQuery;
 	}
 }

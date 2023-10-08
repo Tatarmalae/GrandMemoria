@@ -1,8 +1,12 @@
+import 'ui.design-tokens';
+import 'ui.fonts.opensans';
+
 import {Type, Dom, Tag, Event} from 'main.core';
 import {BasePanel} from 'landing.ui.panel.base';
 import getDeltaFromEvent from './internal/get-delta-from-event';
 import calculateDurationTransition from './internal/calculate-duration-transition';
 import scrollTo from './internal/scroll-to';
+
 import './css/style.css';
 import 'landing.utils';
 
@@ -137,20 +141,22 @@ export class Content extends BasePanel
 			Dom.addClass(this.layout, 'landing-ui-panel-content-with-subtitle');
 		}
 
+		if (this.data.showFromRight === true)
+		{
+			this.setLayoutClass('landing-ui-panel-show-from-right');
+		}
+
 		this.init();
 
 		Event.bind(window.top, 'keydown', this.onKeyDown.bind(this));
-
-		BX.Landing.PageObject.getInstance()
-			.view()
-			.then((frame) => {
-				void (!!frame && Event.bind(frame.contentWindow, 'keydown', this.onKeyDown.bind(this)));
-			}, console.warn);
+		BX.Landing.PageObject.getEditorWindow();
 
 		if (this.data.scrollAnimation)
 		{
 			this.scrollObserver = new IntersectionObserver(this.onIntersecting.bind(this));
 		}
+
+		this.checkReadyToSave = this.checkReadyToSave.bind(this);
 	}
 
 	init()
@@ -286,6 +292,7 @@ export class Content extends BasePanel
 			{
 				Dom.addClass(document.body, 'landing-ui-hide-action-panels');
 			}
+			Dom.addClass(document.body, "landing-ui-action-panels-disable-scrollbar");
 
 			void BX.Landing.Utils.Show(this.overlay);
 			return BX.Landing.Utils.Show(this.layout).then(() => {
@@ -304,6 +311,7 @@ export class Content extends BasePanel
 			{
 				Dom.removeClass(document.body, 'landing-ui-hide-action-panels');
 			}
+			Dom.removeClass(document.body, "landing-ui-action-panels-disable-scrollbar");
 
 			void BX.Landing.Utils.Hide(this.overlay);
 			return BX.Landing.Utils.Hide(this.layout).then(() => {
@@ -346,6 +354,7 @@ export class Content extends BasePanel
 	clearSidebar()
 	{
 		Dom.clean(this.sidebar);
+		this.sidebarButtons = new BX.Landing.UI.Collection.ButtonCollection();
 	}
 
 	setTitle(title)
@@ -374,5 +383,42 @@ export class Content extends BasePanel
 	{
 		super.renderTo(target);
 		Dom.append(this.overlay, target);
+	}
+
+	checkReadyToSave()
+	{
+		let canSave = true;
+		this.forms.forEach(form => {
+			form.fields.forEach(field => {
+				if (field.readyToSave === false)
+				{
+					canSave = false
+				}
+				if (!field.getListeners('onChangeReadyToSave').has(this.checkReadyToSave))
+				{
+					field.subscribe('onChangeReadyToSave', this.checkReadyToSave);
+				}
+			})
+		});
+
+		canSave ? this.enableSave() : this.disableSave()
+	}
+
+	disableSave()
+	{
+		const saveButton = this.buttons.get('save_block_content');
+		if (saveButton)
+		{
+			saveButton.disable();
+		}
+	}
+
+	enableSave()
+	{
+		const saveButton = this.buttons.get('save_block_content');
+		if (saveButton)
+		{
+			saveButton.enable();
+		}
 	}
 }

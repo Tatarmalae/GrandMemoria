@@ -6,7 +6,7 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 
 use \Bitrix\Main\Localization\Loc;
 
-Loc::loadMessages(dirname(__FILE__) . '/.description-nottranslate.php');
+Loc::loadMessages(__DIR__ . '/.description-nottranslate.php');
 
 return array(
 	'parent' => 'store-mini-one-element',
@@ -18,7 +18,7 @@ return array(
 	'fields' => array(
 		'RULE' => null,
 		'ADDITIONAL_FIELDS' => array(
-			'METAOG_IMAGE' => 'https://cdn.bitrix24.site/bitrix/images/demo/page/store-mini-one-element/preview.jpg',
+			'METAOG_IMAGE' => 'https://cdn.bitrix24.site/bitrix/images/demo/page/store-mini-one-element/preview@2x.jpg',
 			'VIEW_USE' => 'N',
 			'VIEW_TYPE' => 'no',
 			'THEME_CODE' => 'event',
@@ -67,7 +67,7 @@ return array(
 					0 => 'landing-block-node-card-title g-line-height-1_2 g-font-weight-700 g-color-white mb-0 g-mb-35--md g-text-transform-none g-font-size-25',
 				),
 				'.landing-block-node-card-button' => array(
-					0 => 'landing-block-node-card-button btn btn-lg g-mt-20 g-mt-0--md text-uppercase u-btn-primary g-font-weight-700 g-font-size-12 g-py-15 g-px-40',
+					0 => 'landing-block-node-card-button btn btn-lg g-mt-20 g-mt-0--md text-uppercase g-btn-primary g-font-weight-700 g-font-size-12 g-py-15 g-px-40',
 				),
 				'.landing-block-node-card-img' => array(
 					0 => 'landing-block-node-card-img g-flex-centered g-bg-cover g-bg-pos-center g-bg-img-hero g-min-height-70vh g-bg-black-opacity-0_5--after h-100 g-pt-10 g-pb-30',

@@ -5,7 +5,8 @@
 }
 
 .landing-ui-form-menuitem .landing-ui-form-header {
-	font-family: OpenSans-Regular, Helvetca, Arial, sans-sarif, serif;
+	font-family: var(--ui-font-family-secondary, var(--ui-font-family-open-sans));
+	font-weight: var(--ui-font-weight-regular, 400);
 	font-size: 16px;
 	padding: 0;
 	display: -webkit-box;
@@ -25,6 +26,10 @@
 	        user-select: none;
 }
 
+.landing-ui-form-menuitem .landing-ui-form-header-left {
+	max-width: calc(100% - 40px);
+}
+
 .landing-ui-form-menuitem .landing-ui-form-header-left,
 .landing-ui-form-menuitem .landing-ui-form-header-right {
 	height: 60px;
@@ -37,7 +42,7 @@
 }
 
 .landing-ui-form-menuitem .landing-ui-form-header-title {
-	max-width: 350px;
+	max-width: 100%;
 	white-space: nowrap;
 	overflow: hidden;
 	-o-text-overflow: ellipsis;
@@ -46,7 +51,7 @@
 
 .landing-ui-form-menuitem .landing-ui-form-header-drag-button {
 	height: 100%;
-	width: 20px;
+	min-width: 20px;
 	cursor: -webkit-grab;
 	cursor: grab;
 	margin-left: -2px;

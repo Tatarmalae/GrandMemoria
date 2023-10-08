@@ -34,7 +34,7 @@ if (count($arResult["ITEMS"]) == 0) return;
                                     <div class="reviews-item__top">
                                         <div class="reviews-item__top-info">
                                             <span class="h4">
-                                                <a href="#" data-toggle="modal" data-target="#modalReviewsItem_<?= $key ?>">
+                                                <a class="modal-ajax" href="#" data-toggle="modal" data-target="#modalReviewsItem" data-key="<?= $key ?>">
                                                     <?= $arItem['PROPERTIES']['NAME']['VALUE'] ?>
                                                 </a>
                                             </span>
@@ -65,7 +65,7 @@ if (count($arResult["ITEMS"]) == 0) return;
                                     </div>
                                     <div class="reviews-item__bottom">
                                         <div class="more">
-                                            <a class="more__link link-static" href="#" data-toggle="modal" data-target="#modalReviewsItem_<?= $key ?>">
+                                            <a class="more__link link-static modal-ajax" href="#" data-toggle="modal" data-target="#modalReviewsItem" data-key="<?= $key ?>">
                                                 <span>Читать целиком</span>
                                                 <svg class="icon__arrow-right" width="24" height="24">
                                                     <use xlink:href="<?= SITE_STYLE_PATH ?>/img/general/svg-symbols.svg#arrow-right"></use>
@@ -103,9 +103,9 @@ if (count($arResult["ITEMS"]) == 0) return;
         </div>
     </div>
 </section>
-<?php foreach ($arResult["ITEMS"] as $key => $arItem): ?>
-    <div class="modal fade" id="modalReviewsItem_<?= $key ?>" tabindex="-1" role="dialog" aria-labelledby="modalReviewsItemLabel">
-        <div class="modal-dialog" role="document">
+<div style="display:none; opacity; 0">
+    <?php foreach ($arResult["ITEMS"] as $key => $arItem): ?>
+        <div class="modal-dialog_<?= $key ?>" role="document">
             <div class="modal-content">
                 <button class="modal-close" type="button" data-dismiss="modal" aria-label="Close">
                     <svg class="icon__close-modal" width="48" height="48">
@@ -176,5 +176,5 @@ if (count($arResult["ITEMS"]) == 0) return;
                 </div>
             </div>
         </div>
-    </div>
-<?php endforeach ?>
+    <?php endforeach ?>
+</div>

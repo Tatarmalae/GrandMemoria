@@ -83,7 +83,8 @@
 	margin-right: 15px;
 	font-size: 11px;
 	text-transform: uppercase;
-	font-family: "OpenSans-Bold", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-family: var(--ui-font-family-secondary, var(--ui-font-family-open-sans));
+	font-weight: var(--ui-font-weight-bold, 700);
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
@@ -118,7 +119,8 @@
 	flex-direction: column;
 	position: relative;
 
-	margin-bottom: 2px;
+	margin-top: 4px;
+	margin-bottom: 4px;
 	margin-right: 5px;
 	scrollbar-color: rgba(0, 0, 0, 0.21) transparent;
 	scrollbar-width: thin;
@@ -193,7 +195,8 @@
 .ui-selector-tab-default-stub-title {
 	color: #7f868d;
 	font-size: 20px;
-	font-family: "OpenSans-Light", "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-family: var(--ui-font-family-secondary, var(--ui-font-family-open-sans));
+	font-weight: var(--ui-font-weight-light, 300);
 	text-align: center;
 }
 
@@ -308,6 +311,7 @@
 	display: flex;
 	height: 54px;
 	background-color: #eaf9fe;
+	border-radius: 0 0 var(--popup-window-border-radius) var(--popup-window-border-radius);
 	padding: 0 18px;
 	overflow: hidden;
 	white-space: nowrap;
@@ -350,7 +354,7 @@
 .ui-selector-search-footer-query {
 	color: #525c69;
 	font-size: 14px;
-	font-weight: bold;
+	font-weight: var(--ui-font-weight-bold);
 
 	white-space: nowrap;
 	text-overflow: ellipsis;

@@ -201,6 +201,14 @@ class CIBlockPropertyHTML
 		)
 		{
 			$text = trim($value["VALUE"]["TEXT"]);
+			if (Loader::includeModule('bitrix24'))
+			{
+				$sanitizer = new \CBXSanitizer();
+				$sanitizer->setLevel(\CBXSanitizer::SECURE_LEVEL_LOW);
+				$sanitizer->ApplyDoubleEncode(false);
+				$text = $sanitizer->SanitizeHtml($text);
+				$value['VALUE']['TEXT'] = $text;
+			}
 			$len = mb_strlen($text);
 			if ($len > 0 || $defaultValue)
 			{
@@ -232,20 +240,39 @@ class CIBlockPropertyHTML
 		$return = false;
 		if (!is_array($value["VALUE"]))
 		{
-			$return = array(
-				"VALUE" => unserialize($value["VALUE"]),
-			);
-			if ($return['VALUE'] === false && $value['VALUE'] <> '')
+			$value['VALUE'] = (string)$value['VALUE'];
+			if ($value['VALUE'] === '')
 			{
-				$return = array(
-					"VALUE" => array(
+				$return = [
+					"VALUE" => [
 						'TEXT' => $value["VALUE"],
-						'TYPE' => 'TEXT'
-					)
-				);
+						'TYPE' => 'TEXT',
+					]
+				];
 			}
-			if($value["DESCRIPTION"])
-				$return["DESCRIPTION"] = trim($value["DESCRIPTION"]);
+			else
+			{
+				$return = [
+					"VALUE" => unserialize($value["VALUE"], ['allowed_classes' => false]),
+				];
+				if ($return['VALUE'] === false)
+				{
+					$return = [
+						"VALUE" => [
+							'TEXT' => $value["VALUE"],
+							'TYPE' => 'TEXT',
+						]
+					];
+				}
+			}
+			if (isset($value['DESCRIPTION']))
+			{
+				$value['DESCRIPTION'] = (string)$value['DESCRIPTION'];
+				if ($value['DESCRIPTION'] !== '')
+				{
+					$return["DESCRIPTION"] = trim($value["DESCRIPTION"]);
+				}
+			}
 		}
 		return $return;
 	}
@@ -264,7 +291,7 @@ class CIBlockPropertyHTML
 		{
 			$return = false;
 			if (CheckSerializedData($arFields))
-				$return = unserialize($arFields);
+				$return = unserialize($arFields, ['allowed_classes' => false]);
 		}
 		else
 		{
@@ -311,7 +338,7 @@ class CIBlockPropertyHTML
 	public static function GetSettingsHTML($arProperty, $strHTMLControlName, &$arPropertyFields)
 	{
 		$arPropertyFields = array(
-			"HIDE" => array("ROW_COUNT", "COL_COUNT"),
+			"HIDE" => array("ROW_COUNT", "COL_COUNT", "MULTIPLE"),
 		);
 
 		$height = 0;

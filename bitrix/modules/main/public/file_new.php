@@ -146,7 +146,7 @@ if($templateID === false)
 $edit_groups = explode(",", COption::GetOptionString('fileman', 'default_edit_groups', ''));
 $arGroupList = array();
 $arEditGroups = array();
-$gr = CGroup::GetList(($v1="sort"), ($v2="asc"), array("ACTIVE"=>"Y", "ADMIN"=>"N", "ANONYMOUS"=>"N"));
+$gr = CGroup::GetList("sort", "asc", array("ACTIVE"=>"Y", "ADMIN"=>"N", "ANONYMOUS"=>"N"));
 while($group = $gr->Fetch())
 {
 	$arGroupList[$group["ID"]] = $group;
@@ -805,7 +805,7 @@ foreach ($arGlobalProperties as $propertyCode => $propertyValue):?>
 <?foreach ($arDirProperties as $propertyCode => $propertyValue):?>
 
 		<tr id="bx_user_property_<?=$propertyIndex?>">
-			<td class="bx-popup-label bx-width30"><?=htmlspecialcharsEx(ToUpper($propertyCode))?><input type="hidden" name="PROPERTY[<?=$propertyIndex?>][CODE]" value="<?=htmlspecialcharsEx(ToUpper($propertyCode))?>" />:</td>
+			<td class="bx-popup-label bx-width30"><?=htmlspecialcharsEx(mb_strtoupper($propertyCode))?><input type="hidden" name="PROPERTY[<?=$propertyIndex?>][CODE]" value="<?=htmlspecialcharsEx(mb_strtoupper($propertyCode))?>" />:</td>
 			<td><input type="text" name="PROPERTY[<?=$propertyIndex?>][VALUE]" value="<?=htmlspecialcharsEx($propertyValue)?>" style="width:90%;"></td>
 		</tr>
 

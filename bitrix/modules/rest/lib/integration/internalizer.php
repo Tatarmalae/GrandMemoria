@@ -4,14 +4,18 @@
 namespace Bitrix\Rest\Integration;
 
 
+use Bitrix\Main\Result;
 use Bitrix\Sale\Controller\Controller;
-use Bitrix\Sale\Result;
 
 final class Internalizer extends ModificationFieldsBase
 {
-	public function __construct(ViewManager $manager, $data=[])
+	public function __construct(ViewManager $manager, $data = [])
 	{
-		$this->format = self::TO_WHITE_LIST | self::TO_SNAKE | self::CHECK_REQUIRED;
+		$this->setFormat([
+			self::TO_WHITE_LIST,
+			self::TO_SNAKE ,
+			self::CHECK_REQUIRED
+		]);
 
 		parent::__construct($manager, $data);
 	}
@@ -25,12 +29,12 @@ final class Internalizer extends ModificationFieldsBase
 
 		$arguments = $this->getArguments();
 
-		if($this->format & self::TO_SNAKE)
+		if(in_array(self::TO_SNAKE, $this->format))
 		{
 			$arguments = $this->convertToSnakeCase($arguments);
 		}
 
-		if($this->format & self::CHECK_REQUIRED)
+		if(in_array(self::CHECK_REQUIRED, $this->format))
 		{
 			$check = $this->check($arguments);
 			if(!$check->isSuccess())
@@ -41,7 +45,7 @@ final class Internalizer extends ModificationFieldsBase
 
 		if($r->isSuccess())
 		{
-			if($this->format & self::TO_WHITE_LIST)
+			if(in_array(self::TO_WHITE_LIST, $this->format))
 			{
 				$arguments = $this->internalize($arguments);
 			}
@@ -138,6 +142,48 @@ final class Internalizer extends ModificationFieldsBase
 		else
 		{
 			$arguments = $view->internalizeArguments($name, $arguments);
+		}
+
+		return $arguments;
+	}
+
+	private function canonicalize($arguments)
+	{
+		$name = $this->getName();
+		/** @var Controller $controller */
+		$controller = $this->getController();
+		$view = $this->getView($controller);
+
+		if($name == 'add')
+		{
+			$fields = $arguments['fields'];
+			if(!empty($fields))
+				$arguments['fields'] = $view->canonicalizeFieldsAdd($fields);
+		}
+		elseif ($name == 'update')
+		{
+			$fields = $arguments['fields'];
+			if(!empty($fields))
+				$arguments['fields'] = $view->canonicalizeFieldsUpdate($fields);
+		}
+		elseif ($name == 'list')
+		{
+			$fields = $view->canonicalizeFieldsList([
+				'select'=>$arguments['select'],
+				'filter'=>$arguments['filter'],
+				'order'=>$arguments['order'],
+			]);
+
+			$arguments['select'] = $fields['select'];
+			$arguments['filter'] = $fields['filter'];
+			$arguments['order'] = $fields['order'];
+		}
+		elseif ($name == 'getfields'){}
+		elseif ($name == 'get'){}
+		elseif ($name == 'delete'){}
+		else
+		{
+			$arguments = $view->canonicalizeArguments($name, $arguments);
 		}
 
 		return $arguments;

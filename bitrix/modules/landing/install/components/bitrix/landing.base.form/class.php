@@ -172,7 +172,7 @@ class LandingBaseFormComponent extends LandingBaseComponent
 			}
 		}
 
-		// detect groups wich different
+		// detect groups which different
 		$diffGroups = array();
 		if (is_array($additionalFields))
 		{
@@ -343,6 +343,7 @@ class LandingBaseFormComponent extends LandingBaseComponent
 				$item[$code] = array(
 					'TITLE' => $field->getTitle(),
 					'READONLY' => !in_array($code, $localMap),
+					'STORED' => $row[$code] ?? $defaultValue,
 					'~CURRENT' => $fillFromRequest
 								? ($code == 'ID') ? $this->id : $this->request($code)
 								: (isset($row[$code]) ? $row[$code] : $defaultValue)

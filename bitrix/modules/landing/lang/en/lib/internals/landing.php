@@ -1,15 +1,15 @@
-<?
+<?php
 $MESS["LANDING_TABLE_ERROR_CANT_BE_EMPTY"] = "Page address cannot be empty.";
-$MESS["LANDING_TABLE_ERROR_ISNOT_FOLDER"] = "A page selected as folder is not a folder";
+$MESS["LANDING_TABLE_ERROR_FOLDER_NOT_FOUND"] = "Folder was not found.";
 $MESS["LANDING_TABLE_ERROR_LD_ACCESS_DENIED"] = "Page edit access was denied.";
 $MESS["LANDING_TABLE_ERROR_LD_ACCESS_DENIED_ACTIVE"] = "Page publishing access was denied.";
 $MESS["LANDING_TABLE_ERROR_LD_ACCESS_DENIED_ADD"] = "Page create access was denied..";
 $MESS["LANDING_TABLE_ERROR_LD_ACCESS_DENIED_DELETED"] = "Page delete access was denied.";
 $MESS["LANDING_TABLE_ERROR_LD_CANT_DELETE_MAIN"] = "Cannot delete the page that was selected in the site settings as a main page.";
+$MESS["LANDING_TABLE_ERROR_LD_IS_LOCK"] = "Page cannot be deleted";
 $MESS["LANDING_TABLE_ERROR_PAGE_FOLDER_NOT_EMPTY"] = "Folder is not empty";
 $MESS["LANDING_TABLE_ERROR_SITE_NOT_FOUND"] = "Site is not found.";
 $MESS["LANDING_TABLE_ERROR_SLASH_IS_NOT_ALLOWED"] = "The slash character cannot be used in a landing address.";
-$MESS["LANDING_TABLE_ERROR_SUBFOLDER_DISABLED"] = "Nested subfolders are not supported";
 $MESS["LANDING_TABLE_ERROR_WRONG_CODE_FORMAT"] = "Incorrect page address";
 $MESS["LANDING_TABLE_FIELD_CREATED_BY_ID"] = "Created by user ID";
 $MESS["LANDING_TABLE_FIELD_DATE_CREATE"] = "Created on";
@@ -35,4 +35,3 @@ $MESS["LANDING_TABLE_FIELD_TPL_CODE"] = "Site template ID";
 $MESS["LANDING_TABLE_FIELD_TPL_ID"] = "Template";
 $MESS["LANDING_TABLE_FIELD_VERSION"] = "Page version";
 $MESS["LANDING_TABLE_FIELD_XML_ID"] = "External ID";
-?>

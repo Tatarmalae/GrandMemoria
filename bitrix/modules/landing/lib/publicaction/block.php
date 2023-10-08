@@ -5,6 +5,8 @@ use \Bitrix\Landing\Manager;
 use \Bitrix\Landing\File;
 use \Bitrix\Landing\Landing;
 use \Bitrix\Landing\Hook;
+use \Bitrix\Landing\Assets;
+use \Bitrix\Landing\Restriction;
 use \Bitrix\Landing\Block as BlockCore;
 use \Bitrix\Main\Localization\Loc;
 use \Bitrix\Landing\PublicActionResult;
@@ -660,14 +662,28 @@ class Block
 	 * @param int $lid Landing id.
 	 * @param int $block Block id.
 	 * @param string $content Block content.
+	 * @param bool $designed Block was designed.
 	 * @return \Bitrix\Landing\PublicActionResult
 	 */
-	public static function updateContent($lid, $block, $content)
+	public static function updateContent($lid, $block, $content, $designed = false)
 	{
 		$result = new PublicActionResult();
 		$error = new \Bitrix\Landing\Error;
 
 		Landing::setEditMode();
+
+		if (Utils::isTrue($designed))
+		{
+			if (!Restriction\Manager::isAllowed('limit_crm_free_superblock1'))
+			{
+				return $result;
+			}
+		}
+
+		if (strpos($content, 'block-wrapper'))
+		{
+			$content = preg_replace('/^<div.*?class="[^"]*block-wrapper[\s"][^>]+>(.*?)<\/div>$/is', '$1', $content);
+		}
 
 		$landing = Landing::createInstance($lid, [
 			'blocks_id' => $block
@@ -679,8 +695,36 @@ class Block
 			$blocks = $landing->getBlocks();
 			if (isset($blocks[$block]))
 			{
+				// remove extra files
+				$newContent = Manager::sanitize($content, $bad);
+				$filesBeforeSave = File::getFilesFromBlockContent(
+					$block,
+					$blocks[$block]->getContent()
+				);
+				$filesAfterSave = File::getFilesFromBlockContent(
+					$block,
+					$newContent
+				);
+				$filesRest = array_intersect($filesBeforeSave, $filesAfterSave);
+				$filesDelete = [];
+				foreach ($filesBeforeSave as $fileId)
+				{
+					if (!in_array($fileId, $filesRest))
+					{
+						$filesDelete[] = $fileId;
+					}
+				}
+				if ($filesDelete)
+				{
+					File::deleteFromBlock($block, $filesDelete);
+				}
+				// update content
 				$blocks[$block]->saveContent(
-					Manager::sanitize($content, $bad)
+					$newContent,
+					Utils::isTrue($designed)
+				);
+				Assets\PreProcessing::blockUpdateNodeProcessing(
+					$blocks[$block]
 				);
 				$result->setResult(
 					$blocks[$block]->save()
@@ -696,6 +740,29 @@ class Block
 			}
 		}
 		$result->setError($landing->getError());
+
+		return $result;
+	}
+
+	/**
+	 * Publication one block from landing.
+	 * @param int $block Block id.
+	 * @return PublicActionResult
+	 */
+	public static function publication(int $block): PublicActionResult
+	{
+		$result = new PublicActionResult();
+
+		$lid = BlockCore::getLandingIdByBlockId($block);
+		if ($lid)
+		{
+			$landing = Landing::createInstance($lid);
+			if ($landing->exist())
+			{
+				$result->setResult($landing->publication($block));
+			}
+			$result->setError($landing->getError());
+		}
 
 		return $result;
 	}
@@ -930,9 +997,10 @@ class Block
 	 * @param mixed $picture File url / file array.
 	 * @param string $ext File extension.
 	 * @param array $params Some file params.
-	 * @return \Bitrix\Landing\PublicActionResult
+	 * @param bool $temp This is temporary file.
+	 * @return PublicActionResult
 	 */
-	public static function uploadFile($block, $picture, $ext = false, array $params = array())
+	public static function uploadFile($block, $picture, $ext = false, array $params = [], $temp = false): PublicActionResult
 	{
 		static $mixedParams = ['picture'];
 
@@ -950,7 +1018,7 @@ class Block
 			$file = Manager::savePicture($picture, $ext, $params);
 			if ($file)
 			{
-				File::addToBlock($block, $file['ID']);
+				File::addToBlock($block, $file['ID'], Utils::isTrue($temp));
 				$result->setResult(array(
 					'id' => $file['ID'],
 					'src' => $file['SRC']
@@ -974,6 +1042,55 @@ class Block
 			$result->setError($error);
 		}
 
+		return $result;
+	}
+
+	/**
+	 * Returns disk's file by attached object id.
+	 * @param int $fileId File (attached object) id.
+	 * @return PublicActionResult
+	 */
+	public static function getFileDisk(int $fileId): PublicActionResult
+	{
+		static $internal = true;
+
+		$result = new PublicActionResult();
+		$result->setResult(null);
+
+		if ($file = \Bitrix\Landing\Connector\Disk::getFileInfo($fileId, true, true))
+		{
+			$result->setResult([
+				'ID' => $file['OBJECT_ID'],
+				'NAME' => $file['NAME']
+			]);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Returns the username.
+	 * @param int $userId.
+	 * @return PublicActionResult
+	 */
+	public static function getUserNameById(int $userId): PublicActionResult
+	{
+		$res = \Bitrix\Main\UserTable::getList([
+			'select' => [
+				'NAME',
+				'LAST_NAME'
+			],
+			'filter' => [
+				'ID' => $userId
+			]]);
+		$row = $res->fetch();
+		$result = new PublicActionResult();
+		$result->setResult([
+			'NAME' => \CUser::formatName(
+				\CSite::getNameFormat(false),
+				$row, true, false
+			)
+		]);
 		return $result;
 	}
 }

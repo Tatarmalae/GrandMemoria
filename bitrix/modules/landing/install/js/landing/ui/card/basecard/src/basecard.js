@@ -1,6 +1,7 @@
 import {Cache, Dom, Tag, Text, Type, Event} from 'main.core';
 import {EventEmitter} from 'main.core.events';
 
+import 'ui.fonts.opensans';
 import './css/base_card.css';
 
 /**
@@ -34,6 +35,11 @@ export class BaseCard extends EventEmitter
 			Dom.addClass(this.layout, this.options.className);
 		}
 
+		if (Type.isObject(this.options.attrs))
+		{
+			Dom.adjust(this.layout, {attrs: this.options.attrs});
+		}
+
 		Event.bind(this.layout, 'click', this.onClick);
 	}
 
@@ -42,9 +48,21 @@ export class BaseCard extends EventEmitter
 		return this.cache.remember('layout', () => {
 			return Tag.render`
 				<div class="landing-ui-card">
-					${this.getHeader()}
+					<div class="landing-ui-card-header-wrapper">
+						${this.getHeader()}
+					</div>
 					${this.getBody()}
 				</div>
+			`;
+		});
+	}
+
+	getRemoveButton(): HTMLDivElement
+	{
+		return this.cache.remember('remove', () =>
+		{
+			return Tag.render`
+				<div class="landing-ui-card-block-remove"></div>
 			`;
 		});
 	}
@@ -65,6 +83,17 @@ export class BaseCard extends EventEmitter
 				<div class="landing-ui-card-body"></div>
 			`;
 		});
+	}
+
+	addWarning(warning: string)
+	{
+		Dom.append(
+			Tag.render`
+				<div class="landing-ui-card-body-warning">${warning}</div>
+			`,
+			this.getBody()
+		);
+		Dom.addClass(this.getBody(), '--warning');
 	}
 
 	setTitle(title: string)

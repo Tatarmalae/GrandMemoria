@@ -182,7 +182,7 @@ return array(
 			),
 			'style' => array(
 				'.landing-block-node-card' => array(
-					0 => 'landing-block-node-card col-md-4 col-lg-2 g-flex-centered g-brd-bottom g-brd-right g-brd-gray-light-v4 g-py-50',
+					0 => 'landing-block-node-card col-md-4 col-lg-2 d-flex flex-column align-items-center justify-content-center g-brd-bottom g-brd-right g-brd-color-inherit g-py-50',
 				),
 				'#wrapper' => array(
 					0 => 'landing-block js-animation text-center animated g-pt-0 fadeInUp g-pb-20',
@@ -250,7 +250,10 @@ return array(
 			),
 			'style' => array(
 				'.landing-block-node-block' => array(
-					0 => 'landing-block-node-block js-animation fadeInUp text-center u-block-hover u-bg-overlay g-color-white h-100 g-bg-black-opacity-0_3--after animated',
+					0 => 'landing-block-node-block h-100 js-animation fadeInUp text-center u-block-hover u-bg-overlay g-color-white g-bg-black-opacity-0_3--after',
+				),
+				'.landing-block-node-block-small' => array(
+					0 => 'landing-block-node-block-small js-animation fadeInUp text-center u-block-hover u-bg-overlay g-color-white g-bg-img-hero g-bg-black-opacity-0_3--after',
 				),
 				'.landing-block-node-subtitle1' => array(
 					0 => 'landing-block-node-subtitle1 g-font-weight-700 g-color-white g-brd-bottom g-brd-2 g-mb-20 g-font-size-16 g-text-transform-none g-brd-transparent',

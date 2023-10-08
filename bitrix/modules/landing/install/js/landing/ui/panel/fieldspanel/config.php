@@ -17,6 +17,13 @@ return [
 		'landing.loc',
 		'landing.ui.form.formsettingsform',
 		'landing.ui.button.basebutton',
+		'landing.ui.field.textfield',
+		'landing.ui.panel.formsettingspanel',
+		'crm.form.client',
+		'main.core.z-index-manager',
+		'ui.userfieldfactory',
+		'landing.master',
+		'ui.fonts.opensans',
 	],
 	'skip_core' => false,
 ];

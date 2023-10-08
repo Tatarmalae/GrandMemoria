@@ -8,15 +8,18 @@
 
 namespace Bitrix\Main\ORM\Fields;
 
+use Bitrix\Main\DB\SqlExpression;
+
 /**
  * Entity field class for enum data type
+ *
  * @package bitrix
  * @subpackage main
  */
 class FloatField extends ScalarField
 {
 	/** @var int|null */
-	protected $scale;
+	protected $precision;
 
 	/**
 	 * FloatField constructor.
@@ -32,27 +35,53 @@ class FloatField extends ScalarField
 
 		if(isset($parameters['scale']))
 		{
-			$this->scale = intval($parameters['scale']);
+			$this->precision = intval($parameters['scale']);
+		}
+
+		if(isset($parameters['precision']))
+		{
+			$this->precision = intval($parameters['precision']);
 		}
 	}
 
 	/**
+	 * @param int $precision
+	 *
+	 * @return $this
+	 */
+	public function configurePrecision($precision)
+	{
+		$this->precision = (int) $precision;
+		return $this;
+	}
+
+	/**
 	 * @param $scale
+	 * @deprecated
 	 *
 	 * @return $this
 	 */
 	public function configureScale($scale)
 	{
-		$this->scale = (int) $scale;
+		$this->precision = (int) $scale;
 		return $this;
 	}
 
 	/**
 	 * @return int|null
 	 */
+	public function getPrecision()
+	{
+		return $this->precision;
+	}
+
+	/**
+	 * @deprecated
+	 * @return int|null
+	 */
 	public function getScale()
 	{
-		return $this->scale;
+		return $this->precision;
 	}
 
 	/**
@@ -62,11 +91,21 @@ class FloatField extends ScalarField
 	 */
 	public function cast($value)
 	{
+		if ($this->is_nullable && $value === null)
+		{
+			return $value;
+		}
+
+		if ($value instanceof SqlExpression)
+		{
+			return $value;
+		}
+
 		$value = doubleval($value);
 
-		if ($this->scale !== null)
+		if ($this->precision !== null)
 		{
-			$value = round($value, $this->scale);
+			$value = round($value, $this->precision);
 		}
 
 		return $value;
@@ -91,7 +130,14 @@ class FloatField extends ScalarField
 	 */
 	public function convertValueToDb($value)
 	{
-		return $this->getConnection()->getSqlHelper()->convertToDbFloat($value);
+		if ($value instanceof SqlExpression)
+		{
+			return $value;
+		}
+
+		return $value === null && $this->is_nullable
+			? $value
+			: $this->getConnection()->getSqlHelper()->convertToDbFloat($value);
 	}
 
 	/**

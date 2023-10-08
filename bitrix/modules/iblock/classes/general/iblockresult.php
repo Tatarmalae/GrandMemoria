@@ -29,16 +29,6 @@ class CIBlockResult extends CDBResult
 		parent::__construct($res);
 	}
 
-	/**
-	 * @deprected
-	 *
-	 * @param $res
-	 */
-	function CIBlockResult($res)
-	{
-		self::__construct($res);
-	}
-
 	function SetUrlTemplates($DetailUrl = "", $SectionUrl = "", $ListUrl = "")
 	{
 		$this->strDetailUrl = $DetailUrl;
@@ -286,7 +276,7 @@ class CIBlockResult extends CDBResult
 			if($TEMPLATE)
 			{
 				$res_tmp = $res;
-				if((intval($res["IBLOCK_ID"]) <= 0) && (intval($res["ID"]) > 0))
+				if((intval(($res["IBLOCK_ID"] ?? 0)) <= 0) && (intval($res["ID"]) > 0))
 				{
 					$res_tmp["IBLOCK_ID"] = $res["ID"];
 					$res_tmp["IBLOCK_CODE"] = $res["CODE"];
@@ -311,7 +301,7 @@ class CIBlockResult extends CDBResult
 			}
 
 			//If this is Element or Section then process it's detail and section URLs
-			if($res["IBLOCK_ID"] <> '')
+			if(($res["IBLOCK_ID"] ?? '') <> '')
 			{
 
 				if(array_key_exists("GLOBAL_ACTIVE", $res))

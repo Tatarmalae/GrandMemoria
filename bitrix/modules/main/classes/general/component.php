@@ -6,6 +6,8 @@
  * @copyright 2001-2013 Bitrix
  */
 
+use Bitrix\Main\IO;
+
 class CBitrixComponent
 {
 	public $__name = "";
@@ -402,7 +404,7 @@ class CBitrixComponent
 	 * @return string
 	 *
 	 */
-	final private function __getClassForPath($componentPath)
+	private function __getClassForPath($componentPath)
 	{
 		if (!isset(self::$__classes_map[$componentPath]))
 		{
@@ -625,8 +627,10 @@ class CBitrixComponent
 		if ($parentComponent instanceof cbitrixcomponent)
 			$this->__parent = $parentComponent;
 
-		if ($arParams["CACHE_TYPE"] != "Y" && $arParams["CACHE_TYPE"] != "N")
+		if (!isset($arParams["CACHE_TYPE"]) || ($arParams["CACHE_TYPE"] != "Y" && $arParams["CACHE_TYPE"] != "N"))
+		{
 			$arParams["CACHE_TYPE"] = "A";
+		}
 
 		if($this->classOfComponent)
 		{
@@ -722,6 +726,7 @@ class CBitrixComponent
 				"Cannot find '#NAME#' template with page '#PAGE#'"
 			));
 		}
+		$this->__template->__component = null;
 	}
 	/**
 	 * Function initializes the template of the component. Returns true on success.
@@ -739,7 +744,14 @@ class CBitrixComponent
 		if (!$this->__bInited)
 			return null;
 
-		$this->__templatePage = $templatePage;
+		try
+		{
+			$this->__templatePage = IO\Path::normalize($templatePage);
+		}
+		catch (IO\InvalidPathException $e)
+		{
+			$this->__templatePage = '';
+		}
 
 		$this->__template = new CBitrixComponentTemplate();
 		$this->__template->setLanguageId($this->getLanguageId());
@@ -994,7 +1006,7 @@ class CBitrixComponent
 					}
 				}
 
-				if ($templateCachedData["__editButtons"])
+				if (isset($templateCachedData["__editButtons"]))
 				{
 					foreach ($templateCachedData["__editButtons"] as $button)
 					{
@@ -1005,13 +1017,17 @@ class CBitrixComponent
 					}
 				}
 
-				if ($templateCachedData["__view"])
+				if (isset($templateCachedData["__view"]))
+				{
 					foreach ($templateCachedData["__view"] as $view_id => $target)
 						foreach ($target as $view_content)
 							$APPLICATION->addViewContent($view_id, $view_content[0], $view_content[1]);
+				}
 
 				if (array_key_exists("__NavNum", $templateCachedData))
+				{
 					$GLOBALS["NavNum"]+= $templateCachedData["__NavNum"];
+				}
 
 				if (array_key_exists("__currentCounters", $templateCachedData))
 				{
@@ -1349,13 +1365,13 @@ class CBitrixComponent
 		if (!is_array($arParams))
 			$arParams = array();
 
-		if (!$arParams['WINDOW'])
+		if (!($arParams['WINDOW'] ?? null))
 			$arParams['WINDOW'] = array(
 				"width" => 780,
 				"height" => 500,
 			);
 
-		if (!$arParams['ICON'] && !$arParams['SRC'] && !$arParams['IMAGE'])
+		if (!($arParams['ICON'] ?? '') && !($arParams['SRC'] ?? '') && !($arParams['IMAGE'] ?? ''))
 			$arParams['ICON'] = 'bx-context-toolbar-edit-icon';
 
 		$arBtn = array(
@@ -1407,7 +1423,7 @@ class CBitrixComponent
 		if (!is_array($arParams))
 			$arParams = array();
 
-		if (!$arParams['ICON'] && !$arParams['SRC'] && !$arParams['IMAGE'])
+		if (!($arParams['ICON'] ?? '') && !($arParams['SRC'] ?? '') && !($arParams['IMAGE'] ?? ''))
 			$arParams['ICON'] = 'bx-context-toolbar-delete-icon';
 
 		if (mb_substr($deleteLink, 0, 11) != 'javascript:')

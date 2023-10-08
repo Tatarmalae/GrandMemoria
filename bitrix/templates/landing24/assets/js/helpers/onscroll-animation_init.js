@@ -1,37 +1,47 @@
 ;(function() {
 	"use strict";
 
+	BX.namespace("BX.Landing.OnscrollAnimationHelper");
+
 	if (BX.browser.IsMobile())
 	{
 		return;
 	}
 
-	var observer = new IntersectionObserver(onIntersection);
-	var animatedMap = new WeakMap();
+	BX.Landing.OnscrollAnimationHelper.observer = new IntersectionObserver(onIntersection);
+	BX.Landing.OnscrollAnimationHelper.animatedMap = new WeakMap();
 
 	var addClass = BX.Landing.Utils.addClass;
 	var removeClass = BX.Landing.Utils.removeClass;
+	var hasClass = BX.Landing.Utils.hasClass;
 	var style = BX.Landing.Utils.style;
 	var isPlainObject = BX.Landing.Utils.isPlainObject;
 	var onAnimationEnd = BX.Landing.Utils.onAnimationEnd;
 	var slice = BX.Landing.Utils.slice;
 	var onCustomEvent = BX.Landing.Utils.onCustomEvent;
+	var  timeA;
 
 	onCustomEvent("BX.Landing.Block:init", function(event) {
-		var allObservableElements = slice(event.block.querySelectorAll('.js-animation'));
+		timeA = Date.now();
+		if (BX.hasClass(event.block, 'landing-designer-block-mode'))
+		{
+			return ;
+		}
+
+		var allObservableElements = BX.Landing.OnscrollAnimationHelper.getBlockAnimatedElements(event.block);
 
 		allObservableElements.forEach(function(element) {
 			prepareAnimatedElement(element);
-			observer.observe(element);
+			BX.Landing.OnscrollAnimationHelper.observer.observe(element);
 		});
 	});
 
 	onCustomEvent("BX.Landing.UI.Panel.URLList:show", function(layout) {
-		var allObservableElements = slice(layout.querySelectorAll('.js-animation'));
+		var allObservableElements = BX.Landing.OnscrollAnimationHelper.getBlockAnimatedElements(layout);
 
 		allObservableElements.forEach(function(element) {
 			prepareAnimatedElement(element);
-			observer.observe(element);
+			BX.Landing.OnscrollAnimationHelper.observer.observe(element);
 		});
 	});
 
@@ -44,7 +54,7 @@
 
 			if (isAnimationChange)
 			{
-				var allObservableElements = slice(event.block.querySelectorAll('.js-animation'));
+				var allObservableElements = BX.Landing.OnscrollAnimationHelper.getBlockAnimatedElements(event.block);
 
 				allObservableElements.forEach(function(element) {
 					prepareAnimatedElement(element);
@@ -54,6 +64,12 @@
 		}
 	});
 
+	BX.Landing.OnscrollAnimationHelper.selector = '.js-animation';
+	BX.Landing.OnscrollAnimationHelper.getBlockAnimatedElements = function(block)
+	{
+		return slice(block.querySelectorAll(BX.Landing.OnscrollAnimationHelper.selector));
+	}
+
 	/**
 	 * Prepares animated element
 	 * @param {HTMLElement} element
@@ -62,7 +78,6 @@
 	{
 		void style(element, {
 			"animation-duration": "1000ms",
-			"visibility": "hidden",
 			"animation-name": "none",
 			"animation-play-state": "paused"
 		});
@@ -74,32 +89,58 @@
 	function onIntersection(entries)
 	{
 		entries.forEach(function(entry) {
-			if (entry.isIntersecting && !animatedMap.has(entry.target))
+			if (entry.isIntersecting)
 			{
-				void runAnimation(entry.target)
-					.then(function() {
-						animatedMap.set(entry.target, true);
-
-						void style(entry.target, {
-							"animation-name": "none"
-						});
-
-						removeClass(entry.target, "animated");
-					});
+				BX.Landing.OnscrollAnimationHelper.animateElement(entry.target)
 			}
 		});
 	}
 
 	/**
-	 * Runs element animation
+	 * Animate element and do service actions
+	 * @param element
+	 */
+	BX.Landing.OnscrollAnimationHelper.animateElement = function(element)
+	{
+		if (!BX.Landing.OnscrollAnimationHelper.animatedMap.has(element))
+		{
+			return runElementAnimation(element)
+				.then(function ()
+				{
+					BX.Landing.OnscrollAnimationHelper.animatedMap.set(element, true);
+
+					void style(element, {
+						"animation-name": "none",
+					});
+
+					removeClass(element, "animated");
+					if (hasClass(element, "modified"))
+					{
+						removeClass(element, "modified");
+					}
+				});
+		}
+
+		return Promise.resolve();
+	}
+
+	/**
+	 * Just animate lement
 	 * @param {HTMLElement} element
 	 * @return {Promise<AnimationEvent>}
 	 */
-	function runAnimation(element)
+	function runElementAnimation(element)
 	{
+		if (
+			(window.performance.timing.domContentLoadedEventStart - window.performance.timing.domLoading > 400)
+			&& (window.performance.timing.domComplete === 0)
+			&& !document.querySelector('main.landing-edit-mode')
+		)
+		{
+			addClass(element, "modified");
+		}
 		addClass(element, "animated");
 		void style(element, {
-			"visibility": "",
 			"animation-name": "",
 			"animation-play-state": "running"
 		});

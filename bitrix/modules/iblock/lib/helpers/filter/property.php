@@ -30,7 +30,11 @@ class Property
 	public static function render($filterId, $propertyType, array $listProperty)
 	{
 		$result = '';
-
+		/**
+		 * @see Property::renderByECrm()
+		 * @see Property::renderByE()
+		 * @see Property::renderByEmployee()
+		 */
 		if(method_exists(__CLASS__, 'renderBy'.$propertyType))
 		{
 			$renderMethod = 'renderBy'.$propertyType;
@@ -80,6 +84,7 @@ class Property
 		if(!Loader::includeModule('crm'))
 			return '';
 
+		\Bitrix\Main\UI\Extension::load('ui.fonts.opensans');
 		Asset::getInstance()->addCss('/bitrix/js/crm/css/crm.css');
 		Asset::getInstance()->addJs('/bitrix/js/crm/crm.js');
 

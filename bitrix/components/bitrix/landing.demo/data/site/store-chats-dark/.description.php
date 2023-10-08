@@ -8,10 +8,8 @@ use \Bitrix\Main\Localization\Loc;
 
 Loc::loadLanguageFile(__FILE__);
 
-$buttons = \Bitrix\Landing\Hook\Page\B24button::getButtons();
-$buttons = array_keys($buttons);
 
-return array(
+return [
 	'code' => 'store-chats-dark',
 	'name' => Loc::getMessage("LANDING_DEMO_STORE_CHATS_DARK--NAME"),
 	'description' => Loc::getMessage("LANDING_DEMO_STORE_CHATS_DARK--DESC"),
@@ -24,33 +22,45 @@ return array(
 	'show_in_list' => 'Y',
 	'type' => 'store',
 	'sort' => 10,
-	'fields' => array(
-		'ADDITIONAL_FIELDS' => array(
-			'B24BUTTON_CODE' => $buttons[0],
+	'version' => 3,
+	'lock_delete' => true,
+	'fields' => [
+		'ADDITIONAL_FIELDS' => [
 			'VIEW_USE' => 'Y',
 			'VIEW_TYPE' => 'mobile',
 			'UP_SHOW' => 'Y',
 			'THEME_CODE' => '3corporate',
-			'THEMEFONTS_CODE' => 'g-font-roboto',
-			'THEMEFONTS_CODE_H' => 'g-font-roboto',
+			'THEMEFONTS_CODE' => 'Roboto',
+			'THEMEFONTS_CODE_H' => 'Roboto',
 			'THEMEFONTS_SIZE' => '1',
 			'THEMEFONTS_USE' => 'Y',
 			'BACKGROUND_USE' => 'Y',
 			'BACKGROUND_COLOR' => '#000000',
-		),
+		],
 		'TITLE' => Loc::getMessage("LANDING_DEMO_STORE_CHATS_DARK--NAME"),
-	),
-	'layout' => array(
+	],
+	'layout' => [
 		'code' => 'header_footer',
-		'ref' => array(
+		'ref' => [
 			1 => 'store-chats-dark/header',
 			2 => 'store-chats-dark/footer',
-		),
-	),
-	'syspages' => array(
+		],
+	],
+	'syspages' => [
 		'order' => 'store-chats-dark/order',
-	),
-	'items' => array(
+		'feedback' => 'store-chats-dark/order',
+		'catalog' => 'store-chats-dark/catalog',
+	],
+	'folders' => [
+		'store-chats-dark/catalog' => [
+			0 => 'store-chats-dark/catalog',
+			1 => 'store-chats-dark/catalog_order',
+			2 => 'store-chats-dark/catalog_detail',
+			3 => 'store-chats-dark/catalog_header',
+			4 => 'store-chats-dark/catalog_footer',
+		],
+	],
+	'items' => [
 		0 => 'store-chats-dark/mainpage',
 		1 => 'store-chats-dark/header',
 		2 => 'store-chats-dark/footer',
@@ -60,7 +70,10 @@ return array(
 		6 => 'store-chats-dark/about',
 		7 => 'store-chats-dark/payinfo',
 		8 => 'store-chats-dark/cutaway',
-	),
-	'site_group_item' => 'Y',
-	'site_group_parent' => 'store-chats',
-);
+		9 => 'store-chats-dark/catalog',
+		10 => 'store-chats-dark/catalog_order',
+		11 => 'store-chats-dark/catalog_detail',
+		12 => 'store-chats-dark/catalog_header',
+		13 => 'store-chats-dark/catalog_footer',
+	],
+];

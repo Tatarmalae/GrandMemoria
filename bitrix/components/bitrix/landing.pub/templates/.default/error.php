@@ -7,38 +7,45 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 use \Bitrix\Landing\Connector;
 use \Bitrix\Landing\Site\Type;
 use \Bitrix\Main\Localization\Loc;
-\Bitrix\Main\UI\Extension::load(["ui.fonts.opensans", "ui.buttons"]);
+
+/** @var array $arResult */
+/** @var array $arParams */
 
 foreach ($arResult['ERRORS'] as $errorCode => $error)
 {
 	break;
 }
 
-// try recognize link to group
+$groupPath = '';
+
+// try to recognize link to group
 if (
-	$errorCode == 'SITE_NOT_ALLOWED' &&
+	($errorCode ?? null) == 'SITE_NOT_ALLOWED' &&
 	$arParams['TYPE'] == 'GROUP' &&
 	isset($arResult['REAL_LANDING'])
 )
 {
 	$landing = $arResult['REAL_LANDING'];
 	/** @var $landing \Bitrix\Landing\Landing */
-	\CBitrixComponent::includeComponentClass('bitrix:landing.socialnetwork.group_redirect');
-	$groupId = \LandingSocialnetworkGroupRedirectComponent::getGroupIdBySiteId(
-		$landing->getSiteId()
-	);
+	$groupId = \Bitrix\Landing\Site\Scope\Group::getGroupIdBySiteId($landing->getSiteId());
 	if ($groupId)
 	{
 		$groupPath = Connector\SocialNetwork::getTabUrl(
 			$groupId,
-			$landing->getPublicUrl(false, false)
+			$landing->getPublicUrl(false, false),
+			true
 		);
 	}
 }
+
 \Bitrix\Landing\Manager::setPageView(
 	'MainTag',
 	'style="height: 100vh; background: #fff;"'
 );
+
+\Bitrix\Main\UI\Extension::load([
+	'ui.fonts.opensans', 'ui.buttons'
+]);
 ?>
 
 <?if ($arParams['TYPE'] == Type::SCOPE_CODE_KNOWLEDGE || $arParams['TYPE'] == Type::SCOPE_CODE_GROUP):?>
@@ -66,7 +73,9 @@ if (
 					<div class="landing-error-kb-img-inner"></div>
 				</div>
 				<div class="landing-error-kb-desc"><?= Loc::getMessage('LANDING_TPL_ERROR_NOT_ALLOWED_NOTE_KNOWLEDGE');?></div>
+				<?if (!\Bitrix\Landing\Connector\Mobile::isMobileHit()):?>
 				<a href="#" id="landing-access-request" class="ui-btn ui-btn-primary"><?= Loc::getMessage('LANDING_TPL_ERROR_NOT_ALLOWED_ASK');?></a>
+				<?endif?>
 			</div>
 		</div>
 		<script>
@@ -126,7 +135,12 @@ if (
 			<div class="landing-error-site-img-inner"></div>
 		</div>
 		<div class="landing-error-site-title"><?= $error;?></div>
-		<div class="landing-error-site-desc"><?= Loc::getMessage('LANDING_TPL_ERROR_NOT_FOUND_NOTE');?></div>
+		<div class="landing-error-site-desc">
+			<?= Loc::getMessage('LANDING_TPL_ERROR_NOT_FOUND_NOTE', [
+				'#LINK1#' => '<a href="' . ($arResult['SITE_URL'] ?? '/') . '">',
+				'#LINK2#' => '</a>',
+			]);?>
+		</div>
 	</div>
 
 <?endif;?>

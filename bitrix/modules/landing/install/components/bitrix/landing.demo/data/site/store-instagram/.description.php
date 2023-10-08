@@ -8,14 +8,11 @@ use \Bitrix\Main\Localization\Loc;
 
 Loc::loadLanguageFile(__FILE__);
 
-$buttons = \Bitrix\Landing\Hook\Page\B24button::getButtons();
-$buttons = array_keys($buttons);
 
 return array(
 	'code' => 'store-instagram',
 	'name' => Loc::getMessage("LANDING_DEMO_STORE_INSTAGRAM--NAME"),
 	'description' => Loc::getMessage("LANDING_DEMO_STORE_INSTAGRAM--DESC"),
-	'active' => true,
 	'preview' => '',
 	'preview2x' => '',
 	'preview3x' => '',
@@ -25,13 +22,12 @@ return array(
 	'sort' => 10,
 	'fields' => array(
 		'ADDITIONAL_FIELDS' => array(
-			'B24BUTTON_CODE' => $buttons[0],
 			'VIEW_USE' => 'N',
 			'VIEW_TYPE' => 'no',
 			'UP_SHOW' => 'Y',
 			'THEME_CODE' => '1construction',
-			'THEMEFONTS_CODE' => 'g-font-roboto',
-			'THEMEFONTS_CODE_H' => 'g-font-montserrat',
+			'THEMEFONTS_CODE' => 'Roboto',
+			'THEMEFONTS_CODE_H' => 'Montserrat',
 			'THEMEFONTS_SIZE' => '1',
 			'THEMEFONTS_USE' => 'Y',
 		),
@@ -59,4 +55,8 @@ return array(
 		5 => 'store-instagram/header_main',
 		6 => 'store-instagram/footer',
 	),
+	'active' => \LandingSiteDemoComponent::checkActive([
+		'ONLY_IN' => [],
+		'EXCEPT' => ['ru'],
+	]),
 );

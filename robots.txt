@@ -2,7 +2,6 @@ User-agent: *
 Allow: /bitrix/
 Allow: /local/
 Allow: /upload/
-Disallow: /info/articles/
 Disallow: /*?
 
 

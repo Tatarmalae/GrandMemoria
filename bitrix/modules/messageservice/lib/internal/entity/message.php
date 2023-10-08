@@ -2,10 +2,31 @@
 namespace Bitrix\MessageService\Internal\Entity;
 
 use Bitrix\Main\Application;
-use Bitrix\Main\Entity;
-use Bitrix\Main\Type;
+use Bitrix\Main\ORM\Data\DataManager;
+use Bitrix\Main\ORM\Fields\ArrayField;
+use Bitrix\Main\ORM\Fields\DatetimeField;
+use Bitrix\Main\ORM\Fields\IntegerField;
+use Bitrix\Main\ORM\Fields\StringField;
+use Bitrix\Main\ORM\Fields\TextField;
+use Bitrix\Main\ORM\Fields\Validators\LengthValidator;
 
-class MessageTable extends Entity\DataManager
+/**
+ * Class MessageTable
+ *
+ * DO NOT WRITE ANYTHING BELOW THIS
+ *
+ * <<< ORMENTITYANNOTATION
+ * @method static EO_Message_Query query()
+ * @method static EO_Message_Result getByPrimary($primary, array $parameters = array())
+ * @method static EO_Message_Result getById($id)
+ * @method static EO_Message_Result getList(array $parameters = array())
+ * @method static EO_Message_Entity getEntity()
+ * @method static \Bitrix\MessageService\Internal\Entity\EO_Message createObject($setDefaultValues = true)
+ * @method static \Bitrix\MessageService\Internal\Entity\EO_Message_Collection createCollection()
+ * @method static \Bitrix\MessageService\Internal\Entity\EO_Message wakeUpObject($row)
+ * @method static \Bitrix\MessageService\Internal\Entity\EO_Message_Collection wakeUpCollection($rows)
+ */
+class MessageTable extends DataManager
 {
 	/**
 	 * @return string
@@ -20,76 +41,125 @@ class MessageTable extends Entity\DataManager
 	 */
 	public static function getMap()
 	{
-		return array(
-			'ID' => array(
-				'data_type' => 'integer',
-				'primary' => true,
-				'autocomplete' => true,
-			),
-			'TYPE' => array(
-				'data_type' => 'string',
-				'required' => true,
-				'validation' => array(__CLASS__, 'validateVarchar30'),
-			),
-			'SENDER_ID' => array(
-				'data_type' => 'string',
-				'required' => true,
-				'validation' => array(__CLASS__, 'validateVarchar50'),
-			),
-			'AUTHOR_ID' => array(
-				'data_type' => 'integer',
-				'default_value' => 0,
-			),
-			'AUTHOR' => array(
-				'data_type' => '\Bitrix\Main\UserTable',
-				'reference' => array(
-					'=this.AUTHOR_ID' => 'ref.ID'
-				),
-				'join_type' => 'LEFT',
-			),
-			'MESSAGE_FROM' => array(
-				'data_type' => 'string',
-				'required' => true,
-				'validation' => array(__CLASS__, 'validateVarchar260'),
-			),
-			'MESSAGE_TO' => array(
-				'data_type' => 'string',
-				'required' => true,
-				'validation' => array(__CLASS__, 'validateVarchar50'),
-			),
-			'MESSAGE_HEADERS' => array(
-				'data_type' => 'string',
-				'serialized' => true
-			),
-			'MESSAGE_BODY' => array(
-				'data_type' => 'string',
-				'required' => true
-			),
-			'DATE_INSERT' => array(
-				'data_type' => 'datetime',
-				'default_value' => new Type\DateTime(),
-			),
-			'DATE_EXEC' => array(
-				'data_type' => 'datetime'
-			),
-			'NEXT_EXEC' => array(
-				'data_type' => 'datetime'
-			),
-			'SUCCESS_EXEC' => array(
-				'data_type' => 'string',
-				'default_value' => 'N',
-			),
-			'EXEC_ERROR' => array(
-				'data_type' => 'string'
-			),
-			'STATUS_ID' => array(
-				'data_type' => 'integer'
-			),
-			'EXTERNAL_ID' => array(
-				'data_type' => 'string',
-				'validation' => array(__CLASS__, 'validateVarchar128'),
-			)
-		);
+		return [
+			'ID' =>
+				(new IntegerField('ID', []))
+					->configurePrimary(true)
+					->configureAutocomplete(true)
+			,
+			'TYPE' =>
+				(new StringField('TYPE', [
+					'validation' => [__CLASS__, 'validateType']
+				]))
+					->configureRequired(true)
+			,
+			'SENDER_ID' =>
+				(new StringField('SENDER_ID', [
+					'validation' => [__CLASS__, 'validateSenderId']
+				]))
+					->configureRequired(true)
+			,
+			'AUTHOR_ID' => (new IntegerField('AUTHOR_ID',
+				[]
+			))
+				->configureDefaultValue(0),
+			'MESSAGE_FROM' =>
+				(new StringField('MESSAGE_FROM', [
+					'validation' => [__CLASS__, 'validateMessageFrom']
+				]))
+			,
+			'MESSAGE_TO' =>
+				(new StringField('MESSAGE_TO', [
+					'validation' => [__CLASS__, 'validateMessageTo']
+				]))
+					->configureRequired(true)
+			,
+			'MESSAGE_HEADERS' =>
+				(new ArrayField('MESSAGE_HEADERS', []))
+					->configureSerializationPhp()
+			,
+			'MESSAGE_BODY' =>
+				(new TextField('MESSAGE_BODY', []))
+					->configureRequired(true)
+			,
+			'DATE_INSERT' =>
+				(new DatetimeField('DATE_INSERT',	[]))
+			,
+			'DATE_EXEC' =>
+				(new DatetimeField('DATE_EXEC', []))
+			,
+			'NEXT_EXEC' =>
+				(new DatetimeField('NEXT_EXEC', []))
+			,
+			'SUCCESS_EXEC' =>
+				(new StringField('SUCCESS_EXEC', []))
+					->configureDefaultValue('N')
+			,
+			'EXEC_ERROR' =>
+				(new StringField('EXEC_ERROR', [
+					'validation' => [__CLASS__, 'validateExecError']
+				]))
+			,
+			'STATUS_ID' =>
+				(new IntegerField('STATUS_ID', []))
+					->configureDefaultValue(0)
+			,
+			'EXTERNAL_ID' =>
+				(new StringField('EXTERNAL_ID', [
+					'validation' => [__CLASS__, 'validateExternalId']
+				]))
+			,
+			'EXTERNAL_STATUS' =>
+				(new StringField('EXTERNAL_STATUS', [
+					'validation' => [__CLASS__, 'validateExternalStatus']
+				]))
+			,
+			'CLUSTER_GROUP' =>
+				(new IntegerField('CLUSTER_GROUP', []))
+			,
+		];
+	}
+
+	public static function getByExternalId(string $senderId, string $externalId, ?string $from = null)
+	{
+		$filter = [
+			'=SENDER_ID' => $senderId,
+			'=EXTERNAL_ID' => $externalId,
+		];
+
+
+		return MessageTable::getList([
+			'filter' => $filter,
+			'limit' => 1
+		]);
+	}
+
+	/**
+	 * Updates message to the new status and returns result of update.
+	 *
+	 * @param int $id Id of the message.
+	 * @param int $newStatusId New status id.
+	 * @return bool True if updated successfully and false otherwise (for example, if the message already was in this status).
+	 */
+	public static function updateStatusId(int $id, int $newStatusId): bool
+	{
+		$connection = Application::getConnection();
+		$tableName = static::getTableName();
+
+		$update = "STATUS_ID = {$newStatusId}";
+
+		$query = "
+			UPDATE
+				$tableName
+			SET
+				$update
+			WHERE
+				ID = $id
+				AND STATUS_ID != {$newStatusId}
+		";
+
+		$connection->query($query);
+		return $connection->getAffectedRowsCount() === 1;
 	}
 
 	public static function getDailyCount($senderId, $fromId)
@@ -154,42 +224,86 @@ class MessageTable extends Entity\DataManager
 	}
 
 	/**
+	 * Returns validators for TYPE field.
+	 *
 	 * @return array
 	 */
-	public static function validateVarchar50()
+	public static function validateType(): array
 	{
-		return array(
-			new Entity\Validator\Length(null, 50),
-		);
+		return [
+			new LengthValidator(null, 30),
+		];
 	}
 
 	/**
+	 * Returns validators for SENDER_ID field.
+	 *
 	 * @return array
 	 */
-	public static function validateVarchar260()
+	public static function validateSenderId(): array
 	{
-		return array(
-			new Entity\Validator\Length(null, 260),
-		);
+		return [
+			new LengthValidator(null, 50),
+		];
 	}
 
 	/**
+	 * Returns validators for MESSAGE_FROM field.
+	 *
 	 * @return array
 	 */
-	public static function validateVarchar30()
+	public static function validateMessageFrom(): array
 	{
-		return array(
-			new Entity\Validator\Length(null, 30),
-		);
+		return [
+			new LengthValidator(null, 260),
+		];
 	}
 
 	/**
+	 * Returns validators for MESSAGE_TO field.
+	 *
 	 * @return array
 	 */
-	public static function validateVarchar128()
+	public static function validateMessageTo(): array
 	{
-		return array(
-			new Entity\Validator\Length(null, 128),
-		);
+		return [
+			new LengthValidator(null, 50),
+		];
+	}
+
+	/**
+	 * Returns validators for EXEC_ERROR field.
+	 *
+	 * @return array
+	 */
+	public static function validateExecError(): array
+	{
+		return [
+			new LengthValidator(null, 255),
+		];
+	}
+
+	/**
+	 * Returns validators for EXTERNAL_ID field.
+	 *
+	 * @return array
+	 */
+	public static function validateExternalId(): array
+	{
+		return [
+			new LengthValidator(null, 128),
+		];
+	}
+
+	/**
+	 * Returns validators for EXTERNAL_STATUS field.
+	 *
+	 * @return array
+	 */
+	public static function validateExternalStatus(): array
+	{
+		return [
+			new LengthValidator(null, 128),
+		];
 	}
 }

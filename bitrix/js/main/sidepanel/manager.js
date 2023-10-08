@@ -12,6 +12,7 @@
  * @property {boolean} [printable=true]
  * @property {boolean} [allowChangeHistory=true]
  * @property {boolean} [allowChangeTitle]
+ * @property {boolean} [hideControls=false]
  * @property {string} [requestMethod]
  * @property {object} [requestParams]
  * @property {string} [loader]
@@ -23,6 +24,8 @@
  * @property {number} [customRightBoundary]
  * @property {number} [customTopBoundary]
  * @property {object} [label]
+ * @property {boolean} [newWindowLabel]
+ * @property {boolean} [copyLinkLabel]
  * @property {?object.<string, function>} [events]
  */
 
@@ -213,6 +216,15 @@ BX.SidePanel.Manager.prototype =
 			}
 
 			slider.setOffset(offset);
+
+			if (topSlider && topSlider.getCustomRightBoundary() !== null)
+			{
+				const rightBoundary = slider.calculateRightBoundary();
+				if (rightBoundary > topSlider.getCustomRightBoundary())
+				{
+					slider.setCustomRightBoundary(topSlider.getCustomRightBoundary());
+				}
+			}
 
 			BX.addCustomEvent(slider, "SidePanel.Slider:onOpenStart", this.handleSliderOpenStart);
 			BX.addCustomEvent(slider, "SidePanel.Slider:onBeforeOpenComplete", this.handleSliderOpenComplete);
@@ -978,6 +990,7 @@ BX.SidePanel.Manager.prototype =
 
 			this.getTopSlider().hideOrDarkenCloseBtn();
 			this.getTopSlider().hidePrintBtn();
+			this.getTopSlider().hideExtraLabels();
 		}
 		else
 		{
@@ -1128,6 +1141,7 @@ BX.SidePanel.Manager.prototype =
 			this.getTopSlider().showOrLightenCloseBtn();
 			this.getTopSlider().unhideOverlay();
 			this.getTopSlider().hideShadow();
+			this.getTopSlider().showExtraLabels();
 
 			if (this.getTopSlider().isPrintable())
 			{
@@ -1423,6 +1437,11 @@ BX.SidePanel.Manager.prototype =
 		var link = this.extractLinkFromEvent(event);
 
 		if (!link || BX.data(link.anchor, "slider-ignore-autobinding"))
+		{
+			return;
+		}
+
+		if (BX.data(event.target, "slider-ignore-autobinding"))
 		{
 			return;
 		}

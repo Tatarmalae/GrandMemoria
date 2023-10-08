@@ -264,7 +264,7 @@ class CAllSearch extends CDBResult
 
 			$r = $DB->Query($strSql, false, "File: ".__FILE__."<br>Line: ".__LINE__);
 		}
-		parent::CDBResult($r);
+		parent::__construct($r);
 	}
 
 	function SetOptions($arOptions)
@@ -293,7 +293,7 @@ class CAllSearch extends CDBResult
 		return md5($perm.$sql.$this->strTags);
 	}
 
-	function chr($a)
+	public static function chr($a)
 	{
 		return chr($a[1]);
 	}
@@ -619,7 +619,7 @@ class CAllSearch extends CDBResult
 
 		sort($arPos);
 
-		$str_len = CUtil::BinStrlen($str);
+		$str_len = strlen($str);
 		$delta = 250 / count($arPos);
 		$arOtr = array();
 		//Have to do it two times because Positions eat each other
@@ -633,14 +633,14 @@ class CAllSearch extends CDBResult
 				$pos_beg = $pos_mid - $delta;
 				if ($pos_beg <= 0)
 					$pos_beg = 0;
-				while (($pos_beg > 0) && (mb_strpos(" ,.!?\n\r", CUtil::BinSubstr($str, $pos_beg, 1)) === false))
+				while (($pos_beg > 0) && (mb_strpos(" ,.!?\n\r", substr($str, $pos_beg, 1)) === false))
 					$pos_beg--;
 
 				//Find where sentence ends
 				$pos_end = $pos_mid + $delta;
 				if ($pos_end > $str_len)
 					$pos_end = $str_len;
-				while (($pos_end < $str_len) && (mb_strpos(" ,.!?\n\r", CUtil::BinSubstr($str, $pos_end, 1)) === false))
+				while (($pos_end < $str_len) && (mb_strpos(" ,.!?\n\r", substr($str, $pos_end, 1)) === false))
 					$pos_end++;
 
 				if ($pos_beg <= $last_pos)
@@ -658,7 +658,7 @@ class CAllSearch extends CDBResult
 		foreach ($arOtr as $borders)
 		{
 			$str_result .= ($borders[0] <= 0? "": " ...")
-				.CUtil::BinSubstr($str, $borders[0], $borders[1] - $borders[0] + 1)
+				.substr($str, $borders[0], $borders[1] - $borders[0] + 1)
 				.($borders[1] >= $str_len? "": "... ");
 		}
 
@@ -703,9 +703,7 @@ class CAllSearch extends CDBResult
 			$site_id = $r["SITE_ID"];
 			if (!isset($arSite[$site_id]))
 			{
-				$b = "sort";
-				$o = "asc";
-				$rsSite = CSite::GetList($b, $o, array("ID" => $site_id));
+				$rsSite = CSite::GetList('', '', array("ID" => $site_id));
 				$arSite[$site_id] = $rsSite->Fetch();
 			}
 			$r["DIR"] = $arSite[$site_id]["DIR"];
@@ -863,7 +861,7 @@ class CAllSearch extends CDBResult
 		if (!is_array($SEARCH_CACHED_GROUPS))
 		{
 			$SEARCH_CACHED_GROUPS = Array();
-			$db_groups = CGroup::GetList($order = "ID", $by = "ASC");
+			$db_groups = CGroup::GetList('id', 'asc');
 			while ($g = $db_groups->Fetch())
 			{
 				$group_id = intval($g["ID"]);
@@ -982,7 +980,7 @@ class CAllSearch extends CDBResult
 			$arFilter = Array("ACTIVE" => "Y");
 			if ($NS["SITE_ID"] != "")
 				$arFilter["ID"] = $NS["SITE_ID"];
-			$r = CSite::GetList($by = "sort", $order = "asc", $arFilter);
+			$r = CSite::GetList('', '', $arFilter);
 			while ($arR = $r->Fetch())
 			{
 				$path = rtrim($arR["DIR"], "/");
@@ -1228,7 +1226,7 @@ class CAllSearch extends CDBResult
 				return 0;
 
 			reset($arFields["SITE_ID"]);
-			list($arFields["LID"], $url) = each($arFields["SITE_ID"]);
+			$arFields["LID"] = current($arFields["SITE_ID"]);
 
 			$arSites = array();
 			foreach ($arFields["SITE_ID"] as $site => $url)
@@ -1364,7 +1362,6 @@ class CAllSearch extends CDBResult
 
 			if (array_key_exists("TITLE", $arFields))
 			{
-				$DB->Query("DELETE FROM b_search_content_title WHERE SEARCH_CONTENT_ID = ".$ID, false, "File: ".__FILE__."<br>Line: ".__LINE__);
 				if (
 					!array_key_exists("INDEX_TITLE", $arFields)
 					|| $arFields["INDEX_TITLE"] !== false
@@ -1547,7 +1544,7 @@ class CAllSearch extends CDBResult
 			return 0;
 
 		$file_site = "";
-		$rsSites = CSite::GetList($by = "lendir", $order = "desc");
+		$rsSites = CSite::GetList("lendir", "desc");
 		while ($arSite = $rsSites->Fetch())
 		{
 			$site_path = preg_replace("#[\\\\\\/]+#", "/", $arSite["ABS_DOC_ROOT"]."/".$arSite["DIR"]."/");

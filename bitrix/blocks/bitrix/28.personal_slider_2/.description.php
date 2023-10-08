@@ -26,6 +26,7 @@ return array(
 			'name' => Loc::getMessage('LANDING_BLOCK_28.PERSONAL_SLIDER_NODES_LANDINGBLOCKNODEPERSONPHOTO'),
 			'type' => 'img',
 			'dimensions' => array('width' => 370),
+			'create2xByDefault' => false,
 		),
 		'.landing-block-node-person-post' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_28.PERSONAL_SLIDER_NODES_LANDINGBLOCKNODEPERSONPOST'),
@@ -47,7 +48,7 @@ return array(
 		'nodes' => array(
 			'.landing-block-node-person-name' => array(
 				'name' => Loc::getMessage('LANDING_BLOCK_28.PERSONAL_SLIDER_STYLE_LANDINGBLOCKNODEPERSONNAME'),
-				'type' => 'typo',
+				'type' => ['typo', 'heading'],
 			),
 			'.landing-block-node-person-post' => array(
 				'name' => Loc::getMessage('LANDING_BLOCK_28.PERSONAL_SLIDER_STYLE_LANDINGBLOCKNODEPERSONPOST'),
@@ -69,6 +70,12 @@ return array(
 				'name' => Loc::getMessage('LANDING_BLOCK_28.PERSONAL_SLIDER_CARDS_LANDINGBLOCKCARDPERSON'),
 				'type' => 'align-items',
 			),
+			'.landing-block-slider' => [
+				'additional' => [
+					'name' => Loc::getMessage('LANDING_BLOCK_28_PERSONAL_SLIDER_STYLE_SLIDER'),
+					'attrsType' => ['autoplay', 'autoplay-speed', 'pause-hover', 'arrows', 'dots'],
+				]
+			],
 		),
 	),
 	'assets' => array(

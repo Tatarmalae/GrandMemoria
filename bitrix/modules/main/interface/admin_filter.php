@@ -6,6 +6,8 @@
  * @copyright 2001-2016 Bitrix
  */
 
+use Bitrix\Main\Web\Uri;
+
 class CAdminFilter
 {
 	public 	$id;
@@ -29,7 +31,7 @@ class CAdminFilter
 		if(empty($popup) || !is_array($popup))
 			$popup = false;
 
-		$this->id = $id;
+		$this->id = preg_replace('/[^a-z0-9_]/i', '', $id);
 		$this->popup = $popup;
 
 		if(is_array($arExtraParams))
@@ -94,7 +96,7 @@ class CAdminFilter
 		}
 	}
 
-	private function err_mess()
+	private static function err_mess()
 	{
 		return "<br>Class: CAdminFilter<br>File: ".__FILE__;
 	}
@@ -146,7 +148,7 @@ class CAdminFilter
 		return true;
 	}
 
-	private function CheckFields($arFields)
+	private static function CheckFields($arFields)
 	{
 		/** @global CMain $APPLICATION */
 		global $APPLICATION;
@@ -185,7 +187,7 @@ class CAdminFilter
 		return true;
 	}
 
-	private function FieldsExcess($arFields)
+	private static function FieldsExcess($arFields)
 	{
 		$arResult = array();
 
@@ -198,7 +200,7 @@ class CAdminFilter
 		return $arResult;
 	}
 
-	private function FieldsDelHiddenEmpty($arFields)
+	private static function FieldsDelHiddenEmpty($arFields)
 	{
 		$arResult = array();
 
@@ -343,7 +345,7 @@ class CAdminFilter
 		return false;
 	}
 
-	public function AddPresetToBase($arFields)
+	public static function AddPresetToBase($arFields)
 	{
 		if(!isset($arFields["NAME"]) || empty($arFields["NAME"]))
 			return false;
@@ -432,7 +434,7 @@ class CAdminFilter
 	{
 		global $DB;
 
-		$err_mess = (CAdminFilter::err_mess())."<br>Function: GetList<br>Line: ";
+		$err_mess = (static::err_mess())."<br>Function: GetList<br>Line: ";
 		$arSqlSearch = Array();
 		if (is_array($arFilter))
 		{
@@ -722,7 +724,10 @@ class CAdminFilter
 		//making filter tabs draggable
 		if($this->url)
 		{
-			$registerUrl = CHTTP::urlDeleteParams($this->url, array("adm_filter_applied", "adm_filter_preset"));
+			$registerUrl = (new Uri($this->url))
+				->deleteParams(["adm_filter_applied", "adm_filter_preset"])
+				->getUri()
+			;
 
 			foreach($this->arItems as $filter_id => $filter)
 			{
@@ -731,7 +736,9 @@ class CAdminFilter
 				if(isset($filter["PRESET_ID"]))
 					$arParamsAdd["adm_filter_preset"] = $filter["PRESET_ID"];
 
-				$filterUrl = CHTTP::urlAddParams($registerUrl, $arParamsAdd, array("encode","skip_empty"));
+				$filterUrl = (new Uri($registerUrl))
+					->addParams($arParamsAdd)
+					->getUri();
 
 				echo "
 					if(BX.adminMenu && BX.adminMenu.registerItem) // todo: find true reason in sliders.

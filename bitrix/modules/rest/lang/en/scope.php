@@ -1,14 +1,21 @@
-<?
+<?php
+$MESS["REST_SCOPE_BICONNECTOR"] = "BI analytics connector";
 $MESS["REST_SCOPE_BIZPROC"] = "Business Processes";
 $MESS["REST_SCOPE_BIZPROC_DESCRIPTION"] = "full access: view, create, edit and delete workflow actions, automation rules and triggers; view task list; run workflows";
 $MESS["REST_SCOPE_CALENDAR"] = "Calendar";
 $MESS["REST_SCOPE_CALENDAR_DESCRIPTION"] = "full access: view, create, edit and delete calendars, calendar events, meetings, booking resources";
 $MESS["REST_SCOPE_CALL"] = "Telephony (outbound calls)";
 $MESS["REST_SCOPE_CALL_DESCRIPTION"] = "restricted access: make outgoing calls via built-in telephony";
+$MESS["REST_SCOPE_CASHBOX"] = "Cash registers";
+$MESS["REST_SCOPE_CASHBOX_DESCRIPTION"] = "full access: view, create, edit and delete cash registers and cash register handlers for online store orders";
+$MESS["REST_SCOPE_CONFIGURATION.IMPORT"] = "Import solution presets";
+$MESS["REST_SCOPE_CONFIGURATION.IMPORT_DESCRIPTION"] = "Access to solution preset import function";
 $MESS["REST_SCOPE_CONTACT_CENTER"] = "Contact center";
 $MESS["REST_SCOPE_CONTACT_CENTER_DESCRIPTION"] = "widgets: add, delete and edit widgets";
 $MESS["REST_SCOPE_CRM"] = "CRM";
 $MESS["REST_SCOPE_CRM_DESCRIPTION"] = "full access: view, create, edit and delete leads, contacts, companies, deals, invoices, quotes, activities, user fields etc.";
+$MESS["REST_SCOPE_DELIVERY"] = "Shipments";
+$MESS["REST_SCOPE_DELIVERY_DESCRIPTION"] = "full access: view, create, edit and delete shipments, extra services and shipment handlers for online store orders";
 $MESS["REST_SCOPE_DEPARTMENT"] = "Company structure";
 $MESS["REST_SCOPE_DEPARTMENT_DESCRIPTION"] = "full access: view, create, edit and delete departments";
 $MESS["REST_SCOPE_DISK"] = "Drive";
@@ -72,7 +79,14 @@ $MESS["REST_SCOPE_TELEPHONY_DESCRIPTION"] = "restricted access: view, create, ed
 $MESS["REST_SCOPE_TIMEMAN"] = "Working Time Management";
 $MESS["REST_SCOPE_TIMEMAN_DESCRIPTION"] = "restricted access: clock-in and clock-out times; enable and disable reporting; view reports";
 $MESS["REST_SCOPE_USER"] = "Users";
+$MESS["REST_SCOPE_USER.USERFIELD"] = "User custom fields";
+$MESS["REST_SCOPE_USER.USERFIELD_DESCRIPTION"] = "full access: read, add, edit and delete custom fields inside user profiles";
 $MESS["REST_SCOPE_USERCONSENT"] = "Agreements";
 $MESS["REST_SCOPE_USERCONSENT_DESCRIPTION"] = "restricted access: view agreements and add user consents";
+$MESS["REST_SCOPE_USERFIELDCONFIG"] = "Custom fields settings";
+$MESS["REST_SCOPE_USERFIELDCONFIG_DESCRIPTION"] = "full access: view, create, edit and delete custom field settings for some of the modules";
+$MESS["REST_SCOPE_USER_BASIC"] = "Users (basic)";
+$MESS["REST_SCOPE_USER_BASIC_DESCRIPTION"] = "read user list and contact information";
+$MESS["REST_SCOPE_USER_BRIEF"] = "Users (minimum)";
+$MESS["REST_SCOPE_USER_BRIEF_DESCRIPTION"] = "read user list and names without contact information";
 $MESS["REST_SCOPE_USER_DESCRIPTION"] = "full access: view, create, edit and delete users";
-?>

@@ -132,6 +132,30 @@ $this->EndViewTarget();
                             </div>
                         <?php endforeach ?>
                     <?php endif ?>
+                    <?php if ($arParams['YOUTUBE']): ?>
+                        <?php foreach ($arParams['YOUTUBE'] as $youtube): ?>
+                            <div class="product-gallery__big-slide swiper-slide">
+                                <a class="product-gallery__big-img img img-1by1" href="#" data-fancybox="galleryCard" data-options="{&quot;src&quot;:&quot;https://www.youtube.com/watch?v=<?= $youtube ?>&quot;}">
+                                    <div class="play__ico">
+                                        <svg width="90" height="54" viewBox="0 0 120 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <g clip-path="url(#clip0_547_879)">
+                                                <path d="M117.501 13.1509C116.815 10.6102 115.475 8.29366 113.613 6.43291C111.751 4.57216 109.434 3.23231 106.892 2.54725C97.5272 1.90735e-06 60 0 60 0C60 0 22.463 9.53674e-07 13.1182 2.50776C10.5705 3.19442 8.24862 4.5396 6.38623 6.40796C4.52383 8.27632 3.18659 10.602 2.50905 13.1509C-6.4373e-06 22.5007 0 42.0197 0 42.0197C0 42.0197 -6.4373e-06 61.5388 2.50905 70.8886C3.19265 73.4302 4.53258 75.7477 6.39458 77.6087C8.25657 79.4698 10.5752 80.809 13.1182 81.4922C22.4728 84 60 84 60 84C60 84 97.537 84 106.892 81.4922C109.434 80.8072 111.751 79.4673 113.613 77.6066C115.475 75.7458 116.815 73.4293 117.501 70.8886C120 61.5388 120 42.0197 120 42.0197C120 42.0197 119.97 22.5007 117.501 13.1509Z" fill="#FF0000"/>
+                                                <path d="M48 60L79 42L48 24V60Z" fill="white"/>
+                                            </g>
+                                            <defs>
+                                                <clipPath id="clip0_547_879">
+                                                    <rect width="120" height="84" fill="white"/>
+                                                </clipPath>
+                                            </defs>
+                                        </svg>
+                                    </div>
+                                    <div class="img__inner object-fit">
+                                        <img class="lazy" data-src="https://img.youtube.com/vi/<?= $youtube ?>/sddefault.jpg" alt="<?= $arResult['NAME'] ?>" src="">
+                                    </div>
+                                </a>
+                            </div>
+                        <?php endforeach ?>
+                    <?php endif ?>
                 </div>
             </div>
         </div>
@@ -160,6 +184,32 @@ $this->EndViewTarget();
                                     <div class="product-gallery__small-img img img-1by1">
                                         <div class="img__inner object-fit">
                                             <img class="lazy" data-src="<?= $thumbSecondSmall['src'] ?>" alt="<?= $arResult['NAME'] ?>" src="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach ?>
+                    <?php endif ?>
+                    <?php if ($arParams['YOUTUBE']): ?>
+                        <?php foreach ($arParams['YOUTUBE'] as $youtube): ?>
+                            <div class="product-gallery__small-slide swiper-slide">
+                                <div class="product-gallery__small-item">
+                                    <div class="product-gallery__small-img img img-1by1">
+                                        <div class="play__ico">
+                                            <svg width="70" height="34" viewBox="0 0 120 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <g clip-path="url(#clip0_547_879)">
+                                                    <path d="M117.501 13.1509C116.815 10.6102 115.475 8.29366 113.613 6.43291C111.751 4.57216 109.434 3.23231 106.892 2.54725C97.5272 1.90735e-06 60 0 60 0C60 0 22.463 9.53674e-07 13.1182 2.50776C10.5705 3.19442 8.24862 4.5396 6.38623 6.40796C4.52383 8.27632 3.18659 10.602 2.50905 13.1509C-6.4373e-06 22.5007 0 42.0197 0 42.0197C0 42.0197 -6.4373e-06 61.5388 2.50905 70.8886C3.19265 73.4302 4.53258 75.7477 6.39458 77.6087C8.25657 79.4698 10.5752 80.809 13.1182 81.4922C22.4728 84 60 84 60 84C60 84 97.537 84 106.892 81.4922C109.434 80.8072 111.751 79.4673 113.613 77.6066C115.475 75.7458 116.815 73.4293 117.501 70.8886C120 61.5388 120 42.0197 120 42.0197C120 42.0197 119.97 22.5007 117.501 13.1509Z" fill="#FF0000"/>
+                                                    <path d="M48 60L79 42L48 24V60Z" fill="white"/>
+                                                </g>
+                                                <defs>
+                                                    <clipPath id="clip0_547_879">
+                                                        <rect width="120" height="84" fill="white"/>
+                                                    </clipPath>
+                                                </defs>
+                                            </svg>
+                                        </div>
+                                        <div class="img__inner object-fit">
+                                            <img class="lazy" data-src="https://img.youtube.com/vi/<?= $youtube ?>/sddefault.jpg" alt="<?= $arResult['NAME'] ?>" src="">
                                         </div>
                                     </div>
                                 </div>

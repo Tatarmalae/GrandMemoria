@@ -1,3 +1,5 @@
+import 'ui.design-tokens';
+
 import {Cache, Tag, Type, Dom} from 'main.core';
 import {EventEmitter} from 'main.core.events';
 import {fetchEventsFromOptions} from 'landing.ui.component.internal';
@@ -53,14 +55,19 @@ export class Link extends EventEmitter
 		return this.cache.remember('layout', () => {
 			const tag = this.getTag();
 			const element = Tag.render`
-				<${tag} 
-					class="landing-ui-component-link landing-ui-component-link-color-${this.options.color}" 
+				<${tag}
+					class="landing-ui-component-link landing-ui-component-link-color-${this.options.color}"
 					onclick="${this.onClick.bind(this)}">${this.options.text}</${tag}>
 			`;
 
 			if (tag === 'a')
 			{
 				Dom.attr(element, 'href', this.options.href);
+			}
+
+			if (tag === 'a' && Type.isStringFilled(this.options.target))
+			{
+				Dom.attr(element, 'target', this.options.target);
 			}
 
 			Dom.attr(element, this.options.attrs);

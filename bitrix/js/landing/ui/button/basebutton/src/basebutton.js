@@ -3,6 +3,7 @@ import {EventEmitter} from 'main.core.events';
 import type BaseButtonOptions from './types/button-options';
 import defaultOptions from './internal/default-options';
 
+import 'ui.fonts.opensans';
 import './css/base_button.css';
 
 /**
@@ -73,14 +74,12 @@ export class BaseButton extends EventEmitter
 			Dom.attr(this.getLayout(), this.options.attrs);
 		}
 
-		if (Type.isArray(this.options.className))
+		if (
+			Type.isArray(this.options.className)
+			|| Type.isStringFilled(this.options.className)
+		)
 		{
-			this.options.className.forEach(this.layout.classList.add, this.layout.classList);
-		}
-
-		if (Type.isString(this.options.className) && !!this.options.className)
-		{
-			this.layout.classList.add(this.options.className);
+			Dom.addClass(this.layout, this.options.className);
 		}
 
 		if (this.options.active)
@@ -152,18 +151,18 @@ export class BaseButton extends EventEmitter
 
 	disable()
 	{
-		Dom.addClass(this.layout, 'landing-ui-disable');
+		Dom.addClass(this.layout, 'landing-ui-disabled');
 	}
 
 	enable()
 	{
-		Dom.removeClass(this.layout, 'landing-ui-disable');
+		Dom.removeClass(this.layout, 'landing-ui-disabled');
 		Dom.attr(this.layout, 'disabled', null);
 	}
 
 	isEnabled()
 	{
-		return !Dom.hasClass(this.layout, 'landing-ui-disable');
+		return !Dom.hasClass(this.layout, 'landing-ui-disabled');
 	}
 
 	show()

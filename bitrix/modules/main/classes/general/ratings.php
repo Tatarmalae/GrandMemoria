@@ -1,4 +1,4 @@
-<?
+<?php
 
 IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/classes/general/ratings.php");
 
@@ -1361,9 +1361,9 @@ class CAllRatings
 		{
 			foreach ($arFilter as $key => $val)
 			{
-				if ($val == '' || $val === "NOT_REF")
+				if ((string)$val == '' || $val === "NOT_REF")
 					continue;
-				switch(mb_strtoupper($key))
+				switch(strtoupper($key))
 				{
 					case "ID":
 						$arSqlSearch[] = GetFilterQuery("RW.ID", $val, "N");
@@ -1799,6 +1799,31 @@ class CAllRatings
 	{
 		global $USER;
 
+		static $beforeListHandlers;
+		if (!isset($beforeListHandlers))
+		{
+			$beforeListHandlers = GetModuleEvents("main", "OnBeforeGetVoteList", true);
+		}
+
+		foreach ($beforeListHandlers as $arEvent)
+		{
+			$arEventResult = ExecuteModuleEventEx($arEvent, array($arParam));
+			if (
+				is_array($arEventResult)
+				&& array_key_exists('RESULT', $arEventResult)
+				&& !$arEventResult['RESULT']
+			)
+			{
+				return [
+					'items_all' => 0,
+					'items_page' => 0,
+					'items' => [],
+					'reactions' => [],
+					'list_page' => (int) $arParam['LIST_PAGE'],
+				];
+			}
+		}
+
 		$reactionResult = self::GetRatingVoteReaction($arParam);
 		$cnt = $reactionResult['items_all'];
 		$cntReactions = $reactionResult['reactions'];
@@ -1895,8 +1920,8 @@ class CAllRatings
 				}
 
 				$rsUser = CUser::GetList(
-					($by = "ID"),
-					($order = "ASC"),
+					"ID",
+					"ASC",
 					array("ID" => implode("|", $arUserID)),
 					$arUserListParams
 				);
@@ -1932,11 +1957,38 @@ class CAllRatings
 			}
 		}
 
+		static $afterListHandlers;
+		if (!isset($afterListHandlers))
+		{
+			$afterListHandlers = GetModuleEvents("main", "OnAfterGetVoteList", true);
+		}
+
+		foreach ($afterListHandlers as $arEvent)
+		{
+			$arEventResult = ExecuteModuleEventEx(
+				$arEvent,
+				[
+					'param' => $arParam,
+					'items' => $arVoteList,
+				]
+			);
+
+			if (
+				is_array($arEventResult)
+				&& array_key_exists('ITEMS', $arEventResult)
+				&& is_array($arEventResult['ITEMS'])
+			)
+			{
+				$arVoteList = array_intersect($arVoteList, $arEventResult['ITEMS']);
+			}
+		}
+
 		return array(
 			'items_all' => $cnt,
 			'items_page' => count($arVoteList),
 			'items' => $arVoteList,
-			'reactions' => $cntReactions
+			'reactions' => $cntReactions,
+			'list_page' => (int) $arParam['LIST_PAGE'],
 		);
 	}
 

@@ -1,3 +1,5 @@
+import 'ui.design-tokens';
+
 import {Cache, Dom, Tag} from 'main.core';
 import {EventEmitter} from 'main.core.events';
 import {Loc} from 'landing.loc';
@@ -27,6 +29,7 @@ export class FieldRules extends EventEmitter
 		const entry = new RuleEntry({
 			...ruleOptions,
 			fieldsList: this.options.fields,
+			dictionary: this.options.dictionary,
 		});
 		this.entries.push(entry);
 		entry.subscribe('onChange', this.onEntryChange);

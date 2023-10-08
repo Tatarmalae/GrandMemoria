@@ -21,7 +21,7 @@ export class CardForm extends BaseForm
 
 		this.labelBindings = options.labelBindings;
 		this.preset = options.preset;
-		[this.oldIndex] = this.selector.split('@');
+		[, this.oldIndex] = this.selector.split('@');
 	}
 
 	getWrapper(): HTMLDivElement
@@ -87,9 +87,12 @@ export class CardForm extends BaseForm
 	onRemoveItemClick(event: MouseEvent)
 	{
 		event.preventDefault();
-		Dom.remove(this.wrapper);
-
-		this.emit('onRemove');
+		event.stopPropagation();
+		if (!this.getLayout().closest('.landing-ui-disallow-remove'))
+		{
+			Dom.remove(this.wrapper);
+			this.emit('onRemove');
+		}
 	}
 
 	serialize(): {[key: string]: any}

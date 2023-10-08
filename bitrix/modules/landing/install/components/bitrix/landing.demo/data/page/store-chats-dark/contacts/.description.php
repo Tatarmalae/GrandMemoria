@@ -7,6 +7,7 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 use \Bitrix\Main\Localization\Loc;
 
 return array(
+	'old_id' => 2,
 	'code' => 'store-chats-dark/contacts',
 	'name' => Loc::getMessage('LANDING_DEMO_STORE_CHATS_DARK-CONTACTS-NAME'),
 	'description' => Loc::getMessage('LANDING_DEMO_STORE_CHATS_DARK-CONTACTS-DESC'),
@@ -97,7 +98,7 @@ return array(
 				),
 				'.landing-block-node-text' => array(
 					0 => array(
-						'text' => '<a href="tel:#PHONE1#">#PHONE1#</a>',
+						'text' => '<a href="tel:#crmPhone1">#crmPhoneTitle1</a>',
 					),
 				),
 			),

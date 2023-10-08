@@ -113,11 +113,15 @@ class Comment
 	public function saveFiles(int $id, array $files): bool
 	{
 		$manager = $this->getUserFieldManager();
-		if($manager)
+		if ($manager instanceof \CUserTypeManager)
 		{
-			return (bool) $manager->Update($this->filesUserFieldEntityId, $id, [
+			$data = [
 				$this->filesUserFieldName => $files,
-			]);
+			];
+			if ($manager->CheckFields($this->filesUserFieldEntityId, $id, $data))
+			{
+				return (bool) $manager->Update($this->filesUserFieldEntityId, $id, $data);
+			}
 		}
 
 		return false;

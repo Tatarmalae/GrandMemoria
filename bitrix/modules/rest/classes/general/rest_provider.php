@@ -1,6 +1,13 @@
 <?
 use Bitrix\Main\ArgumentNullException;
 use Bitrix\Main\Config\Option;
+use Bitrix\Main\Context;
+use Bitrix\Main\Data\Cache;
+use Bitrix\Main\Engine\Controller;
+use Bitrix\Main\Engine\Resolver;
+use Bitrix\Main\Engine\Router;
+use Bitrix\Main\HttpRequest;
+use Bitrix\Rest\Engine\ScopeManager;
 use Bitrix\Main\Entity;
 use Bitrix\Main\Loader;
 use Bitrix\Rest\RestException;
@@ -21,12 +28,32 @@ class CRestProvider
 		"project" => "project",
 		"corporation" => "corporation",
 		"company" => "company",
+		"company2" => "company2",
+		"company3" => "company3",
 		"team" => "team",
 		"demo" => "demo",
 		"nfr" => "nfr",
 		"tf" => "tf",
 		"crm" => "crm",
 		"tasks" => "tasks",
+		"basic" => "basic",
+		"start" => "start",
+		"std" => "std",
+		"pro" => "pro",
+		"ent" => "ent",
+		"pro100" => "pro100",
+		"ent250" => "ent250",
+		"ent500" => "ent500",
+		"ent1000" => "ent1000",
+		"ent2000" => "ent2000",
+		"ent3000" => "ent3000",
+		"ent4000" => "ent4000",
+		"ent5000" => "ent5000",
+		"ent6000" => "ent6000",
+		"ent7000" => "ent7000",
+		"ent8000" => "ent8000",
+		"ent9000" => "ent9000",
+		"ent10000" => "ent10000",
 	);
 
 	protected static $arApp = null;
@@ -43,6 +70,7 @@ class CRestProvider
 
 					'scope' => array(__CLASS__, 'scopeList'),
 					'methods' => array(__CLASS__, 'methodsList'),
+					'method.get' => array(__CLASS__, 'getMethod'),
 
 					'server.time' => array(__CLASS__, 'getServerTime'),
 				),
@@ -91,6 +119,17 @@ class CRestProvider
 								"category" => \Bitrix\Rest\Sqs::CATEGORY_IMPORTANT,
 							)
 						),
+						'OnSubscriptionRenew' => [
+							'rest',
+							'onAfterSubscriptionRenew',
+							[
+								__CLASS__,
+								'onSubscriptionRenew',
+							],
+							[
+								'sendRefreshToken' => true,
+							],
+						],
 						'OnAppTest' => array(
 							'rest',
 							'OnRestAppTest',
@@ -120,6 +159,7 @@ class CRestProvider
 			if(!\Bitrix\Main\ModuleManager::isModuleInstalled('oauth'))
 			{
 				$ownMethods[\CRestUtil::GLOBAL_SCOPE]['app.info'] = array(__CLASS__, 'appInfo');
+				$ownMethods[\CRestUtil::GLOBAL_SCOPE]['feature.get'] = array(__CLASS__, 'getFeature');
 			}
 
 			$arDescription = array();
@@ -223,7 +263,7 @@ class CRestProvider
 	{
 		$arQuery = array_change_key_case($arQuery, CASE_UPPER);
 
-		$bHalt = (bool)$arQuery['HALT'];
+		$bHalt = (isset($arQuery['HALT'])) ? ((bool) $arQuery['HALT']) : false;
 
 		$arResult = array(
 			'result' => array(),
@@ -241,6 +281,10 @@ class CRestProvider
 			{
 				if(($cnt++) < \CRestUtil::BATCH_MAX_LENGTH)
 				{
+					if (!is_string($call))
+					{
+						continue;
+					}
 					$queryData = parse_url($call);
 
 					$method = $queryData['path'];
@@ -262,19 +306,33 @@ class CRestProvider
 							}
 						}
 
-						$pseudoServer = new \CRestServerBatchItem(array(
-							'CLASS' => __CLASS__,
-							'METHOD' => $method,
-							'QUERY' => $arParams
-						));
-						$pseudoServer->setApplicationId($server->getClientId());
-						$pseudoServer->setAuthKeys(array_keys($authData));
-						$pseudoServer->setAuthData($server->getAuthData());
-						$pseudoServer->setAuthType($server->getAuthType());
+						$methods = [ToLower($method), $method];
 
-						$res = $pseudoServer->process();
+						// try lowercase first, then original
+						foreach ($methods as $restMethod)
+						{
+							$pseudoServer = new \CRestServerBatchItem([
+								'CLASS' => __CLASS__,
+								'METHOD' => $restMethod,
+								'QUERY' => $arParams
+							], false);
+							$pseudoServer->setApplicationId($server->getClientId());
+							$pseudoServer->setAuthKeys(array_keys($authData));
+							$pseudoServer->setAuthData($server->getAuthData());
+							$pseudoServer->setAuthType($server->getAuthType());
+							$res = $pseudoServer->process();
 
-						unset($pseudoServer);
+							unset($pseudoServer);
+
+							// try original controller name if lower is not found
+							if (is_array($res) && !empty($res['error']) && $res['error'] === 'ERROR_METHOD_NOT_FOUND')
+							{
+								continue;
+							}
+
+							// output result
+							break;
+						}
 					}
 				}
 				else
@@ -296,7 +354,7 @@ class CRestProvider
 					}
 				}
 
-				if($res['error'] && $bHalt)
+				if(isset($res['error']) && $res['error'] && $bHalt)
 				{
 					break;
 				}
@@ -376,6 +434,80 @@ class CRestProvider
 		return $arResult;
 	}
 
+	public static function getMethod($query, $n, \CRestServer $server): array
+	{
+		$result = [
+			'isExisting' => false,
+			'isAvailable' => false,
+		];
+		$name = $query['name'];
+		if (!empty($name))
+		{
+			$currentScope = self::getScope($server);
+			$currentScope[] = \CRestUtil::GLOBAL_SCOPE;
+			$cache = Cache::createInstance();
+			if ($cache->initCache(
+				ScopeManager::CACHE_TIME,
+				'info' . md5($name . implode('|', $currentScope)),
+				ScopeManager::CACHE_DIR . 'method/'
+			))
+			{
+				$result = $cache->getVars();
+			}
+			elseif ($cache->startDataCache())
+			{
+				$method = ScopeManager::getInstance()->getMethodInfo($name);
+
+				$arMethods = $server->getServiceDescription();
+				foreach ($arMethods as $scope => $methodList)
+				{
+					if (!empty($methodList[$name]))
+					{
+						if (in_array($scope, $currentScope, true))
+						{
+							$result['isAvailable'] = true;
+						}
+						$result['isExisting'] = true;
+					}
+				}
+
+				if (!$result['isExisting'])
+				{
+					$request = new HttpRequest(
+						Context::getCurrent()->getServer(),
+						[
+							'action' => $method['method'],
+						],
+						[],
+						[],
+						[]
+					);
+					$router = new Router($request);
+
+					/** @var Controller $controller */
+					[$controller, $action] = Resolver::getControllerAndAction(
+						$router->getVendor(),
+						$router->getModule(),
+						$router->getAction(),
+						Controller::SCOPE_REST
+					);
+					if ($controller)
+					{
+						if (in_array($method['scope'], $currentScope, true))
+						{
+							$result['isAvailable'] = true;
+						}
+						$result['isExisting'] = true;
+					}
+				}
+
+				$cache->endDataCache($result);
+			}
+		}
+
+		return $result;
+	}
+
 	public static function appInfo($params, $n, \CRestServer $server)
 	{
 		$licensePrevious = '';
@@ -451,6 +583,69 @@ class CRestProvider
 		}
 
 		return $res;
+	}
+
+	/**
+	 * Return feature information.
+	 *
+	 * @param $params
+	 * @param $n
+	 * @param CRestServer $server
+	 *
+	 * @return array
+	 *
+	 * @throws RestException
+	 * @throws \Bitrix\Main\LoaderException
+	 */
+	public static function getFeature($params, $n, \CRestServer $server)
+	{
+		$params = array_change_key_case($params, CASE_UPPER);
+		$result = [
+			'value' => '',
+		];
+		if (empty($params['CODE']))
+		{
+			throw new RestException(
+				'CODE can\'t be empty',
+				'CODE_EMPTY',
+				\CRestServer::STATUS_WRONG_REQUEST
+			);
+		}
+
+		if(\Bitrix\Main\ModuleManager::isModuleInstalled('bitrix24') && Loader::includeModule('bitrix24'))
+		{
+			$result['value'] = \Bitrix\Bitrix24\Feature::isFeatureEnabled($params['CODE']) ? 'Y' : 'N';
+		}
+		else
+		{
+			foreach (GetModuleEvents('rest', 'onRestGetFeature', true) as $event)
+			{
+				$eventData = ExecuteModuleEventEx(
+					$event,
+					[
+						$params['CODE'],
+					]
+				);
+				if (is_array($eventData))
+				{
+					if ($eventData['value'] === true || $eventData['value'] === 'Y')
+					{
+						$result['value'] = 'Y';
+					}
+					else
+					{
+						$result['value'] = 'N';
+					}
+				}
+			}
+
+			if (empty($result['value']))
+			{
+				$result['value'] = LANGUAGE_ID . '_selfhosted';
+			}
+		}
+
+		return $result;
 	}
 
 	/**
@@ -697,7 +892,7 @@ class CRestProvider
 
 		$licenseInfo = COption::GetOptionString("main", $licenseOption);
 
-		list($lang, $licenseName, $additional) = explode("_", $licenseInfo, 3);
+		[$lang, $licenseName, $additional] = explode("_", $licenseInfo, 3);
 
 		if(!array_key_exists($licenseName, static::$licenseList))
 		{

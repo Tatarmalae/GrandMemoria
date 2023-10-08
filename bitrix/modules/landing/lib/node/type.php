@@ -10,6 +10,7 @@ class Type
 	const LINK = 'link';
 	const MAP = 'map';
 	const TEXT = 'text';
+	const STYLE_IMAGE = 'styleimg';
 
 	protected static $classes = [];
 
@@ -18,7 +19,7 @@ class Type
 	 * @param string $type Node type.
 	 * @return string
 	 */
-	public static function getClassName($type)
+	public static function getClassName(string $type): string
 	{
 		$type = mb_strtolower($type);
 

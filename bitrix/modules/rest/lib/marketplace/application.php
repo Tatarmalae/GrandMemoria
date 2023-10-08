@@ -22,210 +22,255 @@ Loc::loadMessages(__FILE__);
 
 class Application
 {
+	/**
+	 * Id of user on whose behalf are the actions do. If not set - use current system user
+	 * @var null
+	 */
+	protected static ?int $contextUserId = null;
+
+	public static function setContextUserId(int $id): void
+	{
+		self::$contextUserId = $id;
+	}
+
 	public static function install($code, $version = false, $checkHash = false, $installHash = false, $from = null) : array
 	{
 		$result = [];
-		if (CRestUtil::canInstallApplication())
+
+		if (!OAuthService::getEngine()->isRegistered())
 		{
-			if (!OAuthService::getEngine()->isRegistered())
+			try
 			{
-				try
+				OAuthService::register();
+				OAuthService::getEngine()->getClient()->getApplicationList();
+			}
+			catch(SystemException $e)
+			{
+				$result = [
+					'error' => $e->getCode(),
+					'errorDescription' => $e->getMessage(),
+				];
+			}
+		}
+
+		if (OAuthService::getEngine()->isRegistered())
+		{
+			$version = !empty($version) ? $version : false;
+
+			$result = [
+				'error' => 'INSTALL_ERROR',
+				'errorDescription' => Loc::getMessage('RMP_INSTALL_ERROR'),
+			];
+
+			$appDetailInfo = false;
+			if ($code <> '')
+			{
+				if (!empty($checkHash) && !empty($installHash))
 				{
-					OAuthService::register();
+					$appDetailInfo = Client::getInstall($code, $version, $checkHash, $installHash);
 				}
-				catch(SystemException $e)
+				else
 				{
-					$result = [
-						'error' => $e->getCode(),
-						'error_description' => $e->getMessage()
-					];
+					$appDetailInfo = Client::getInstall($code, $version);
+				}
+
+				if ($appDetailInfo)
+				{
+					$appDetailInfo = $appDetailInfo['ITEMS'];
 				}
 			}
 
-			if (OAuthService::getEngine()->isRegistered())
+			if (
+				$appDetailInfo
+				&& (
+					!Access::isAvailable($code)
+					|| !Access::isAvailableCount(Access::ENTITY_TYPE_APP, $code)
+				)
+			)
 			{
-				$version = !empty($version) ? $version : false;
-
 				$result = [
-					'error' => Loc::getMessage('RMP_INSTALL_ERROR')
+					'error' => 'ACTION_ACCESS_DENIED',
+					'errorDescription' => Loc::getMessage('RMP_ERROR_ACCESS_DENIED'),
+					'helperCode' => Access::getHelperCode(Access::ACTION_INSTALL, Access::ENTITY_TYPE_APP, $appDetailInfo)
 				];
-
-				$appDetailInfo = false;
-				if ($code <> '')
+			}
+			elseif ($appDetailInfo)
+			{
+				if (CRestUtil::canInstallApplication($appDetailInfo, self::$contextUserId))
 				{
+					$queryFields = [
+						'CLIENT_ID' => $appDetailInfo['APP_CODE'],
+						'VERSION' => $appDetailInfo['VER'],
+						'BY_SUBSCRIPTION' => $appDetailInfo['BY_SUBSCRIPTION'] === 'Y' ? 'Y' : 'N',
+					];
+
 					if (!empty($checkHash) && !empty($installHash))
 					{
-						$appDetailInfo = Client::getInstall($code, $version, $checkHash, $installHash);
-					}
-					else
-					{
-						$appDetailInfo = Client::getInstall($code, $version);
+						$queryFields['CHECK_HASH'] = $checkHash;
+						$queryFields['INSTALL_HASH'] = $installHash;
 					}
 
-					if ($appDetailInfo)
+					$installResult = OAuthService::getEngine()->getClient()->installApplication($queryFields);
+					if ($installResult['error'] === 'verification_needed')
 					{
-						$appDetailInfo = $appDetailInfo['ITEMS'];
+						if (\Bitrix\Main\ModuleManager::isModuleInstalled('bitrix24'))
+						{
+							OAuthService::getEngine()->getClient()->getApplicationList();
+							$installResult = OAuthService::getEngine()->getClient()->installApplication($queryFields);
+						}
+						elseif (
+							defined('ADMIN_SECTION')
+							&& $appDetailInfo['TYPE'] === 'C'
+							&& $appDetailInfo['MODE'] === 'S'
+							&& mb_strpos($appDetailInfo['CODE'], 'bitrix.') === 0
+						)
+						{
+							$installResult = [
+								'result' => [
+									'client_id' => $appDetailInfo['APP_CODE'],
+									'version' => (int)$appDetailInfo['VER'],
+									'status' => AppTable::STATUS_FREE,
+									'scope' => array_keys($appDetailInfo['RIGHTS']),
+								],
+							];
+						}
 					}
-				}
 
-				if (
-					$appDetailInfo
-					&& (
-						!Access::isAvailable($code)
-						|| !Access::isAvailableCount(Access::ENTITY_TYPE_APP, $code)
-					)
-				)
-				{
-					$result = [
-						'error' => Loc::getMessage('RMP_ERROR_ACCESS_DENIED'),
-						'helperCode' => Access::getHelperCode(Access::ACTION_INSTALL, Access::ENTITY_TYPE_APP, $appDetailInfo)
-					];
-				}
-				elseif ($appDetailInfo)
-				{
-					if (CRestUtil::canInstallApplication($appDetailInfo))
+					if ($installResult['error'])
 					{
-						$queryFields = [
-							'CLIENT_ID' => $appDetailInfo['APP_CODE'],
-							'VERSION' => $appDetailInfo['VER'],
-							'BY_SUBSCRIPTION' => $appDetailInfo['BY_SUBSCRIPTION'] === 'Y' ? 'Y' : 'N',
+						$result['error'] = $installResult['error'];
+						$result['errorDescription'] = $installResult['error_description'];
+					}
+					elseif ($installResult['result'])
+					{
+						$appFields = [
+							'CLIENT_ID' => $installResult['result']['client_id'],
+							'CODE' => $appDetailInfo['CODE'],
+							'ACTIVE' => AppTable::ACTIVE,
+							'INSTALLED' => ($appDetailInfo['OPEN_API'] === 'Y' || empty($appDetailInfo['INSTALL_URL']))
+								? AppTable::INSTALLED
+								: AppTable::NOT_INSTALLED,
+							'URL' => $appDetailInfo['URL'],
+							'URL_DEMO' => $appDetailInfo['DEMO_URL'],
+							'URL_INSTALL' => $appDetailInfo['INSTALL_URL'],
+							'VERSION' => $installResult['result']['version'],
+							'SCOPE' => implode(',', $installResult['result']['scope']),
+							'STATUS' => $installResult['result']['status'],
+							'SHARED_KEY' => $appDetailInfo['SHARED_KEY'],
+							'CLIENT_SECRET' => '',
+							'APP_NAME' => $appDetailInfo['NAME'],
+							'MOBILE' => $appDetailInfo['BXMOBILE'] === 'Y' ? AppTable::ACTIVE : AppTable::INACTIVE,
+							'USER_INSTALL' => CRestUtil::appCanBeInstalledByUser($appDetailInfo) ? AppTable::ACTIVE : AppTable::INACTIVE,
 						];
 
-						if (isset($checkHash, $installHash))
+						if (
+							$appFields['STATUS'] === AppTable::STATUS_TRIAL
+							|| $appFields['STATUS'] === AppTable::STATUS_PAID
+						)
 						{
-							$queryFields['CHECK_HASH'] = $checkHash;
-							$queryFields['INSTALL_HASH'] = $installHash;
+							$appFields['DATE_FINISH'] = DateTime::createFromTimestamp($installResult['result']['date_finish']);
+						}
+						else
+						{
+							$appFields['DATE_FINISH'] = '';
 						}
 
-						$installResult = OAuthService::getEngine()->getClient()->installApplication($queryFields);
-
-						if ($installResult['error'])
+						//Configuration app
+						if (
+							$appDetailInfo['TYPE'] === AppTable::TYPE_CONFIGURATION
+							&& $appDetailInfo['MODE'] !== AppTable::MODE_SITE
+						)
 						{
-							$result['error_description'] = $installResult['error'] . ': ' . $installResult['error_description'];
+							$appFields['INSTALLED'] = AppTable::NOT_INSTALLED;
 						}
-						elseif ($installResult['result'])
+
+						$existingApp = AppTable::getByClientId($appFields['CLIENT_ID']);
+						if ($existingApp)
 						{
-							$appFields = [
-								'CLIENT_ID' => $installResult['result']['client_id'],
-								'CODE' => $appDetailInfo['CODE'],
-								'ACTIVE' => AppTable::ACTIVE,
-								'INSTALLED' => ($appDetailInfo['OPEN_API'] === 'Y' || empty($appDetailInfo['INSTALL_URL']))
-									? AppTable::INSTALLED
-									: AppTable::NOT_INSTALLED,
-								'URL' => $appDetailInfo['URL'],
-								'URL_DEMO' => $appDetailInfo['DEMO_URL'],
-								'URL_INSTALL' => $appDetailInfo['INSTALL_URL'],
-								'VERSION' => $installResult['result']['version'],
-								'SCOPE' => implode(',', $installResult['result']['scope']),
-								'STATUS' => $installResult['result']['status'],
-								'SHARED_KEY' => $appDetailInfo['SHARED_KEY'],
-								'CLIENT_SECRET' => '',
-								'APP_NAME' => $appDetailInfo['NAME'],
-								'MOBILE' => $appDetailInfo['BXMOBILE'] === 'Y' ? AppTable::ACTIVE : AppTable::INACTIVE,
-								'USER_INSTALL' => CRestUtil::appCanBeInstalledByUser($appDetailInfo) ? AppTable::ACTIVE : AppTable::INACTIVE,
-							];
+							$addResult = AppTable::update($existingApp['ID'], $appFields);
+						}
+						else
+						{
+							$addResult = AppTable::add($appFields);
+						}
 
-							if (
-								$appFields['STATUS'] === AppTable::STATUS_TRIAL
-								|| $appFields['STATUS'] === AppTable::STATUS_PAID
-							)
-							{
-								$appFields['DATE_FINISH'] = DateTime::createFromTimestamp($installResult['result']['date_finish']);
-							}
-							else
-							{
-								$appFields['DATE_FINISH'] = '';
-							}
+						if ($addResult->isSuccess())
+						{
+							$appId = $addResult->getId();
 
-							//Configuration app
-							if ($appDetailInfo['TYPE'] === AppTable::TYPE_CONFIGURATION)
-							{
-								$appFields['INSTALLED'] = AppTable::NOT_INSTALLED;
-							}
-
-							$existingApp = AppTable::getByClientId($appFields['CLIENT_ID']);
 							if ($existingApp)
 							{
-								$addResult = AppTable::update($existingApp['ID'], $appFields);
+								AppLogTable::log($appId, AppLogTable::ACTION_TYPE_UPDATE);
 							}
 							else
 							{
-								$addResult = AppTable::add($appFields);
+								AppLogTable::log($appId, AppLogTable::ACTION_TYPE_ADD);
 							}
 
-							if ($addResult->isSuccess())
+							if ($appFields['INSTALLED'] === AppTable::INSTALLED)
 							{
-								$appId = $addResult->getId();
+								AppLogTable::log($appId, AppLogTable::ACTION_TYPE_INSTALL);
+							}
 
-								if ($existingApp)
+							if (!CRestUtil::isAdmin(self::$contextUserId))
+							{
+								CRestUtil::notifyInstall($appFields);
+							}
+
+							if (is_array($appDetailInfo['MENU_TITLE']))
+							{
+								foreach ($appDetailInfo['MENU_TITLE'] as $lang => $langName)
 								{
-									AppLogTable::log($appId, AppLogTable::ACTION_TYPE_UPDATE);
-								}
-								else
-								{
-									AppLogTable::log($appId, AppLogTable::ACTION_TYPE_ADD);
-								}
-
-								if ($appFields['INSTALLED'] === AppTable::INSTALLED)
-								{
-									AppLogTable::log($appId, AppLogTable::ACTION_TYPE_INSTALL);
-								}
-
-								if (!CRestUtil::isAdmin())
-								{
-									CRestUtil::notifyInstall($appFields);
-								}
-
-								if (is_array($appDetailInfo['MENU_TITLE']))
-								{
-									foreach ($appDetailInfo['MENU_TITLE'] as $lang => $langName)
-									{
-										$appLangFields = array(
-											'APP_ID' => $appId,
-											'LANGUAGE_ID' => $lang,
-											'MENU_NAME' => $langName
-										);
-
-										$appLangUpdateFields = array(
-											'MENU_NAME' => $langName
-										);
-
-										$connection = Main\Application::getConnection();
-										$queries = $connection->getSqlHelper()->prepareMerge(
-											AppLangTable::getTableName(),
-											[
-												'APP_ID',
-												'LANGUAGE_ID'
-											],
-											$appLangFields,
-											$appLangUpdateFields
-										);
-
-										foreach($queries as $query)
-										{
-											$connection->queryExecute($query);
-										}
-									}
-								}
-
-								if ($appDetailInfo['OPEN_API'] === 'Y' && !empty($appFields['URL_INSTALL']))
-								{
-									// checkCallback is already called inside checkFields
-									$result = EventTable::add(
-										[
-											'APP_ID' => $appId,
-											'EVENT_NAME' => 'ONAPPINSTALL',
-											'EVENT_HANDLER' => $appFields['URL_INSTALL'],
-										]
+									$appLangFields = array(
+										'APP_ID' => $appId,
+										'LANGUAGE_ID' => $lang,
+										'MENU_NAME' => $langName
 									);
-									if ($result->isSuccess())
+
+									$appLangUpdateFields = array(
+										'MENU_NAME' => $langName
+									);
+
+									$connection = Main\Application::getConnection();
+									$queries = $connection->getSqlHelper()->prepareMerge(
+										AppLangTable::getTableName(),
+										[
+											'APP_ID',
+											'LANGUAGE_ID'
+										],
+										$appLangFields,
+										$appLangUpdateFields
+									);
+
+									foreach($queries as $query)
 									{
-										Sender::bind('rest', 'OnRestAppInstall');
+										$connection->queryExecute($query);
 									}
 								}
+							}
 
-								AppTable::install($appId);
+							if ($appDetailInfo['OPEN_API'] === 'Y' && !empty($appFields['URL_INSTALL']))
+							{
+								// checkCallback is already called inside checkFields
+								$result = EventTable::add(
+									[
+										'APP_ID' => $appId,
+										'EVENT_NAME' => 'ONAPPINSTALL',
+										'EVENT_HANDLER' => $appFields['URL_INSTALL'],
+									]
+								);
+								if ($result->isSuccess())
+								{
+									Sender::bind('rest', 'OnRestAppInstall');
+								}
+							}
 
+							AppTable::install($appId);
+
+							$redirect = false;
+							$open = false;
+							if ($appDetailInfo['TYPE'] !== AppTable::TYPE_CONFIGURATION)
+							{
 								$uriString = CRestUtil::getApplicationPage($appId);
 								$uri = new Uri($uriString);
 								$ver = (int) $version;
@@ -237,45 +282,63 @@ class Application
 									]
 								);
 								$redirect = $uri->getUri();
-
-								$result = [
-									'success' => 1,
-									'id' => $appId,
-									'open' => $appDetailInfo['OPEN_API'] !== 'Y',
-									'installed' => $appFields['INSTALLED'] === 'Y',
-									'redirect' => $redirect,
-								];
-
-								Analytic::logToFile(
-									'finishInstall',
-									$code,
-									$from ?? 'index'
-								);
+								$open = $appDetailInfo['OPEN_API'] !== 'Y';
 							}
-							else
-							{
-								$result['error_description'] = implode('<br />', $addResult->getErrorMessages());
-							}
+
+							$result = [
+								'success' => 1,
+								'id' => $appId,
+								'open' => $open,
+								'installed' => $appFields['INSTALLED'] === 'Y',
+								'redirect' => $redirect,
+							];
+
+							Analytic::logToFile(
+								'finishInstall',
+								$code,
+								$from ?? 'index'
+							);
 						}
-					}
-					else
-					{
-						$result = ['error' => Loc::getMessage('RMP_ACCESS_DENIED')];
+						else
+						{
+							$result['errorDescription'] = implode('<br />', $addResult->getErrorMessages());
+						}
 					}
 				}
 				else
 				{
-					$result = ['error' => Loc::getMessage('RMP_NOT_FOUND')];
+					$result = [
+						'error' => 'ACCESS_DENIED',
+						'errorDescription' => Loc::getMessage('RMP_ACCESS_DENIED'),
+					];
 				}
 			}
-			elseif (!$result['error'])
+			else
 			{
-				$result = ['error' => Loc::getMessage('RMP_INSTALL_ERROR')];
+				$result = [
+					'error' => 'APPLICATION_NOT_FOUND',
+					'errorDescription' => Loc::getMessage('RMP_NOT_FOUND'),
+				];
 			}
 		}
-		else
+		elseif (!$result['error'])
 		{
-			$result = ['error' => Loc::getMessage('RMP_ACCESS_DENIED')];
+			$result = [
+				'error' => 'OAUTH_REGISTER',
+				'errorDescription' => Loc::getMessage('RMP_INSTALL_ERROR'),
+			];
+		}
+
+		if ($result['error'])
+		{
+			if ($result['error'] === 'SUBSCRIPTION_REQUIRED')
+			{
+				$result['errorDescription'] = Loc::getMessage('RMP_ERROR_SUBSCRIPTION_REQUIRED');
+			}
+			elseif ($result['error'] === 'verification_needed')
+			{
+				$result['errorDescription'] = Loc::getMessage('RMP_ERROR_VERIFICATION_NEEDED');
+			}
 		}
 
 		return $result;
@@ -283,7 +346,7 @@ class Application
 
 	public static function uninstall($code, bool $clean = false, $from = null) : array
 	{
-		if (CRestUtil::isAdmin())
+		if (CRestUtil::isAdmin(self::$contextUserId))
 		{
 			$res = AppTable::getList(
 				[
@@ -360,7 +423,7 @@ class Application
 	public static function reinstall($id) : array
 	{
 		$result = [];
-		if (CRestUtil::isAdmin())
+		if (CRestUtil::isAdmin(self::$contextUserId))
 		{
 			$appInfo = AppTable::getByClientId($id);
 			if (
@@ -410,6 +473,7 @@ class Application
 	public static function setRights($appId, $rights) : array
 	{
 		$result = [];
+		// todo: maybe can add self::$contextUser to isAdmin check
 		if (CRestUtil::isAdmin())
 		{
 			if ($appId > 0)
@@ -438,6 +502,7 @@ class Application
 
 	public static function getRights($appId)
 	{
+		// todo: maybe can add self::$contextUser to isAdmin check
 		if (CRestUtil::isAdmin())
 		{
 			if ($appId > 0)

@@ -10,12 +10,13 @@ use Bitrix\Main\NotImplementedException;
 use Bitrix\Main\Result;
 use Bitrix\Main\Type\Date;
 use Bitrix\Main\Type\DateTime;
+use Bitrix\Rest\Integration\Externalizer;
 
 abstract class Base
 {
 	abstract public function getFields();
 
-	final public function prepareFieldInfos($fields)
+	final public function prepareFieldInfos($fields): array
 	{
 		$result = [];
 		foreach($fields as $name => $info)
@@ -33,17 +34,23 @@ abstract class Base
 		return $result;
 	}
 
-	protected function prepareFieldAttributs($info, $attributs)
+	protected function prepareFieldAttributs($info, $attributs): array
 	{
+		$intersectRequired = array_intersect([
+			Attributes::REQUIRED,
+			Attributes::REQUIRED_ADD,
+			Attributes::REQUIRED_UPDATE
+		], $attributs);
+
 		return array(
 			'TYPE' => $info['TYPE'],
-			'IS_REQUIRED' => in_array(Attributes::REQUIRED, $attributs, true),
+			'IS_REQUIRED' => count($intersectRequired) > 0,
 			'IS_READ_ONLY' => in_array(Attributes::READONLY, $attributs, true),
 			'IS_IMMUTABLE' => in_array(Attributes::IMMUTABLE, $attributs, true)
 		);
 	}
 
-	final public function getListFieldInfo(array $fieldsInfo, $params=[])
+	final public function getListFieldInfo(array $fieldsInfo, $params=[]): array
 	{
 		$list = [];
 
@@ -93,7 +100,7 @@ abstract class Base
 		return $this->convertKeysToSnakeCase($fields);
 	}
 
-	final public function convertKeysToSnakeCaseOrder($fields)
+	final public function convertKeysToSnakeCaseOrder($fields): array
 	{
 		$result = [];
 
@@ -121,18 +128,12 @@ abstract class Base
 	//endregion
 
 	//region internalize fields
-	/**
-	 * @param $name
-	 * @param $arguments
-	 * @throws NotImplementedException
-	 * @return array
-	 */
-	public function internalizeArguments($name, $arguments)
+	public function internalizeArguments($name, $arguments): array
 	{
 		throw new NotImplementedException('Internalize arguments. The method '.$name.' is not implemented.');
 	}
 
-	public function internalizeFieldsList($arguments, $fieldsInfo=[])
+	public function internalizeFieldsList($arguments, $fieldsInfo=[]): array
 	{
 		$fieldsInfo = empty($fieldsInfo) ? $this->getFields():$fieldsInfo;
 
@@ -149,7 +150,7 @@ abstract class Base
 		];
 	}
 
-	public function internalizeFieldsAdd($fields, $fieldsInfo=[])
+	public function internalizeFieldsAdd($fields, $fieldsInfo=[]): array
 	{
 		$fieldsInfo = empty($fieldsInfo) ? $this->getFields():$fieldsInfo;
 
@@ -162,7 +163,7 @@ abstract class Base
 		);
 	}
 
-	public function internalizeFieldsUpdate($fields, $fieldsInfo=[])
+	public function internalizeFieldsUpdate($fields, $fieldsInfo=[]): array
 	{
 		$fieldsInfo = empty($fieldsInfo) ? $this->getFields():$fieldsInfo;
 
@@ -175,13 +176,7 @@ abstract class Base
 		);
 	}
 
-	/**
-	 * @param $fields
-	 * @param array $fieldsInfo
-	 * @return array
-	 * @throws NotImplementedException
-	 */
-	final protected function internalizeFields($fields, array $fieldsInfo)
+	final protected function internalizeFields($fields, array $fieldsInfo): array
 	{
 		$result = [];
 
@@ -200,12 +195,12 @@ abstract class Base
 				continue;
 			}
 
-			$result[$name] = $r->getData()[0];
+			$result[$this->canonicalizeField($name, $info)] = $r->getData()[0];
 		}
 		return $result;
 	}
 
-	final protected function internalizeValue($value, $info)
+	final protected function internalizeValue($value, $info): Result
 	{
 		$r = new Result();
 
@@ -266,7 +261,7 @@ abstract class Base
 		return $r;
 	}
 
-	protected function internalizeDateValue($value)
+	protected function internalizeDateValue($value): Result
 	{
 		$r = new Result();
 
@@ -289,7 +284,7 @@ abstract class Base
 		return $r;
 	}
 
-	protected function internalizeDateTimeValue($value)
+	protected function internalizeDateTimeValue($value): Result
 	{
 		$r = new Result();
 
@@ -370,7 +365,7 @@ abstract class Base
 		return  $result;
 	}
 
-	protected function internalizeExtendedTypeValue($value, $info)
+	protected function internalizeExtendedTypeValue($value, $info): Result
 	{
 		$r = new Result();
 
@@ -379,7 +374,7 @@ abstract class Base
 		return $r;
 	}
 
-	final protected function parserFileValue(array $data)
+	final protected function parserFileValue(array $data): array
 	{
 		$count = count($data);
 
@@ -402,13 +397,13 @@ abstract class Base
 		return ['CONTENT'=>$content, 'NAME'=>$name];
 	}
 
-	final protected function internalizeFilterFields($fields, array $fieldsInfo)
+	final protected function internalizeFilterFields($fields, array $fieldsInfo): array
 	{
 		$result = [];
 
 		$fieldsInfo = empty($fieldsInfo)? $this->getFields():$fieldsInfo;
 
-		if(is_array($fields) && count($fields)>0)
+		if (is_array($fields) && !empty($fields))
 		{
 			$listFieldsInfo = $this->getListFieldInfo($fieldsInfo, ['filter'=>['ignoredAttributes'=>[Attributes::HIDDEN]]]);
 
@@ -417,25 +412,27 @@ abstract class Base
 				$field = \CSqlUtil::GetFilterOperation($rawName);
 
 				$info = isset($listFieldsInfo[$field['FIELD']]) ? $listFieldsInfo[$field['FIELD']]:null;
-				if(!$info)
+				if (!$info)
 				{
 					continue;
 				}
 
 				$r = $this->internalizeValue($value, $info);
 
-				if($r->isSuccess() === false)
+				if ($r->isSuccess() === false)
 				{
 					continue;
 				}
 
 				$operation = mb_substr($rawName, 0, mb_strlen($rawName) - mb_strlen($field['FIELD']));
-				if(isset($info['FORBIDDEN_FILTERS'])
+				if (isset($info['FORBIDDEN_FILTERS'])
 					&& is_array($info['FORBIDDEN_FILTERS'])
 					&& in_array($operation, $info['FORBIDDEN_FILTERS'], true))
 				{
 					continue;
 				}
+
+				$rawName = $operation.$this->canonicalizeField($field['FIELD'], $info);
 
 				$result[$rawName] = $r->getData()[0];
 			}
@@ -444,7 +441,7 @@ abstract class Base
 		return $result;
 	}
 
-	final protected function internalizeSelectFields($fields, array $fieldsInfo)
+	final protected function internalizeSelectFields($fields, array $fieldsInfo): array
 	{
 		$result = [];
 
@@ -452,54 +449,51 @@ abstract class Base
 
 		$listFieldsInfo = $this->getListFieldInfo($fieldsInfo, ['filter'=>['ignoredAttributes'=>[Attributes::HIDDEN]]]);
 
-		if(empty($fields) || in_array('*', $fields, true))
+		if (empty($fields) || in_array('*', $fields, true))
 		{
-			$result = array_keys($listFieldsInfo);
+			$fields = array_keys($listFieldsInfo);
 		}
-		else
-		{
-			foreach ($fields as $name)
-			{
-				$info = isset($listFieldsInfo[$name]) ? $listFieldsInfo[$name]:null;
-				if(!$info)
-				{
-					continue;
-				}
 
-				$result[] = $name;
+		foreach ($fields as $name)
+		{
+			$info = isset($listFieldsInfo[$name]) ? $listFieldsInfo[$name]:null;
+			if (!$info)
+			{
+				continue;
 			}
+
+			$result[] = $this->canonicalizeField($name, $info);
 		}
 
 		return $result;
 	}
 
-	final protected function internalizeOrderFields($fields, array $fieldsInfo)
+	final protected function internalizeOrderFields($fields, array $fieldsInfo): array
 	{
 		$result = [];
 
 		$fieldsInfo = empty($fieldsInfo)? $this->getFields():$fieldsInfo;
 
-		if(is_array($fields)
-			&& count($fields)>0)
+		if (is_array($fields) && count($fields)>0)
 		{
 			$listFieldsInfo = $this->getListFieldInfo($fieldsInfo, ['filter'=>['ignoredAttributes'=>[Attributes::HIDDEN]]]);
 
-			foreach ($fields as $field=>$order)
+			foreach ($fields as $field => $order)
 			{
 				$info = isset($listFieldsInfo[$field]) ? $listFieldsInfo[$field]:null;
-				if(!$info)
+				if (!$info)
 				{
 					continue;
 				}
 
-				$result[$field]=$order;
+				$result[$this->canonicalizeField($field, $info)] = $order;
 			}
 		}
 
 		return $result;
 	}
 
-	final protected function internalizeListFields($list, $fieldsInfo=[])
+	final protected function internalizeListFields($list, $fieldsInfo=[]): array
 	{
 		$result = [];
 
@@ -519,7 +513,7 @@ abstract class Base
 	//endregion
 
 	// region externalize fields
-	final protected function externalizeValue($name, $value, $fields, $fieldsInfo)
+	final protected function externalizeValue($name, $value, $fields, $fieldsInfo): Result
 	{
 		$r = new Result();
 
@@ -527,7 +521,7 @@ abstract class Base
 
 		if(empty($value))
 		{
-			$value = null;
+			$value = $this->externalizeEmptyValue($name, $value, $fields, $fieldsInfo);
 		}
 		else
 		{
@@ -587,7 +581,7 @@ abstract class Base
 		return $r;
 	}
 
-	final protected function externalizeFields($fields, $fieldsInfo)
+	final protected function externalizeFields($fields, $fieldsInfo): array
 	{
 		$result = [];
 
@@ -595,15 +589,17 @@ abstract class Base
 		{
 			foreach($fields as $name => $value)
 			{
+				$name = $this->aliasesField($name, $fieldsInfo);
+
 				$info = isset($fieldsInfo[$name]) ? $fieldsInfo[$name] : null;
-				if(!$info)
+				if (!$info)
 				{
 					continue;
 				}
 
 				$r = $this->externalizeValue($name, $value, $fields, $fieldsInfo);
 
-				if($r->isSuccess() === false)
+				if ($r->isSuccess() === false)
 				{
 					continue;
 				}
@@ -614,7 +610,12 @@ abstract class Base
 		return $result;
 	}
 
-	final protected function externalizeDateValue($value)
+	protected function externalizeEmptyValue($name, $value, $fields, $fieldsInfo)
+	{
+		return null;
+	}
+
+	final protected function externalizeDateValue($value): Result
 	{
 		$r = new Result();
 
@@ -629,7 +630,7 @@ abstract class Base
 		return $r;
 	}
 
-	final protected function externalizeDateTimeValue($value)
+	final protected function externalizeDateTimeValue($value): Result
 	{
 		$r = new Result();
 
@@ -650,7 +651,7 @@ abstract class Base
 	 * @return string
 	 * @throws NotImplementedException
 	 */
-	protected function externalizeFileValue($name, $value, $fields)
+	protected function externalizeFileValue($name, $value, $fields): array
 	{
 		throw new NotImplementedException('Externalize file. The method externalizeFile is not implemented.');
 	}
@@ -662,7 +663,7 @@ abstract class Base
 	 * @param $fieldsInfo
 	 * @return Result
 	 */
-	protected function externalizeExtendedTypeValue($name, $value, $fields, $fieldsInfo)
+	protected function externalizeExtendedTypeValue($name, $value, $fields, $fieldsInfo): Result
 	{
 		$r = new Result();
 
@@ -671,7 +672,7 @@ abstract class Base
 		return $r;
 	}
 
-	public function externalizeListFields($list, $fieldsInfo=[])
+	public function externalizeListFields($list, $fieldsInfo=[]): array
 	{
 		$result = [];
 
@@ -693,12 +694,12 @@ abstract class Base
 	 * @throws NotImplementedException
 	 * @return array
 	 */
-	public function externalizeResult($name, $fields)
+	public function externalizeResult($name, $fields): array
 	{
 		throw new NotImplementedException('Externalize result. The method '.$name.' is not implemented.');
 	}
 
-	public function externalizeFieldsGet($fields, $fieldsInfo=[])
+	public function externalizeFieldsGet($fields, $fieldsInfo=[]): array
 	{
 		$fieldsInfo = empty($fieldsInfo) ? $this->getFields():$fieldsInfo;
 
@@ -712,16 +713,8 @@ abstract class Base
 	}
 	// endregion
 
-	//region convert keys to camel case
-	final public function convertKeysToCamelCase($fields)
-	{
-		return Converter::toJson()
-			->process($fields);
-	}
-	// endregion
-
 	//region check fields
-	final public function checkFieldsAdd($fields)
+	final public function checkFieldsAdd($fields): Result
 	{
 		$r = new Result();
 
@@ -732,7 +725,7 @@ abstract class Base
 		return $r;
 	}
 
-	final public function checkFieldsUpdate($fields)
+	final public function checkFieldsUpdate($fields): Result
 	{
 		$r = new Result();
 
@@ -743,33 +736,33 @@ abstract class Base
 		return $r;
 	}
 
-	public function checkFieldsList($arguments)
+	public function checkFieldsList($arguments): Result
 	{
 		return new Result();
 	}
 
-	public function checkArguments($name, $arguments)
+	public function checkArguments($name, $arguments): Result
 	{
 		return new Result();
 	}
 
-	final protected function checkRequiredFieldsAdd($fields)
+	final protected function checkRequiredFieldsAdd($fields): Result
 	{
 		return $this->checkRequiredFields($fields, $this->getListFieldInfo(
 			$this->getFields(),
-			['filter'=>['ignoredAttributes'=>[Attributes::HIDDEN, Attributes::READONLY]]]
+			['filter'=>['ignoredAttributes'=>[Attributes::HIDDEN, Attributes::READONLY, Attributes::REQUIRED_UPDATE]]]
 		));
 	}
 
-	final protected function checkRequiredFieldsUpdate($fields)
+	final protected function checkRequiredFieldsUpdate($fields): Result
 	{
 		return $this->checkRequiredFields($fields, $this->getListFieldInfo(
 			$this->getFields(),
-			['filter'=>['ignoredAttributes'=>[Attributes::HIDDEN, Attributes::READONLY, Attributes::IMMUTABLE]]]
+			['filter'=>['ignoredAttributes'=>[Attributes::HIDDEN, Attributes::READONLY, Attributes::REQUIRED_ADD, Attributes::IMMUTABLE]]]
 		));
 	}
 
-	final protected function checkRequiredFields($fields, array $fieldsInfo, $params=[])
+	final protected function checkRequiredFields($fields, array $fieldsInfo, $params=[]): Result
 	{
 		$r = new Result();
 
@@ -785,11 +778,50 @@ abstract class Base
 			elseif($info['IS_REQUIRED'] == 'Y' || in_array($name, $addRequiredFields))
 			{
 				if(!isset($fields[$name]))
-					$r->addError(new Error($this->convertKeysToCamelCase($name)));
+					$r->addError(new Error(Externalizer::convertKeysToCamelCase($name)));
 			}
 		}
 
 		return $r;
+	}
+	//endregion
+
+	//region canonical
+	final protected function canonicalizeField($name, $info): string
+	{
+		$canonical = $info['CANONICAL_NAME'] ?? null;
+		if ($canonical)
+		{
+			return $canonical;
+		}
+		else
+		{
+			return $name;
+		}
+	}
+	//endregion
+
+	//region aliases
+	final protected function aliasesField($name, $fieldsInfo): string
+	{
+		$alias = $name;
+
+		$item = array_filter($fieldsInfo, function($info) use ($name){
+			$canonical = $info['CANONICAL_NAME'] ?? null;
+			if (!$canonical)
+			{
+				return false;
+			}
+
+			return $canonical === $name;
+		});
+
+		if (is_array($item) && !empty($item))
+		{
+			$alias = array_keys($item)[0];
+		}
+
+		return $alias;
 	}
 	//endregion
 }

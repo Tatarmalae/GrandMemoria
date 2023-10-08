@@ -11,14 +11,16 @@
 }
 
 .landing-ui-card-headercard-description {
-	font-family: OpenSans-Light, Helvetca, Arial, sans-sarif;
+	font-family: var(--ui-font-family-secondary, var(--ui-font-family-open-sans));
+	font-weight: var(--ui-font-weight-light, 300);
 	font-size: 11px;
 	padding-top: 7px;
 	display: inline-block;
 }
 
 .landing-ui-card-headercard .landing-ui-card-header {
-	font-family: OpenSans-Light, Helvetca, Arial, sans-sarif;
+	font-family: var(--ui-font-family-secondary, var(--ui-font-family-open-sans));
+	font-weight: var(--ui-font-weight-light, 300);
 	font-size: 22px;
 	color: #333333;
 	line-height: 28px;
@@ -27,7 +29,7 @@
 }
 
 .landing-ui-card-headercard-without-bottom-margin {
-	margin-bottom: 0!important;
+	margin-bottom: 0 !important;
 }
 
 .landing-ui-card-headercard-2 .landing-ui-card-header {

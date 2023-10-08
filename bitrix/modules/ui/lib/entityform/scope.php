@@ -20,6 +20,14 @@ use CUserOptions;
  */
 class Scope
 {
+	protected const CODE_USER = 'U';
+	protected const CODE_PROJECT = 'SG';
+	protected const CODE_DEPARTMENT   = 'DR';
+
+	protected const TYPE_USER = 'user';
+	protected const TYPE_PROJECT = 'project';
+	protected const TYPE_DEPARTMENT = 'department';
+
 	protected $user;
 	protected static $instance = null;
 
@@ -36,36 +44,60 @@ class Scope
 		return self::$instance;
 	}
 
+	/**
+	 * @param string $entityTypeId
+	 * @param string|null $moduleId
+	 * @return array
+	 */
 	public function getUserScopes(string $entityTypeId, ?string $moduleId = null): array
 	{
-		$result = [];
-		$scopeIds = $this->getScopesIdByUser($moduleId);
-		if (count($scopeIds))
+		static $results = [];
+		$key = $entityTypeId . '-' . $moduleId;
+
+		if (!isset($results[$key]))
 		{
-			$scopes = EntityFormConfigTable::getList([
-				'select' => [
-					'ID',
-					'NAME',
-					'ACCESS_CODE' => '\Bitrix\Ui\EntityForm\EntityFormConfigAcTable:CONFIG.ACCESS_CODE'
-				],
-				'filter' => [
-					'@ID' => $scopeIds,
-					'=ENTITY_TYPE_ID' => $entityTypeId
-				]
-			]);
-			foreach ($scopes as $scope)
+			$result = [];
+			$scopeIds = $this->getScopesIdByUser($moduleId);
+			$entityTypeIds = ($this->getEntityTypeIdMap()[$entityTypeId] ?? [$entityTypeId]);
+
+			if (!empty($scopeIds))
 			{
-				$result[$scope['ID']]['NAME'] = HtmlFilter::encode($scope['NAME']);
-				if (!isset($result[$scope['ID']]['ACCESS_CODES'][$scope['ACCESS_CODE']]))
+				$scopes = EntityFormConfigTable::getList([
+					'select' => [
+						'ID',
+						'NAME',
+						'ACCESS_CODE' => '\Bitrix\Ui\EntityForm\EntityFormConfigAcTable:CONFIG.ACCESS_CODE'
+					],
+					'filter' => [
+						'@ID' => $scopeIds,
+						'@ENTITY_TYPE_ID' => $entityTypeIds
+					]
+				]);
+				foreach ($scopes as $scope)
 				{
-					$accessCode = new AccessCode($scope['ACCESS_CODE']);
-					$member = (new DataProvider())->getEntity($accessCode->getEntityType(), $accessCode->getEntityId());
-					$result[$scope['ID']]['ACCESS_CODES'][$scope['ACCESS_CODE']] = $scope['ACCESS_CODE'];
-					$result[$scope['ID']]['MEMBERS'][$scope['ACCESS_CODE']] = $member->getMetaData();
+					$result[$scope['ID']]['NAME'] = HtmlFilter::encode($scope['NAME']);
+					if (!isset($result[$scope['ID']]['ACCESS_CODES'][$scope['ACCESS_CODE']]))
+					{
+						$accessCode = new AccessCode($scope['ACCESS_CODE']);
+						$member = (new DataProvider())->getEntity($accessCode->getEntityType(),
+							$accessCode->getEntityId());
+						$result[$scope['ID']]['ACCESS_CODES'][$scope['ACCESS_CODE']] = $scope['ACCESS_CODE'];
+						$result[$scope['ID']]['MEMBERS'][$scope['ACCESS_CODE']] = $member->getMetaData();
+					}
 				}
 			}
+			$results[$key] = $result;
 		}
-		return $result;
+
+		return $results[$key];
+	}
+
+	protected function getEntityTypeIdMap(): array
+	{
+		return [
+			'lead_details' => ['lead_details', 'returning_lead_details'],
+			'returning_lead_details' => ['lead_details', 'returning_lead_details'],
+		];
 	}
 
 	/**
@@ -93,6 +125,7 @@ class Scope
 	private function getScopesIdByUser(?string $moduleId = null): array
 	{
 		$accessCodes = $this->getUser()->GetAccessCodes();
+		$this->prepareAccessCodes($accessCodes);
 
 		$params = [
 			'select' => [
@@ -123,7 +156,18 @@ class Scope
 			}
 		}
 
-		return $result;
+		return array_unique($result);
+	}
+
+	protected function prepareAccessCodes(array &$accessCodes): void
+	{
+		$accessCodes = array_filter($accessCodes, static fn($code) => mb_strpos($code, 'CHAT') !== 0);
+
+		foreach ($accessCodes as &$accessCode)
+		{
+			$accessCode = preg_replace('|^(SG\d*?)(_[K,A,M])$|', '$1', $accessCode);
+		}
+		unset($accessCode);
 	}
 
 	/**
@@ -134,7 +178,7 @@ class Scope
 	{
 		if ($row = EntityFormConfigTable::getRowById($scopeId))
 		{
-			return $row['CONFIG'];
+			return (is_array($row['CONFIG']) ? $row['CONFIG'] : null);
 		}
 		return null;
 	}
@@ -179,23 +223,7 @@ class Scope
 	 */
 	public function setScope(string $categoryName, string $guid, string $scope, int $userScopeId = 0): void
 	{
-		$scope = (isset($scope) ? strtoupper($scope) : EntityEditorConfigScope::UNDEFINED);
-
-		if (EntityEditorConfigScope::isDefined($scope))
-		{
-			if ($scope === EntityEditorConfigScope::CUSTOM && $userScopeId)
-			{
-				$value = [
-					'scope' => $scope,
-					'userScopeId' => $userScopeId
-				];
-			}
-			else
-			{
-				$value = $scope;
-			}
-			CUserOptions::SetOption($categoryName, "{$guid}_scope", $value);
-		}
+		$this->setScopeToUser($categoryName, $guid, $scope, $userScopeId);
 	}
 
 	public function setScopeConfig(
@@ -204,7 +232,7 @@ class Scope
 		string $name,
 		array $accessCodes,
 		array $config,
-		string $common
+		array $params = []
 	)
 	{
 		if (empty($name))
@@ -220,12 +248,14 @@ class Scope
 			return $errors;
 		}
 
+		$this->formatAccessCodes($accessCodes);
+
 		$result = EntityFormConfigTable::add([
 			'CATEGORY' => $category,
 			'ENTITY_TYPE_ID' => $entityTypeId,
 			'NAME' => $name,
 			'CONFIG' => $config,
-			'COMMON' => $common
+			'COMMON' => ($params['common'] ?? 'Y'),
 		]);
 
 		if ($result->isSuccess())
@@ -234,14 +264,109 @@ class Scope
 			foreach ($accessCodes as $ac)
 			{
 				EntityFormConfigAcTable::add([
-					'ACCESS_CODE' => $ac['ID'],
+					'ACCESS_CODE' => $ac['id'],
 					'CONFIG_ID' => $configId,
 				]);
 			}
+
+			$this->forceSetScopeToUsers($accessCodes, [
+				'forceSetToUsers' => ($params['forceSetToUsers'] ?? false),
+				'categoryName' => ($params['categoryName'] ?? ''),
+				'entityTypeId' => $entityTypeId,
+				'configId' => $configId,
+			]);
+
 			return $configId;
 		}
 
 		return $result->getErrors();
+	}
+
+	/**
+	 * @param array $accessCodes
+	 */
+	protected function formatAccessCodes(array &$accessCodes): void
+	{
+		foreach ($accessCodes as $key => $item)
+		{
+			if ($item['entityId'] === self::TYPE_USER)
+			{
+			$accessCodes[$key]['id'] = self::CODE_USER . (int)$accessCodes[$key]['id'];
+			}
+			elseif ($item['entityId'] === self::TYPE_DEPARTMENT)
+			{
+				$accessCodes[$key]['id'] = self::CODE_DEPARTMENT . (int)$accessCodes[$key]['id'];
+			}
+			elseif ($item['entityId'] === self::TYPE_PROJECT)
+			{
+				$accessCodes[$key]['id'] = self::CODE_PROJECT . (int)$accessCodes[$key]['id'];
+			}
+			else{
+				unset($accessCodes[$key]);
+			}
+		}
+	}
+
+	/**
+	 * @param array $accessCodes
+	 * @param array $params
+	 */
+	protected function forceSetScopeToUsers(array $accessCodes = [], array $params = []): void
+	{
+		if ($params['forceSetToUsers'] && $params['categoryName'])
+		{
+			$userIdPattern = '/^U(\d+)$/';
+			foreach ($accessCodes as $ac)
+			{
+				$matches = [];
+				if (preg_match($userIdPattern, $ac['id'], $matches))
+				{
+					$this->setScopeToUser(
+						$params['categoryName'],
+						$params['entityTypeId'],
+						EntityEditorConfigScope::CUSTOM,
+						$params['configId'],
+						$matches[1]
+					);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param string $categoryName
+	 * @param string $guid
+	 * @param string $scope
+	 * @param int $userScopeId
+	 * @param int|null $userId
+	 */
+	protected function setScopeToUser(
+		string $categoryName,
+		string $guid,
+		string $scope,
+		int $userScopeId,
+		?int $userId = null
+	): void
+	{
+		$scope = (isset($scope) ? strtoupper($scope) : EntityEditorConfigScope::UNDEFINED);
+
+		if (EntityEditorConfigScope::isDefined($scope))
+		{
+			if ($scope === EntityEditorConfigScope::CUSTOM && $userScopeId)
+			{
+				$value = [
+					'scope' => $scope,
+					'userScopeId' => $userScopeId
+				];
+			}
+			else
+			{
+				$value = $scope;
+			}
+
+			$userId = ($userId ?? false);
+			CUserOptions::SetOption($categoryName, "{$guid}_scope", $value, false, $userId);
+		}
 	}
 
 	public function updateScopeConfig(int $id, array $config)
@@ -281,7 +406,7 @@ class Scope
 		$accessCodes = EntityFormConfigAcTable::getList([
 			'select' => ['ACCESS_CODE'],
 			'filter' => ['=CONFIG_ID' => $configId]
-		]);
+		])->fetchAll();
 		$result = [];
 		if (count($accessCodes))
 		{

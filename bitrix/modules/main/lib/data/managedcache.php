@@ -30,8 +30,8 @@ class ManagedCache
 		static $type = null;
 		if ($type === null)
 		{
-			$cm = Main\Application::getInstance()->getConnectionPool();
-			$type = $cm->getDefaultConnectionType();
+			$type = Main\Application::getInstance()->getConnection()->getType();
+			$type = strtoupper($type);
 		}
 		return $type;
 	}
@@ -100,6 +100,7 @@ class ManagedCache
 		if (isset($this->cache[$uniqueId]))
 		{
 			$obCache = Cache::createInstance();
+			$obCache->noOutput();
 			$obCache->startDataCache($this->ttl[$uniqueId], $uniqueId, $this->cachePath[$uniqueId], $val, "managed_cache");
 			$obCache->endDataCache();
 

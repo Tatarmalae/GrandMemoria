@@ -175,7 +175,7 @@ class CSearchItem extends CDBResult
 			$site_id = $r["SITE_ID"];
 			if (!isset($arSite[$site_id]))
 			{
-				$rsSite = CSite::GetList($b, $o, array("ID" => $site_id));
+				$rsSite = CSite::GetList('', '', array("ID" => $site_id));
 				$arSite[$site_id] = $rsSite->Fetch();
 			}
 			$r["DIR"] = $arSite[$site_id]["DIR"];
@@ -187,7 +187,13 @@ class CSearchItem extends CDBResult
 			if (mb_substr($r["URL"], 0, 1) == "=")
 			{
 				foreach (GetModuleEvents("search", "OnSearchGetURL", true) as $arEvent)
-					$r["URL"] = ExecuteModuleEventEx($arEvent, array($r));
+				{
+					$newUrl = ExecuteModuleEventEx($arEvent, array($r));
+					if (isset($newUrl))
+					{
+						$r["URL"] = $newUrl;
+					}
+				}
 			}
 
 			$r["URL"] = str_replace(

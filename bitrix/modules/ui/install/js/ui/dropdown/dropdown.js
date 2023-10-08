@@ -1,4 +1,4 @@
-	(function() {
+(function() {
 
 	"use strict";
 
@@ -25,8 +25,11 @@
 		this.targetElement = options.targetElement;
 		this.CurrentItem = null;
 
+		this.id = BX.prop.getString(options, "id", BX.Text.getRandom());
 		this.searchAction = BX.prop.getString(options, "searchAction", "");
 		this.searchOptions = BX.prop.getObject(options, "searchOptions", {});
+		this.previousSearchQuery = null;
+		this.isLastSearchComplete = null;
 
 		this.messages = BX.prop.getObject(options, "messages", {});
 
@@ -89,7 +92,7 @@
 							return;
 						}
 
-						this.getPopupWindow().show();
+						this.showPopupWindow();
 
 					}.bind(this));
 				}.bind(this), 100);
@@ -117,7 +120,7 @@
 					{
 						BX.PreventDefault(e);
 					}
-					this.getPopupWindow().show();
+					this.showPopupWindow();
 				}.bind(this), true);
 
 				setTimeout(function() {
@@ -128,7 +131,7 @@
 							return;
 						}
 
-						this.getPopupWindow().show();
+						this.showPopupWindow();
 
 						if(!this.popupAlertContainer)
 						{
@@ -161,7 +164,7 @@
 
 								if (this.targetElement.value !== '' && !this.popupWindow)
 								{
-									this.getPopupWindow().show();
+									this.showPopupWindow();
 								}
 								else {
 									BX.PreventDefault(e);
@@ -216,24 +219,23 @@
 					else
 					{
 						this.handleTypeInField();
-						//this.targetElement.addEventListener("input", BX.debounce(this.handleTypeInField.bind(this), 500), true);
 					}
 
 					if(this.targetElement.value !== '' && !this.popupWindow)
 					{
-						this.getPopupWindow().show();
+						this.showPopupWindow();
 						return;
 					}
 
 					if(e.keyCode === 9 && !this.popupWindow)
 					{
-						this.getPopupWindow().show();
+						this.showPopupWindow();
 						return;
 					}
 
 					if(e.keyCode === 9 && this.targetElement.value === '' && !this.popupWindow)
 					{
-						this.getPopupWindow().show();
+						this.showPopupWindow();
 					}
 
 					if(!this.enableCreation) {
@@ -265,12 +267,12 @@
 
 					if (e.keyCode === 9 && !this.popupWindow)
 					{
-						this.getPopupWindow().show();
+						this.showPopupWindow();
 						return;
 					}
 					if (e.keyCode === 9 && this.targetElement.value === '' && !this.popupWindow)
 					{
-						this.getPopupWindow().show();
+						this.showPopupWindow();
 						return;
 					}
 
@@ -290,8 +292,6 @@
 						this.setItems(this.getDefaultItems());
 						BX.cleanNode(this.popupAlertContainer);
 						this.newAlertContainer = null;
-
-						return;
 					}
 					else
 					{
@@ -339,21 +339,30 @@
 					this.isChanged = true;
 				}
 
+				var searchQuery = this.targetElement.value.trim();
+				var isRequestsFlowAllowed =
+					this.autocompleteDelay === 0
+						? true
+						: this.isLastSearchComplete !== false
+				;
 				var loader = this.getItemsListContainer();
 
-				if (!this.targetElement.value)
+				if(!searchQuery)
 				{
 					this.setItems(this.getDefaultItems());
 					loader.classList.remove('ui-dropdown-loader-active');
 					BX.cleanNode(this.popupAlertContainer);
 					this.newAlertContainer = null;
+					this.previousSearchQuery = '';
 
 					BX.onCustomEvent(this, "BX.UI.Dropdown:onReset", [this]);
 				}
-				else if(this.targetElement.value.length >= this.minSearchStringLength)
-				{
-					BX.onCustomEvent(this, "BX.UI.Dropdown:onBeforeSearchStart", [this, this.targetElement.value]);
-					//this.setItems(this.searchItemsByStr(this.targetElement.value));
+				else if(
+					searchQuery.length >= this.minSearchStringLength
+					&& searchQuery !== this.previousSearchQuery
+					&& isRequestsFlowAllowed
+				) {
+					BX.onCustomEvent(this, "BX.UI.Dropdown:onBeforeSearchStart", [this, searchQuery]);
 					clearTimeout(this.ajaxRequestTimer);
 					this.ajaxRequestTimer = setTimeout(this.searchItemsByStrDelayed.bind(this), this.autocompleteDelay);
 
@@ -362,9 +371,11 @@
 			},
 			searchItemsByStrDelayed: function()
 			{
+				this.isLastSearchComplete = false;
 				var loader = this.getItemsListContainer();
+				var searchQuery = this.targetElement.value.trim();
 				var eventData = {
-					searchQuery: this.targetElement.value
+					searchQuery: searchQuery
 				};
 				BX.onCustomEvent(this, "BX.UI.Dropdown:onSearchStart", [this, eventData]);
 
@@ -373,6 +384,7 @@
 						function (items)
 						{
 							BX.onCustomEvent(this, "BX.UI.Dropdown:onSearchComplete", [this, items]);
+
 							return items;
 						}.bind(this))
 					.then(
@@ -391,6 +403,11 @@
 							this.setItems(items);
 							loader.classList.remove('ui-dropdown-loader-active');
 
+							this.showPopupWindow();
+
+							this.previousSearchQuery = searchQuery;
+							this.isLastSearchComplete = true;
+							this.handleTypeInField();
 						}.bind(this)
 				);
 			},
@@ -416,11 +433,19 @@
 					this.footerItems = items;
 				}
 			},
+			showPopupWindow: function()
+			{
+				var popupAlertContainer = this.getPopupAlertContainer();
+				if (this.getItems().length || this.footerItems || (popupAlertContainer && popupAlertContainer.textContent.trim().length))
+				{
+					this.getPopupWindow().show();
+				}
+			},
 			getPopupWindow: function()
 			{
 				if (!this.popupWindow)
 				{
-					this.popupWindow = new BX.PopupWindow("dropdown", this.targetElement, {
+					this.popupWindow = new BX.PopupWindow("dropdown_" + this.id, this.targetElement, {
 						autoHide: true,
 						content : this.popupConatiner ? this.popupContainer : this.getPopupContainer(),
 						contentColor : "white",
@@ -456,6 +481,10 @@
 			{
 				var currentElement = BX.findParent(this.getPopupWindow().bindElement, {className: 'crm-kanban-quick-form'});
 
+				if (!currentElement)
+				{
+					return 0;
+				}
 				this.popupWindow.popupContainer.style.width = currentElement.offsetWidth + "px";
 				var equalWidth = - (this.targetElement.getBoundingClientRect().left - currentElement.getBoundingClientRect().left);
 
@@ -544,9 +573,6 @@
 						props: {
 							className: 'ui-dropdown-alert'
 						},
-						events: {
-							click: this.onEmptyValueEvent.bind(this)
-						},
 						children: [
 							this.alertContainerValue = BX.create('div', {
 								attrs: { className: 'ui-dropdown-alert-name' },
@@ -554,11 +580,14 @@
 							}),
 							BX.create('div', {
 								attrs: { className: 'ui-dropdown-alert-text' },
-								text: BX.prop.getString(this.messages, this.enableCreation ? "creationLegend" : "notFound", "")
+								text: BX.prop.getString(this.messages, this.enableCreation ? "creationLegend" : "notFound", ""),
+								events: {
+									click: this.onEmptyValueEvent.bind(this)
+								}
 							})
 						]
 					});
-
+					BX.onCustomEvent(this, "BX.UI.Dropdown:onGetNewAlertContainer", [this, this.newAlertContainer]);
 					this.targetElement.addEventListener("input", function()
 					{
 						this.alertContainerValue.textContent = this.targetElement.value;
@@ -616,20 +645,29 @@
 				{
 					var attrs = BX.prop.getObject(item, "attributes", {});
 
+					var icon = BX.prop.getObject(attrs, "icon", null);
 					var phones = BX.prop.getArray(attrs, "phone", []);
 					var emails = BX.prop.getArray(attrs, "email", []);
 					var webs = BX.prop.getArray(attrs, "web", []);
 
+					var iconSrc = (icon !== null && BX.type.isNotEmptyString(icon.src) ? icon.src : '');
 					var phone = phones.length > 0 ? phones[0].value : "";
 					var email = emails.length > 0 ? emails[0].value : "";
 					var web = (webs.length > 0 ? webs[0].value : '');
 
 					item.node = BX.create('div', {
 						attrs: {
-							className: 'ui-dropdown-item'
+							className: 'ui-dropdown-item' + (iconSrc !== '' ? ' ui-dropdown-item-node-with-icon' : '')
 						},
 						events: { click: this.handleItemClick.bind(this, item) },
 						children: [
+							iconSrc !== '' ? BX.create('span', {
+								attrs: {
+									className: 'ui-dropdown-item-icon',
+									style: 'background-image: url(\'' + BX.util.htmlspecialchars(iconSrc) + '\')'
+								},
+								text: ''
+							}) : null,
 							BX.create('div', {
 								attrs: {
 									className: 'ui-dropdown-item-name'

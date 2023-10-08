@@ -11,12 +11,13 @@
 		this.forms = [];
 	}
 
+	BX.Landing.EmbedForms.formsData = {};
+
 	BX.Landing.EmbedForms.prototype = {
 		add: function(formNode)
 		{
 			var form = new BX.Landing.EmbedFormEntry(formNode);
 			this.forms.push(form);
-			form.init();
 		},
 
 		remove: function(formNode)
@@ -68,45 +69,110 @@
 	BX.Landing.EmbedFormEntry.ATTR_USE_STYLE_STR = 'data-b24form-use-style';
 	BX.Landing.EmbedFormEntry.ATTR_DESIGN = 'b24formDesign';
 	BX.Landing.EmbedFormEntry.ATTR_IS_CONNECTOR = 'b24formConnector';
+	BX.Landing.EmbedFormEntry.FORM_ID_MATCHER = /^#crmFormInline(\d+)$/i;
+	BX.Landing.EmbedFormEntry.PRIMARY_OPACITY_MATCHER = /--primary([\da-fA-F]{2})/;
 
 	BX.Landing.EmbedFormEntry.prototype = {
 		init: function()
 		{
-			var formParams = this.node.dataset.b24form;
+			// todo: add loader
+
+			// check ERRORS
+			var formParams = this.node.dataset[BX.Landing.EmbedFormEntry.ATTR_FORM_ID];
 			if(!formParams)
 			{
 				this.showNoFormsMessage();
 				return;
 			}
 			formParams = formParams.split('|');
-			if (formParams.length !== 3)
+			if(
+				formParams.length !== 1
+				&& formParams.length !== 3
+			)
 			{
 				this.showNoFormsMessage();
 				return;
 			}
-			this.id = formParams[0];
-			this.sec = formParams[1];
-			this.url = formParams[2];
-			this.useStyle = (this.node.dataset[BX.Landing.EmbedFormEntry.ATTR_USE_STYLE] === 'Y');
-			this.design = this.node.dataset[BX.Landing.EmbedFormEntry.ATTR_DESIGN]
-				? JSON.parse(this.node.dataset[BX.Landing.EmbedFormEntry.ATTR_DESIGN])
-				: {};
-			this.primaryOpacityMatcher = new RegExp("--primary([\\da-fA-F]{2})");
 
-			this.load();
+			// LOAD by two variant - full params on with ajax load by marker
+			this.useStyle = (this.node.dataset[BX.Landing.EmbedFormEntry.ATTR_USE_STYLE] === 'Y');
+			let designAttr = this.node.dataset[BX.Landing.EmbedFormEntry.ATTR_DESIGN];
+			this.design = designAttr
+				? JSON.parse(designAttr.replaceAll('&quot;', '"'))
+				: {};
+
+			if(formParams.length === 1)
+			{
+				// can't ajax load params in public
+				if(BX.Landing.getMode() === 'view')
+				{
+					return;
+				}
+
+				var idMarker = formParams[0].match(BX.Landing.EmbedFormEntry.FORM_ID_MATCHER);
+				if(idMarker && idMarker.length === 2)
+				{
+					this.loadParamsById(idMarker[1])
+						.then(this.load.bind(this))
+						.catch(this.showNoFormsMessage.bind(this));
+				}
+				else
+				{
+					this.showNoFormsMessage();
+				}
+			}
+			else if (formParams.length === 3)
+			{
+				this.id = formParams[0];
+				this.sec = formParams[1];
+				this.url = formParams[2];
+				this.load();
+			}
+		},
+
+		loadParamsById: function(formId)
+		{
+			if(!(formId in BX.Landing.EmbedForms.formsData))
+			{
+				BX.Landing.EmbedForms.formsData[formId] = BX.Landing.Backend.getInstance().action(
+					"Form::getById",
+					{formId: formId}
+				);
+			}
+			return BX.Landing.EmbedForms.formsData[formId]
+				.then(function(result) {
+					if (Object.keys(result).length > 0)
+					{
+						this.id = result.ID;
+						this.sec = result.SECURITY_CODE;
+						this.url = result.URL;
+					}
+					else
+					{
+						return Promise.reject();
+					}
+				}.bind(this));
 		},
 
 		showNoFormsMessage: function()
 		{
-			var errorText =
-				(
-					this.node.dataset[BX.Landing.EmbedFormEntry.ATTR_IS_CONNECTOR]
-					&& this.node.dataset[BX.Landing.EmbedFormEntry.ATTR_IS_CONNECTOR] === 'Y'
-				)
-				? BX.message('LANDING_BLOCK_WEBFORM_NO_FORM_BUS_NEW')
-				: BX.message('LANDING_BLOCK_WEBFORM_NO_FORM_CP')
-			;
-			this.node.innerHTML = this.createErrorMessage(BX.message('LANDING_BLOCK_WEBFORM_NO_FORM'), errorText);
+			if(BX.Landing.getMode() !== 'view')
+			{
+				var error = BX.message('LANDING_BLOCK_WEBFORM_NO_FORM');
+				var desc =
+					(
+						this.node.dataset[BX.Landing.EmbedFormEntry.ATTR_IS_CONNECTOR]
+						&& this.node.dataset[BX.Landing.EmbedFormEntry.ATTR_IS_CONNECTOR] === 'Y'
+					)
+						? BX.message('LANDING_BLOCK_WEBFORM_NO_FORM_BUS_NEW')
+						: BX.message('LANDING_BLOCK_WEBFORM_NO_FORM_CP')
+				;
+				this.node.innerHTML = this.createErrorMessage(BX.message('LANDING_BLOCK_WEBFORM_NO_FORM'), desc);
+				BX.onCustomEvent('BX.Landing.BlockAssets.Form:addScript', [{
+					node: this.node,
+					error: error
+				}]);
+			}
 		},
 
 		createErrorMessage: function (title, message)
@@ -137,13 +203,18 @@
 
 		load: function()
 		{
+			BX.onCustomEvent('BX.Landing.BlockAssets.Form:addScript', [{
+				success: true,
+				node: this.node,
+				script: this.url
+			}]);
 			this.node.innerHTML = '';	//clear "no form" alert
 			this.loadScript();
 		},
 
 		unload: function()
 		{
-			if (!b24form || !b24form.App || !this.formObject)
+			if (typeof b24form === 'undefined' || !b24form.App || !this.formObject)
 			{
 				return;
 			}
@@ -163,10 +234,10 @@
 
 		loadScript: function()
 		{
-			var cacheTime = (BX.Landing.getMode() === "edit")
+			const cacheTime = (BX.Landing.getMode() === "edit")
 				? Date.now() / 1000 | 0
 				: Date.now() / 60000 | 0;
-			var script = document.createElement('script');
+			const script = document.createElement('script');
 			script.setAttribute('data-b24-form', 'inline/' + this.id + '/' + this.sec);
 			script.setAttribute('data-skip-moving', 'true');
 			script.innerText =
@@ -175,7 +246,7 @@
 				"var h=d.getElementsByTagName('script')[0];h.parentNode.insertBefore(s,h);" +
 				"})(window,document,'" + this.url + "')"
 			;
-			this.node.append(script);
+			this.node.appendChild(script);
 		},
 
 		onFormLoad: function(formObject)
@@ -189,34 +260,55 @@
 
 		getParams: function()
 		{
-			var params = {
+			const params = {
 				design: {
-					shadow: false
+					shadow: false,
+					font: 'var(--landing-font-family)'
 				}
 			};
 
-			var primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
-			var design = this.design;
-			for (var property in design.color)
+			const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+			let design = this.design;
+			for (const property in design.color)
 			{
 				if (
-					design.color[property] === '--primary'
-					|| design.color[property].match(this.primaryOpacityMatcher) !== null
+					design.color.hasOwnProperty(property)
+					&& (
+						design.color[property] === '--primary'
+						|| design.color[property].match(BX.Landing.EmbedFormEntry.PRIMARY_OPACITY_MATCHER) !== null
+					)
 				)
 				{
 					design.color[property] = design.color[property].replace('--primary', primaryColor);
 				}
 			}
+			if (design.color.background !== undefined)
+			{
+				design.color.popupBackground =
+					(design.color.background.length === 9)
+						? design.color.background.slice(0,7) + 'FF'
+						: design.color.background;
+			}
+
 			params.design = Object.assign(params.design, design);
 			return params;
 		}
 	};
 
-	var embedForms = new BX.Landing.EmbedForms();
+	const embedForms = new BX.Landing.EmbedForms();
+
+	window.addEventListener('b24:form:init:before', function(event)
+	{
+		if (BX.Landing.getMode() === "edit")
+		{
+			// tell form that it's in edit mode
+			event.detail.data.editMode = true;
+		}
+	});
 
 	window.addEventListener('b24:form:init', function(event)
 	{
-		var form = embedForms.getFormByNode(event.detail.object.node.parentElement)
+		const form = embedForms.getFormByNode(event.detail.object.node.parentElement)
 		if (!!form && event.detail.object)
 		{
 			form.onFormLoad(event.detail.object);
@@ -225,7 +317,7 @@
 
 	BX.addCustomEvent("BX.Landing.Block:init", function(event)
 	{
-		var formNode = event.block.querySelector(event.makeRelativeSelector(".bitrix24forms"));
+		const formNode = event.block.querySelector(event.makeRelativeSelector(".bitrix24forms"));
 		if (formNode)
 		{
 			embedForms.add(formNode);
@@ -234,7 +326,7 @@
 
 	BX.addCustomEvent("BX.Landing.Block:remove", function(event)
 	{
-		var formNode = event.block.querySelector(event.makeRelativeSelector(".bitrix24forms"));
+		const formNode = event.block.querySelector(event.makeRelativeSelector(".bitrix24forms"));
 		if (formNode)
 		{
 			embedForms.remove(formNode);
@@ -243,7 +335,7 @@
 
 	BX.addCustomEvent("BX.Landing.Block:Node:updateAttr", function(event)
 	{
-		var formNode = event.block.querySelector(event.makeRelativeSelector(".bitrix24forms"));
+		const formNode = event.block.querySelector(event.makeRelativeSelector(".bitrix24forms"));
 		if (formNode)
 		{
 			embedForms.reload(formNode);

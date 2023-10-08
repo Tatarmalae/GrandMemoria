@@ -1,38 +1,14 @@
 this.BX = this.BX || {};
 this.BX.Landing = this.BX.Landing || {};
 this.BX.Landing.UI = this.BX.Landing.UI || {};
-(function (exports,landing_ui_field_basefield,landing_ui_component_actionpanel,main_core,main_core_events,landing_ui_component_iconbutton,main_popup,ui_draganddrop_draggable,landing_pageobject,landing_ui_field_textfield,landing_loc,landing_ui_component_internal) {
+(function (exports,ui_fonts_opensans,landing_ui_field_basefield,landing_ui_component_actionpanel,ui_designTokens,main_core,main_core_events,landing_ui_component_internal,landing_ui_component_iconbutton,landing_loc,ui_draganddrop_draggable,landing_pageobject,landing_ui_field_textfield,main_popup) {
 	'use strict';
 
-	function _templateObject3() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field-element-", "\">\n\t\t\t\t\t", "\n\t\t\t\t\t<div class=\"landing-ui-field-element-text\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"]);
+	var _templateObject, _templateObject2, _templateObject3;
 
-	  _templateObject3 = function _templateObject3() {
-	    return data;
-	  };
+	function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-	  return data;
-	}
-
-	function _templateObject2() {
-	  var data = babelHelpers.taggedTemplateLiteral(["<div class=\"landing-ui-field-element-text-title\">", "</div>"]);
-
-	  _templateObject2 = function _templateObject2() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _templateObject() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field-element-text-action\">\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"]);
-
-	  _templateObject = function _templateObject() {
-	    return data;
-	  };
-
-	  return data;
-	}
+	function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { babelHelpers.defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 	var defaultOptions = {
 	  removable: true,
 	  draggable: false,
@@ -52,7 +28,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 
 	    _this.subscribeFromOptions(landing_ui_component_internal.fetchEventsFromOptions(options));
 
-	    _this.options = babelHelpers.objectSpread({}, defaultOptions, options);
+	    _this.options = _objectSpread(_objectSpread({}, defaultOptions), options);
 	    _this.cache = new main_core.Cache.MemoryCache();
 	    return _this;
 	  }
@@ -93,7 +69,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      var _this3 = this;
 
 	      return this.cache.remember('actionsLayout', function () {
-	        return main_core.Tag.render(_templateObject(), _this3.getActionsDropdown().getLayout());
+	        return main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field-element-text-action\">\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"])), _this3.getActionsDropdown().getLayout());
 	      });
 	    }
 	  }, {
@@ -102,7 +78,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      var _this4 = this;
 
 	      return this.cache.remember('titleLayout', function () {
-	        return main_core.Tag.render(_templateObject2(), _this4.options.title);
+	        return main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["<div class=\"landing-ui-field-element-text-title\">", "</div>"])), _this4.options.title);
 	      });
 	    }
 	  }, {
@@ -131,7 +107,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      var _this6 = this;
 
 	      return this.cache.remember('layout', function () {
-	        return main_core.Tag.render(_templateObject3(), _this6.options.color, _this6.options.draggable ? _this6.getDragButtonLayout() : '', _this6.options.actionsLabel ? _this6.getActionsLayout() : '', _this6.getTitleLayout(), _this6.options.removable ? _this6.getRemoveButtonLayout() : '');
+	        return main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field-element-", "\">\n\t\t\t\t\t", "\n\t\t\t\t\t<div class=\"landing-ui-field-element-text\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"])), _this6.options.color, _this6.options.draggable ? _this6.getDragButtonLayout() : '', _this6.options.actionsLabel ? _this6.getActionsLayout() : '', _this6.getTitleLayout(), _this6.options.removable ? _this6.getRemoveButtonLayout() : '');
 	      });
 	    }
 	  }]);
@@ -143,123 +119,11 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	  red: 'red'
 	});
 
-	var listValueSettingsItems = [{
-	  value: 'equal',
-	  label: landing_loc.Loc.getMessage('LANDING_RULE_FIELD_CONDITION_VALUE_SETTINGS_EQUAL')
-	}, {
-	  value: 'not-equal',
-	  label: landing_loc.Loc.getMessage('LANDING_RULE_FIELD_CONDITION_VALUE_SETTINGS_NOT_EQUAL')
-	}];
+	var _templateObject$1, _templateObject2$1, _templateObject3$1, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10;
 
-	function _templateObject11() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-rule-entry\">\n\t\t\t\t\t", "\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"]);
+	function ownKeys$1(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-	  _templateObject11 = function _templateObject11() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _templateObject10() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-rule-entry-expression\">\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"]);
-
-	  _templateObject10 = function _templateObject10() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _templateObject9() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-rule-entry-expression-link\">\n\t\t\t\t\t<div \n\t\t\t\t\t\tclass=\"landing-ui-rule-entry-expression-link-text\"\n\t\t\t\t\t\tonclick=\"", "\"\n\t\t\t\t\t>\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"landing-ui-rule-entry-expression-link-sep\"></div>\n\t\t\t\t</div>\n\t\t\t"]);
-
-	  _templateObject9 = function _templateObject9() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _templateObject8() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-rule-entry-condition\">\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"]);
-
-	  _templateObject8 = function _templateObject8() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _templateObject7() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-rule-entry-condition-value\">\n\t\t\t\t\t<div class=\"landing-ui-rule-entry-condition-value-text\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"]);
-
-	  _templateObject7 = function _templateObject7() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _templateObject6() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div \n\t\t\t\t\tclass=\"landing-ui-rule-entry-condition-value-value-label\"\n\t\t\t\t\tonclick=\"", "\"\n\t\t\t\t>\n\t\t\t\t\t", "\n\t\t\t\t</div>\t\t\t\n\t\t\t"]);
-
-	  _templateObject6 = function _templateObject6() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _templateObject5() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-rule-entry-condition-value-operator\">\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"]);
-
-	  _templateObject5 = function _templateObject5() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _templateObject4() {
-	  var data = babelHelpers.taggedTemplateLiteral(["<div class=\"value-settings-popup\"></div>"]);
-
-	  _templateObject4 = function _templateObject4() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _templateObject3$1() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"value-settings-item value-settings-item-value\">\n\t\t\t\t<input \n\t\t\t\t\ttype=\"radio\" \n\t\t\t\t\tid=\"value_", "_", "\" \n\t\t\t\t\tname=\"value_", "_", "\"\n\t\t\t\t\tonchange=\"", "\"\n\t\t\t\t\t", "\n\t\t\t\t>\n\t\t\t\t<label for=\"value_", "_", "\">", "</label>\n\t\t\t</div>\n\t\t"]);
-
-	  _templateObject3$1 = function _templateObject3() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _templateObject2$1() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"value-settings-item\">\n\t\t\t\t<input \n\t\t\t\t\ttype=\"radio\" \n\t\t\t\t\tid=\"operator_", "_", "\" \n\t\t\t\t\tname=\"operator_", "_", "\"\n\t\t\t\t\tonchange=\"", "\"\n\t\t\t\t\t", "\n\t\t\t\t>\n\t\t\t\t<label for=\"operator_", "_", "\">", "</label>\n\t\t\t</div>\n\t\t"]);
-
-	  _templateObject2$1 = function _templateObject2() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _templateObject$1() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"value-settings-item-separator\"></div>\n\t\t"]);
-
-	  _templateObject$1 = function _templateObject() {
-	    return data;
-	  };
-
-	  return data;
-	}
+	function _objectSpread$1(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$1(Object(source), !0).forEach(function (key) { babelHelpers.defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$1(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 	var RuleEntry = /*#__PURE__*/function (_EventEmitter) {
 	  babelHelpers.inherits(RuleEntry, _EventEmitter);
 
@@ -273,7 +137,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 
 	    _this.subscribeFromOptions(landing_ui_component_internal.fetchEventsFromOptions(options));
 
-	    _this.options = babelHelpers.objectSpread({}, options);
+	    _this.options = _objectSpread$1({}, options);
 	    _this.cache = new main_core.Cache.MemoryCache();
 	    _this.draggable = new ui_draganddrop_draggable.Draggable({
 	      container: _this.getExpressionContainer(),
@@ -312,48 +176,67 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	    });
 
 	    return _this;
-	  } // eslint-disable-next-line class-methods-use-this
-
+	  }
 
 	  babelHelpers.createClass(RuleEntry, [{
-	    key: "renderSeparator",
-	    value: function renderSeparator() {
-	      return main_core.Tag.render(_templateObject$1());
+	    key: "getOperatorField",
+	    value: function getOperatorField() {
+	      var _this2 = this;
+
+	      return this.cache.remember('operatorField', function () {
+	        var condition = _this2.options.dictionary.deps.condition;
+	        return new BX.Landing.UI.Field.Radio({
+	          selector: 'operator',
+	          value: [_this2.state.condition.operator],
+	          items: condition.operations.filter(function (item) {
+	            return !main_core.Type.isArrayFilled(item.fieldTypes) || item.fieldTypes.includes(_this2.options.condition.field.type);
+	          }).map(function (item) {
+	            return {
+	              name: item.name,
+	              value: item.id
+	            };
+	          }),
+	          onChange: _this2.onOperatorChange.bind(_this2)
+	        });
+	      });
 	    }
 	  }, {
-	    key: "renderOperatorRadioButton",
-	    value: function renderOperatorRadioButton(_ref) {
-	      var _this2 = this;
+	    key: "getOperatorLabel",
+	    value: function getOperatorLabel(operator) {
+	      var operatorField = this.getOperatorField();
+	      return operatorField.items.reduce(function (acc, item) {
+	        return String(item.value) === String(operator) ? item.name : acc;
+	      }, '');
+	    }
+	  }, {
+	    key: "onOperatorChange",
+	    value: function onOperatorChange() {
+	      var operatorField = this.getOperatorField();
+
+	      var _operatorField$getVal = operatorField.getValue(),
+	          _operatorField$getVal2 = babelHelpers.slicedToArray(_operatorField$getVal, 1),
+	          value = _operatorField$getVal2[0];
+
+	      this.getOperatorLabelLayout().textContent = this.getOperatorLabel(value);
+	      this.state.condition.operator = value;
+	      this.emit('onChange');
+	    }
+	  }, {
+	    key: "getSeparator",
+	    value: function getSeparator() {
+	      return this.cache.remember('separator', function () {
+	        return main_core.Tag.render(_templateObject$1 || (_templateObject$1 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"value-settings-item-separator\"></div>\n\t\t\t"])));
+	      });
+	    }
+	  }, {
+	    key: "renderValueRadioButton",
+	    value: function renderValueRadioButton(_ref) {
+	      var _this3 = this;
 
 	      var label = _ref.label,
 	          value = _ref.value,
 	          id = _ref.id,
-	          _ref$checked = _ref.checked,
-	          checked = _ref$checked === void 0 ? false : _ref$checked;
-
-	      var onChanage = function onChanage() {
-	        if (value === 'equal') {
-	          _this2.getOperatorLabelLayout().textContent = landing_loc.Loc.getMessage('LANDING_RULE_FIELD_CONDITION_VALUE_EQUALS');
-	          _this2.state.condition.operator = '=';
-	        } else {
-	          _this2.getOperatorLabelLayout().textContent = landing_loc.Loc.getMessage('LANDING_RULE_FIELD_CONDITION_VALUE_NOT_EQUALS');
-	          _this2.state.condition.operator = '!=';
-	        }
-
-	        _this2.emit('onChange');
-	      };
-
-	      return main_core.Tag.render(_templateObject2$1(), id, value, id, this.options.condition.field.id, onChanage, checked ? 'checked' : '', id, value, label);
-	    }
-	  }, {
-	    key: "renderValueRadioButton",
-	    value: function renderValueRadioButton(_ref2) {
-	      var _this3 = this;
-
-	      var label = _ref2.label,
-	          value = _ref2.value,
-	          id = _ref2.id,
-	          checked = _ref2.checked;
+	          checked = _ref.checked;
 
 	      var onChange = function onChange() {
 	        _this3.setValueLabelText(label);
@@ -363,7 +246,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	        _this3.emit('onChange');
 	      };
 
-	      return main_core.Tag.render(_templateObject3$1(), id, value, id, this.options.condition.field.id, onChange, checked ? 'checked' : '', id, value, label);
+	      return main_core.Tag.render(_templateObject2$1 || (_templateObject2$1 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"value-settings-item value-settings-item-value\">\n\t\t\t\t<input \n\t\t\t\t\ttype=\"radio\" \n\t\t\t\t\tid=\"value_", "_", "\" \n\t\t\t\t\tname=\"value_", "_", "\"\n\t\t\t\t\tonchange=\"", "\"\n\t\t\t\t\t", "\n\t\t\t\t>\n\t\t\t\t<label for=\"value_", "_", "\">", "</label>\n\t\t\t</div>\n\t\t"])), id, value, id, this.options.condition.field.id, onChange, checked ? 'checked' : '', id, value, label);
 	    }
 	  }, {
 	    key: "getValueSettingsPopup",
@@ -372,17 +255,15 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 
 	      return this.cache.remember('valueSettingsPopup', function () {
 	        var rootWindow = landing_pageobject.PageObject.getRootWindow();
-	        var popupContent = main_core.Tag.render(_templateObject4());
+	        var popupContent = main_core.Tag.render(_templateObject3$1 || (_templateObject3$1 = babelHelpers.taggedTemplateLiteral(["<div class=\"value-settings-popup\"></div>"])));
 	        var random = main_core.Text.getRandom();
 
 	        if (_this4.options.condition.field.type === 'list' || _this4.options.condition.field.type === 'checkbox' || _this4.options.condition.field.type === 'radio' || _this4.options.condition.field.type === 'bool') {
-	          listValueSettingsItems.forEach(function (item, index) {
-	            main_core.Dom.append(_this4.renderOperatorRadioButton(babelHelpers.objectSpread({}, item, {
-	              id: random,
-	              checked: index === 0
-	            })), popupContent);
-	          });
-	          main_core.Dom.append(_this4.renderSeparator(), popupContent);
+	          var operatorField = _this4.getOperatorField();
+
+	          operatorField.setValue(_this4.options.condition.operator);
+	          main_core.Dom.append(operatorField.getLayout(), popupContent);
+	          main_core.Dom.append(_this4.getSeparator(), popupContent);
 
 	          var valueItems = function () {
 	            if (_this4.options.condition.field.type === 'bool') {
@@ -399,20 +280,19 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	          }();
 
 	          valueItems.forEach(function (item) {
-	            var checked = _this4.options.condition.field.value === item.value;
-	            main_core.Dom.append(main_core.Dom.append(_this4.renderValueRadioButton(babelHelpers.objectSpread({}, item, {
+	            var checked = String(_this4.options.condition.value) === String(item.value);
+	            main_core.Dom.append(main_core.Dom.append(_this4.renderValueRadioButton(_objectSpread$1(_objectSpread$1({}, item), {}, {
 	              id: random,
 	              checked: checked
 	            })), popupContent), popupContent);
 	          });
 	        } else {
-	          listValueSettingsItems.forEach(function (item, index) {
-	            main_core.Dom.append(_this4.renderOperatorRadioButton(babelHelpers.objectSpread({}, item, {
-	              id: random,
-	              checked: index === 0
-	            })), popupContent);
-	          });
-	          main_core.Dom.append(_this4.renderSeparator(), popupContent);
+	          var _operatorField = _this4.getOperatorField();
+
+	          _operatorField.setValue(_this4.options.condition.operator);
+
+	          main_core.Dom.append(_operatorField.getLayout(), popupContent);
+	          main_core.Dom.append(_this4.getSeparator(), popupContent);
 	          var inputField = new landing_ui_field_textfield.TextField({
 	            textOnly: true,
 	            onValueChange: function onValueChange() {
@@ -458,7 +338,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      var _this5 = this;
 
 	      return this.cache.remember('operatorLayout', function () {
-	        return main_core.Tag.render(_templateObject5(), landing_loc.Loc.getMessage("LANDING_RULE_FIELD_CONDITION_VALUE_".concat(_this5.options.condition.operator === '=' ? 'EQUALS' : 'NOT_EQUALS')));
+	        return main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-rule-entry-condition-value-operator\">\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"])), _this5.getOperatorLabel(_this5.options.condition.operator));
 	      });
 	    }
 	  }, {
@@ -468,7 +348,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 
 	      if (main_core.Type.isArray(this.options.condition.field.items)) {
 	        var valueItem = this.options.condition.field.items.find(function (item) {
-	          return item.value === _this6.options.condition.value;
+	          return String(item.value) === String(_this6.options.condition.value);
 	        });
 
 	        if (valueItem && main_core.Type.isString(valueItem.label)) {
@@ -496,7 +376,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      var _this7 = this;
 
 	      return this.cache.remember('valueLabelLayout', function () {
-	        return main_core.Tag.render(_templateObject6(), _this7.onValueLabelClick.bind(_this7), _this7.getValueLabel());
+	        return main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div \n\t\t\t\t\tclass=\"landing-ui-rule-entry-condition-value-value-label\"\n\t\t\t\t\tonclick=\"", "\"\n\t\t\t\t>\n\t\t\t\t\t", "\n\t\t\t\t</div>\t\t\t\n\t\t\t"])), _this7.onValueLabelClick.bind(_this7), _this7.getValueLabel());
 	      });
 	    }
 	  }, {
@@ -534,7 +414,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	        // 		this.emit('onRemove');
 	        // 	},
 	        // });
-	        return main_core.Tag.render(_templateObject7(), _this8.getOperatorLabelLayout(), _this8.getValueLabelLayout());
+	        return main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-rule-entry-condition-value\">\n\t\t\t\t\t<div class=\"landing-ui-rule-entry-condition-value-text\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"])), _this8.getOperatorLabelLayout(), _this8.getValueLabelLayout());
 	      });
 	    }
 	  }, {
@@ -543,7 +423,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      var _this9 = this;
 
 	      return this.cache.remember('conditionContainer', function () {
-	        return main_core.Tag.render(_templateObject8(), _this9.getConditionValueLayout());
+	        return main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-rule-entry-condition\">\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"])), _this9.getConditionValueLayout());
 	      });
 	    }
 	  }, {
@@ -556,7 +436,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	          bindElement: _this10.getAddFieldLink(),
 	          maxHeight: 205,
 	          items: _this10.options.fieldsList.filter(function (field) {
-	            return field.type !== 'page' && field.type !== 'layout';
+	            return field.type !== 'page' && field.type !== 'layout' && field.id !== _this10.options.condition.field.id;
 	          }).map(function (item) {
 	            return {
 	              id: item.id,
@@ -599,10 +479,11 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	  }, {
 	    key: "addExpressionItem",
 	    value: function addExpressionItem(options) {
-	      var preparedOptions = babelHelpers.objectSpread({
+	      var preparedOptions = _objectSpread$1({
 	        preventEvent: false,
 	        action: 'show'
 	      }, options);
+
 	      var fieldElement = new FieldElement({
 	        id: preparedOptions.id,
 	        title: preparedOptions.label,
@@ -681,7 +562,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      var _this11 = this;
 
 	      return this.cache.remember('addFieldLink', function () {
-	        return main_core.Tag.render(_templateObject9(), _this11.onAddFieldLinkClick.bind(_this11), landing_loc.Loc.getMessage('LANDING_RULE_FIELD_EXPRESSION_ADD_FIELD_LINK_LABEL'));
+	        return main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-rule-entry-expression-link\">\n\t\t\t\t\t<div \n\t\t\t\t\t\tclass=\"landing-ui-rule-entry-expression-link-text\"\n\t\t\t\t\t\tonclick=\"", "\"\n\t\t\t\t\t>\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"landing-ui-rule-entry-expression-link-sep\"></div>\n\t\t\t\t</div>\n\t\t\t"])), _this11.onAddFieldLinkClick.bind(_this11), landing_loc.Loc.getMessage('LANDING_RULE_FIELD_EXPRESSION_ADD_FIELD_LINK_LABEL'));
 	      });
 	    }
 	  }, {
@@ -690,7 +571,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      var _this12 = this;
 
 	      return this.cache.remember('expressionContainer', function () {
-	        return main_core.Tag.render(_templateObject10(), _this12.getAddFieldLink());
+	        return main_core.Tag.render(_templateObject9 || (_templateObject9 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-rule-entry-expression\">\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"])), _this12.getAddFieldLink());
 	      });
 	    }
 	  }, {
@@ -699,7 +580,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      var _this13 = this;
 
 	      return this.cache.remember('layout', function () {
-	        return main_core.Tag.render(_templateObject11(), _this13.getConditionContainer(), _this13.getExpressionContainer());
+	        return main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-rule-entry\">\n\t\t\t\t\t", "\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"])), _this13.getConditionContainer(), _this13.getExpressionContainer());
 	      });
 	    }
 	  }, {
@@ -717,35 +598,11 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	  return RuleEntry;
 	}(main_core_events.EventEmitter);
 
-	function _templateObject3$2() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field-rule-field-row\">\n\t\t\t\t\t", "\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"]);
+	var _templateObject$2, _templateObject2$2, _templateObject3$2;
 
-	  _templateObject3$2 = function _templateObject3() {
-	    return data;
-	  };
+	function ownKeys$2(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-	  return data;
-	}
-
-	function _templateObject2$2() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field-rule-field-row-list\"></div>\n\t\t\t"]);
-
-	  _templateObject2$2 = function _templateObject2() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _templateObject$2() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field-rule-field-row-field-container\">\n\t\t\t\t\t<div class=\"landing-ui-field-rule-field-row-field-container-title\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t", "\n\t\t\t\t\t<div class=\"landing-ui-field-rule-field-row-field-container-action-title\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"]);
-
-	  _templateObject$2 = function _templateObject() {
-	    return data;
-	  };
-
-	  return data;
-	}
+	function _objectSpread$2(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$2(Object(source), !0).forEach(function (key) { babelHelpers.defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$2(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 	var FieldRules = /*#__PURE__*/function (_EventEmitter) {
 	  babelHelpers.inherits(FieldRules, _EventEmitter);
 
@@ -758,7 +615,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 
 	    _this.setEventNamespace('BX.Landing.UI.Field.RuleField.FieldRow');
 
-	    _this.options = babelHelpers.objectSpread({}, options);
+	    _this.options = _objectSpread$2({}, options);
 	    _this.cache = new main_core.Cache.MemoryCache();
 	    _this.entries = [];
 	    _this.onEntryChange = _this.onEntryChange.bind(babelHelpers.assertThisInitialized(_this));
@@ -771,8 +628,9 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	  babelHelpers.createClass(FieldRules, [{
 	    key: "addRule",
 	    value: function addRule(ruleOptions) {
-	      var entry = new RuleEntry(babelHelpers.objectSpread({}, ruleOptions, {
-	        fieldsList: this.options.fields
+	      var entry = new RuleEntry(_objectSpread$2(_objectSpread$2({}, ruleOptions), {}, {
+	        fieldsList: this.options.fields,
+	        dictionary: this.options.dictionary
 	      }));
 	      this.entries.push(entry);
 	      entry.subscribe('onChange', this.onEntryChange);
@@ -812,14 +670,14 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      var _this3 = this;
 
 	      return this.cache.remember('fieldContainer', function () {
-	        return main_core.Tag.render(_templateObject$2(), landing_loc.Loc.getMessage('LANDING_RULE_FIELD_CONDITION_FIELD_TITLE'), _this3.getConditionFieldLayout(), landing_loc.Loc.getMessage('LANDING_RULE_FIELD_CONDITION_FIELD_SHOW_ACTION_TITLE'));
+	        return main_core.Tag.render(_templateObject$2 || (_templateObject$2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field-rule-field-row-field-container\">\n\t\t\t\t\t<div class=\"landing-ui-field-rule-field-row-field-container-title\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t", "\n\t\t\t\t\t<div class=\"landing-ui-field-rule-field-row-field-container-action-title\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"])), landing_loc.Loc.getMessage('LANDING_RULE_FIELD_CONDITION_FIELD_TITLE'), _this3.getConditionFieldLayout(), landing_loc.Loc.getMessage('LANDING_RULE_FIELD_CONDITION_FIELD_SHOW_ACTION_TITLE'));
 	      });
 	    }
 	  }, {
 	    key: "getListContainer",
 	    value: function getListContainer() {
 	      return this.cache.remember('listContainer', function () {
-	        return main_core.Tag.render(_templateObject2$2());
+	        return main_core.Tag.render(_templateObject2$2 || (_templateObject2$2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field-rule-field-row-list\"></div>\n\t\t\t"])));
 	      });
 	    }
 	  }, {
@@ -828,7 +686,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      var _this4 = this;
 
 	      return this.cache.remember('layout', function () {
-	        return main_core.Tag.render(_templateObject3$2(), _this4.getFieldContainer(), _this4.getListContainer());
+	        return main_core.Tag.render(_templateObject3$2 || (_templateObject3$2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field-rule-field-row\">\n\t\t\t\t\t", "\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"])), _this4.getFieldContainer(), _this4.getListContainer());
 	      });
 	    }
 	  }, {
@@ -842,45 +700,11 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	  return FieldRules;
 	}(main_core_events.EventEmitter);
 
-	function _templateObject4$1() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field-rule-footer\">\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"]);
+	var _templateObject$3, _templateObject2$3, _templateObject3$3, _templateObject4$1;
 
-	  _templateObject4$1 = function _templateObject4() {
-	    return data;
-	  };
+	function ownKeys$3(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-	  return data;
-	}
-
-	function _templateObject3$3() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field-rule-body\"></div>\n\t\t\t"]);
-
-	  _templateObject3$3 = function _templateObject3() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _templateObject2$3() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field-rule-header\">\n\t\t\t\t\t", "\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"]);
-
-	  _templateObject2$3 = function _templateObject2() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _templateObject$3() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field-rule-header-title\">", "</div>\n\t\t\t"]);
-
-	  _templateObject$3 = function _templateObject() {
-	    return data;
-	  };
-
-	  return data;
-	}
+	function _objectSpread$3(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$3(Object(source), !0).forEach(function (key) { babelHelpers.defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$3(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 	/**
 	 * @memberOf BX.Landing.UI.Field
 	 */
@@ -906,30 +730,50 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	    main_core.Dom.append(_this.getHeaderLayout(), _this.getLayout());
 	    main_core.Dom.append(_this.getBodyLayout(), _this.getLayout());
 	    main_core.Dom.append(_this.getFooterLayout(), _this.getLayout());
+
+	    _this.setRuleType(_this.options.type);
+
 	    _this.rows = [];
 
 	    _this.options.rules.forEach(function (rule) {
 	      _this.addRule(rule);
 	    });
 
-	    var hideLabel = _this.options.rules.some(function (rule) {
-	      return rule.expression.length > 0;
-	    });
-
-	    if (hideLabel) {
-	      var label = _this.rows[0].getFieldContainer().querySelector('.landing-ui-field-rule-field-row-field-container-action-title');
-
-	      main_core.Dom.hide(label);
+	    if (_this.hasExpression()) {
+	      _this.hideExpressionsLabel();
 	    }
 
 	    return _this;
 	  }
 
 	  babelHelpers.createClass(RuleField, [{
+	    key: "hideExpressionsLabel",
+	    value: function hideExpressionsLabel() {
+	      main_core.Dom.hide(this.rows[0].getFieldContainer().querySelector('.landing-ui-field-rule-field-row-field-container-action-title'));
+	    }
+	  }, {
+	    key: "hasExpression",
+	    value: function hasExpression() {
+	      return this.options.rules.some(function (rule) {
+	        return rule.expression.length > 0;
+	      });
+	    }
+	  }, {
+	    key: "setRuleType",
+	    value: function setRuleType(type) {
+	      this.cache.set('ruleType', type);
+	    }
+	  }, {
+	    key: "getRuleType",
+	    value: function getRuleType() {
+	      return this.cache.get('ruleType');
+	    }
+	  }, {
 	    key: "addRule",
 	    value: function addRule(fieldRules) {
-	      var row = new FieldRules(babelHelpers.objectSpread({}, fieldRules, {
-	        fields: this.options.fields
+	      var row = new FieldRules(_objectSpread$3(_objectSpread$3({}, fieldRules), {}, {
+	        fields: this.options.fields,
+	        dictionary: this.options.dictionary
 	      }));
 	      this.rows.push(row);
 	      row.subscribe('onChange', this.onRowChange);
@@ -955,7 +799,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	    key: "getHeaderTitleLayout",
 	    value: function getHeaderTitleLayout() {
 	      return this.cache.remember('headerTitleLayout', function () {
-	        return main_core.Tag.render(_templateObject$3(), landing_loc.Loc.getMessage('LANDING_FIELDS_RULES_TYPE_1'));
+	        return main_core.Tag.render(_templateObject$3 || (_templateObject$3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field-rule-header-title\">", "</div>\n\t\t\t"])), landing_loc.Loc.getMessage('LANDING_FIELDS_RULES_TYPE_1'));
 	      });
 	    }
 	  }, {
@@ -981,14 +825,14 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      var _this3 = this;
 
 	      return this.cache.remember('headerLayout', function () {
-	        return main_core.Tag.render(_templateObject2$3(), _this3.getHeaderTitleLayout(), _this3.getRemoveButtonLayout());
+	        return main_core.Tag.render(_templateObject2$3 || (_templateObject2$3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field-rule-header\">\n\t\t\t\t\t", "\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"])), _this3.getHeaderTitleLayout(), _this3.getRemoveButtonLayout());
 	      });
 	    }
 	  }, {
 	    key: "getBodyLayout",
 	    value: function getBodyLayout() {
 	      return this.cache.remember('bodyLayout', function () {
-	        return main_core.Tag.render(_templateObject3$3());
+	        return main_core.Tag.render(_templateObject3$3 || (_templateObject3$3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field-rule-body\"></div>\n\t\t\t"])));
 	      });
 	    }
 	  }, {
@@ -997,7 +841,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      var _this4 = this;
 
 	      return this.cache.remember('footerLayout', function () {
-	        return main_core.Tag.render(_templateObject4$1(), _this4.getFooterActionPanel().getLayout());
+	        return main_core.Tag.render(_templateObject4$1 || (_templateObject4$1 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field-rule-footer\">\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"])), _this4.getFooterActionPanel().getLayout());
 	      });
 	    }
 	  }, {
@@ -1032,9 +876,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	        return new window.top.BX.Main.Menu({
 	          bindElement: _this6.getFooterActionPanel().getLeftContainer().firstElementChild,
 	          maxHeight: 205,
-	          items: _this6.options.fields.filter(function (field) {
-	            return field.type !== 'page' && field.type !== 'layout';
-	          }).map(function (field) {
+	          items: _this6.options.fields.map(function (field) {
 	            return {
 	              id: field.id,
 	              text: field.label,
@@ -1078,5 +920,5 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 
 	exports.RuleField = RuleField;
 
-}((this.BX.Landing.UI.Field = this.BX.Landing.UI.Field || {}),BX.Landing.UI.Field,BX.Landing.UI.Component,BX,BX.Event,BX.Landing.UI.Component,BX.Main,BX.UI.DragAndDrop,BX.Landing,BX.Landing.UI.Field,BX.Landing,BX.Landing.UI.Component));
+}((this.BX.Landing.UI.Field = this.BX.Landing.UI.Field || {}),BX,BX.Landing.UI.Field,BX.Landing.UI.Component,BX,BX,BX.Event,BX.Landing.UI.Component,BX.Landing.UI.Component,BX.Landing,BX.UI.DragAndDrop,BX.Landing,BX.Landing.UI.Field,BX.Main));
 //# sourceMappingURL=rulefield.bundle.js.map

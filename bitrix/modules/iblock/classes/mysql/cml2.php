@@ -1,4 +1,4 @@
-<?
+<?php
 use Bitrix\Main;
 
 /*
@@ -10,7 +10,7 @@ class CIBlockXMLFile
 	var $_sessid = "";
 
 	var $charset = false;
-	var $element_stack = false;
+	var $element_stack = [];
 	var $file_position = 0;
 
 	var $read_size = 10240;
@@ -18,12 +18,9 @@ class CIBlockXMLFile
 	var $buf_position = 0;
 	var $buf_len = 0;
 
-	private $_get_xml_chunk_function = "_get_xml_chunk";
-
 	function __construct($table_name = "b_xml_tree")
 	{
 		$this->_table_name = strtolower($table_name);
-		$this->_get_xml_chunk_function = "_get_xml_chunk";
 	}
 
 	function StartSession($sess_id)
@@ -100,60 +97,46 @@ class CIBlockXMLFile
 	return : result of the CDatabase::Query method
 	We use drop due to mysql innodb slow truncate bug.
 	*/
-	function DropTemporaryTables()
+	public function DropTemporaryTables()
 	{
-		if(!isset($this) || !is_object($this) || $this->_table_name == '')
+		global $DB;
+
+		if ($DB->TableExists($this->_table_name))
 		{
-			$ob = new CIBlockXMLFile;
-			return $ob->DropTemporaryTables();
+			return $DB->DDL("drop table ".$this->_table_name);
 		}
-		else
-		{
-			global $DB;
-			if($DB->TableExists($this->_table_name))
-				return $DB->DDL("drop table ".$this->_table_name);
-			else
-				return true;
-		}
+		return true;
 	}
 
-	function CreateTemporaryTables($with_sess_id = false)
+	public function CreateTemporaryTables($with_sess_id = false)
 	{
-		if(!isset($this) || !is_object($this) || $this->_table_name == '')
-		{
-			$ob = new CIBlockXMLFile;
-			return $ob->CreateTemporaryTables();
-		}
-		else
-		{
-			global $DB;
+		global $DB;
 
-			if ($DB->TableExists($this->_table_name))
-				return false;
+		if ($DB->TableExists($this->_table_name))
+			return false;
 
-			if(defined("MYSQL_TABLE_TYPE") && MYSQL_TABLE_TYPE <> '')
-				$DB->Query("SET storage_engine = '".MYSQL_TABLE_TYPE."'", true);
+		if(defined("MYSQL_TABLE_TYPE") && MYSQL_TABLE_TYPE <> '')
+			$DB->Query("SET storage_engine = '".MYSQL_TABLE_TYPE."'", true);
 
-			$res = $DB->DDL("create table ".$this->_table_name."
-				(
-					ID int(11) not null auto_increment,
-					".($with_sess_id? "SESS_ID varchar(32),": "")."
-					PARENT_ID int(11),
-					LEFT_MARGIN int(11),
-					RIGHT_MARGIN int(11),
-					DEPTH_LEVEL int(11),
-					NAME varchar(255),
-					VALUE longtext,
-					ATTRIBUTES text,
-					PRIMARY KEY (ID)
-				)
-			");
+		$res = $DB->DDL("create table ".$this->_table_name."
+			(
+				ID bigint not null auto_increment,
+				".($with_sess_id? "SESS_ID varchar(32),": "")."
+				PARENT_ID bigint,
+				LEFT_MARGIN int(11),
+				RIGHT_MARGIN int(11),
+				DEPTH_LEVEL int(11),
+				NAME varchar(255),
+				VALUE longtext,
+				ATTRIBUTES text,
+				PRIMARY KEY (ID)
+			)
+		");
 
-			if ($res && defined("BX_XML_CREATE_INDEXES_IMMEDIATELY"))
-				$res = $this->IndexTemporaryTables($with_sess_id);
+		if ($res && defined("BX_XML_CREATE_INDEXES_IMMEDIATELY"))
+			$res = $this->IndexTemporaryTables($with_sess_id);
 
-			return $res;
-		}
+		return $res;
 	}
 
 	function IsExistTemporaryTable()
@@ -199,35 +182,27 @@ class CIBlockXMLFile
 
 	return : result of the CDatabase::Query method
 	*/
-	function IndexTemporaryTables($with_sess_id = false)
+	public function IndexTemporaryTables($with_sess_id = false)
 	{
-		if(!isset($this) || !is_object($this) || $this->_table_name == '')
+		global $DB;
+		$res = true;
+
+		if($with_sess_id)
 		{
-			$ob = new CIBlockXMLFile;
-			return $ob->IndexTemporaryTables();
+			if(!$DB->IndexExists($this->_table_name, array("SESS_ID", "PARENT_ID")))
+				$res = $DB->DDL("CREATE INDEX ix_".$this->_table_name."_parent on ".$this->_table_name."(SESS_ID, PARENT_ID)");
+			if($res && !$DB->IndexExists($this->_table_name, array("SESS_ID", "LEFT_MARGIN")))
+				$res = $DB->DDL("CREATE INDEX ix_".$this->_table_name."_left on ".$this->_table_name."(SESS_ID, LEFT_MARGIN)");
 		}
 		else
 		{
-			global $DB;
-			$res = true;
-
-			if($with_sess_id)
-			{
-				if(!$DB->IndexExists($this->_table_name, array("SESS_ID", "PARENT_ID")))
-					$res = $DB->DDL("CREATE INDEX ix_".$this->_table_name."_parent on ".$this->_table_name."(SESS_ID, PARENT_ID)");
-				if($res && !$DB->IndexExists($this->_table_name, array("SESS_ID", "LEFT_MARGIN")))
-					$res = $DB->DDL("CREATE INDEX ix_".$this->_table_name."_left on ".$this->_table_name."(SESS_ID, LEFT_MARGIN)");
-			}
-			else
-			{
-				if(!$DB->IndexExists($this->_table_name, array("PARENT_ID")))
-					$res = $DB->DDL("CREATE INDEX ix_".$this->_table_name."_parent on ".$this->_table_name."(PARENT_ID)");
-				if($res && !$DB->IndexExists($this->_table_name, array("LEFT_MARGIN")))
-					$res = $DB->DDL("CREATE INDEX ix_".$this->_table_name."_left on ".$this->_table_name."(LEFT_MARGIN)");
-			}
-
-			return $res;
+			if(!$DB->IndexExists($this->_table_name, array("PARENT_ID")))
+				$res = $DB->DDL("CREATE INDEX ix_".$this->_table_name."_parent on ".$this->_table_name."(PARENT_ID)");
+			if($res && !$DB->IndexExists($this->_table_name, array("LEFT_MARGIN")))
+				$res = $DB->DDL("CREATE INDEX ix_".$this->_table_name."_left on ".$this->_table_name."(LEFT_MARGIN)");
 		}
+
+		return $res;
 	}
 
 	function Add($arFields)
@@ -235,15 +210,15 @@ class CIBlockXMLFile
 		global $DB;
 
 		$strSql1 = "PARENT_ID, LEFT_MARGIN, RIGHT_MARGIN, DEPTH_LEVEL, NAME";
-		$strSql2 = intval($arFields["PARENT_ID"]).", ".intval($arFields["LEFT_MARGIN"]).", ".intval($arFields["RIGHT_MARGIN"]).", ".intval($arFields["DEPTH_LEVEL"]).", '".$DB->ForSQL($arFields["NAME"], 255)."'";
+		$strSql2 = (int)$arFields["PARENT_ID"].", ".(int)$arFields["LEFT_MARGIN"].", ".(int)$arFields["RIGHT_MARGIN"].", ".(int)$arFields["DEPTH_LEVEL"].", '".$DB->ForSQL($arFields["NAME"], 255)."'";
 
-		if(array_key_exists("ATTRIBUTES", $arFields))
+		if (isset($arFields["ATTRIBUTES"]))
 		{
 			$strSql1 .= ", ATTRIBUTES";
 			$strSql2 .= ", '".$DB->ForSQL($arFields["ATTRIBUTES"])."'";
 		}
 
-		if(array_key_exists("VALUE", $arFields))
+		if (isset($arFields["VALUE"]))
 		{
 			$strSql1 .= ", VALUE";
 			$strSql2 .= ", '".$DB->ForSQL($arFields["VALUE"])."'";
@@ -257,7 +232,7 @@ class CIBlockXMLFile
 
 		$strSql = "INSERT INTO ".$this->_table_name." (".$strSql1.") VALUES (".$strSql2.")";
 
-		$rs = $DB->Query($strSql);
+		$DB->Query($strSql);
 
 		return $DB->LastID();
 	}
@@ -559,7 +534,6 @@ class CIBlockXMLFile
 	*/
 	function _start_element($xmlChunk)
 	{
-		global $DB;
 		static $search = array(
 				"'&(quot|#34);'i",
 				"'&(lt|#60);'i",
@@ -662,7 +636,7 @@ class CIBlockXMLFile
 		$child = array_pop($this->element_stack);
 		$this->element_stack[count($this->element_stack)-1]["R"] = $child["R"]+1;
 		if($child["R"] != $child["RO"])
-			$DB->Query("UPDATE ".$this->_table_name." SET RIGHT_MARGIN = ".intval($child["R"])." WHERE ID = ".intval($child["ID"]));
+			$DB->Query("UPDATE ".$this->_table_name." SET RIGHT_MARGIN = ".(int)$child["R"]." WHERE ID = ".(int)$child["ID"]);
 	}
 
 	/*
@@ -738,6 +712,10 @@ class CIBlockXMLFile
 				$arIndex[$ar["ID"]] = &$arIndex[$parent_id][$ar["NAME"]];
 			}
 		}
+		unset($ar);
+		unset($rs);
+		unset($arIndex);
+		unset($arSalt);
 
 		return $arResult;
 	}
@@ -755,24 +733,36 @@ class CIBlockXMLFile
 			"VALUE" => "VALUE",
 		);
 		foreach($arSelect as $i => $field)
-			if(!array_key_exists($field, $arFields))
+		{
+			if (!isset($arFields[$field]))
+			{
 				unset($arSelect[$i]);
-		if(count($arSelect) <= 0)
+			}
+		}
+		if (empty($arSelect))
+		{
 			$arSelect[] = "*";
+		}
 
 		$arSQLWhere = array();
 		foreach($arFilter as $field => $value)
 		{
 			if($field == "ID" && is_array($value) && !empty($value))
-				$arSQLWhere[$field] = $field." in (".implode(",", array_map("intval", $value)).")";
+			{
+				Main\Type\Collection::normalizeArrayValuesByInt($value, false);
+				if (!empty($value))
+				{
+					$arSQLWhere[$field] = $field . " in (" . implode(",", $value) . ")";
+				}
+			}
 			elseif($field == "ID" || $field == "LEFT_MARGIN")
-				$arSQLWhere[$field] = $field." = ".intval($value);
+				$arSQLWhere[$field] = $field." = ".(int)$value;
 			elseif($field == "PARENT_ID" || $field == "PARENT_ID+0")
-				$arSQLWhere[$field] = $field." = ".intval($value);
+				$arSQLWhere[$field] = $field." = ".(int)$value;
 			elseif($field == ">ID")
-				$arSQLWhere[$field] = "ID > ".intval($value);
+				$arSQLWhere[$field] = "ID > ".(int)$value;
 			elseif($field == "><LEFT_MARGIN")
-				$arSQLWhere[$field] = "LEFT_MARGIN between ".intval($value[0])." AND ".intval($value[1]);
+				$arSQLWhere[$field] = "LEFT_MARGIN between ".(int)$value[0]." AND ".(int)$value[1];
 			elseif($field == "NAME")
 				$arSQLWhere[$field] = $field." = "."'".$DB->ForSQL($value)."'";
 		}
@@ -781,10 +771,14 @@ class CIBlockXMLFile
 
 		foreach($arOrder as $field => $by)
 		{
-			if(!array_key_exists($field, $arFields))
+			if(!isset($arFields[$field]))
+			{
 				unset($arSelect[$field]);
+			}
 			else
-				$arOrder[$field] = $field." ".($by=="desc"? "desc": "asc");
+			{
+				$arOrder[$field] = $field . " " . ($by == "desc" ? "desc" : "asc");
+			}
 		}
 
 		$strSql = "
@@ -810,7 +804,7 @@ class CIBlockXMLFile
 	function Delete($ID)
 	{
 		global $DB;
-		return $DB->Query("delete from ".$this->_table_name." where ID = ".intval($ID));
+		return $DB->Query("delete from ".$this->_table_name." where ID = ".(int)$ID);
 	}
 
 	public static function UnZip($file_name, $last_zip_entry = "", $start_time = 0, $interval = 0)

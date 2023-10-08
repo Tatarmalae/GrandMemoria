@@ -1,10 +1,15 @@
 <?php
+
 namespace Bitrix\MessageService\Integration;
 
 use Bitrix\Main\Loader;
+use Bitrix\Main\Type\DateTime;
 
 class Pull
 {
+	public const TAG = 'MESSAGESERVICE';
+	public const COMMAND = 'message_update';
+
 	private static $canUse;
 
 	public static function canUse()
@@ -18,7 +23,17 @@ class Pull
 
 	public static function onMessagesUpdate(array $messages)
 	{
-		return static::addToStack('message_update', array('messages' => $messages));
+		if (!static::canUse())
+		{
+			return false;
+		}
+
+		return static::addToStack(
+			self::COMMAND,
+			[
+				'messages' => static::convertData($messages)
+			]
+		);
 	}
 
 	/**
@@ -34,12 +49,34 @@ class Pull
 		}
 
 		return \CPullWatch::addToStack(
-			'MESSAGESERVICE',
+			self::TAG,
 			array(
 				'module_id' => 'messageservice',
 				'command' => $command,
 				'params' => $params,
 			)
 		);
+	}
+
+	/**
+	 * Converts message fields to the suitable for sending via p&p format.
+	 *
+	 * @param array $messages
+	 * @return array
+	 */
+	private static function convertData(array $messages): array
+	{
+		foreach($messages as $k => $message)
+		{
+			foreach ($message as $field => $value)
+			{
+				if ($value instanceof DateTime)
+				{
+					$messages[$k][$field] = (string)$value;
+				}
+			}
+		}
+
+		return $messages;
 	}
 }

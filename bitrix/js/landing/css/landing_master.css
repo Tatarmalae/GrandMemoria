@@ -22,7 +22,7 @@ body {
 .block-container-item div {
     margin-top: 10px;
     color: blue;
-    font-weight: bold;
+    font-weight: var(--ui-font-weight-bold);
     cursor: pointer;
 }
 .block-container-item img {
@@ -99,36 +99,37 @@ main > [class~='block-wrapper']:last-of-type .landing-ui-panel-create-action {
 	bottom: -80px;
 }
 
-main > [class~='block-wrapper']:last-of-type .landing-ui-panel-create-action .landing-ui-button,
-main > .landing-ui-button[data-id="insert_first_block"],
-main .landing-main > .landing-ui-button[data-id="insert_first_block"],
-main .landing-header > .landing-ui-button[data-id="insert_first_block"],
-main .landing-sidebar > .landing-ui-button[data-id="insert_first_block"],
-main .landing-footer > .landing-ui-button[data-id="insert_first_block"] {
-	height: 40px;
-	padding-left: 55px;
-	padding-right: 40px;
-	border: 0;
-	background: #212121;
-}
+/*main > [class~='block-wrapper']:last-of-type .landing-ui-panel-create-action .landing-ui-button,*/
+/*main > .landing-ui-button[data-id="insert_first_block"],*/
+/*main .landing-main > .landing-ui-button[data-id="insert_first_block"],*/
+/*main .landing-header > .landing-ui-button[data-id="insert_first_block"],*/
+/*main .landing-sidebar > .landing-ui-button[data-id="insert_first_block"],*/
+/*main .landing-footer > .landing-ui-button[data-id="insert_first_block"] {*/
+/*	!*height: 40px;*!*/
+/*	!*padding-left: 55px;*!*/
+/*	!*padding-right: 40px;*!*/
+/*	!*border: ;*!*/
+/*	background: #d1f066;*/
+/*	color: #333333;*/
+/*}*/
 
-main [class~='block-wrapper']:last-of-type .landing-ui-panel-create-action .landing-ui-button:hover,
-main > .landing-ui-button[data-id="insert_first_block"]:hover,
-main .landing-main > .landing-ui-button[data-id="insert_first_block"]:hover,
-main .landing-header > .landing-ui-button[data-id="insert_first_block"]:hover,
-main .landing-sidebar > .landing-ui-button[data-id="insert_first_block"]:hover,
-main .landing-footer > .landing-ui-button[data-id="insert_first_block"]:hover {
-	background: #000;
-}
+/*!*main [class~='block-wrapper']:last-of-type .landing-ui-panel-create-action .landing-ui-button:hover,*!*/
+/*main > .landing-ui-button[data-id="insert_first_block"]:hover,*/
+/*main .landing-main > .landing-ui-button[data-id="insert_first_block"]:hover,*/
+/*main .landing-header > .landing-ui-button[data-id="insert_first_block"]:hover,*/
+/*main .landing-sidebar > .landing-ui-button[data-id="insert_first_block"]:hover,*/
+/*main .landing-footer > .landing-ui-button[data-id="insert_first_block"]:hover {*/
+/*	background: #b3e600;*/
+/*}*/
 
-main > [class~='block-wrapper']:last-of-type .landing-ui-panel-create-action .landing-ui-button:before,
-main > .landing-ui-button[data-id="insert_first_block"]::before,
-main .landing-main > .landing-ui-button[data-id="insert_first_block"]::before,
-main .landing-header > .landing-ui-button[data-id="insert_first_block"]::before,
-main .landing-sidebar > .landing-ui-button[data-id="insert_first_block"]::before,
-main .landing-footer > .landing-ui-button[data-id="insert_first_block"]::before {
-	left: 34px;
-}
+/*main > [class~='block-wrapper']:last-of-type .landing-ui-panel-create-action .landing-ui-button:before,*/
+/*main > .landing-ui-button[data-id="insert_first_block"]::before,*/
+/*main .landing-main > .landing-ui-button[data-id="insert_first_block"]::before,*/
+/*main .landing-header > .landing-ui-button[data-id="insert_first_block"]::before,*/
+/*main .landing-sidebar > .landing-ui-button[data-id="insert_first_block"]::before,*/
+/*main .landing-footer > .landing-ui-button[data-id="insert_first_block"]::before {*/
+/*	left: 34px;*/
+/*}*/
 
 main > .landing-ui-button[data-id="insert_first_block"],
 main .landing-main > .landing-ui-button[data-id="insert_first_block"],
@@ -225,11 +226,10 @@ main .landing-sidebar:not(.landing-empty) + .landing-main.landing-empty {
 .landing-ui-panel-content-action,
 .landing-ui-panel-block-action,
 .landing-ui-panel-sidebar-actions {
-	background-color: #ffffff;
-    top: 40px;
+    top: 33px;
     left: 16px;
     position: absolute;
-	border-radius: 20px;
+	padding-top: 7px;
 	z-index: 316;
 	-webkit-user-select: none;
 	-moz-user-select: none;
@@ -280,7 +280,7 @@ body[style*="cursor: move;"] .landing-ui-panel-block-card-action {
 .block-buttons-clone-add {
     cursor: pointer;
     width: 15px;
-    font-weight: bold;
+    font-weight: var(--ui-font-weight-bold);
     text-align: center;
     float: left;
     color: green;
@@ -288,7 +288,7 @@ body[style*="cursor: move;"] .landing-ui-panel-block-card-action {
 .block-buttons-clone-remove {
     cursor: pointer;
     width: 15px;
-    font-weight: bold;
+    font-weight: var(--ui-font-weight-bold);
     text-align: center;
     float: left;
     color: red;
@@ -300,14 +300,14 @@ body[style*="cursor: move;"] .landing-ui-panel-block-card-action {
     height: 20px;
     background-color: #dfdfdf;
     padding: 5px;
-    font-weight: bold;
+    font-weight: var(--ui-font-weight-bold);
     text-align: center;
 }
 .block-content-card-subtitle {
     height: 20px;
     background-color: lightcyan;
     padding: 5px;
-    font-weight: bold;
+    font-weight: var(--ui-font-weight-bold);
     text-align: center;
 }
 
@@ -400,13 +400,15 @@ body[style*="cursor: move;"] .landing-ui-panel-block-card-action {
 	justify-content: flex-end;
 }
 
-.landing-ui-form-style .landing-ui-button[data-id^="align-"] {
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"],
+.landing-ui-form-style .landing-ui-button[data-id^="align-"]:not([data-id^="align-items-column-"]) {
 	height: 32px !important;
 	position: relative;
 	margin-top: 8px;
 }
 
-.landing-ui-form-style .landing-ui-button[data-id^="align-"] .landing-ui-button-text {
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"] .landing-ui-button-text,
+.landing-ui-form-style .landing-ui-button[data-id^="align-"]:not([data-id^="align-items-column-"]) .landing-ui-button-text {
 	display: block;
 	height: 100%;
 	border: 1px solid #e4e5e7;
@@ -415,7 +417,8 @@ body[style*="cursor: move;"] .landing-ui-panel-block-card-action {
 	transition: border-color .2s ease;
 }
 
-.landing-ui-form-style .landing-ui-button[data-id^="align-"] .landing-ui-align {
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"] .landing-ui-align,
+.landing-ui-form-style .landing-ui-button[data-id^="align-"]:not([data-id^="align-items-column-"]) .landing-ui-align {
 	width: 16px;
 	height: 3px;
 	background: #333;
@@ -423,48 +426,70 @@ body[style*="cursor: move;"] .landing-ui-panel-block-card-action {
 	display: flex;
 }
 
-.landing-ui-form-style .landing-ui-button[data-id^="align-"] .landing-ui-align-items-center {
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"] .landing-ui-align-items-center,
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"] .landing-ui-align-items-around,
+.landing-ui-form-style .landing-ui-button[data-id^="align-"]:not([data-id^="align-items-column-"]) .landing-ui-align-items-center {
 	margin-top: 12px;
 }
 
-.landing-ui-form-style .landing-ui-button[data-id^="align-"] .landing-ui-align-items-end {
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"] .landing-ui-align-items-end,
+.landing-ui-form-style .landing-ui-button[data-id^="align-"]:not([data-id^="align-items-column-"]) .landing-ui-align-items-end {
 	margin-top: 19px;
 }
 
-.landing-ui-form-style .landing-ui-button[data-id^="align-"].landing-ui-active .landing-ui-button-text {
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"].landing-ui-active .landing-ui-button-text,
+.landing-ui-form-style .landing-ui-button[data-id^="align-"]:not([data-id^="align-items-column-"]).landing-ui-active .landing-ui-button-text {
 	border-color: #2fc6f6;
 }
 
-.landing-ui-form-style .landing-ui-button[data-id^="align-"] .landing-ui-align:before,
-.landing-ui-form-style .landing-ui-button[data-id^="align-"] .landing-ui-align:after {
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"] .landing-ui-align:before,
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"] .landing-ui-align:after,
+.landing-ui-form-style .landing-ui-button[data-id^="align-"]:not([data-id^="align-items-column-"]) .landing-ui-align:before,
+.landing-ui-form-style .landing-ui-button[data-id^="align-"]:not([data-id^="align-items-column-"]) .landing-ui-align:after {
 	position: absolute;
 	width: 9px;
 	height: 6px;
 	background: url(data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%229%22%20height%3D%226%22%3E%3Cpath%20fill%3D%22%23333%22%20fill-rule%3D%22evenodd%22%20d%3D%22M1.341%205.937L4.008%203.27l.659-.662.672.662%202.666%202.667.941-.941L4.673.723.401%204.996z%22/%3E%3C/svg%3E);
 }
 
-.landing-ui-form-style .landing-ui-button[data-id^="align-"] .landing-ui-align-items-start:before,
-.landing-ui-form-style .landing-ui-button[data-id^="align-"] .landing-ui-align-items-end:after {
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"] .landing-ui-align-items-start:before,
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"] .landing-ui-align-items-end:after,
+.landing-ui-form-style .landing-ui-button[data-id^="align-"]:not([data-id^="align-items-column-"]) .landing-ui-align-items-start:before,
+.landing-ui-form-style .landing-ui-button[data-id^="align-"]:not([data-id^="align-items-column-"]) .landing-ui-align-items-end:after {
 	content: none;
 }
 
-.landing-ui-form-style .landing-ui-button[data-id^="align-"] .landing-ui-align-items-start:after {
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"] .landing-ui-align-items-start:after,
+.landing-ui-form-style .landing-ui-button[data-id^="align-"]:not([data-id^="align-items-column-"]) .landing-ui-align-items-start:after {
 	top: 12px;
 	left: 14px;
 }
 
-.landing-ui-form-style .landing-ui-button[data-id^="align-"] .landing-ui-align-items-center:before {
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"] .landing-ui-align-items-center:before,
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"] .landing-ui-align-items-around:before,
+.landing-ui-form-style .landing-ui-button[data-id^="align-"]:not([data-id^="align-items-column-"]) .landing-ui-align-items-center:before {
 	top: 6px;
 	transform: rotate(180deg);
 	left: 18px;
 }
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"] .landing-ui-align-items-around:before {
+	transform: none;
+}
 
-.landing-ui-form-style .landing-ui-button[data-id^="align-"] .landing-ui-align-items-center:after {
+
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"] .landing-ui-align-items-center:after,
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"] .landing-ui-align-items-around:after,
+.landing-ui-form-style .landing-ui-button[data-id^="align-"]:not([data-id^="align-items-column-"]) .landing-ui-align-items-center:after {
 	top: 17px;
 	left: 17.5px;
 }
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"] .landing-ui-align-items-around:after {
+	transform: rotate(180deg);
+}
 
-.landing-ui-form-style .landing-ui-button[data-id^="align-"] .landing-ui-align-items-end:before {
+
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"] .landing-ui-align-items-end:before,
+.landing-ui-form-style .landing-ui-button[data-id^="align-"]:not([data-id^="align-items-column-"]) .landing-ui-align-items-end:before {
 	top: 11px;
 	transform: rotate(180deg);
 	left: 18px;
@@ -476,6 +501,7 @@ body[style*="cursor: move;"] .landing-ui-panel-block-card-action {
 .landing-ui-form-style .landing-ui-button[data-id^="justify-content"],
 .landing-ui-form-style .landing-ui-button[data-id^="u-navbar-align"],
 .landing-ui-form-style .landing-ui-button[data-id^="align-"] {
+	position: relative;
 	background: none!important;
 	border: none!important;
 	box-shadow: none!important;
@@ -530,7 +556,8 @@ body[style*="cursor: move;"] .landing-ui-panel-block-card-action {
 	background: none;
 }
 
-.landing-ui-form-style .landing-ui-button[data-id^="align-"] {
+.landing-ui-form-style .landing-ui-button[data-id^="justify-content-column-"],
+.landing-ui-form-style .landing-ui-button[data-id^="align-"]:not([data-id^="align-items-column-"]) {
 	padding-left: 4px;
 	padding-right: 4px;
 }
@@ -608,7 +635,7 @@ body[style*="cursor: move;"] .landing-ui-panel-block-card-action {
 
 .landing-ui-new-inline {
 	position: relative;
-	font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+	font-family: var(--ui-font-family-primary, var(--ui-font-family-helvetica));
 	font-size: 9px;
 	letter-spacing: .5px;
 	top: -1px;
@@ -704,7 +731,7 @@ body[style*="cursor: move;"] .landing-ui-panel-block-card-action {
 	.l-d-lg-none {
 		display: block!important;
 	}
-	
+
 	.l-d-lg-none.g-flex-centered {
 		display: flex!important;
 	}
@@ -845,6 +872,9 @@ main.landing-edit-mode.landing-ui-overlay::after {
 
 .landing-layout-flex {
 	overflow: visible!important;
+}
+.landing-edit-mode
+{
 	min-height: 100vh;
 }
 
@@ -860,8 +890,7 @@ main.landing-edit-mode.landing-ui-overlay::after {
 
 .landing-block-user-action {
 	background-color: #EEF2F4;
-	height: 60vh;
-	min-height: 300px;
+	height: inherit;
 	position: relative;
 	display: flex;
 	align-items: center;
@@ -900,15 +929,6 @@ only screen and (min-resolution: 2dppx) {
 	.landing-ui-form-card-item-header {
 		border-bottom-width: .5px!important;
 	}
-}
-
-.bx-ie.bx-ie11 body {
-	overflow: hidden;
-}
-
-.bx-ie.bx-ie11 .g-upper-show,
-.bx-ie.bx-ie11 .template-bitrix24 {
-	overflow-y: auto;
 }
 
 .landing-ui-block-selectable-overlay {
@@ -977,4 +997,111 @@ div[id^="popup-window-content-calendar-resourcebooking-settings-popup"] {
 	max-height: 400px;
 	overflow: auto;
 	overflow-x: hidden;
+}
+
+.landing-ui-field .landing-ui-field-input li {
+	background: transparent!important;
+	margin: 0!important;
+}
+
+/*video ratio buttons*/
+/* todo: del, if not using*/
+.landing-ui-ratio-1by1,
+.landing-ui-ratio-4by3,
+.landing-ui-ratio-16by9,
+.landing-ui-ratio-9by16,
+.landing-ui-ratio-21by9
+{
+	width: 30px;
+	height: 30px;
+	display: inline-block;
+	background-size: cover;
+}
+.landing-ui-ratio-1by1
+{
+	background-image: url(/bitrix/images/landing/ratio/1by1.svg);
+}
+.landing-ui-ratio-4by3
+{
+	background-image: url(/bitrix/images/landing/ratio/4by3.svg);
+}
+.landing-ui-ratio-16by9
+{
+	background-image: url(/bitrix/images/landing/ratio/16by9.svg);
+}
+.landing-ui-ratio-9by16
+{
+	background-image: url(/bitrix/images/landing/ratio/9by16.svg);
+}
+.landing-ui-ratio-21by9
+{
+	background-image: url(/bitrix/images/landing/ratio/21by9.svg);
+}
+
+.landing-ui-field-color .landing-ui-field-header {
+	padding: 0 4px;
+	margin-bottom: 16px;
+	font: 17px var(--ui-font-family-secondary, var(--ui-font-family-open-sans));
+	font-weight: var(--ui-font-weight-light, 300);
+	color: #535c69;
+}
+
+.landing-ui-panel-create-before-action {
+	position: absolute;
+	top: 30px;
+	left: 0;
+	right: 0;
+	display: none;
+	transition: 200ms opacity ease;
+	z-index: 99;
+}
+
+.landing-main > [class~='block-wrapper']:first-of-type .landing-ui-panel-create-before-action {
+	display: none;
+	opacity: 0;
+}
+
+.landing-ui-hide-action-panels-form [class~='block-wrapper']:first-of-type .landing-ui-panel-create-before-action {
+	display: block;
+	opacity: 1;
+}
+
+body:not(.landing-ui-hide-action-panels) .landing-main > [class~='block-wrapper']:first-of-type:hover .landing-ui-panel-create-before-action {
+	display: block;
+	opacity: 1;
+}
+
+.landing-ui-hide-action-panels-form .landing-ui-panel-create-action {
+	opacity: 1;
+}
+
+.landing-ui-panel-form-design-action {
+	position: absolute;
+	left: 20px;
+	top: 20px;
+	width: auto;
+	display: none;
+}
+
+.landing-ui-panel-form-design-action .landing-ui-button {
+	background: #FFFFFF;
+	border: 1px solid rgba(82,92,105,0.80);
+	border-radius: 100px;
+}
+
+.landing-ui-hide-action-panels-form .landing-ui-panel-form-design-action {
+	display: block;
+}
+
+.ui-btn:focus {
+	outline: none!important;
+}
+
+.landing-ui-hide-action-panels .landing-ui-panel-create-before-action {
+	display: none;
+}
+
+.landing-ui-hide-action-panels-form.landing-ui-hide-action-panels .landing-ui-panel-create-action,
+.landing-ui-hide-action-panels-form.landing-ui-hide-action-panels .landing-ui-panel-create-before-action {
+	display: none!important;
 }

@@ -13,9 +13,9 @@ return [
 	],
 	'rel' => [
 		'main.polyfill.core',
+		'ui.fonts.opensans',
 		'ui.vue.directives.lazyload',
 		'ui.vue',
-		'rest.client',
 		'ui.dexie',
 	],
 	'skip_core' => true,

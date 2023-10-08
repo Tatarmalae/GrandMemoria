@@ -9,10 +9,12 @@
 namespace Bitrix\Rest\OAuth;
 
 
+use Bitrix\Main\Localization\Loc;
 use Bitrix\Rest\Application;
 use Bitrix\Rest\AppTable;
 use Bitrix\Rest\AuthStorageInterface;
 use Bitrix\Rest\Engine\Access;
+use Bitrix\Rest\Engine\Access\HoldEntity;
 use Bitrix\Rest\Event\Session;
 use Bitrix\Rest\OAuthService;
 
@@ -77,6 +79,15 @@ class Auth
 					$error = true;
 				}
 
+				if (!$error && HoldEntity::is(HoldEntity::TYPE_APP, $tokenInfo['client_id']))
+				{
+					$tokenInfo = [
+						'error' => 'OVERLOAD_LIMIT',
+						'error_description' => 'REST API is blocked due to overload.'
+					];
+					$error = true;
+				}
+
 				if (
 					!$error
 					&& (
@@ -119,6 +130,7 @@ class Auth
 				if(!$error && $scope !== \CRestUtil::GLOBAL_SCOPE && isset($tokenInfo['scope']))
 				{
 					$tokenScope = explode(',', $tokenInfo['scope']);
+					$tokenScope = \Bitrix\Rest\Engine\RestManager::fillAlternativeScope($scope, $tokenScope);
 					if(!in_array($scope, $tokenScope))
 					{
 						$tokenInfo = array('error' => 'insufficient_scope', 'error_description' => 'The request requires higher privileges than provided by the access token');
@@ -128,7 +140,19 @@ class Auth
 
 				if(!$error && $tokenInfo['user_id'] > 0)
 				{
-					if(!\CRestUtil::makeAuth($tokenInfo))
+					global $USER;
+					if ($USER instanceof \CUser && $USER->isAuthorized())
+					{
+						if ((int)$USER->getId() !== (int)$tokenInfo['user_id'])
+						{
+							$tokenInfo = [
+								'error' => 'authorization_error',
+								'error_description' => Loc::getMessage('REST_OAUTH_ERROR_LOGOUT_BEFORE'),
+							];
+							$error = true;
+						}
+					}
+					elseif (!\CRestUtil::makeAuth($tokenInfo))
 					{
 						$tokenInfo = array('error' => 'authorization_error', 'error_description' => 'Unable to authorize user');
 						$error = true;

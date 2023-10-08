@@ -3,13 +3,16 @@ namespace Bitrix\MessageService\Sender\Sms;
 
 /**
  * Class Dummy. For testing purposes only. It saves SMS to the log by AddMessage2Log().
+ *
  * @example $eventManager = \Bitrix\Main\EventManager::getInstance(); $eventManager->registerEventHandler('messageservice', 'onGetSmsSenders', 'messageservice', 'Bitrix\MessageService\Sender\Sms\Dummy', 'onGetSmsSenders');
  */
 class Dummy extends \Bitrix\MessageService\Sender\Base
 {
+	public const ID = 'dummy';
+
 	public function getId()
 	{
-		return 'dummy';
+		return static::ID;
 	}
 
 	public function getName()
@@ -34,12 +37,32 @@ class Dummy extends \Bitrix\MessageService\Sender\Base
 
 	public function sendMessage(array $messageFieldsFields)
 	{
+		$messageFieldsFields['MESSAGE_BODY'] = $this->prepareMessageBodyForSend($messageFieldsFields['MESSAGE_BODY']);
 		AddMessage2Log($messageFieldsFields);
 
 		$result = new \Bitrix\MessageService\Sender\Result\SendMessage();
-
 		$result->setStatus(\Bitrix\MessageService\MessageStatus::DELIVERED);
 		$result->setExternalId(uniqid());
+
+		$dialogId = \Bitrix\Main\Config\Option::get('messageservice', 'dummy_dialog_id', '');
+		if (
+			!empty($dialogId)
+			&& \Bitrix\Main\Loader::includeModule('im')
+			&& \Bitrix\Im\Common::isChatId($dialogId)
+		)
+		{
+			$messageFieldsFields['provider_settings'] = [
+				"socketTimeout" => $this->socketTimeout,
+				"streamTimeout" => $this->streamTimeout,
+			];
+
+			\CIMChat::AddMessage([
+				'DIALOG_ID' => $dialogId,
+				'USER_ID' => 0,
+				'SYSTEM' => 'Y',
+				'MESSAGE' => '[b]MessageService test message[/b] :idea: [br][br]' . print_r($messageFieldsFields, 1),
+			]);
+		}
 
 		return $result;
 	}

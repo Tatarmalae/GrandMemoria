@@ -13,7 +13,7 @@ use Bitrix\Main\Config\Option;
                 <div class="footer__column">
                     <a class="logo-link" href="<?= SITE_DIR ?>">
                         <div class="logo">
-                            <img src="<?= SITE_STYLE_PATH ?>/img/general/logo-white.svg" alt="<?= SITE_SERVER_NAME ?>"/>
+                            <img src="<?= SITE_STYLE_PATH ?>/img/general/logo-white.svg" width="160" height="66" alt="<?= SITE_SERVER_NAME ?>"/>
                         </div>
                     </a>
                     <?php $APPLICATION->IncludeComponent(

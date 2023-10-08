@@ -13,8 +13,10 @@ return [
 	],
 	'rel' => [
 		'main.polyfill.core',
+		'ui.fonts.opensans',
 		'main.polyfill.intersectionobserver',
 		'ui.vue',
+		'main.core.events',
 	],
 	'skip_core' => true,
 ];

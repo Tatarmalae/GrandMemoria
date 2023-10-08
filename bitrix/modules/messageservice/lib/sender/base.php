@@ -1,10 +1,40 @@
 <?php
 namespace Bitrix\MessageService\Sender;
 
+use Bitrix\Main\Text\Emoji;
+use Bitrix\MessageService\MessageStatus;
 use Bitrix\MessageService\MessageType;
+use Bitrix\MessageService\Providers;
 
 abstract class Base
 {
+	protected Providers\Informant $informant;
+	protected Providers\Initiator $initiator;
+	protected Providers\Sender $sender;
+
+	protected int $socketTimeout = 10;
+	protected int $streamTimeout = 30;
+
+	/**
+	 * @param int $socketTimeout
+	 * @return Base
+	 */
+	public function setSocketTimeout(int $socketTimeout): Base
+	{
+		$this->socketTimeout = $socketTimeout;
+		return $this;
+	}
+
+	/**
+	 * @param int $streamTimeout
+	 * @return Base
+	 */
+	public function setStreamTimeout(int $streamTimeout): Base
+	{
+		$this->streamTimeout = $streamTimeout;
+		return $this;
+	}
+
 	/**
 	 * @return bool
 	 */
@@ -13,6 +43,7 @@ abstract class Base
 		return true;
 	}
 
+	/** @deprecated  */
 	public static function className()
 	{
 		return get_called_class();
@@ -54,6 +85,48 @@ abstract class Base
 	abstract public function getFromList();
 
 	/**
+	 * Get default From.
+	 * @return null|string
+	 */
+	public function getDefaultFrom()
+	{
+		$fromList = $this->getFromList();
+		$from = isset($fromList[0]) ? $fromList[0]['id'] : null;
+		//Try to find alphanumeric from
+		foreach ($fromList as $item)
+		{
+			if (!preg_match('#^[0-9]+$#', $item['id']))
+			{
+				$from = $item['id'];
+				break;
+			}
+		}
+		return $from;
+	}
+
+	/**
+	 * @return mixed|null
+	 */
+	public function getFirstFromList()
+	{
+		$fromList = $this->getFromList();
+		if (!is_array($fromList))
+		{
+			return null;
+		}
+
+		foreach ($fromList as $item)
+		{
+			if (isset($item['id']) && $item['id'])
+			{
+				return $item['id'];
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * @param string $from
 	 * @return bool
 	 */
@@ -80,10 +153,28 @@ abstract class Base
 	 * Converts service status to internal status
 	 * @see \Bitrix\MessageService\MessageStatus
 	 * @param mixed $serviceStatus
-	 * @return null|int
+	 * @return int
 	 */
 	public static function resolveStatus($serviceStatus)
 	{
-		return null;
+		return MessageStatus::UNKNOWN;
+	}
+
+	public function getManageUrl()
+	{
+		return $this->isConfigurable() ? '/crm/configs/sms/?sender='.$this->getId() : '';
+	}
+
+	/**
+	 * Prepares text for message body.
+	 */
+	public function prepareMessageBodyForSave(string $text): string
+	{
+		return Emoji::encode($text);
+	}
+
+	protected function prepareMessageBodyForSend(string $text): string
+	{
+		return Emoji::decode($text);
 	}
 }

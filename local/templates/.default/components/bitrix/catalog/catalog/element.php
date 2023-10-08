@@ -35,6 +35,9 @@ try {
     if ($sectionProps['UF_SERVICES']) {
         $elementServices = $sectionProps['UF_SERVICES'];
     }
+    if ($sectionProps['UF_YOUTUBE']) {
+        $elementYouTube = $sectionProps['UF_YOUTUBE'];
+    }
 } catch (Throwable $e) {
     Debug::dumpToFile($e->getMessage());
 }
@@ -190,6 +193,7 @@ try {
             'GIFTS_MAIN_PRODUCT_DETAIL_BLOCK_TITLE' => $arParams['GIFTS_MAIN_PRODUCT_DETAIL_BLOCK_TITLE'],
             'GIFTS_MAIN_PRODUCT_DETAIL_HIDE_BLOCK_TITLE' => $arParams['GIFTS_MAIN_PRODUCT_DETAIL_HIDE_BLOCK_TITLE'],
             'BENEFITS' => $elementBenefits ?? null,
+            'YOUTUBE' => $elementYouTube ?? null,
         ],
         $component
     );

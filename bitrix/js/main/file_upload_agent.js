@@ -48,6 +48,8 @@ BX.FileUploadAgent = function(arParams) {
 	if (! this.parent._mkFileInput) // first agent
 		this._mkFileInput();
 
+	this.hUploaderChange = this.onUploaderChange.bind(this);
+
 	if (! window.wduf_places)
 		window.wduf_places = {};
 };
@@ -63,8 +65,6 @@ BX.FileUploadAgent.prototype.Init = function()
 	}
 
 	if (this.fileInput) {
-		if (! this.hUploaderChange)
-			this.hUploaderChange = BX.proxy(this.onUploaderChange, this);
 		BX.bind(this.fileInput, 'change', this.hUploaderChange);
 	}
 	if (this.hAttachEvents && BX.type.isFunction(this.hAttachEvents)) {
@@ -97,8 +97,7 @@ BX.FileUploadAgent.prototype._mkClose = function(parent)
 		target = divLoaded;
 
 	if (!!target) {
-		var p = parent;
-		BX.bind(closeBtn, 'click', BX.delegate(function() {this.StopUpload(p); }, this));
+		BX.bind(closeBtn, 'click', this.StopUpload.bind(this, parent));
 		target.appendChild(closeBtn);
 	}
 };
@@ -456,20 +455,24 @@ BX.FileUploadAgent.prototype._clearPlace = function()
 	this.place = null;
 };
 
-BX.FileUploadAgent.prototype.StopUpload = function(p)
+BX.FileUploadAgent.prototype.StopUpload = function(parentNode)
 {
-	var parent = p;
+	if (!parentNode)
+	{
+		return;
+	}
 
-	BX.hide(parent);
-	BX.onCustomEvent(this.caller, 'StopUpload', [this, parent]);
+	BX.onCustomEvent(this.caller, 'StopUpload', [this, parentNode]);
 
-	sID = p.id;
-	mID = sID.match(new RegExp(this.doc_prefix + '(\\d+)'));
-	if (!!mID) {
-		id = mID[1];
-		var fileInput = BX('file-doc' + id);
-		if (!!fileInput)
+	BX.hide(parentNode);
+	var mID = parentNode.id.match(new RegExp(this.doc_prefix + '(\\d+)'));
+	if (!!mID)
+	{
+		var fileInput = BX('file-doc' + mID[1]);
+		if (fileInput)
+		{
 			BX.remove(fileInput);
+		}
 	}
 };
 

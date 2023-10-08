@@ -71,18 +71,25 @@ if (isset($arResult['ITEM']))
 		$actualItem = $item;
 	}
 
+	$morePhoto = null;
 	if ($arParams['PRODUCT_DISPLAY_MODE'] === 'N' && $haveOffers)
 	{
 		$price = $item['ITEM_START_PRICE'];
 		$minOffer = $item['OFFERS'][$item['ITEM_START_PRICE_SELECTED']];
 		$measureRatio = $minOffer['ITEM_MEASURE_RATIOS'][$minOffer['ITEM_MEASURE_RATIO_SELECTED']]['RATIO'];
-		$morePhoto = $item['MORE_PHOTO'];
+		if (isset($item['MORE_PHOTO']))
+		{
+			$morePhoto = $item['MORE_PHOTO'];
+		}
 	}
 	else
 	{
 		$price = $actualItem['ITEM_PRICES'][$actualItem['ITEM_PRICE_SELECTED']];
 		$measureRatio = $price['MIN_QUANTITY'];
-		$morePhoto = $actualItem['MORE_PHOTO'];
+		if (isset($actualItem['MORE_PHOTO']))
+		{
+			$morePhoto = $actualItem['MORE_PHOTO'];
+		}
 	}
 
 	$showSlider = is_array($morePhoto) && count($morePhoto) > 1;
@@ -278,6 +285,10 @@ if (isset($arResult['ITEM']))
 			? $item['DISPLAY_PROPERTIES'][$arParams['BRAND_PROPERTY']]['DISPLAY_VALUE']
 			: null;
 
+		$jsParams['IS_FACEBOOK_CONVERSION_CUSTOMIZE_PRODUCT_EVENT_ENABLED'] =
+			$arResult['IS_FACEBOOK_CONVERSION_CUSTOMIZE_PRODUCT_EVENT_ENABLED']
+		;
+
 		$templateData = array(
 			'JS_OBJ' => $obName,
 			'ITEM' => array(
@@ -289,7 +300,7 @@ if (isset($arResult['ITEM']))
 		);
 		?>
 		<script>
-		  var <?=$obName?> = new JCCatalogItem(<?=CUtil::PhpToJSObject($jsParams, false, true)?>);
+			var <?=$obName?> = new JCCatalogItem(<?=CUtil::PhpToJSObject($jsParams, false, true)?>);
 		</script>
 	</div>
 	<?

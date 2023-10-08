@@ -55,7 +55,7 @@
 .main-ui-select-inner-item.main-ui-select-inner-item-legend {
 	margin-top: 6px;
 	padding-left: 10px;
-	font-weight: bold;
+	font-weight: var(--ui-font-weight-bold);
 	cursor: default;
 	border-bottom: none;
 }
@@ -87,7 +87,7 @@
 
 .popup-select-content .main-ui-checked {
 	background: #f3f6f8;
-	font-weight: bold;
+	font-weight: var(--ui-font-weight-bold);
 }
 
 .main-ui-popup-show-animation {
@@ -117,7 +117,7 @@
 
 .main-ui-control.main-ui-select,
 .main-ui-control.main-ui-multi-select {
-	padding: 3px 32px 3px 3px;
+	padding: 3px 50px 3px 3px;
 	height: auto;
 	min-height: 38px;
 	background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNSIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI1IDE2Ij4gIDxwb2x5Z29uIGZpbGw9IiM1MzVDNjkiIGZpbGwtcnVsZT0iZXZlbm9kZCIgcG9pbnRzPSIzLjU0NiA3LjQyNSAzLjU0NiAxLjYwNyAxLjYwNyAxLjYwNyAxLjYwNyA4LjM5NCAxLjYwNyA5LjM2NCA5LjM2NCA5LjM2NCA5LjM2NCA3LjQyNSIgdHJhbnNmb3JtPSJyb3RhdGUoLTQ1IDkuOSAxLjY1NykiLz48L3N2Zz4=);
@@ -155,12 +155,14 @@
 	padding: 6px;
 	margin: 1px 0 0 0;
 	box-shadow: 0 6px 21px 0 rgba(0,0,0,0.15);
+	max-height: 177px;
+	overflow: auto;
 }
 
 .main-ui-select-inner-item {
 	padding: 0 6px 0 3px;
 	min-height: 33px;
-	font: 14px/33px "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font: 14px/33px var(--ui-font-family-primary, var(--ui-font-family-helvetica));
 	color: #80868e;
 	-webkit-transition: background .3s;
 	transition: background .3s;
@@ -222,7 +224,7 @@
 	height: 30px;
 	border-radius: 2px;
 	background: #bcedfc;
-	font: 15px/30px "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font: 15px/30px var(--ui-font-family-primary, var(--ui-font-family-helvetica));
 	vertical-align: middle;
 	-webkit-transition: background 0.2s linear;
 	transition: background 0.2s linear;
@@ -258,7 +260,7 @@
 	padding: 0;
 	height: 30px;
 	border: none;
-	font: 15px/30px "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font: 15px/30px var(--ui-font-family-primary, var(--ui-font-family-helvetica));
 	box-sizing: border-box;
 	letter-spacing: 10px;
 }

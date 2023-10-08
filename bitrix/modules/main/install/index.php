@@ -20,7 +20,7 @@ class main extends CModule
 	var $MODULE_DESCRIPTION;
 	var $MODULE_CSS;
 
-	function main()
+	public function __construct()
 	{
 		$arModuleVersion = array();
 
@@ -43,8 +43,7 @@ class main extends CModule
 
 	function InstallDB()
 	{
-		/** @global string $DBType */
-		global $DB, $DBType, $DBHost, $DBLogin, $DBPassword, $DBName, $APPLICATION;
+		global $DB, $DBHost, $DBLogin, $DBPassword, $DBName, $APPLICATION;
 
 		if (!is_object($APPLICATION))
 			$APPLICATION = new CMain;
@@ -67,10 +66,10 @@ class main extends CModule
 		if ($success)
 			return true;
 
-		if ($DBType == "mysql" && defined("MYSQL_TABLE_TYPE") && MYSQL_TABLE_TYPE <> '')
+		if (defined("MYSQL_TABLE_TYPE") && MYSQL_TABLE_TYPE <> '')
 			$DB->Query("SET storage_engine = '".MYSQL_TABLE_TYPE."'", true);
 
-		$errors = $DB->RunSQLBatch($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/install/".$DBType."/install.sql");
+		$errors = $DB->RunSQLBatch($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/install/mysql/install.sql");
 		if ($errors !== false)
 		{
 			$APPLICATION->ThrowException(implode("", $errors));
@@ -107,8 +106,8 @@ class main extends CModule
 
 		RegisterModule("main");
 		RegisterModuleDependences('iblock', 'OnIBlockPropertyBuildList', 'main', 'CIBlockPropertyUserID', 'GetUserTypeDescription', 100, '/modules/main/tools/prop_userid.php');
-		RegisterModuleDependences('main', 'OnUserDelete','main', 'CFavorites','OnUserDelete', 100, "/modules/main/classes/".mb_strtolower($GLOBALS["DB"]->type)."/favorites.php");
-		RegisterModuleDependences('main', 'OnLanguageDelete','main', 'CFavorites','OnLanguageDelete', 100, "/modules/main/classes/".mb_strtolower($GLOBALS["DB"]->type)."/favorites.php");
+		RegisterModuleDependences('main', 'OnUserDelete','main', 'CFavorites','OnUserDelete', 100, "/modules/main/classes/mysql/favorites.php");
+		RegisterModuleDependences('main', 'OnLanguageDelete','main', 'CFavorites','OnLanguageDelete', 100, "/modules/main/classes/mysql/favorites.php");
 		RegisterModuleDependences('main', 'OnUserDelete','main', 'CUserOptions','OnUserDelete');
 		RegisterModuleDependences('main', 'OnChangeFile','main', 'CMain','OnChangeFileComponent');
 		RegisterModuleDependences('main', 'OnUserTypeRightsCheck','main', 'CUser','UserTypeRightsCheck');
@@ -132,7 +131,6 @@ class main extends CModule
 		RegisterModuleDependences('main', 'OnBeforeGroupUpdate', 'main', 'CGroupAuthProvider', 'OnBeforeGroupUpdate');
 		RegisterModuleDependences('main', 'OnBeforeGroupDelete', 'main', 'CGroupAuthProvider', 'OnBeforeGroupDelete');
 		RegisterModuleDependences('main', 'OnAfterSetUserGroup', 'main', 'CGroupAuthProvider', 'OnAfterSetUserGroup');
-		RegisterModuleDependences('main', 'OnUserLogin', 'main', 'CGroupAuthProvider', 'OnUserLogin');
 		RegisterModuleDependences("main", "OnEventLogGetAuditTypes", "main", "CEventMain", "GetAuditTypes");
 		RegisterModuleDependences("main", "OnEventLogGetAuditHandlers", "main", "CEventMain", "MakeMainObject");
 		RegisterModuleDependences("perfmon", "OnGetTableSchema", "main", "CTableSchema", "OnGetTableSchema");
@@ -175,19 +173,27 @@ class main extends CModule
 		$eventManager->registerEventHandler('main', 'onGetUserFieldValues', 'main', '\Bitrix\Main\UserField\Internal\UserFieldHelper', 'onGetUserFieldValues');
 		$eventManager->registerEventHandler('main', 'onUpdateUserFieldValues', 'main', '\Bitrix\Main\UserField\Internal\UserFieldHelper', 'onUpdateUserFieldValues');
 		$eventManager->registerEventHandler('main', 'onDeleteUserFieldValues', 'main', '\Bitrix\Main\UserField\Internal\UserFieldHelper', 'onDeleteUserFieldValues');
+		$eventManager->registerEventHandler('main', 'OnAfterUserTypeAdd', 'main', '\Bitrix\Main\ORM\Entity', 'onUserTypeChange');
+		$eventManager->registerEventHandler('main', 'OnAfterUserTypeUpdate', 'main', '\Bitrix\Main\ORM\Entity', 'onUserTypeChange');
+		$eventManager->registerEventHandler('main', 'OnAfterUserTypeDelete', 'main', '\Bitrix\Main\ORM\Entity', 'onUserTypeChange');
 
 		if (LANGUAGE_ID == "ru")
+		{
+			COption::SetOptionString("main", "~new_license18_0_sign", "Y");
 			COption::SetOptionString("main", "vendor", "1c_bitrix");
+			COption::SetOptionString("main", "update_site", "www.1c-bitrix.ru");
+		}
 		else
+		{
+			COption::SetOptionString("main", "~new_license17_5_sign", "Y");
 			COption::SetOptionString("main", "vendor", "bitrix");
+			COption::SetOptionString("main", "update_site", "www.bitrixsoft.com");
+		}
 
 		COption::SetOptionString("main", "PARAM_MAX_SITES", "2");
 		COption::SetOptionString("main", "PARAM_MAX_USERS", "0");
-		COption::SetOptionString("main", "distributive6", "Y");
-		COption::SetOptionString("main", "~new_license11_sign", "Y");
 		COption::SetOptionString("main", "GROUP_DEFAULT_TASK", "1");
 		COption::SetOptionString("main", "admin_lid", LANGUAGE_ID);
-		COption::SetOptionString("main", "update_site", "www.bitrixsoft.com");
 		COption::SetOptionString("main", "update_site_ns", "Y");
 		COption::SetOptionString("main", "optimize_css_files", "Y");
 		COption::SetOptionString("main", "optimize_js_files", "Y");
@@ -216,13 +222,9 @@ class main extends CModule
 		self::InstallSmiles();
 
 		/* geolocation handlers */
-		if(function_exists('geoip_db_avail')) //if available php geoip extension
-		{
-			GeoIp\HandlerTable::add(array('SORT' => 90, 'ACTIVE' => 'Y', 'CLASS_NAME' => '\Bitrix\Main\Service\GeoIp\Extension'));
-		}
-
-		GeoIp\HandlerTable::add(array('SORT' => 100, 'ACTIVE' => 'N', 'CLASS_NAME' => '\Bitrix\Main\Service\GeoIp\MaxMind'));
-		GeoIp\HandlerTable::add(array('SORT' => 110, 'ACTIVE' => 'Y', 'CLASS_NAME' => '\Bitrix\Main\Service\GeoIp\SypexGeo'));
+		GeoIp\HandlerTable::add(array('SORT' => 100, 'ACTIVE' => 'Y', 'CLASS_NAME' => '\\Bitrix\\Main\\Service\\GeoIp\\GeoIP2'));
+		GeoIp\HandlerTable::add(array('SORT' => 110, 'ACTIVE' => 'N', 'CLASS_NAME' => '\\Bitrix\\Main\\Service\\GeoIp\\MaxMind'));
+		GeoIp\HandlerTable::add(array('SORT' => 120, 'ACTIVE' => 'N', 'CLASS_NAME' => '\\Bitrix\\Main\\Service\\GeoIp\\SypexGeo'));
 
 		return true;
 	}
@@ -276,10 +278,6 @@ class main extends CModule
 			if ($rsGroup->Fetch())
 				continue;
 
-			//mssql does not allow insert identity by default
-			if($DB->type == "MSSQL")
-				unset($arGroup["~ID"]);
-
 			$success = (bool)$group->Add($arGroup);
 			if (!$success)
 			{
@@ -325,6 +323,7 @@ class main extends CModule
 		$arLanguages = array(
 			array(
 				"LID" => LANGUAGE_ID,
+				"CODE" => GetMessage("MAIN_DEFAULT_LANGUAGE_CODE"),
 				"ACTIVE" => "Y",
 				"SORT" => 1,
 				"DEF" => "Y",
@@ -364,6 +363,7 @@ class main extends CModule
 
 			$arLanguages[] = array(
 				"LID" => "en",
+				"CODE" => "en",
 				"ACTIVE" => "Y",
 				"SORT" => 2,
 				"DEF" => "N",
@@ -403,6 +403,7 @@ class main extends CModule
 
 			$arLanguages[] = array(
 				"LID" => "de",
+				"CODE" => "de",
 				"ACTIVE" => "Y",
 				"SORT" => 3,
 				"DEF" => "N",
@@ -442,6 +443,7 @@ class main extends CModule
 
 			$arLanguages[] = array(
 				"LID" => "ua",
+				"CODE" => "uk",
 				"ACTIVE" => "Y",
 				"SORT" => 4,
 				"DEF" => "N",
@@ -481,6 +483,7 @@ class main extends CModule
 
 			$arLanguages[] = array(
 				"LID" => "ru",
+				"CODE" => "ru",
 				"ACTIVE" => "Y",
 				"SORT" => 3,
 				"DEF" => "N",
@@ -1428,13 +1431,9 @@ class main extends CModule
 
 	private static function InstallSmiles()
 	{
-		/** @global string $DBType */
-		global $DBType;
-
 		require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/general/virtual_io.php");
 		require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/general/virtual_file.php");
 		include_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/general/file.php");
-		include_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/".$DBType."/file.php");
 		include_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/general/archive.php");
 		include_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/general/csv_data.php");
 		include_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/general/file_temp.php");
@@ -1451,7 +1450,7 @@ class main extends CModule
 	function InstallEvents()
 	{
 		$arEventTypes = array();
-		$langs = CLanguage::GetList($b="", $o="");
+		$langs = CLanguage::GetList();
 		while($language = $langs->Fetch())
 		{
 			$lid = $language["LID"];
@@ -1526,6 +1525,13 @@ class main extends CModule
 				'NAME'        => GetMessage("MAIN_INSTALL_EVENT_TYPE_USER_CODE_REQUEST"),
 				'DESCRIPTION' => GetMessage("MAIN_INSTALL_EVENT_TYPE_USER_CODE_REQUEST_DESC"),
 				'SORT'        => 10,
+			);
+			$arEventTypes[] = array(
+				'LID'         => $lid,
+				'EVENT_NAME'  => 'NEW_DEVICE_LOGIN',
+				'NAME'        => GetMessage('MAIN_INSTALL_EVENT_TYPE_NEW_DEVICE_LOGIN'),
+				'DESCRIPTION' => GetMessage('MAIN_INSTALL_EVENT_TYPE_NEW_DEVICE_LOGIN_DESC'),
+				'SORT'        => 11,
 			);
 
 			//sms types
@@ -1650,6 +1656,15 @@ class main extends CModule
 			"SUBJECT" => GetMessage("MAIN_INSTALL_EVENT_MESS_USER_CODE_REQUEST"),
 			"MESSAGE" => GetMessage("MAIN_INSTALL_EVENT_MESS_USER_CODE_REQUEST_MESS"),
 		);
+		$arMessages[] = array(
+			"EVENT_NAME" => "NEW_DEVICE_LOGIN",
+			"LID" => "s1",
+			"LANGUAGE_ID" => LANGUAGE_ID,
+			"EMAIL_FROM" => "#DEFAULT_EMAIL_FROM#",
+			"EMAIL_TO" => "#EMAIL#",
+			"SUBJECT" => GetMessage('MAIN_INSTALL_EVENT_MESSAGE_NEW_DEVICE_LOGIN_SUBJECT'),
+			"MESSAGE" => GetMessage('MAIN_INSTALL_EVENT_MESSAGE_NEW_DEVICE_LOGIN'),
+		);
 
 		$message = new CEventMessage;
 		foreach ($arMessages as $arMessage)
@@ -1754,5 +1769,6 @@ class main extends CModule
 		$DB->Query("UPDATE b_user SET EXTERNAL_AUTH_ID = NULL WHERE EXTERNAL_AUTH_ID = 'socservices'");
 		$DB->Query("UPDATE b_file SET HANDLER_ID=NULL WHERE HANDLER_ID is not null");
 		$DB->Query("UPDATE b_event_message SET EMAIL_FROM='#DEFAULT_EMAIL_FROM#' WHERE EMAIL_FROM LIKE '%no-reply@bitrix24%'");
+		$DB->Query("UPDATE b_geoip_handlers SET ACTIVE = 'N', CONFIG = ''");
 	}
 }

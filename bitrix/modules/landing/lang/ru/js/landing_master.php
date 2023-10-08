@@ -12,6 +12,7 @@ $MESS["ACTION_BUTTON_ACTIONS_CUT"] = "Вырезать";
 $MESS["ACTION_BUTTON_ACTIONS_COPY"] = "Копировать";
 $MESS["ACTION_BUTTON_ACTIONS_PASTE"] = "Вставить";
 $MESS["ACTION_BUTTON_ACTIONS_REMOVE"] = "Удалить";
+$MESS["ACTION_BUTTON_EXPIRED"] = "Подписка истекла";
 $MESS["ACTION_BUTTON_STYLE"] = "Дизайн";
 $MESS["ACTION_BUTTON_CREATE"] = "добавить блок";
 $MESS["EDITOR_ACTION_REMOVE_FORMAT"] = "Очистить форматирование";
@@ -32,7 +33,8 @@ $MESS["FIELD_LINK_TEXT_LABEL"] = "Текст";
 $MESS["FIELD_LINK_HREF_PLACEHOLDER"] = "http:// или выбрать блок, страницу";
 $MESS["FIELD_LINK_HREF_PLACEHOLDER_PAGES_ONLY"] = "выбрать страницу";
 $MESS["FIELD_LINK_HREF_PLACEHOLDER_WITHOUT_CUSTOM_URL"] = "выбрать блок или страницу";
-$MESS["FIELD_LINK_HREF_LABEL"] = "Ссылка";
+$MESS["FIELD_LINK_HREF_LABEL_2"] = "Действие по клику";
+$MESS["FIELD_LINK_HREF_BUTTON"] = "Выберите действие";
 $MESS["FIELD_LINK_TARGET_LABEL"] = "открывать";
 $MESS["FIELD_LINK_TARGET_SELF"] = "В этом окне";
 $MESS["FIELD_LINK_TARGET_BLANK"] = "В новом окне";
@@ -100,12 +102,20 @@ $MESS["LANDING_LINKS_PANEL_MY_SITES__KNOWLEDGE"] = "Все базы знаний
 $MESS["LANDING_LINKS_BUTTON_LANDINGS"] = "Страницу сайта";
 $MESS["LANDING_LINKS_BUTTON_LANDINGS__KNOWLEDGE"] = "Страницу базы знаний";
 $MESS["LANDING_LINKS_BUTTON_BLOCKS"] = "Блок для перехода";
+$MESS["LANDING_LINKS_BUTTON_FORMS"] = "CRM-форму";
+$MESS["LANDING_LINKS_BUTTON_PHONES"] = "Телефон";
 $MESS["LANDING_LINKS_LANDINGS_TITLE"] = "Страницы сайта";
 $MESS["LANDING_LINKS_LANDINGS_TITLE__KNOWLEDGE"] = "Базы знаний и страницы";
 $MESS["LANDING_LINKS_BLOCKS_TITLE"] = "Переход к блоку";
+$MESS["LANDING_LINKS_CRM_FORMS_TITLE"] = "CRM-формы";
+$MESS["LANDING_LINKS_CRM_PHONES_TITLE"] = "Телефоны";
+$MESS["LANDING_LINKS_CRM_PHONES_USERS"] = "Пользователи";
 $MESS["LANDING_BLOCKS_LIST_FEEDBACK_BUTTON"] = "Обратная связь";
 $MESS["LANDING_BLOCKS_LIST_NEW_LABEL"] = "Новый";
 $MESS["LANDING_BLOCKS_ACTIONS_FEEDBACK_BUTTON"] = "Оставить замечание";
+$MESS["LANDING_BLOCKS_ACTIONS_SAVE_BLOCK_BUTTON"] = "Сохранить в список блоков";
+$MESS["LANDING_BLOCKS_ACTIONS_DESIGN_BLOCK"] = "Суперблок";
+$MESS["LANDING_BLOCKS_ACTIONS_DESIGN_BLOCK_NEW"] = "Новое";
 $MESS["LANDING_PANEL_FEEDBACK_TITLE"] = "Обратная связь";
 $MESS["LANDING_IMAGE_LIBRARY_PANEL_TITLE"] = "Вставить изображение";
 $MESS["LANDING_IMAGE_UNSPLASH_DESCRIPTION"] = "<a href=\"https://unsplash.com/\" rel=\"nofollow\" target=\"_blank\">Unsplash</a> - это сайт для поиска изображений. Перед использованием найденных фото или картинок для вашего сайта, рекомендуем ознакомиться с <a href=\"https://unsplash.com/terms\" rel=\"nofollow\" target=\"_blank\">лицензией и правилами</a> сервиса. ";
@@ -134,7 +144,6 @@ $MESS["LANDING_TITLE_OF_EDITOR_ACTION_FONT"] = "Изменить шрифт";
 $MESS["LANDING_TITLE_OF_EDITOR_ACTION_CLEAR"] = "Очистить форматирование";
 $MESS["LANDING_TITLE_OF_EDITOR_ACTION_DRAG"] = "Потяните, чтобы перетащить панель";
 $MESS["LANDING_TITLE_OF_EDITOR_ACTION_TEXT_BACKGROUND"] = "Изменить фоновый цвет текста";
-$MESS["LANDING_TITLE_OF_EDITOR_ACTION_CREATE_PAGE"] = "Создать страницу";
 $MESS["LANDING_TITLE_OF_EDITOR_ACTION_CREATE_PAGE"] = "Создать страницу";
 $MESS["LANDING_TITLE_OF_EDITOR_ACTION_UL"] = "Создать маркированный список";
 $MESS["LANDING_TITLE_OF_EDITOR_ACTION_OL"] = "Создать нумерованный список";
@@ -183,7 +192,6 @@ $MESS["LANDING_CONTENT_IMAGE_RECOMMENDED_SIZE"] = "Минимальный раз
 $MESS["LANDING_CONTENT_IMAGE_RECOMMENDED_WIDTH"] = "Минимальная ширина изображения";
 $MESS["LANDING_CONTENT_IMAGE_RECOMMENDED_HEIGHT"] = "Минимальная высота изображения";
 $MESS["LANDING_CONTENT_URL_LINK"] = "Ссылка";
-$MESS["LANDING_CONTENT_URL_PREVIEW_TITLE"] = "Нажмите для предпросмотра";
 $MESS["LANDING_CONTENT_URL_MEDIA_BUTTON"] = "Медиа";
 $MESS["LANDING_CONTENT_URL_MEDIA_FORM_TITLE"] = "Медиа настройки";
 $MESS["LANDING_CONTENT_URL_MEDIA_CAPTIONED"] = "Показывать описание";
@@ -192,12 +200,14 @@ $MESS["LANDING_CONTENT_URL_MEDIA_QUALITY_AUTO"] = "Автоматически";
 $MESS["LANDING_CONTENT_URL_MEDIA_QUALITY_LOW"] = "Низкое";
 $MESS["LANDING_CONTENT_URL_MEDIA_QUALITY_HIGH"] = "Высокое";
 $MESS["LANDING_CONTENT_URL_MEDIA_AUTOPLAY"] = "Воспроизводить автоматически";
+$MESS["LANDING_CONTENT_URL_MEDIA_AUTOPLAY_DESC_NEW"] = "Автовоспроизведение работает только на опубликованном сайте";
 $MESS["LANDING_CONTENT_URL_MEDIA_CONTROLS"] = "Показывать элементы управления";
 $MESS["LANDING_CONTENT_URL_MEDIA_LOOP"] = "Воспроизводить по кругу";
 $MESS["LANDING_CONTENT_URL_MEDIA_START"] = "Начинать воспроизведение с";
 $MESS["LANDING_CONTENT_URL_MEDIA_YES"] = "Да";
 $MESS["LANDING_CONTENT_URL_MEDIA_NO"] = "Нет";
 $MESS["LANDING_CONTENT_URL_MEDIA_SOUND"] = "Включить звук";
+$MESS["LANDING_CONTENT_URL_MEDIA_SOUND_ALERT"] = "Автовоспроизведение возможно только при выключенном звуке";
 $MESS["LANDING_CONTENT_URL_MEDIA_FB_PAGE_SMALL_HEADER"] = "Показывать компактный заголовок";
 $MESS["LANDING_CONTENT_URL_MEDIA_FB_PAGE_COVER"] = "Показывать обложку";
 $MESS["LANDING_CONTENT_URL_MEDIA_FB_PAGE_FACES"] = "Показывать лица друзей";
@@ -210,7 +220,7 @@ $MESS["LANDING_CONTENT_URL_MEDIA_FB_POST_FULL"] = "Показать весь п�
 
 $MESS["LANDING_CONTENT_MEDIA_SECONDS_SHORT"] = "Сек.";
 $MESS["LANDING_TITLE_OF_EDITOR_ACTION_DESIGN"] = "Дизайн";
-$MESS["LANDING_BLOCK_DISABLED_ON_DESKTOP_NAME"] = "Настроена видимость блока";
+$MESS["LANDING_BLOCK_DISABLED_ON_DESKTOP_NAME_2"] = "Настроена видимость блока";
 
 $MESS["LANDING_BLOCK_HIDDEN_ON_DESKTOP"] = "Скрыт на&nbsp;устройствах с&nbsp;шириной экрана более чем 1120px";
 $MESS["LANDING_BLOCK_HIDDEN_ON_TABLET"] = "Скрыт на&nbsp;устройствах с&nbsp;шириной экрана менее чем 1120px но&nbsp;более чем 575px";
@@ -221,10 +231,15 @@ $MESS["LANDING_TITLE_OF_EDITOR_ACTION_GLAVRED"] = "Главред";
 $MESS["LANDING_TITLE_OF_EDITOR_ACTION_GLAVRED_TITLE"] = "Главред помогает очистить текст от словесного мусора, проверяет на соответствие информационному стилю.";
 // ~~~~
 
-$MESS["LANDING_CONTENT_URL_MEDIA_HELP"] = "<p>Укажите ссылку на видео с Youtube, Vimeo, Vine или Instagram, и клик по этой ссылке откроет видео во всплывающем окне.</p>";
-//$MESS["LANDING_CONTENT_URL_MEDIA_HELP"] = "<p>Укажите ссылку на видео с Youtube, Vimeo, Vine или Instagram, и клик по этой ссылке откроет видео во всплывающем окне.</p><p>Укажите ссылку на карту с Google Maps, и клик по этой ссылке откроет карту во всплывающем окне.</p>";
+$MESS["LANDING_CONTENT_URL_MEDIA_HELP_2"] = "<p>Укажите ссылку на видео с Youtube, RuTube, VK видео или Vimeo, и клик по этой ссылке откроет видео во всплывающем окне.</p>";
 $MESS["LANDING_CONTENT_URL_MEDIA_HELP_TITLE"] = "Медиа-ссылки";
 $MESS["LANDING_BLOCKS_LIST_PREVIEW_NEW"] = "Новый";
+$MESS["LANDING_BLOCKS_LIST_PREVIEW_EXPIRED"] = "Подписка истекла";
+$MESS["LANDING_BLOCKS_LIST_PREVIEW_MARKET"] = "Маркет";
+$MESS["LANDING_BLOCKS_LIST_PREVIEW_MARKET_HINT"] = "Блок доступен по Подписке на Маркет";
+$MESS["LANDING_BLOCKS_LIST_PREVIEW_DELETE_MSG"] = "Вы уверены, что хотите удалить этот блок?";
+$MESS["LANDING_BLOCKS_LIST_PREVIEW_MY_NEW"] = "Мой";
+$MESS["LANDING_BLOCKS_LIST_PREVIEW_FAVORITE"] = "Сохранённый блок";
 
 $MESS["LANDING_ALERT_ACTION_CLOSE"] = "Закрыть";
 $MESS["LANDING_ALERT_ACTION_SUPPORT_LINK"] = "Написать в поддержку";
@@ -268,9 +283,12 @@ $MESS["LANDING_GOOGLE_FONT_PANEL_LANGUAGE_ARABIC"] = "Арабский";
 $MESS["LANDING_GOOGLE_FONT_PANEL_LANGUAGE_HEBREW"] = "Иврит";
 $MESS["LANDING_GOOGLE_FONT_PANEL_LANGUAGE_KOREAN"] = "Корейский";
 
+$MESS["LANDING_GOOGLE_FONT_SEARCH_TITLE"] = "Поиск";
+$MESS["LANDING_GOOGLE_FONT_SEARCH_PLACEHOLDER"] = "название шрифта";
+
 $MESS["LANDING_GOOGLE_FONT_PANEL_CATEGORY_FORM_TITLE"] = "Категория";
-$MESS["LANDING_GOOGLE_FONT_PANEL_CATEGORY_SANS_SERIF"] = "Гротеск";
-$MESS["LANDING_GOOGLE_FONT_PANEL_CATEGORY_SERIF"] = "Антиква";
+$MESS["LANDING_GOOGLE_FONT_PANEL_CATEGORY_SANS_SERIF_2"] = "Без засечек";
+$MESS["LANDING_GOOGLE_FONT_PANEL_CATEGORY_SERIF_2"] = "С засечками";
 $MESS["LANDING_GOOGLE_FONT_PANEL_CATEGORY_DISPLAY"] = "Декоративный";
 $MESS["LANDING_GOOGLE_FONT_PANEL_CATEGORY_HANDWRITING"] = "Рукописный";
 $MESS["LANDING_GOOGLE_FONT_PANEL_CATEGORY_MONOSPACE"] = "Моноширный";
@@ -305,6 +323,7 @@ $MESS["LANDING_STYLE_PANEL_CATALOG_LIST_NAME"] = "Товар";
 $MESS["LANDING_STYLE_PANEL_CATALOG_LIST_LOCATION"] = "Путь";
 $MESS["LANDING_STYLE_PANEL_CATALOG_SEARCH_PLACEHOLDER"] = "Название товара или раздела";
 $MESS["LANDING_LINKS_BUTTON_CATALOG"] = "Элемент каталога";
+$MESS["LANDING_LINKS_BUTTON_DISK_FILE"] = "Файл на моем Диске";
 $MESS["LANDING_STYLE_PANEL_CATALOG_SEARCH_TYPE_ALL"] = "Все";
 $MESS["LANDING_STYLE_PANEL_CATALOG_SEARCH_TYPE_ELEMENTS"] = "Элементы";
 $MESS["LANDING_STYLE_PANEL_CATALOG_SEARCH_TYPE_SECTIONS"] = "Разделы";
@@ -372,6 +391,17 @@ $MESS['LANDING_CREATE_PAGE_PANEL_FIELD_PAGE_CODE'] = 'Код страницы';
 $MESS['LANDING_CREATE_PAGE_PANEL_SUCCESS_MESSAGE_TITLE'] = 'Страница создана';
 $MESS['LANDING_CREATE_PAGE_PANEL_FAIL_MESSAGE_TITLE'] = 'Не удалось создать страницу';
 
+$MESS['LANDING_SAVE_BLOCK_PANEL_TITLE'] = 'Сохранить в список блоков';
+$MESS['LANDING_SAVE_BLOCK_PANEL_FAIL_MESSAGE_TITLE'] = 'Не удалось сохранить блок';
+$MESS['LANDING_SAVE_BLOCK_PANEL_SUCCESS_MESSAGE_TITLE'] = 'Блок успешно сохранен';
+$MESS['LANDING_SAVE_BLOCK_PANEL_MESSAGE_TITLE'] = 'Сохранить как шаблон';
+$MESS['LANDING_SAVE_BLOCK_PANEL_MESSAGE_TEXT'] = 'Создавайте свои блоки и храните их в списке для быстрого использования на страницах своих сайтов.';
+$MESS['LANDING_SAVE_BLOCK_PANEL_FIELD_TITLE'] = 'Название блока';
+$MESS['LANDING_SAVE_BLOCK_PANEL_FIELD_SECTIONS'] = 'Разделы для блока';
+$MESS['LANDING_SAVE_BLOCK_PANEL_FIELD_TEMPLATE_REF'] = 'Привязать к текущему стилю';
+$MESS['LANDING_SAVE_BLOCK_PANEL_FIELD_PREVIEW'] = 'Превью блока';
+$MESS['LANDING_SAVE_BLOCK_PANEL_SUCCESS'] = 'Блок успешно сохранен.';
+
 
 $MESS['LANDING_BLOCK__DETAIL_PAGE_PANEL_TITLE'] = 'Детальная страница';
 $MESS['LANDING_BLOCK__DETAIL_PAGE_PANEL_TEMPLATES'] = 'Готовые решения';
@@ -381,10 +411,103 @@ $MESS['LANDING_ACTION_BUTTON_PUBLISH'] = 'Опубликовать';
 $MESS['LANDING_LINK_PLACEHOLDER_NEW_PAGE'] = 'Новая страница';
 $MESS['LANDING_LINK_NEW_PAGE_LABEL'] = 'НОВАЯ';
 $MESS['LANDING_LINK_NEW_PAGE_SAVE_BUTTON_LABEL'] = 'Создать';
+$MESS['LANDING_LINK_NEW_PAGE_CANCEL_BUTTON_LABEL'] = 'Отменить';
 
-$MESS['LANDING_EMBED_FIELD_DESCRIPTION'] = 'Пример: https://www.youtube.com/watch?v=q4d8g9Dn3ww';
+$MESS['LANDING_EMBED_BG_FIELD_DESCRIPTION'] = 'Допускаются только полные или короткие ссылки на видео с&nbsp;сервисов Youtube и VK видео';
+$MESS['LANDING_EMBED_NOT_BG_FIELD_DESCRIPTION'] = 'Допускаются только полные или короткие ссылки на видео с&nbsp;сервисов Youtube, VK видео, RuTube или Vimeo';
 $MESS['LANDING_EMBED_FIELD_PLACEHOLDER'] = 'Ссылка на видео';
 $MESS['LANDING_EMBED_ERROR_TEXT'] = 'Укажите ссылку на страницу с видео. Код и другие способы вставки не поддерживаются.';
+$MESS['LANDING_EMBED_ERROR_WRONG_SOURCE_TEXT_ALL'] = 'Некорректная ссылка';
 
 $MESS['LANDING_SHOW_FORM_EDITOR'] = 'Настроить форму';
 
+$MESS['LANDING_DESIGN_BLOCK_REPO_BUTTON'] = 'Добавить элемент';
+$MESS['LANDING_DESIGN_BLOCK_REPO_TITLE'] = 'Добавить элемент';
+
+$MESS['LANDING_EDIT_BLOCK_DEFAULT_FONT'] = 'Вернуть шрифт по умолчанию';
+
+$MESS['LANDING_EDIT_NEED_PUBLICATION'] = 'Изменения в настройке вступят в силу сразу после публикации сайта';
+
+$MESS['LANDING_DROPDOWN_NOT_FILLED'] = 'Не выбрано';
+$MESS['LANDING_FORM_EDITOR_ADD_BLOCK_TOUR_STEP_1_TITLE'] = 'Добавление блоков';
+$MESS['LANDING_FORM_EDITOR_ADD_BLOCK_TOUR_STEP_1_TEXT'] = 'Сохраните изменения и закройте редактор, чтобы добавить блоки';
+$MESS['LANDING_FORM_EDITOR_FORM_DESIGN_TOUR_STEP_1_TITLE'] = 'Настройка дизайна';
+$MESS['LANDING_FORM_EDITOR_FORM_DESIGN_TOUR_STEP_1_TEXT'] = 'Сохраните изменения и закройте редактор, чтобы настроить дизайн';
+$MESS['LANDING_FORM_DESIGN_BUTTON'] = 'Настроить дизайн';
+
+// Table editor
+$MESS["LANDING_TITLE_OF_EDITOR_ACTION_CREATE_TABLE"] = "Создать таблицу";
+$MESS["LANDING_TITLE_OF_EDITOR_ACTION_PASTE_TABLE"] = "Вставить таблицу";
+$MESS["LANDING_TITLE_OF_EDITOR_ACTION_TABLE_CELL_BG"] = "Изменить цвет ячеек";
+$MESS["LANDING_TITLE_OF_EDITOR_ACTION_DELETE_ROW_TABLE"] = "Удалить строку";
+$MESS["LANDING_TITLE_OF_EDITOR_ACTION_DELETE_COL_TABLE"] = "Удалить столбец";
+$MESS["LANDING_TITLE_OF_EDITOR_ACTION_TABLE_STYLE"] = "Стиль таблицы";
+$MESS["LANDING_TITLE_OF_EDITOR_ACTION_TABLE_COPY"] = "Копировать таблицу";
+$MESS["LANDING_TITLE_OF_EDITOR_ACTION_TABLE_COPIED"] = "Таблица успешно скопирована.";
+$MESS["LANDING_TITLE_OF_EDITOR_ACTION_TABLE_NOT_COPIED"] = "Не удалось скопировать таблицу.";
+$MESS["LANDING_TITLE_OF_EDITOR_ACTION_TABLE_DELETE"] = "Удалить таблицу";
+$MESS["LANDING_TABLE_BUTTON_ADD_ROW"] = "Добавить строку";
+$MESS["LANDING_TABLE_BUTTON_ADD_COL"] = "Добавить столбец";
+$MESS["LANDING_TABLE_BUTTON_DELETE_TABLE"] = "Удалить таблицу";
+$MESS["LANDING_TABLE_STYLE_1"] = "Светлый";
+$MESS["LANDING_TABLE_STYLE_2"] = "Светлый с чередованием строк";
+$MESS["LANDING_TABLE_STYLE_3"] = "Светлый с чередованием столбцов";
+$MESS["LANDING_TABLE_STYLE_4"] = "Светлый с заглавной строкой";
+$MESS["LANDING_TABLE_STYLE_5"] = "Светлый с заглавной строкой и столбцом";
+$MESS["LANDING_TABLE_STYLE_6"] = "Темный";
+$MESS["LANDING_TABLE_STYLE_7"] = "Темный с чередованием строк";
+$MESS["LANDING_TABLE_STYLE_8"] = "Темный с чередованием столбцов";
+$MESS["LANDING_TABLE_STYLE_9"] = "Темный с заглавной строкой";
+$MESS["LANDING_TABLE_STYLE_10"] = "Темный с заглавной строкой и столбцом";
+$MESS["LANDING_TABLE_DND_ROWS"] = "Потяните для перемещения строки";
+$MESS["LANDING_TABLE_DND_COLS"] = "Потяните для перемещения столбца";
+$MESS["LANDING_TABLE_RESIZE_COLS"] = "Потяните для изменения ширины столбца";
+$MESS["LANDING_TABLE_SELECT_TABLE"] = "Выбрать всю таблицу";
+$MESS["LANDING_TABLE_BUTTON_CHANGE_TEXT"] = "Отредактировать текст";
+$MESS['LANDING_FONTS_PANEL_MORE_BUTTON_LABEL'] = 'Загрузить еще';
+$MESS['LANDING_FONTS_PANEL_EMPTY_STUB'] = 'Шрифты не найдены...';
+
+//link control phrases
+//actions
+$MESS["LANDING_LINK_URL_ACTION_SELECT"] = "Выберите действие";
+$MESS["LANDING_LINK_URL_ACTION_PAGE"] = "Перейти на страницу";
+$MESS["LANDING_LINK_URL_ACTION_BLOCK"] = "Перейти к блоку";
+$MESS["LANDING_LINK_URL_ACTION_CRM"] = "Открыть CRM-форму";
+$MESS["LANDING_LINK_URL_ACTION_PRODUCT"] = "Открыть страницу товара";
+$MESS["LANDING_LINK_URL_ACTION_PHONE"] = "Позвонить";
+$MESS["LANDING_LINK_URL_ACTION_SMS"] = "Отправить СМС";
+$MESS["LANDING_LINK_URL_ACTION_EMAIL"] = "Отправить письмо по e-mail";
+$MESS["LANDING_LINK_URL_ACTION_SKYPE"] = "Связаться по Skype";
+$MESS["LANDING_LINK_URL_ACTION_LINK"] = "Перейти по внешней ссылке";
+$MESS["LANDING_LINK_URL_ACTION_FILE_MSGVER_1"] = "Открыть файл";
+$MESS["LANDING_LINK_URL_ACTION_USER"] = "Открыть профиль в Битрикс24";
+$MESS["LANDING_LINK_URL_DELETE_ACTION"] = "Не указывать ссылку";
+$MESS["LANDING_LINK_URL_ACTION_SELECT_CATALOG"] = "Выбрать папку";
+$MESS["LANDING_LINK_URL_ACTION_SELECT_PAGE"] = "Выбрать страницу";
+
+$MESS["LANDING_LINK_URL_TITLE_PAGE"] = "Клиент откроет страницу";
+$MESS["LANDING_LINK_URL_TITLE_BLOCK"] = "Клиент откроет блок";
+$MESS["LANDING_LINK_URL_TITLE_CRM_FORM"] = "Клиент откроет CRM-форму";
+$MESS["LANDING_LINK_URL_TITLE_PRODUCT"] = "Клиент откроет страницу товара в этом окне";
+$MESS["LANDING_LINK_URL_TITLE_TEL"] = "Клиент позвонит по указанному номеру";
+$MESS["LANDING_LINK_URL_TITLE_SMS"] = "Клиент отправит СМС";
+$MESS["LANDING_LINK_URL_TITLE_SKYPE"] = "Клиент свяжется с указанным контактом в Slype";
+$MESS["LANDING_LINK_URL_TITLE_MAILTO"] = "Клиент отправит письмо на указанный e-mail";
+$MESS["LANDING_LINK_URL_TITLE_LINK"] = "Клиент откроет страницу";
+$MESS["LANDING_LINK_URL_TITLE_FILE"] = "Пользователь скачает файл";
+$MESS["LANDING_LINK_URL_TITLE_USER"] = "Откроется профиль пользователя Битрикс24";
+
+$MESS["LANDING_LINK_URL_BUTTON_PAGE"] = "Выберите страницу для перехода";
+$MESS["LANDING_LINK_URL_BUTTON_PAGE_SHORT"] = "Страницы сайта";
+$MESS["LANDING_LINK_URL_BUTTON_BLOCK"] = "Выберите блок для перехода";
+$MESS["LANDING_LINK_URL_BUTTON_CRM"] = "Выберите CRM-Форму";
+$MESS["LANDING_LINK_URL_BUTTON_FILE"] = "Выберите файл";
+$MESS["LANDING_LINK_URL_BUTTON_USER"] = "Выберите пользователя";
+$MESS["LANDING_LINK_URL_BUTTON_PRODUCT"] = "Выберите товар";
+$MESS["LANDING_LINK_URL_BUTTON_CATALOG"] = "Каталог товаров";
+
+//placeholder
+$MESS["LANDING_LINK_URL_PLACEHOLDER_PHONE"] = "Выберите или введите номер телефона";
+$MESS["LANDING_LINK_URL_PLACEHOLDER_EMAIL"] = "Введите e-mail";
+$MESS["LANDING_LINK_URL_PLACEHOLDER_SKYPE"] = "Введите логин Skype";
+$MESS["LANDING_LINK_URL_PLACEHOLDER_URL"] = "Введите url";

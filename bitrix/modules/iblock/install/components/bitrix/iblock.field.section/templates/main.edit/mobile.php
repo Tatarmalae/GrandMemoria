@@ -3,12 +3,20 @@
 if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
 use Bitrix\Iblock\UserField\Types\SectionType;
+use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Text\HtmlFilter;
 
 /**
  * @var DateUfComponent $component
  * @var array $arResult
  */
+
+if (!$arResult['hasAccessToCatalog'])
+{
+	echo Loc::getMessage('IBLOCK_FIELD_SECTION_CATALOG_ACCESS_DENIED');
+
+	return;
+}
 
 $component = $this->getComponent();
 
@@ -21,6 +29,7 @@ $nodes = [$arResult['userField']['~id']];
 	name="<?= $arResult['fieldName'] ?>"
 	id="<?= $arResult['userField']['~id'] ?>"
 	class="mobile-grid-data-select"
+	data-is-inline-edit="false"
 	<?= ($arResult['userField']['MULTIPLE'] === 'Y' ? ' multiple' : '') ?>
 >
 	<?php

@@ -16,7 +16,8 @@ class Syspage
 		'cart',
 		'order',
 		'payment',
-		'compare'
+		'compare',
+		'feedback',
 	);
 
 	/**
@@ -93,9 +94,10 @@ class Syspage
 	 * Get pages for site.
 	 * @param int $id Site id.
 	 * @param bool $active Only active items.
+	 * @param bool $force If true - reload static cache
 	 * @return array
 	 */
-	public static function get($id, $active = false)
+	public static function get(int $id, bool $active = false, bool $force = false): array
 	{
 		static $types = array();
 		$id = intval($id);
@@ -121,7 +123,8 @@ class Syspage
 		};
 
 		if (
-			isset($types[$id])
+			!$force
+			&& isset($types[$id])
 			&& count($types[$id]) > 0
 		)
 		{
@@ -152,6 +155,20 @@ class Syspage
 		while ($row = $res->fetch())
 		{
 			$types[$id][$row['TYPE']] = $row;
+		}
+
+		// event for external changes
+		$event = new \Bitrix\Main\Event('landing', 'onLandingSyspageRetrieve', [
+			'types' => $types
+		]);
+		$event->send();
+		foreach ($event->getResults() as $result)
+		{
+			$params = $result->getParameters();
+			if (is_array($params))
+			{
+				$types = $params;
+			}
 		}
 
 		return $removeHidden($types[$id]);

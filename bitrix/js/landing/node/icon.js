@@ -50,7 +50,17 @@
 				libraries.forEach(function(library) {
 					library.categories.forEach(function(category) {
 						category.items.forEach(function(item) {
-							var classList = item.split(" ");
+							var className = '';
+							if (BX.Type.isObject(item))
+							{
+								className = item.options.join(' ');
+							}
+							else
+							{
+								className = item;
+							}
+
+							var classList = className.split(" ");
 							classList.forEach(function(className) {
 								if (className)
 								{
@@ -118,7 +128,26 @@
 				.then(function() {
 					if (value.url)
 					{
-						attr(this.node, "data-pseudo-url", value.url);
+						let isNeedSetPseudoLink = false;
+						if (!(value.url.href === '#' && value.url.target === ''))
+						{
+							isNeedSetPseudoLink = true;
+						}
+						if (value.url.href === 'selectActions:')
+						{
+							value.url.href = '';
+							value.url.enabled = false;
+							isNeedSetPseudoLink = true;
+						}
+						if (value.url.href.startsWith('product:'))
+						{
+							value.url.target = '_self';
+							isNeedSetPseudoLink = true;
+						}
+						if (isNeedSetPseudoLink)
+						{
+							attr(this.node, "data-pseudo-url", value.url);
+						}
 					}
 					this.onChange();
 

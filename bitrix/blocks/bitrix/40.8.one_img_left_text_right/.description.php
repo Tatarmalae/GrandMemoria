@@ -32,6 +32,7 @@ return [
 			'name' => Loc::getMessage('LANDING_BLOCK_40_8_IMG'),
 			'type' => 'img',
 			'dimensions' => ['width' => 540],
+			'create2xByDefault' => false,
 		],
 		'.landing-block-link' => [
 			'name' => Loc::getMessage('LANDING_BLOCK_40_7_LINK'),
@@ -41,15 +42,11 @@ return [
 	'style' => [
 		'.landing-block-card-title-left' => [
 			'name' => Loc::getMessage('LANDING_BLOCK_40_8_TITLE'),
-			'type' => ['typo', 'border-color', 'border-width'],
-		],
-		'.landing-block-card-border-right' => [
-			'name' => Loc::getMessage('LANDING_BLOCK_40_8_SEPARATOR'),
-			'type' => ['border-color', 'border-width'],
+			'type' => ['typo', 'heading'],
 		],
 		'.landing-block-card-title-right' => [
 			'name' => Loc::getMessage('LANDING_BLOCK_40_8_TITLE'),
-			'type' => ['typo'],
+			'type' => ['typo', 'heading'],
 		],
 		'.landing-block-card-text-left' => [
 			'name' => Loc::getMessage('LANDING_BLOCK_40_8_TEXT'),
@@ -77,11 +74,11 @@ return [
 		],
 		'.landing-block-link' => [
 			'name' => Loc::getMessage('LANDING_BLOCK_40_8_LINK'),
-			'type' => ['typo-link']
+			'type' => ['typo-link'],
 		],
 		'.landing-block-link-container' => [
 			'name' => Loc::getMessage('LANDING_BLOCK_40_8_CONTAINER'),
-			'type' => ['text-align']
+			'type' => ['text-align'],
 		],
 	],
 ];

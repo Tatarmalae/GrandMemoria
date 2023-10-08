@@ -17,8 +17,11 @@ return array(
 		'.landing-block-node-img' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_32.6.IMG_GRID_4_COLS_NODES_LANDINGBLOCKNODEIMG'),
 			'type' => 'img',
+			'useInDesigner' => false,
 			'dimensions' => array('width' => 1080),
+			'disableLink' => true,
 			'allowInlineEdit' => false,
+			'create2xByDefault' => false,
 		),
 		'.landing-block-node-img-title' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_32.6.IMG_GRID_4_COLS_NODES_LANDINGBLOCKNODETXT'),

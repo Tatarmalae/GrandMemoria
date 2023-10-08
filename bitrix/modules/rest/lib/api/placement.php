@@ -5,13 +5,17 @@ namespace Bitrix\Rest\Api;
 use Bitrix\Main\ArgumentException;
 use Bitrix\Main\ArgumentNullException;
 use Bitrix\Main\Entity\ExpressionField;
+use Bitrix\Main\Loader;
 use Bitrix\Rest\AccessException;
 use Bitrix\Rest\AppTable;
 use Bitrix\Rest\AuthTypeException;
 use Bitrix\Rest\HandlerHelper;
 use Bitrix\Rest\OAuth\Auth;
+use Bitrix\Rest\PlacementLangTable;
 use Bitrix\Rest\PlacementTable;
 use Bitrix\Rest\RestException;
+use Bitrix\Rest\Lang;
+use Bitrix\Main\ArgumentTypeException;
 
 class Placement extends \IRestService
 {
@@ -87,20 +91,6 @@ class Placement extends \IRestService
 		return $result;
 	}
 
-	/**
-	 * Clears placement's cache in other modules.
-	 * @return void
-	 */
-	protected static function clearPlacementCache(): void
-	{
-		if (defined('BX_COMP_MANAGED_CACHE'))
-		{
-			global $CACHE_MANAGER;
-			$CACHE_MANAGER->clearByTag('intranet_menu_binding');
-		}
-	}
-
-
 	public static function bind($params, $n, \CRestServer $server)
 	{
 		static::checkPermission($server);
@@ -134,50 +124,100 @@ class Placement extends \IRestService
 		$placementList = static::getPlacementList($server, $scopeList);
 		$placementInfo = $placementList[$placement];
 
-		if(is_array($placementInfo) && !$placementInfo['private'])
+		if (is_array($placementInfo) && !$placementInfo['private'])
 		{
+			$placementLangList = [];
 			$placementBind = array(
 				'APP_ID' => $appInfo['ID'],
+				'USER_ID' => (int) $params['USER_ID'] > 0 ? (int) $params['USER_ID'] : PlacementTable::DEFAULT_USER_ID_VALUE,
 				'PLACEMENT' => $placement,
 				'PLACEMENT_HANDLER' => $placementHandler,
+				'OPTIONS' => static::prepareOptions($params['OPTIONS'], $placementInfo['options']),
 			);
 
-			if(!empty($params['TITLE']))
+			if (
+				$placementBind['USER_ID'] !== PlacementTable::DEFAULT_USER_ID_VALUE
+				&& $placementInfo['user_mode'] !== true
+			)
 			{
-				$placementBind['TITLE'] = trim($params['TITLE']);
+				throw new RestException(
+					'User mode is not available.',
+					PlacementTable::ERROR_PLACEMENT_USER_MODE
+				);
 			}
 
-			if(!empty($params['DESCRIPTION']))
+			$langList = Lang::listLanguage();
+			$langDefault = reset($langList);
+
+			if (empty($params['LANG_ALL']))
 			{
-				$placementBind['COMMENT'] = trim($params['DESCRIPTION']);
+				if (!empty($params['TITLE']))
+				{
+					$placementLangList[$langDefault]['TITLE'] = trim($params['TITLE']);
+				}
+
+				if (!empty($params['DESCRIPTION']))
+				{
+					$placementLangList[$langDefault]['DESCRIPTION'] = trim($params['DESCRIPTION']);
+				}
+
+				if (!empty($params['GROUP_NAME']))
+				{
+					$placementLangList[$langDefault]['GROUP_NAME'] = trim($params['GROUP_NAME']);
+				}
+			}
+			else
+			{
+				$fieldList = [
+					'TITLE',
+					'DESCRIPTION',
+					'GROUP_NAME',
+				];
+				foreach ($params['LANG_ALL'] as $langCode => $langItem)
+				{
+					foreach ($fieldList as $field)
+					{
+						$placementLangList[$langCode][$field] = trim($langItem[$field] ?? '');
+					}
+				}
 			}
 
-			if(!empty($params['GROUP_NAME']))
-			{
-				$placementBind['GROUP_NAME'] = trim($params['GROUP_NAME']);
-			}
+			$placementBind['LANG_ALL'] = $placementLangList;
+			$placementBind = Lang::mergeFromLangAll($placementBind);
+			unset($placementBind['LANG_ALL']);
 
-			if($placementInfo['max_count'] > 0)
+			if ($placementInfo['max_count'] > 0)
 			{
+				$filter = [
+					'=APP_ID' => $placementBind['APP_ID'],
+					'=PLACEMENT' => $placementBind['PLACEMENT'],
+				];
+				if ($placementInfo['user_mode'] === true)
+				{
+					$filter['=USER_ID'] = [
+						PlacementTable::DEFAULT_USER_ID_VALUE,
+						(int)$placementBind['USER_ID'],
+					];
+				}
+
 				$res = PlacementTable::getList(
 					[
-						'filter' => [
-							'=APP_ID' => $placementBind['APP_ID'],
-							'=PLACEMENT' => $placementBind['PLACEMENT']
+						'filter' => $filter,
+						'select' => [
+							'COUNT',
 						],
-						'select' => array('COUNT'),
-						'runtime' => array(
-							new ExpressionField('COUNT', 'COUNT(*)')
-						)
+						'runtime' => [
+							new ExpressionField('COUNT', 'COUNT(*)'),
+						]
 					]
 				);
 
-				if($result = $res->fetch())
+				if ($result = $res->fetch())
 				{
-					if($result['COUNT'] >= $placementInfo['max_count'])
+					if ($result['COUNT'] >= $placementInfo['max_count'])
 					{
 						throw new RestException(
-							'Placement max count: '.$placementInfo['max_count'],
+							'Placement max count: ' . $placementInfo['max_count'],
 							PlacementTable::ERROR_PLACEMENT_MAX_COUNT
 						);
 					}
@@ -193,18 +233,63 @@ class Placement extends \IRestService
 			{
 				$placementBind['ICON'] = $file;
 			}
+			if (!empty($placementInfo['registerCallback']['callback']))
+			{
+				if (
+					$placementInfo['registerCallback']['moduleId']
+					&& Loader::includeModule($placementInfo['registerCallback']['moduleId'])
+					&& is_callable($placementInfo['registerCallback']['callback'])
+				)
+				{
+					$resultCallback = call_user_func(
+						$placementInfo['registerCallback']['callback'],
+						$placementBind,
+						$placementInfo
+					);
+					if (!empty($resultCallback['error']) && !empty($resultCallback['error_description']))
+					{
+						return $resultCallback;
+					}
+				}
+			}
 
 			$result = PlacementTable::add($placementBind);
-			if(!$result->isSuccess())
+			if ($result->isSuccess())
+			{
+				$placementId = $result->getId();
+				if (empty($placementLangList))
+				{
+					$app = AppTable::getByClientId($placementBind['APP_ID']);
+					if (!empty($app['APP_NAME']))
+					{
+						$placementLangList[$langDefault] = [
+							'TITLE' => $app['APP_NAME']
+						];
+					}
+				}
+				foreach ($placementLangList as $langId => $data)
+				{
+					$data['PLACEMENT_ID'] = $placementId;
+					$data['LANGUAGE_ID'] = $langId;
+					$res = PlacementLangTable::add($data);
+					if (!$res->isSuccess())
+					{
+						$errorMessage = $res->getErrorMessages();
+						throw new RestException(
+							'Unable to set placements language: ' . implode(', ', $errorMessage),
+							RestException::ERROR_CORE
+						);
+					}
+				}
+			}
+			else
 			{
 				$errorMessage = $result->getErrorMessages();
 				throw new RestException(
-					'Unable to set placement handler: '.implode(', ', $errorMessage),
+					'Unable to set placement handler: ' . implode(', ', $errorMessage),
 					RestException::ERROR_CORE
 				);
 			}
-
-			self::clearPlacementCache();
 
 			return true;
 		}
@@ -215,6 +300,31 @@ class Placement extends \IRestService
 		);
 	}
 
+	private static function prepareOptions($data = [], $setting = []): array
+	{
+		$result = [];
+
+		if (!empty($setting) && is_array($data))
+		{
+			foreach ($data as $key => $value)
+			{
+				if (!empty($setting[$key]))
+				{
+					switch ($setting[$key])
+					{
+						case 'int':
+							$result[$key] = (int) $value;
+							break;
+						case 'string':
+							$result[$key] = (string) $value;
+							break;
+					}
+				}
+			}
+		}
+
+		return $result;
+	}
 
 	public static function unbind($params, $n, \CRestServer $server)
 	{
@@ -222,10 +332,15 @@ class Placement extends \IRestService
 
 		$params = array_change_key_case($params, CASE_UPPER);
 
+		if (!is_string($params['PLACEMENT']))
+		{
+			throw new ArgumentTypeException('PLACEMENT', 'string');
+		}
+
 		$placement = toUpper($params['PLACEMENT']);
 		$placementHandler = $params['HANDLER'];
 
-		if($placement == '')
+		if ($placement == '')
 		{
 			throw new ArgumentNullException("PLACEMENT");
 		}
@@ -234,7 +349,7 @@ class Placement extends \IRestService
 
 		$placementList = static::getPlacementList($server);
 
-		if(array_key_exists($placement, $placementList) && !$placementList[$placement]['private'])
+		if (array_key_exists($placement, $placementList) && !$placementList[$placement]['private'])
 		{
 			$appInfo = static::getApplicationInfo($server);
 
@@ -242,6 +357,11 @@ class Placement extends \IRestService
 				'=APP_ID' => $appInfo["ID"],
 				'=PLACEMENT' => $placement,
 			);
+
+			if (array_key_exists('USER_ID', $params))
+			{
+				$filter['USER_ID'] = (int)$params['USER_ID'];
+			}
 
 			if($placementHandler <> '')
 			{
@@ -261,11 +381,6 @@ class Placement extends \IRestService
 					$cnt++;
 				}
 			}
-		}
-
-		if ($cnt > 0)
-		{
-			self::clearPlacementCache();
 		}
 
 		return array('count' => $cnt);
@@ -291,15 +406,34 @@ class Placement extends \IRestService
 
 		$placementList = static::getPlacementList($server);
 
-		while($placement = $dbRes->fetch())
+		foreach ($dbRes->fetchCollection() as $placement)
 		{
-			if(array_key_exists($placement['PLACEMENT'], $placementList) && !$placementList[$placement['PLACEMENT']]['private'])
+			if (
+				array_key_exists($placement->getPlacement(), $placementList)
+				&& !$placementList[$placement->getPlacement()]['private']
+			)
 			{
+				$langList = [];
+				$placement->fillLangAll();
+				if (!is_null($placement->getLangAll()))
+				{
+					foreach ($placement->getLangAll() as $lang)
+					{
+						$langList[$lang->getLanguageId()] = [
+							'TITLE' => $lang->getTitle(),
+							'DESCRIPTION' => $lang->getDescription(),
+							'GROUP_NAME' => $lang->getGroupName(),
+						];
+					}
+				}
 				$result[] = array(
-					"placement" => $placement['PLACEMENT'],
-					"handler" => $placement['PLACEMENT_HANDLER'],
-					"title" => $placement['TITLE'],
-					"description" => $placement['COMMENT'],
+					'placement' => $placement->getPlacement(),
+					'userId' => $placement->getUserId(),
+					'handler' => $placement->getPlacementHandler(),
+					'options' => $placement->getOptions(),
+					'title' => $placement->getTitle(),
+					'description' => $placement->getComment(),
+					'langAll' => $langList,
 				);
 			}
 		}

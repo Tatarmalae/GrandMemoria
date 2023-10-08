@@ -27,6 +27,7 @@ ErrorDocument 404 /404.php
   RewriteCond %{REQUEST_FILENAME} !/bitrix/urlrewrite.php$
   RewriteRule ^(.*)$ /bitrix/urlrewrite.php [L]
   RewriteRule .* - [E=REMOTE_USER:%{HTTP:Authorization}]
+  Redirect 301 /catalog/granitnye/gravirovka-pamyatnikov/ /ritualnye-uslugi/gravirovka-pamyatnikov/
 </IfModule>
 
 <IfModule mod_dir.c>
@@ -80,3 +81,9 @@ ErrorDocument 404 /404.php
 <IfModule mod_deflate.c>
 AddOutputFilterByType DEFLATE text/html text/plain text/xml application/xml application/xhtml+xml text/css text/javascript application/javascript application/x-javascript image/svg+xml image/svg
 </IfModule>
+
+RewriteEngine   on
+RewriteCond %{HTTP_REFERER}  shiza.zigmund.rocks [NC]
+RewriteCond %{HTTP_REFERER}  spros.work [NC]
+RewriteCond %{HTTP_REFERER}  unu.im [NC]
+RewriteRule ^.* -   [F,L]

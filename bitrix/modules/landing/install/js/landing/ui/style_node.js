@@ -3,8 +3,7 @@
 
 	BX.namespace("BX.Landing.UI");
 
-
-	var isString = BX.Landing.Utils.isString;
+	const slice = BX.Landing.Utils.slice;
 
 	/**
 	 * Implements interface for works with style node
@@ -30,9 +29,19 @@
 		this.clickHandler = "onClick" in options ? options.onClick : (function() {});
 		this.iframe = "iframe" in options ? options.iframe : null;
 		this.affects = new BX.Landing.Collection.BaseCollection();
+		this.inlineProperties = [];
+		this.computedProperties = [];
+		this.pseudoElement = null;
+		this.isSelectGroupFlag = null;
 		this.onFrameLoad();
 	};
 
+	BX.Landing.UI.Style.SERVICE_CLASSES = [
+		'landing-card',
+		'slick-slide',
+		'slick-current',
+		'slick-active',
+	];
 
 	BX.Landing.UI.Style.prototype = {
 		/**
@@ -40,11 +49,15 @@
 		 */
 		onFrameLoad: function()
 		{
-			if (!this.node)
+			if (this.node)
+			{
+				this.node = BX.type.isArray(this.node) ? this.node : [this.node];
+			}
+			else
 			{
 				this.node = this.getNode(true);
-				this.currentTarget = this.node[0];
 			}
+			this.currentTarget = this.node[0];
 
 			this.node.forEach(function (node) {
 				node.addEventListener("click", this.onClick.bind(this));
@@ -58,7 +71,7 @@
 
 		getNode: function(all)
 		{
-			var elements = [].slice.call(this.iframe.document.querySelectorAll(this.relativeSelector));
+			const elements = slice(this.iframe.document.querySelectorAll(this.relativeSelector));
 
 			if (this.isSelectGroup() || all)
 			{
@@ -66,6 +79,11 @@
 			}
 
 			return this.currentTarget ? [elements[this.getElementIndex(this.currentTarget)]] : [];
+		},
+
+		getTargetElement: function()
+		{
+			return this.currentTarget;
 		},
 
 		getElementIndex: function(element)
@@ -117,12 +135,32 @@
 			BX.fireEvent(node.parentNode, "mouseenter");
 		},
 
-
 		isSelectGroup: function()
 		{
+			if (this.isSelectGroupFlag !== null)
+			{
+				return this.isSelectGroupFlag;
+			}
+
 			return window.localStorage.getItem("selectGroup") === "true";
 		},
 
+		/**
+		 * Forced set isSelectGroup flag just for current style node
+ 		 * @param value
+		 */
+		setIsSelectGroup: function(value)
+		{
+			this.isSelectGroupFlag = !!value;
+		},
+
+		/**
+		 * Unset force set isSelectGroup flag
+		 */
+		unsetIsSelectGroupFlag: function()
+		{
+			this.isSelectGroupFlag = null;
+		},
 
 		/**
 		 * Highlights this node
@@ -157,9 +195,63 @@
 		 */
 		isChanged: function()
 		{
-			return JSON.stringify(this.value) !== JSON.stringify(this.getValue());
+			const currentValue = this.getValue();
+			if (JSON.stringify(this.value) !== JSON.stringify(currentValue))
+			{
+				return true;
+			}
+			else
+			{
+				return this.lastValue !== undefined && JSON.stringify(this.lastValue) !== JSON.stringify(currentValue);
+			}
 		},
 
+		/**
+		 * Set list of used inline properties for get them in value
+		 * @param {string|array} property
+		 */
+		setInlineProperty: function (property)
+		{
+			if (!BX.Type.isArray(property))
+			{
+				property = [property];
+			}
+			property.forEach(function (prop)
+			{
+				if (this.inlineProperties.indexOf(prop) === -1)
+				{
+					this.inlineProperties.push(prop);
+				}
+			}, this);
+		},
+
+		/**
+		 * Set list of properties for get computed styles
+		 * @param {string|array} property
+		 */
+		setComputedProperty: function (property)
+		{
+			if (!BX.Type.isArray(property))
+			{
+				property = [property];
+			}
+			property.forEach(function (prop)
+			{
+				if (this.computedProperties.indexOf(prop) === -1)
+				{
+					this.computedProperties.push(prop);
+				}
+			}, this);
+		},
+
+		/**
+		 * Set list of properties for get computed styles
+		 * @param {string} pseudo
+		 */
+		setPseudoElement: function(pseudo)
+		{
+			this.pseudoElement = pseudo;
+		},
 
 		/**
 		 * Sets node value
@@ -171,92 +263,205 @@
 		 */
 		setValue: function(value, items, postfix, affect, exclude)
 		{
-			this.lastValue = this.lastValue || this.getValue();
+			this.lastValue = this.currentValue;
+			this.currentValue = this.getValue();
 
-			if (!!value && BX.type.isArray(items))
+			if(!value)
 			{
-				affect = !!affect ? affect : "";
+				return;
+			}
 
-				if (typeof value === "object")
+			affect = !!affect ? affect : "";
+			if (affect.length)
+			{
+				if (affect !== "background-image")
 				{
-					if ("from" in value && "to" in value)
-					{
-						value.from += "-min";
-						value.to += "-max";
-					}
+					this.affects.add(affect);
+				}
+			}
 
+			if (BX.type.isObjectLike(value))
+			{
+				if ("from" in value && "to" in value)
+				{
+					value.from += "-min";
+					value.to += "-max";
+				}
+
+				if(!("style" in value))
+				{
 					var keys = Object.keys(value);
 					value = keys.map(function(key) {
 						return value[key];
 					});
 				}
-				else
+			}
+			else
+			{
+				value = [value];
+			}
+
+			this.getNode().forEach(function(node) {
+				if (BX.type.isArray(value))
 				{
-					value = [value];
+					this.setValueClass(node, value, items, affect);
+				}
+				if (BX.type.isObjectLike(value))
+				{
+					// todo: need min max?
+					if("style" in value)
+					{
+						this.setValueStyle(node, value.style);
+					}
+
+					if (
+						"className" in value
+						&& BX.type.isArray(value.className)
+					)
+					{
+						this.setValueClass(node, value.className, items, affect);
+					}
 				}
 
-				if (affect.length)
+				if (affect)
 				{
 					if (affect !== "background-image")
 					{
-						this.affects.add(affect);
+						slice(node.querySelectorAll("*")).forEach(function(child) {
+							child.style[affect] = null;
+							if (affect === "color")
+							{
+								child.removeAttribute("color");
+							}
+						});
 					}
 				}
 
-				this.getNode().forEach(function(node) {
-					value.forEach(function(valueItem) {
-						items.forEach(function(item) {
-							if (value.indexOf(item.value) === -1 &&
-								value.indexOf(item.value+"-min") === -1 &&
-								value.indexOf(item.value+"-max") === -1)
-							{
-								node.classList.remove(item.value);
-								node.classList.remove(item.value+"-min");
-								node.classList.remove(item.value+"-max");
-							}
-						});
-
-						if (affect)
-						{
-							node.style[affect] = null;
-
-							if (affect !== "background-image")
-							{
-								[].slice.call(node.querySelectorAll("*")).forEach(function(child) {
-									child.style[affect] = null;
-									if (affect === "color")
-									{
-										child.removeAttribute("color");
-									}
-								});
-							}
-
-						}
-
-						node.classList.add(valueItem);
-					}, this);
-
-					if (exclude)
+				if (exclude)
+				{
+					exclude.items.forEach(function(item)
 					{
-						exclude.items.forEach(function(item) {
+						node.classList.remove(item.value);
+					});
+				}
+			}, this);
+		},
+
+		setValueClass: function(node, value, items, affect) {
+			if (BX.type.isArray(items))
+			{
+				node.style[affect] = null;
+
+				value.forEach(function(valueItem)
+				{
+					items.forEach(function(item)
+					{
+						if (value.indexOf(item.value) === -1 &&
+							value.indexOf(item.value + "-min") === -1 &&
+							value.indexOf(item.value + "-max") === -1)
+						{
 							node.classList.remove(item.value);
-						});
-					}
+							node.classList.remove(item.value + "-min");
+							node.classList.remove(item.value + "-max");
+						}
+					});
+
+					node.classList.add(valueItem);
 				});
 			}
 		},
 
+		setValueStyle: function (node, style)
+		{
+			this.inlineProperties.forEach(function (prop)
+			{
+				if (prop in style)
+				{
+					node.style.setProperty(prop, style[prop]);
+				}
+			});
+		},
 
 		/**
 		 * Gets style node value
-		 * @returns {{classList: string[], affect: ?string}}
+		 * @param isNeedComputed boolean - true if need match computed styles
+		 * @returns {{classList: string[], affect: ?string, style: ?{string: string}}}
 		 */
-		getValue: function()
+		getValue: function(isNeedComputed)
 		{
+			const node = this.getNode().length ? this.getNode()[0] : null;
+			const style = {};
+			if (node)
+			{
+				let isAllInlineProps = false;
+				if (this.inlineProperties.length)
+				{
+					isAllInlineProps = true;
+					const styleObj = node.style;
+					this.inlineProperties.forEach(function (prop) {
+						style[prop] = styleObj.getPropertyValue(prop).trim() || null;
+						isAllInlineProps = isAllInlineProps && !!style[prop];
+					});
+				}
+				if (!!isNeedComputed && this.computedProperties.length && !isAllInlineProps)
+				{
+					this.computedProperties.forEach(function (prop) {
+						style[prop] =
+							getComputedStyle(node, this.pseudoElement).getPropertyValue(prop)
+							|| null;
+					}.bind(this));
+				}
+			}
+
 			return {
-				classList: this.getNode().length ? this.getNode()[0].className.split(" ") : [],
-				affect: this.affects.toArray()
+				classList: node ? this.sanitizeClassList(slice(node.classList)) : [],
+				affect: this.affects.toArray(),
+				style: style,
 			};
-		}
+		},
+
+		/**
+		 * Gets style in special format for save to history entry
+		 */
+		getValueForHistory: function ()
+		{
+			const value = {className: "", style: ""};
+
+			if (this.node[0])
+			{
+				value.className = this.sanitizeClassName(this.node[0].className);
+				value.style = this.node[0].style.cssText;
+			}
+
+			return value;
+		},
+
+		/**
+		 * Remove service classes from class list
+		 * @param {[string]} classes
+		 * @returns {[string]} - array without service classes
+		 */
+		sanitizeClassList: function(classes)
+		{
+			const result = [];
+			classes.forEach(classItem => {
+				if (BX.Landing.UI.Style.SERVICE_CLASSES.indexOf(classItem) === -1)
+				{
+					result.push(classItem);
+				}
+			});
+
+			return result;
+		},
+
+		/**
+		 * Remove service classes from classes string
+		 * @param {string} classes
+		 * @returns {string} - classes string without service classes
+		 */
+		sanitizeClassName: function(classes)
+		{
+			return this.sanitizeClassList(classes.split(' ')).join(' ');
+		},
 	};
 })();

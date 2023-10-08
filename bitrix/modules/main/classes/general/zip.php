@@ -24,6 +24,7 @@ class CZip implements IBXArchive
 	private $add_path = "";
 	private $replaceExistentFiles = false;
 	private $checkBXPermissions = false;
+	private $rule = [];
 
 	const ReadBlockSize = 2048;
 
@@ -379,6 +380,8 @@ class CZip implements IBXArchive
 	{
 		$this->SetOptions(array("ADD_PATH"=>$strPath));
 
+		$rule = $this->GetOptions()['RULE'];
+
 		$arParams = array(
 			"add_path"              => $this->add_path,
 			"remove_path"           => $this->remove_path,
@@ -388,7 +391,7 @@ class CZip implements IBXArchive
 			"callback_post_extract" => "",
 			"set_chmod"             => 0,
 			"by_name"               => "",
-			"by_index"              => "",
+			"by_index"              => array_key_exists("by_index", $rule) ?  $rule['by_index'] : "",
 			"by_preg"               => ""
 		);
 
@@ -434,6 +437,9 @@ class CZip implements IBXArchive
 
 		if (array_key_exists("CHECK_PERMISSIONS", $arOptions))
 			$this->checkBXPermissions = $arOptions["CHECK_PERMISSIONS"] === true;
+
+		if (array_key_exists("RULE", $arOptions))
+			$this->rule = $arOptions["RULE"];
 	}
 
 	/**
@@ -448,7 +454,8 @@ class CZip implements IBXArchive
 			"REMOVE_PATH"       => $this->remove_path,
 			"STEP_TIME"         => $this->step_time,
 			"UNPACK_REPLACE"    => $this->replaceExistentFiles,
-			"CHECK_PERMISSIONS" => $this->checkBXPermissions
+			"CHECK_PERMISSIONS" => $this->checkBXPermissions,
+			"RULE" 				=> $this->rule,
 			);
 
 		return $arOptions;
@@ -1452,10 +1459,11 @@ class CZip implements IBXArchive
 			$extract = false;
 
 			//look for the specific extract rules
-			if ((isset($arParams['by_name'])) && ($arParams['by_name'] != 0))
+			if ((isset($arParams['by_name'])) && is_array($arParams['by_name']))
 			{
 				//is filename in the list
-				for ($j = 0; ($j<sizeof($arParams['by_name'])) && (!$extract); $j++)
+				$count = count($arParams['by_name']);
+				for ($j = 0; $j < $count && !$extract; $j++)
 				{
 					//is directory
 					if (mb_substr($arParams['by_name'][$j], -1) == "/")
@@ -1481,10 +1489,10 @@ class CZip implements IBXArchive
 					$extract = true;
 				}
 			}
-			else if ((isset($arParams['by_index'])) && ($arParams['by_index'] != 0))
+			else if ((isset($arParams['by_index'])) && is_array($arParams['by_index']))
 			{
 				//extract by index rule (if index is in the list)
-				for ($j = $j_start; ($j<sizeof($arParams['by_index'])) && (!$extract); $j++)
+				for ($j = $j_start, $n = count($arParams['by_index']); $j < $n && !$extract; $j++)
 				{
 					if (($i>=$arParams['by_index'][$j]['start']) && ($i<=$arParams['by_index'][$j]['end']))
 					{
@@ -2125,10 +2133,10 @@ class CZip implements IBXArchive
 			$isFound = false;
 
 			//name rule
-			if ((isset($arParams['by_name'])) && ($arParams['by_name'] != 0))
+			if ((isset($arParams['by_name'])) && is_array($arParams['by_name']))
 			{
 				//if the filename is in the list
-				for ($j = 0; ($j<sizeof($arParams['by_name'])) && (!$isFound); $j++)
+				for ($j = 0, $n = count($arParams['by_name']); $j < $n && !$isFound; $j++)
 				{
 					if (mb_substr($arParams['by_name'][$j], -1) == "/")
 					{
@@ -2158,10 +2166,10 @@ class CZip implements IBXArchive
 					$isFound = true;
 				}
 			}
-			else if ((isset($arParams['by_index'])) && ($arParams['by_index'] != 0))
+			else if ((isset($arParams['by_index'])) && is_array($arParams['by_index']))
 			{
 				//index rule: if index is in the list
-				for ($j = $j_start; ($j<sizeof($arParams['by_index'])) && (!$isFound); $j++)
+				for ($j = $j_start, $n = count($arParams['by_index']); $j < $n && !$isFound; $j++)
 				{
 					if (($i>=$arParams['by_index'][$j]['start'])
 						&& ($i<=$arParams['by_index'][$j]['end']))

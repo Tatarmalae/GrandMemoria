@@ -1,4 +1,5 @@
-<? if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
+<?php
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
 
 /**
  * @var string $componentPath
@@ -604,6 +605,13 @@ $arTemplateParameters['MESS_NOT_AVAILABLE'] = array(
 	'TYPE' => 'STRING',
 	'DEFAULT' => GetMessage('CP_BCE_TPL_MESS_NOT_AVAILABLE_DEFAULT')
 );
+$arTemplateParameters['MESS_NOT_AVAILABLE_SERVICE'] = array(
+	'PARENT' => 'VISUAL',
+	'NAME' => GetMessage('CP_BCE_TPL_MESS_NOT_AVAILABLE_SERVICE'),
+	'TYPE' => 'STRING',
+	'DEFAULT' => GetMessage('CP_BCE_TPL_MESS_NOT_AVAILABLE_SERVICE_DEFAULT')
+);
+
 $arTemplateParameters['USE_VOTE_RATING'] = array(
 	'PARENT' => 'VISUAL',
 	'NAME' => GetMessage('CP_BCE_TPL_USE_VOTE_RATING'),
@@ -611,7 +619,6 @@ $arTemplateParameters['USE_VOTE_RATING'] = array(
 	'DEFAULT' => 'N',
 	'REFRESH' => 'Y'
 );
-
 if (isset($arCurrentValues['USE_VOTE_RATING']) && $arCurrentValues['USE_VOTE_RATING'] === 'Y')
 {
 	$arTemplateParameters['VOTE_DISPLAY_AS_RATING'] = array(
@@ -663,9 +670,7 @@ if (isset($arCurrentValues['USE_COMMENTS']) && $arCurrentValues['USE_COMMENTS'] 
 	}
 
 	$boolRus = false;
-	$langBy = 'id';
-	$langOrder = 'asc';
-	$rsLangs = CLanguage::GetList($langBy, $langOrder, array('ID' => 'ru','ACTIVE' => 'Y'));
+	$rsLangs = CLanguage::GetList('id', 'asc', array('ID' => 'ru','ACTIVE' => 'Y'));
 	if ($arLang = $rsLangs->Fetch())
 	{
 		$boolRus = true;

@@ -1,6 +1,7 @@
-import { Text, Tag, Type, Loc } from 'main.core';
+import { Tag, Type, Loc } from 'main.core';
 import type Tab from '../tabs/tab';
 import BaseStub from './base-stub';
+import encodeUrl from '../../common/encode-url';
 
 export default class DefaultStub extends BaseStub
 {
@@ -26,7 +27,7 @@ export default class DefaultStub extends BaseStub
 
 			const iconStyle =
 				Type.isStringFilled(icon)
-					? `style="background-image: url('${icon}'); opacity: ${iconOpacity / 100};"`
+					? `style="background-image: url('${encodeUrl(icon)}'); opacity: ${iconOpacity / 100};"`
 					: ''
 			;
 
@@ -34,7 +35,7 @@ export default class DefaultStub extends BaseStub
 
 			return Tag.render`
 				<div class="ui-selector-tab-default-stub">
-					<div class="ui-selector-tab-default-stub-icon"${iconStyle}></div>
+					<div class="ui-selector-tab-default-stub-icon" ${iconStyle}></div>
 					<div class="ui-selector-tab-default-stub-titles">
 						<div class="ui-selector-tab-default-stub-title">${title}</div>
 						${
@@ -52,9 +53,12 @@ export default class DefaultStub extends BaseStub
 
 	getDefaultTitle()
 	{
-		const tabTitle = Text.encode(this.getTab().getTitle());
+		const titleNode = this.getTab().getTitleNode();
 
-		return Loc.getMessage('UI_SELECTOR_TAB_STUB_TITLE').replace(/#TAB_TITLE#/, tabTitle);
+		const titleContainer = Tag.render`<span class="ui-selector-tab-default-stub-title"></span>`;
+		titleNode.renderTo(titleContainer);
+
+		return Loc.getMessage('UI_SELECTOR_TAB_STUB_TITLE').replace(/#TAB_TITLE#/, titleContainer.innerHTML);
 	}
 
 	render(): HTMLElement

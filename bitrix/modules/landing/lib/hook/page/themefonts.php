@@ -6,9 +6,19 @@ use Bitrix\Landing\Assets;
 use Bitrix\Landing\Field;
 use Bitrix\Landing\Hook;
 use Bitrix\Landing\Internals\HookDataTable;
+use Bitrix\Landing\Landing;
+use Bitrix\Landing\Manager;
+use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Entity\Query;
+use Bitrix\Main\Page\Asset;
+use Bitrix\Main\Page\AssetLocation;
+use Bitrix\Main\Text\HtmlFilter;
+use Bitrix\UI\Fonts;
 
+/**
+ * Typographic settings
+ */
 class ThemeFonts extends Hook\Page
 {
 	protected const BASE_HTML_SIZE = '14px';
@@ -20,63 +30,85 @@ class ThemeFonts extends Hook\Page
 	protected function getMap(): array
 	{
 		return [
-			'USE' => new Field\Checkbox(
-				'USE', array(
-					'title' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_USE'),
-				)
-			),
-			'CODE_H' => new Field\Select(
-				'CODE_H', array(
-					'title' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_H'),
-					'options' => self::getSelectOptions(),
-				)
-			),
-			'CODE' => new Field\Select(
-				'CODE', array(
-					'title' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_BASE'),
-					'options' => self::getSelectOptions(),
-				)
-			),
-			'SIZE' => new Field\Select(
-				'SIZE', array(
-					'title' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_SIZE'),
-					'options' => [
-						'0.92857' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_12'),
-						'1' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_14'),
-						'1.14286' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_16'),
-					],
-				)
-			),
-
+			'USE' => new Field\Checkbox('USE', [
+				'title' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_USE_2'),
+			]),
+			'CODE_H' => new Field\Text('CODE_H', [
+				'title' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_BASE_2'),
+				'default' => 'Open Sans',
+			]),
+			'CODE' => new Field\Text('CODE', [
+				'title' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_BASE_2'),
+				'default' => 'Open Sans',
+			]),
+			'SIZE' => new Field\Select('SIZE', [
+				'title' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_SIZE'),
+				'default' => '1',
+				'options' => [
+					'0.92857' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_12'),
+					'1' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_14'),
+					'1.14286' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_16'),
+				],
+			]),
+			'COLOR' => new Field\Text('COLOR', [
+				'title' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_COLOR'),
+				'help' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_COLOR_HELP'),
+			]),
+			'COLOR_H' => new Field\Text('COLOR_H', [
+				'title' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_COLOR_H'),
+				'help' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_COLOR_HELP_H'),
+			]),
+			'LINE_HEIGHT' => new Field\Select('LINE_HEIGHT', [
+				'title' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_LINE_HEIGHT'),
+				'default' => '1.6',
+				'options' => self::getLineHeightOptions(),
+			]),
+			'FONT_WEIGHT' => new Field\Select('FONT_WEIGHT', [
+				'title' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_WEIGHT_2'),
+				'default' => '400',
+				'options' => self::getFontWeightOptions(),
+				'help' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_WEIGHT_HELP_2'),
+			]),
+			'FONT_WEIGHT_H' => new Field\Select('FONT_WEIGHT_H', [
+				'title' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_WEIGHT_H_2'),
+				'default' => '400',
+				'options' => self::getFontWeightOptions(),
+				'help' => Loc::getMessage('LNDNGHOOK_THEMEFONTS_FONT_WEIGHT_HELP_H'),
+			]),
 		];
 	}
 
-	protected static function getSelectOptions(): ?array
+	protected static function getLineHeightOptions(): array
 	{
-		// todo: add OS font (SanFrancisco -> Helvetica -> Roboto -> Arial). What if Roboto use separately by g-font-roboto?
-		static $options = [];
-
-		if (!empty($options))
-		{
-			return $options;
-		}
-
-		foreach (Hook\Page\Fonts::DEFAULT_FONTS as $fontClass => $font)
-		{
-			$options[$fontClass] = $font['name'];
-		}
-
-		return $options;
+		return [
+			'0.7' => '0.7',
+			'0.8' => '0.8',
+			'0.9' => '0.9',
+			'1' => '1',
+			'1.1' => '1.1',
+			'1.2' => '1.2',
+			'1.3' => '1.3',
+			'1.4' => '1.4',
+			'1.5' => '1.5',
+			'1.6' => '1.6',
+			'1.7' => '1.7',
+			'1.8' => '1.8',
+			'2' => '2',
+		];
 	}
 
-	protected static function getDefaultValues(): array
+	protected static function getFontWeightOptions(): array
 	{
-		$defaultFont = array_keys(Hook\Page\Fonts::DEFAULT_FONTS)[0];
-
 		return [
-			'baseFont' => $defaultFont,
-			'hFont' => $defaultFont,
-			'size' => '1',
+			'100' => '100',
+			'200' => '200',
+			'300' => '300',
+			'400' => '400',
+			'500' => '500',
+			'600' => '600',
+			'700' => '700',
+			'800' => '800',
+			'900' => '900',
 		];
 	}
 
@@ -110,37 +142,61 @@ class ThemeFonts extends Hook\Page
 			return;
 		}
 
-		$baseFont = trim($this->fields['CODE']->getValue());
-		$hFont = trim($this->fields['CODE_H']->getValue());
-		$size = trim($this->fields['SIZE']->getValue());
+		$this->setThemeFont();
+		$this->setHFontTheme();
+		$this->setSize();
+		$this->setColors();
+		$this->setTypo();
+	}
 
-		if (!$baseFont || !$size || !$hFont)
+	protected function getField(string $name): ?string
+	{
+		if ($field = $this->fields[$name]->getValue())
 		{
-			$defaultValues = self::getDefaultValues();
-			$baseFont = $baseFont ?: $defaultValues['baseFont'];
-			$hFont = $hFont ?: $defaultValues['hFont'];
-			$size = $size ?: $defaultValues['size'];
+			return HtmlFilter::encode(trim($field));
 		}
 
-		$this->setBaseFont($baseFont);
-		$this->setHFont($hFont);
-		$this->setSize($size);
+		return self::getDefaultValues()[$name];
+	}
+
+	protected static function getDefaultValues(): array
+	{
+		return [
+			'CODE' => 'Open Sans',
+			'CODE_H' => 'Open Sans',
+			'SIZE' => '1',
+			'LINE_HEIGHT' => '1.6',
+			'FONT_WEIGHT' => '400',
+			'FONT_WEIGHT_H' => '400',
+		];
 	}
 
 	/**
-	 * Set fonts for ALL text in body, add style string
-	 * @param string $font
+	 * Set the main font to the page
 	 */
-	protected function setBaseFont(string $font): void
+	protected function setThemeFont(): void
 	{
+		$font = $this->getField('CODE');
+		$font = self::convertFontName($font);
+
 		$assets = Assets\Manager::getInstance();
-		$assets->addString(Hook\Page\Fonts::outputDefaultFont($font));
+		if ($this->fields['CODE']->getValue() !== null)
+		{
+			$assets->addString(
+				"<style>
+					body {
+						--landing-font-family: {$font}
+					}
+				</style>"
+			);
+		}
+
+		$assets->addString(self::getFontLink($font));
 		$assets->addString(
 			'<style>
 				body {
 					font-weight: 400;
-					font-family: ' . Hook\Page\Fonts::DEFAULT_FONTS[$font]['family'] . ';
-					line-height: 1.6;
+					font-family: ' . $font . ';
 					-webkit-font-smoothing: antialiased;
 					-moz-osx-font-smoothing: grayscale;
 					-moz-font-feature-settings: "liga", "kern";
@@ -152,27 +208,72 @@ class ThemeFonts extends Hook\Page
 
 	/**
 	 * Set fonts for headers, add style string
-	 * @param string $font
 	 */
-	protected function setHFont(string $font): void
+	protected function setHFontTheme(): void
 	{
+		$font = $this->getField('CODE_H');
+		$font = self::convertFontName($font);
+
 		$assets = Assets\Manager::getInstance();
-		$assets->addString(Hook\Page\Fonts::outputDefaultFont($font));
+		$assets->addString(self::getFontLink($font));
 		$assets->addString(
 			'<style>
 				h1, h2, h3, h4, h5, h6 {
-					font-family: ' . Hook\Page\Fonts::DEFAULT_FONTS[$font]['family'] . ';
+					font-family: ' . $font . ';
 				}
 			</style>'
 		);
 	}
 
 	/**
-	 * Set base font size for ALL text in body, add style string
-	 * @param float $size
+	 * Convert to correct font name
+	 * @param string $fontName
+	 * @return string
 	 */
-	protected function setSize(float $size): void
+	protected static function convertFontName(string $fontName): string
 	{
+		$fontName = str_replace(['g-font-', '-', 'ibm ', 'pt '], ['', ' ', 'IBM ', 'PT '], $fontName);
+
+		$pattern = [
+			'/sc(?:(?![a-z]))/i',
+			'/jp(?:(?![a-z]))/i',
+			'/kr(?:(?![a-z]))/i',
+			'/tc(?:(?![a-z]))/i',
+		];
+		$replace = ['SC', 'JP', 'KR', 'TC'];
+		$fontNameNew = preg_filter($pattern, $replace, $fontName);
+		if ($fontNameNew)
+		{
+			$fontName = $fontNameNew;
+		}
+
+		$fontName = ucwords($fontName);
+
+		return $fontName;
+	}
+
+	protected static function getFontLink(string $font): string
+	{
+		$domain = 'fonts.googleapis.com';
+		if (Loader::includeModule('ui'))
+		{
+			$domain = Fonts\Proxy::resolveDomain(Manager::getZone());
+		}
+
+		$fontLink = "<link rel=\"stylesheet\" href=\"https://{$domain}/css2?family=";
+		$fontLink .= str_replace(" ", "+", $font);
+		$fontLink .= ':wght@100;200;300;400;500;600;700;800;900">';
+
+		return $fontLink;
+	}
+
+	/**
+	 * Set base font size for ALL text in body, add style string
+	 */
+	protected function setSize(): void
+	{
+		$size = $this->getField('SIZE');
+
 		$assets = Assets\Manager::getInstance();
 		$assets->addString(
 			'<style>
@@ -180,6 +281,63 @@ class ThemeFonts extends Hook\Page
 			body {font-size: ' . $size . 'rem;}
 			.g-font-size-default {font-size: ' . $size . 'rem;}
 		</style>'
+		);
+	}
+
+	/**
+	 * Set colors for text and headers
+	 */
+	protected function setColors(): void
+	{
+		$color = $this->getField('COLOR');
+		$hColor = $this->getField('COLOR_H');
+		$css = '';
+
+		if ($color && Theme::isHex($color))
+		{
+			$css .= "--theme-color-main: {$color} !important;";
+		}
+		if ($hColor && Theme::isHex($hColor))
+		{
+			$css .= "--theme-color-title: {$hColor} !important;";
+		}
+
+		if (!empty($css))
+		{
+			Asset::getInstance()->addString(
+				"<style>:root {{$css}}</style>",
+				false,
+				AssetLocation::BEFORE_CSS
+			)
+			;
+		}
+	}
+
+	/**
+	 * Set weight and line-height for text and headers
+	 */
+	protected function setTypo(): void
+	{
+		$lineHeight = $this->getField('LINE_HEIGHT');
+		$fontWeight = $this->getField('FONT_WEIGHT');
+		$hFontWeight = $this->getField('FONT_WEIGHT_H');
+
+		$mainClass = Landing::getEditMode() ? '.landing-edit-mode' : '.landing-public-mode';
+		$assets = Assets\Manager::getInstance();
+		$assets->addString(
+			"<style>
+				main{$mainClass} {
+					line-height: {$lineHeight};
+					font-weight: {$fontWeight};
+				}
+				
+				{$mainClass} .h1, {$mainClass} .h2, {$mainClass} .h3, {$mainClass} .h4, 
+				{$mainClass} .h5, {$mainClass} .h6, {$mainClass} .h7,
+				{$mainClass} h1, {$mainClass} h2, {$mainClass} h3, {$mainClass} h4, 
+				{$mainClass} h5, {$mainClass} h6 {
+					font-weight: {$hFontWeight};
+				}
+			</style>"
 		);
 	}
 
@@ -196,108 +354,108 @@ class ThemeFonts extends Hook\Page
 	{
 		$migrations = [
 			'1construction' => [
-				'CODE' => 'g-font-alegreya-sans',
-				'CODE_H' => 'g-font-alegreya-sans',
+				'CODE' => 'Alegreya Sans',
+				'CODE_H' => 'Alegreya Sans',
 				'SIZE' => '1.14286',
 			],
 			'2business' => [
-				'CODE' => 'g-font-roboto',
-				'CODE_H' => 'g-font-roboto',
+				'CODE' => 'Roboto',
+				'CODE_H' => 'Roboto',
 				'SIZE' => '1',
 			],
 			'3corporate' => [
-				'CODE' => 'g-font-roboto',
-				'CODE_H' => 'g-font-roboto',
+				'CODE' => 'Roboto',
+				'CODE_H' => 'Roboto',
 				'SIZE' => '1',
 			],
 			'accounting' => [
-				'CODE' => 'g-font-open-sans',
-				'CODE_H' => 'g-font-open-sans',
+				'CODE' => 'Open Sans',
+				'CODE_H' => 'Open Sans',
 				'SIZE' => '1',
 			],
 			'agency' => [
-				'CODE' => 'g-font-roboto',
-				'CODE_H' => 'g-font-roboto',
+				'CODE' => 'Roboto',
+				'CODE_H' => 'Roboto',
 				'SIZE' => '1',
 			],
 			'app' => [
-				'CODE' => 'g-font-open-sans',
-				'CODE_H' => 'g-font-open-sans',
+				'CODE' => 'Open Sans',
+				'CODE_H' => 'Open Sans',
 				'SIZE' => '1.14286',
 			],
 			'architecture' => [
-				'CODE' => 'g-font-open-sans',
-				'CODE_H' => 'g-font-open-sans',
+				'CODE' => 'Open Sans',
+				'CODE_H' => 'Open Sans',
 				'SIZE' => '1',
 			],
 			'charity' => [
-				'CODE' => 'g-font-open-sans',
-				'CODE_H' => 'g-font-open-sans',
+				'CODE' => 'Open Sans',
+				'CODE_H' => 'Open Sans',
 				'SIZE' => '0.92857',
 			],
 			'consulting' => [
-				'CODE' => 'g-font-open-sans',
-				'CODE_H' => 'g-font-open-sans',
+				'CODE' => 'Open Sans',
+				'CODE_H' => 'Open Sans',
 				'SIZE' => '1',
 			],
 			'courses' => [
-				'CODE' => 'g-font-alegreya-sans',
-				'CODE_H' => 'g-font-alegreya-sans',
+				'CODE' => 'Alegreya Sans',
+				'CODE_H' => 'Alegreya Sans',
 				'SIZE' => '1',
 			],
 			'event' => [
-				'CODE' => 'g-font-open-sans',
-				'CODE_H' => 'g-font-open-sans',
+				'CODE' => 'Open Sans',
+				'CODE_H' => 'Open Sans',
 				'SIZE' => '1.14286',
 			],
 			'gym' => [
-				'CODE' => 'g-font-roboto',
-				'CODE_H' => 'g-font-roboto',
+				'CODE' => 'Roboto',
+				'CODE_H' => 'Roboto',
 				'SIZE' => '1',
 			],
 			'lawyer' => [
-				'CODE' => 'g-font-roboto',
-				'CODE_H' => 'g-font-open-sans',
+				'CODE' => 'Roboto',
+				'CODE_H' => 'Open Sans',
 				'SIZE' => '1',
 			],
 			'music' => [
-				'CODE' => 'g-font-open-sans',
-				'CODE_H' => 'g-font-open-sans',
+				'CODE' => 'Open Sans',
+				'CODE_H' => 'Open Sans',
 				'SIZE' => '0.92857',
 			],
 			'photography' => [
-				'CODE' => 'g-font-roboto',
-				'CODE_H' => 'g-font-roboto',
+				'CODE' => 'Roboto',
+				'CODE_H' => 'Roboto',
 				'SIZE' => '0.92857',
 			],
 			'real-estate' => [
-				'CODE' => 'g-font-open-sans',
-				'CODE_H' => 'g-font-open-sans',
+				'CODE' => 'Open Sans',
+				'CODE_H' => 'Open Sans',
 				'SIZE' => '1',
 			],
 			'restaurant' => [
-				'CODE' => 'g-font-montserrat',
-				'CODE_H' => 'g-font-montserrat',
+				'CODE' => 'Montserrat',
+				'CODE_H' => 'Montserrat',
 				'SIZE' => '0.92857',
 			],
 			'shipping' => [
-				'CODE' => 'g-font-open-sans',
-				'CODE_H' => 'g-font-open-sans',
+				'CODE' => 'Open Sans',
+				'CODE_H' => 'Open Sans',
 				'SIZE' => '1',
 			],
 			'spa' => [
-				'CODE' => 'g-font-open-sans',
-				'CODE_H' => 'g-font-open-sans',
+				'CODE' => 'Open Sans',
+				'CODE_H' => 'Open Sans',
 				'SIZE' => '1',
 			],
 			'travel' => [
-				'CODE' => 'g-font-roboto',
-				'CODE_H' => 'g-font-roboto',
+				'CODE' => 'Roboto',
+				'CODE_H' => 'Roboto',
 				'SIZE' => '1',
 			],
 			'wedding' => [
-				'CODE' => 'g-font-montserrat',
-				'CODE_H' => 'g-font-montserrat',
+				'CODE' => 'Montserrat',
+				'CODE_H' => 'Montserrat',
 				'SIZE' => '1',
 			],
 		];
@@ -320,8 +478,7 @@ class ThemeFonts extends Hook\Page
 					->where('ENTITY_ID', $siteId)
 					->where('ENTITY_TYPE', Hook::ENTITY_TYPE_SITE)
 				)
-			)
-		;
+			);
 
 		while ($old = $queryOld->fetch())
 		{
@@ -332,8 +489,7 @@ class ThemeFonts extends Hook\Page
 				->where('ENTITY_ID', $old['ENTITY_ID'])
 				->where('ENTITY_TYPE', $old['ENTITY_TYPE'])
 				->where('PUBLIC', $old['PUBLIC'])
-				->fetch()
-			;
+				->fetch();
 			if (!$existing)
 			{
 				//process

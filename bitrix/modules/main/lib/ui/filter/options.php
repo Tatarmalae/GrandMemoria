@@ -21,6 +21,7 @@ class Options
 	protected $useCommonPresets;
 	protected $commonPresetsId;
 	protected $request;
+	protected ?string $currentFilterPresetId = null;
 
 	const DEFAULT_FILTER = "default_filter";
 	const TMP_FILTER = "tmp_filter";
@@ -406,6 +407,8 @@ class Options
 			$dateselId = $id."_datesel";
 			$numselId = $id."_numsel";
 			$type = $field["type"];
+			$isEmpty = $id."_isEmpty";
+			$hasAnyValue = $id."_hasAnyValue";
 
 			if ($type == "date")
 			{
@@ -448,7 +451,7 @@ class Options
 					$result["rows"][] = $id;
 				}
 			}
-			else if ($type == "dest_selector")
+			else if ($type == "dest_selector" || $type == "entity_selector")
 			{
 				if ($request[$id] !== null)
 				{
@@ -463,6 +466,18 @@ class Options
 					$result["fields"][$id] = $request[$id];
 					$result["rows"][] = $id;
 				}
+			}
+
+			if (isset($request[$isEmpty]))
+			{
+				$result['fields'][$isEmpty] = $request[$isEmpty];
+				$result["rows"][] = $id;
+			}
+
+			if (isset($request[$hasAnyValue]))
+			{
+				$result['fields'][$hasAnyValue] = $request[$hasAnyValue];
+				$result["rows"][] = $id;
 			}
 		}
 
@@ -487,6 +502,14 @@ class Options
 	public function getSessionFilterId()
 	{
 		return \Bitrix\Main\Application::getInstance()->getSession()["main.ui.filter"][$this->getId()]["filter"];
+	}
+
+	public function isSetOutside(): bool
+	{
+		return filter_var(
+			\Bitrix\Main\Application::getInstance()->getSession()["main.ui.filter"][$this->getId()]["isSetOutside"],
+			FILTER_VALIDATE_BOOLEAN
+		);
 	}
 
 
@@ -529,7 +552,7 @@ class Options
 	 */
 	public function getCurrentFilterId()
 	{
-		$sessionFilterId = $this->getSessionFilterId();
+		$sessionFilterId = ($this->getCurrentFilterPresetId() ?? $this->getSessionFilterId());
 		$defaultFilterId = $this->getDefaultFilterId();
 		return !empty($sessionFilterId) ? $sessionFilterId : $defaultFilterId;
 	}
@@ -702,7 +725,19 @@ class Options
 
 				elseif (mb_substr($key, -5) !== "_from" && mb_substr($key, -3) !== "_to")
 				{
-					$resultFields[$key] = $field;
+					if  (mb_substr($key, -8) === "_isEmpty")
+					{
+						$resultFields[substr($key, 0, -8)] = false;
+					}
+					elseif  (mb_substr($key, -12) === "_hasAnyValue")
+					{
+
+						$resultFields['!'.substr($key, 0, -12)] = false;
+					}
+					else
+					{
+						$resultFields[$key] = $field;
+					}
 				}
 			}
 		}
@@ -719,7 +754,6 @@ class Options
 	{
 		return $presetId === self::DEFAULT_FILTER;
 	}
-
 
 	/**
 	 * Gets current filter values
@@ -975,6 +1009,25 @@ class Options
 			$this->options["filter_rows"] = implode(",", $aCols);
 	}
 
+	public function removeRowFromPreset(string $presetId, string $rowName): bool
+	{
+		$rowsString = $this->options["filters"][$presetId]["filter_rows"] ?? '';
+		if ($rowsString === '')
+		{
+			return false;
+		}
+		$rows = explode(",", $rowsString);
+		$pos = array_search($rowName, $rows,true);
+		if ($pos !== false)
+		{
+			unset($rows[$pos]);
+			$this->options["filters"][$presetId]["filter_rows"] = implode(",", $rows);
+
+			return true;
+		}
+
+		return false;
+	}
 
 	/**
 	 * Restores filter options to default
@@ -1073,6 +1126,7 @@ class Options
 				)
 				{
 					\Bitrix\Main\Application::getInstance()->getSession()["main.ui.filter"][$this->id]["filter"] = $presetId;
+					\Bitrix\Main\Application::getInstance()->getSession()["main.ui.filter"][$this->id]["isSetOutside"] = $params["isSetOutside"];
 				}
 
 			}
@@ -1208,7 +1262,7 @@ class Options
 		{
 			case DateType::YESTERDAY :
 			{
-				$dateTime = new Filter\DateTime();
+				$dateTime = Filter\DateTimeFactory::createToday();
 
 				$result[$fieldId."_datesel"] = DateType::YESTERDAY;
 				$result[$fieldId."_month"] = $dateTime->month();
@@ -1221,7 +1275,7 @@ class Options
 
 			case DateType::CURRENT_DAY :
 			{
-				$dateTime = new Filter\DateTime();
+				$dateTime = Filter\DateTimeFactory::createToday();
 
 				$result[$fieldId."_datesel"] = DateType::CURRENT_DAY;
 				$result[$fieldId."_month"] = $dateTime->month();
@@ -1234,7 +1288,7 @@ class Options
 
 			case DateType::TOMORROW :
 			{
-				$dateTime = new Filter\DateTime();
+				$dateTime = Filter\DateTimeFactory::createToday();
 
 				$result[$fieldId."_datesel"] = DateType::TOMORROW;
 				$result[$fieldId."_month"] = $dateTime->month();
@@ -1247,8 +1301,7 @@ class Options
 
 			case DateType::CURRENT_WEEK :
 			{
-				$date = Date::createFromTimestamp(strtotime("monday this week"));
-				$dateTime = new Filter\DateTime($date->getTimestamp());
+				$dateTime = Filter\DateTimeFactory::createCurrentWeekMonday();
 
 				$result[$fieldId."_datesel"] = DateType::CURRENT_WEEK;
 				$result[$fieldId."_month"] = $dateTime->month();
@@ -1261,8 +1314,7 @@ class Options
 
 			case DateType::NEXT_WEEK :
 			{
-				$date = Date::createFromTimestamp(strtotime("monday next week"));
-				$dateTime = new Filter\DateTime($date->getTimestamp());
+				$dateTime = Filter\DateTimeFactory::createNextWeekMonday();
 
 				$result[$fieldId."_datesel"] = DateType::NEXT_WEEK;
 				$result[$fieldId."_month"] = $dateTime->month();
@@ -1275,8 +1327,7 @@ class Options
 
 			case DateType::CURRENT_MONTH :
 			{
-				$date = Date::createFromTimestamp(strtotime("first day of this month"));
-				$dateTime = new Filter\DateTime($date->getTimestamp());
+				$dateTime = Filter\DateTimeFactory::createFirstDayOfCurrentMonth();
 
 				$result[$fieldId."_datesel"] = DateType::CURRENT_MONTH;
 				$result[$fieldId."_month"] = $dateTime->month();
@@ -1289,8 +1340,7 @@ class Options
 
 			case DateType::NEXT_MONTH :
 			{
-				$date = Date::createFromTimestamp(strtotime("first day of next month"));
-				$dateTime = new Filter\DateTime($date->getTimestamp());
+				$dateTime = Filter\DateTimeFactory::createFirstDayOfNextMonth();
 
 				$result[$fieldId."_datesel"] = DateType::NEXT_MONTH;
 				$result[$fieldId."_month"] = $dateTime->month();
@@ -1303,7 +1353,7 @@ class Options
 
 			case DateType::CURRENT_QUARTER :
 			{
-				$dateTime = new Filter\DateTime();
+				$dateTime = Filter\DateTimeFactory::createToday();
 
 				$result[$fieldId."_datesel"] = DateType::QUARTER;
 				$result[$fieldId."_month"] = $dateTime->month();
@@ -1316,7 +1366,7 @@ class Options
 
 			case DateType::LAST_7_DAYS :
 			{
-				$dateTime = new Filter\DateTime();
+				$dateTime = Filter\DateTimeFactory::createToday();
 
 				$result[$fieldId."_datesel"] = DateType::LAST_7_DAYS;
 				$result[$fieldId."_month"] = $dateTime->month();
@@ -1329,7 +1379,7 @@ class Options
 
 			case DateType::LAST_30_DAYS :
 			{
-				$dateTime = new Filter\DateTime();
+				$dateTime = Filter\DateTimeFactory::createToday();
 
 				$result[$fieldId."_datesel"] = DateType::LAST_30_DAYS;
 				$result[$fieldId."_month"] = $dateTime->month();
@@ -1342,7 +1392,7 @@ class Options
 
 			case DateType::LAST_60_DAYS :
 			{
-				$dateTime = new Filter\DateTime();
+				$dateTime = Filter\DateTimeFactory::createToday();
 
 				$result[$fieldId."_datesel"] = DateType::LAST_60_DAYS;
 				$result[$fieldId."_month"] = $dateTime->month();
@@ -1355,7 +1405,7 @@ class Options
 
 			case DateType::LAST_90_DAYS :
 			{
-				$dateTime = new Filter\DateTime();
+				$dateTime = Filter\DateTimeFactory::createToday();
 
 				$result[$fieldId."_datesel"] = DateType::LAST_90_DAYS;
 				$result[$fieldId."_month"] = $dateTime->month();
@@ -1390,7 +1440,7 @@ class Options
 			{
 				if (is_numeric($source[$fieldId."_days"]))
 				{
-					$dateTime = new Filter\DateTime();
+					$dateTime = Filter\DateTimeFactory::createToday();
 					$days = (int) $source[$fieldId."_days"];
 					$days = $days > 0 ? ($days + 1) : $days;
 
@@ -1410,7 +1460,7 @@ class Options
 			{
 				if (is_numeric($source[$fieldId."_days"]))
 				{
-					$dateTime = new Filter\DateTime();
+					$dateTime = Filter\DateTimeFactory::createToday();
 					$days = (int) $source[$fieldId."_days"];
 					$days = max($days, 0);
 
@@ -1430,7 +1480,7 @@ class Options
 			{
 				if (is_numeric($source[$fieldId."_days"]))
 				{
-					$dateTime = new Filter\DateTime();
+					$dateTime = Filter\DateTimeFactory::createToday();
 					$days = (int) $source[$fieldId."_days"];
 
 					$result[$fieldId."_days"] = $source[$fieldId."_days"];
@@ -1445,7 +1495,7 @@ class Options
 			{
 				if (is_numeric($source[$fieldId."_days"]))
 				{
-					$dateTime = new Filter\DateTime();
+					$dateTime = Filter\DateTimeFactory::createToday();
 					$days = (int) $source[$fieldId."_days"];
 
 					$result[$fieldId."_days"] = $source[$fieldId."_days"];
@@ -1460,7 +1510,7 @@ class Options
 			{
 				if (is_numeric($source[$fieldId."_days"]))
 				{
-					$dateTime = new Filter\DateTime();
+					$dateTime = Filter\DateTimeFactory::createToday();
 					$days = (int) $source[$fieldId."_days"];
 
 					$result[$fieldId."_days"] = $source[$fieldId."_days"];
@@ -1475,7 +1525,7 @@ class Options
 				{
 					if (is_numeric($source[$fieldId."_days"]))
 					{
-						$dateTime = new Filter\DateTime();
+						$dateTime = Filter\DateTimeFactory::createToday();
 						$days = (int) $source[$fieldId."_days"];
 
 						$result[$fieldId."_days"] = $source[$fieldId."_days"];
@@ -1552,8 +1602,7 @@ class Options
 
 			case DateType::LAST_WEEK :
 			{
-				$date = Date::createFromTimestamp(strtotime("monday previous week"));
-				$dateTime = new Filter\DateTime($date->getTimestamp());
+				$dateTime = Filter\DateTimeFactory::createLastWeekMonday();
 
 				$result[$fieldId."_datesel"] = DateType::LAST_WEEK;
 				$result[$fieldId."_from"] = $dateTime->toString();
@@ -1563,8 +1612,7 @@ class Options
 
 			case DateType::LAST_MONTH :
 			{
-				$date = Date::createFromTimestamp(strtotime("first day of previous month"));
-				$dateTime = new Filter\DateTime($date->getTimestamp());
+				$dateTime = Filter\DateTimeFactory::createFirstDayOfLastMonth();
 
 				$result[$fieldId."_datesel"] = DateType::LAST_MONTH;
 				$result[$fieldId."_year"] = $dateTime->year();
@@ -1666,7 +1714,9 @@ class Options
 					"_value",
 					"_days",
 					"_months",
-					"_years"
+					"_years",
+					"_isEmpty",
+					"_hasAnyValue",
 				),
 				"",
 				$key
@@ -1709,15 +1759,44 @@ class Options
 			$fields = array_merge($fields, $presetFields);
 		}
 
+		$defaultPresetFieldsOrder = [];
 		// Fetch fields from default presets
 		foreach ($this->getDefaultPresets() as $key => $preset)
 		{
 			$presetFields = static::fetchPresetFields($preset);
 			$fields = array_merge($fields, $presetFields);
+			if ($preset['default'])
+			{
+				$defaultPresetFieldsOrder = $presetFields;
+			}
 		}
 
 		$fields = array_unique($fields);
 
+		if (!empty($defaultPresetFieldsOrder))
+		{
+			// fields order should be defined by default filter preset
+			$fields = array_unique(array_merge($defaultPresetFieldsOrder, $fields));
+		}
+
 		return $fields;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getCurrentFilterPresetId(): ?string
+	{
+		return $this->currentFilterPresetId;
+	}
+
+	/**
+	 * @param string|null $presetId
+	 * @return Options
+	 */
+	public function setCurrentFilterPresetId(?string $presetId): Options
+	{
+		$this->currentFilterPresetId = $presetId;
+		return $this;
 	}
 }

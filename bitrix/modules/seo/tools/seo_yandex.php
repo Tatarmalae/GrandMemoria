@@ -15,7 +15,7 @@ use Bitrix\Main\IO\Path;
 
 CUtil::JSPostUnescape();
 
-Loc::loadMessages(dirname(__FILE__).'/../include.php');
+Loc::loadMessages(__DIR__.'/../include.php');
 
 $engine = new Engine\Yandex();
 
@@ -177,7 +177,8 @@ elseif (isset($_REQUEST['get']))
 <?
 				foreach($arDomains as $domain)
 				{
-					$domainView = \CBXPunycode::ToUnicode($domain['DOMAIN'], $errors=null);
+					$errors = [];
+					$domainView = \CBXPunycode::ToUnicode($domain['DOMAIN'], $errors);
 					$domainEnc = Converter::getHtmlConverter()->encode($domain['DOMAIN']);
 					$domainViewEnc = Converter::getHtmlConverter()->encode($domainView);
 

@@ -207,6 +207,7 @@
 				case 0: // no catalog
 				case 1: // product
 				case 2: // set
+				case 7: // service
 					if (arParams.PRODUCT && typeof arParams.PRODUCT === 'object')
 					{
 						this.currentPriceMode = arParams.PRODUCT.ITEM_PRICE_MODE;
@@ -401,6 +402,10 @@
 					this.useCompare = false;
 				}
 			}
+
+			this.isFacebookConversionCustomizeProductEventEnabled
+				= arParams.IS_FACEBOOK_CONVERSION_CUSTOMIZE_PRODUCT_EVENT_ENABLED
+			;
 		}
 
 		if (this.errorCode === 0)
@@ -609,6 +614,7 @@
 					case 0: // no catalog
 					case 1: // product
 					case 2: // set
+					case 7: // service
 						if (parseInt(this.product.morePhotoCount) > 1 && this.obPictSlider)
 						{
 							this.initializeSlider();
@@ -618,7 +624,7 @@
 
 						break;
 					case 3: // sku
-						if (this.offers.length > 0)
+						if (this.offers.length > 0 && this.obTree)
 						{
 							treeItems = BX.findChildren(this.obTree, {tagName: 'li'}, true);
 
@@ -680,6 +686,7 @@
 				case 0: //no catalog
 				case 1: //product
 				case 2: //set
+				case 7: // service
 					item = {
 						'id': this.product.id,
 						'name': this.product.name,
@@ -728,7 +735,6 @@
 			{
 				case 'addToCart':
 					info = {
-						'event': 'addToCart',
 						'ecommerce': {
 							'currencyCode': this.currentPrices[this.currentPriceSelected] && this.currentPrices[this.currentPriceSelected].CURRENCY || '',
 							'add': {
@@ -1005,7 +1011,7 @@
 		quantitySet: function(index)
 		{
 			var resetQuantity, strLimit;
-			
+
 			var newOffer = this.offers[index],
 				oldOffer = this.offers[this.offerNum];
 
@@ -1486,6 +1492,22 @@
 								BX.removeClass(rowItems[i], 'selected');
 							}
 						}
+					}
+
+					if (
+						this.isFacebookConversionCustomizeProductEventEnabled
+						&& BX.Type.isArrayFilled(this.offers)
+						&& BX.Type.isObject(this.offers[this.offerNum])
+					)
+					{
+						BX.ajax.runAction(
+							'sale.facebookconversion.customizeProduct',
+							{
+								data: {
+									offerId: this.offers[this.offerNum]['ID']
+								}
+							}
+						);
 					}
 				}
 			}
@@ -2081,7 +2103,7 @@
 
 				if (this.showPercent)
 				{
-					if (price && parseInt(price.DISCOUNT) > 0)
+					if (price && parseInt(price.PERCENT) > 0)
 					{
 						obData = {style: {display: ''}, html: -price.PERCENT + '%'};
 					}
@@ -2130,6 +2152,7 @@
 					case 0: // no catalog
 					case 1: // product
 					case 2: // set
+					case 7: // service
 						compareLink = url.replace('#ID#', this.product.id.toString());
 						break;
 					case 3: // sku
@@ -2281,6 +2304,7 @@
 				case 0: // no catalog
 				case 1: // product
 				case 2: // set
+				case 7: // service
 					if (this.product.id == id)
 					{
 						this.setCompared(false);
@@ -2313,6 +2337,7 @@
 			{
 				case 1: // product
 				case 2: // set
+				case 7: // service
 					this.basketUrl = this.basketUrl.replace('#ID#', this.product.id.toString());
 					break;
 				case 3: // sku
@@ -2457,6 +2482,7 @@
 			{
 				case 1: // product
 				case 2: // set
+				case 7: // service
 					if (this.basketData.useProps && !this.basketData.emptyProps)
 					{
 						this.initPopupWindow();
@@ -2528,6 +2554,7 @@
 					{
 						case 1: // product
 						case 2: // set
+						case 7: // service
 							strPict = this.product.pict.SRC;
 							break;
 						case 3: // sku

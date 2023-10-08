@@ -4,6 +4,7 @@ namespace Bitrix\Landing\Node;
 use \Bitrix\Landing\File;
 use \Bitrix\Landing\Manager;
 use \Bitrix\Main\Web\DOM\StyleInliner;
+use \Bitrix\Landing\Node;
 
 class Img extends \Bitrix\Landing\Node
 {
@@ -27,6 +28,7 @@ class Img extends \Bitrix\Landing\Node
 	{
 		$doc = $block->getDom();
 		$resultList = $doc->querySelectorAll($selector);
+		$files = null;
 
 		foreach ($data as $pos => $value)
 		{
@@ -39,11 +41,20 @@ class Img extends \Bitrix\Landing\Node
 			$id2x = isset($value['id2x']) ? intval($value['id2x']) : 0;
 			$isLazy = isset($value['isLazy']) && $value['isLazy'] === 'Y';
 
+			if ($src)
+			{
+				$src = str_replace('http://', 'https://', $src);
+			}
+			if ($src2x)
+			{
+				$src2x = str_replace('http://', 'https://', $src2x);
+			}
+
 			if (isset($value['url']))
 			{
 				$url = is_array($value['url'])
-						? json_encode($value['url'])
-						: $value['url'];
+					? json_encode($value['url'])
+					: $value['url'];
 			}
 			else
 			{
@@ -55,7 +66,6 @@ class Img extends \Bitrix\Landing\Node
 				// check permissions to this file ids
 				if ($id || $id2x)
 				{
-					static $files = null;
 					if ($files === null)
 					{
 						$files = File::getFilesFromBlock($block->getId());
@@ -88,7 +98,7 @@ class Img extends \Bitrix\Landing\Node
 					{
 						// and one two additional bg
 						$newStyles = [
-							"background-image: url('{$src}');"
+							"background-image: url('{$src}');",
 						];
 						if ($src2x)
 						{
@@ -96,7 +106,7 @@ class Img extends \Bitrix\Landing\Node
 								$newStyles,
 								[
 									"background-image: -webkit-image-set(url('{$src}') 1x, url('{$src2x}') 2x);",
-									"background-image: image-set(url('{$src}') 1x, url('{$src2x}') 2x);"
+									"background-image: image-set(url('{$src}') 1x, url('{$src2x}') 2x);",
 								]
 							);
 						}
@@ -124,18 +134,18 @@ class Img extends \Bitrix\Landing\Node
 					$resultList[$pos]->setAttribute('style', $style);
 
 					// for lazyload
-					if($isLazy)
+					if ($isLazy)
 					{
 						$resultList[$pos]->setAttribute('data-lazy-bg', 'Y');
-						if($lazyOrigSrc = $value['lazyOrigSrc'])
+						if ($lazyOrigSrc = $value['lazyOrigSrc'])
 						{
 							$resultList[$pos]->setAttribute('data-src', $lazyOrigSrc);
 						}
-						if($lazyOrigSrc2x = $value['lazyOrigSrc2x'])
+						if ($lazyOrigSrc2x = $value['lazyOrigSrc2x'])
 						{
 							$resultList[$pos]->setAttribute('data-src2x', $lazyOrigSrc2x);
 						}
-						if($lazyOrigStyle = $value['lazyOrigStyle'])
+						if ($lazyOrigStyle = $value['lazyOrigStyle'])
 						{
 							$resultList[$pos]->setAttribute('data-style', $lazyOrigStyle);
 						}
@@ -155,32 +165,32 @@ class Img extends \Bitrix\Landing\Node
 					}
 
 					// for lazyload
-					if($isLazy)
+					if ($isLazy)
 					{
 						$resultList[$pos]->setAttribute('data-lazy-img', 'Y');
 						$resultList[$pos]->setAttribute('loading', 'lazy');
-						if($lazyOrigSrc = $value['lazyOrigSrc'])
+						if ($lazyOrigSrc = $value['lazyOrigSrc'])
 						{
 							$resultList[$pos]->setAttribute('data-src', $lazyOrigSrc);
 						}
-						if($lazyOrigSrcset = $value['lazyOrigSrcset'])
+						if ($lazyOrigSrcset = $value['lazyOrigSrcset'])
 						{
 							$resultList[$pos]->setAttribute('data-srcset', $lazyOrigSrcset);
 						}
 					}
 				}
-				if ($id)
-				{
-					$resultList[$pos]->setAttribute('data-fileid', $id);
-				}
-				if ($id2x)
-				{
-					$resultList[$pos]->setAttribute('data-fileid2x', $id2x);
-				}
-				if ($url)
-				{
-					$resultList[$pos]->setAttribute('data-pseudo-url', $url);
-				}
+				$id
+					? $resultList[$pos]->setAttribute('data-fileid', $id)
+					: $resultList[$pos]->removeAttribute('data-fileid')
+				;
+				$id2x
+					? $resultList[$pos]->setAttribute('data-fileid2x', $id2x)
+					: $resultList[$pos]->removeAttribute('data-fileid2x')
+				;
+				$url
+					? $resultList[$pos]->setAttribute('data-pseudo-url', $url)
+					: $resultList[$pos]->removeAttribute('data-pseudo-url')
+				;
 			}
 		}
 	}
@@ -196,6 +206,10 @@ class Img extends \Bitrix\Landing\Node
 		$data = array();
 		$doc = $block->getDom();
 		$resultList = $doc->querySelectorAll($selector);
+		if (!$resultList)
+		{
+			$resultList = Node\Style::getNodesBySelector($block, $selector);
+		}
 
 		foreach ($resultList as $pos => $res)
 		{
@@ -240,21 +254,21 @@ class Img extends \Bitrix\Landing\Node
 					}
 
 					// for lazyload
-					if(
+					if (
 						($isLazy = $res->getAttribute('data-lazy-bg'))
 						&& $isLazy === 'Y'
 					)
 					{
 						$data[$pos]['isLazy'] = 'Y';
-						if($lazyOrigSrc = $res->getAttribute('data-src'))
+						if ($lazyOrigSrc = $res->getAttribute('data-src'))
 						{
 							$data[$pos]['lazyOrigSrc'] = $lazyOrigSrc;
 						}
-						if($lazyOrigSrc2x = $res->getAttribute('data-src2x'))
+						if ($lazyOrigSrc2x = $res->getAttribute('data-src2x'))
 						{
 							$data[$pos]['lazyOrigSrc2x'] = $lazyOrigSrc2x;
 						}
-						if($lazyOrigStyle = $res->getAttribute('data-style'))
+						if ($lazyOrigStyle = $res->getAttribute('data-style'))
 						{
 							$data[$pos]['lazyOrigStyle'] = $lazyOrigStyle;
 						}
@@ -276,33 +290,47 @@ class Img extends \Bitrix\Landing\Node
 				}
 
 				// for lazyload
-				if(
-					($isLazy = $res->getAttribute('data-lazy-img'))
-					&& $isLazy === 'Y'
-				)
+				$isLazy = $res->getAttribute('data-lazy-img');
+				if ($isLazy === 'Y')
 				{
 					$data[$pos]['isLazy'] = 'Y';
-					if($lazyOrigSrc = $res->getAttribute('data-src'))
+					$lazyOrigSrc = $res->getAttribute('data-src');
+					if ($lazyOrigSrc)
 					{
 						$data[$pos]['lazyOrigSrc'] = $lazyOrigSrc;
 					}
-					if($lazyOrigSrcset = $res->getAttribute('data-srcset'))
+					$lazyOrigSrcset = $res->getAttribute('data-srcset');
+					if ($lazyOrigSrcset)
 					{
+						if (
+							preg_match('/([^ ]+) 2x/i', $lazyOrigSrcset, $matches)
+							&& $matches[1]
+						)
+						{
+							$data[$pos]['lazyOrigSrc2x'] = $matches[1];
+						}
+						// comment just for changes
 						$data[$pos]['lazyOrigSrcset'] = $lazyOrigSrcset;
 					}
 				}
 			}
-			$dataAtrs = [
-				'data-pseudo-url' => 'url',
-				'data-fileid' => 'id',
-				'data-fileid2x' => 'id2x',
-			];
-			foreach ($dataAtrs as $codeFrom => $codeTo)
+
+			if ($val = $res->getAttribute('data-pseudo-url'))
 			{
-				if ($val = $res->getAttribute($codeFrom))
-				{
-					$data[$pos][$codeTo] = $val;
-				}
+				$data[$pos]['url'] = $val;
+			}
+
+			if ($val = $res->getAttribute('data-fileid'))
+			{
+				$data[$pos]['id'] = $val;
+			}
+
+			if (
+				(isset($data[$pos]['src2x']) || isset($data[$pos]['lazyOrigSrc2x']))
+				&& ($val = $res->getAttribute('data-fileid2x'))
+			)
+			{
+				$data[$pos]['id2x'] = $val;
 			}
 		}
 
@@ -334,5 +362,33 @@ class Img extends \Bitrix\Landing\Node
 		}
 
 		return $searchContent;
+	}
+
+	public static function prepareManifest($block, $node)
+	{
+		return self::prepareNode($node, $block);
+	}
+
+	/**
+	 * Prepare node if is styleImg type.
+	 * @param array $node Selector.
+	 * @param \Bitrix\Landing\Block $block Block instance.
+	 * @return array
+	 */
+	public static function prepareNode(array $node, \Bitrix\Landing\Block $block): array
+	{
+		$matches = [];
+		$pattern = '/' . substr($node['code'], 1) . '[^\"]*/i';
+		if (preg_match($pattern, $block->getContent(), $matches) === 1)
+		{
+			$pattern = '/[\s]?g-bg-image[\s]?/i';
+			if (preg_match($pattern, $matches[0]) === 1)
+			{
+				$node['type'] = 'styleimg';
+				$node['handler'] = StyleImg::getHandlerJS();
+			}
+		}
+
+		return $node;
 	}
 }

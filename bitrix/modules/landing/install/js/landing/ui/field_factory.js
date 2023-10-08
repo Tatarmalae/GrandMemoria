@@ -33,6 +33,7 @@
 					onChange: this.onChangeHandler,
 					onValueChange: this.onValueChangeHandler,
 					attribute: options.attribute,
+					attrKey: options.attrKey,
 					disabled: BX.Text.toBoolean(options.disabled)
 				});
 			}
@@ -50,6 +51,7 @@
 					onChange: this.onChangeHandler,
 					onValueChange: this.onValueChangeHandler,
 					attribute: options.attribute,
+					attrKey: options.attrKey,
 					time: options.time,
 					format: options.format,
 					disabled: BX.Text.toBoolean(options.disabled)
@@ -66,6 +68,7 @@
 					onChange: this.onChangeHandler,
 					onValueChange: this.onValueChangeHandler,
 					attribute: options.attribute,
+					attrKey: options.attrKey,
 					disabled: BX.Text.toBoolean(options.disabled)
 				});
 			}
@@ -80,7 +83,10 @@
 					onChange: this.onChangeHandler,
 					onValueChange: this.onValueChangeHandler,
 					attribute: options.attribute,
-					disabled: BX.Text.toBoolean(options.disabled)
+					attrKey: options.attrKey,
+					disabled: BX.Text.toBoolean(options.disabled),
+					dependency: options.dependency,
+					hint: options.hint
 				});
 			}
 
@@ -93,6 +99,7 @@
 					onChange: this.onChangeHandler,
 					onValueChange: this.onValueChangeHandler,
 					attribute: options.attribute,
+					attrKey: options.attrKey,
 					uploadParams: this.uploadParams,
 					disabled: BX.Text.toBoolean(options.disabled)
 				});
@@ -113,6 +120,7 @@
 					onChange: this.onChangeHandler,
 					onValueChange: this.onValueChangeHandler,
 					attribute: options.attribute,
+					attrKey: options.attrKey,
 					disabled: BX.Text.toBoolean(options.disabled)
 				});
 			}
@@ -126,6 +134,7 @@
 					onChange: this.onChangeHandler,
 					onValueChange: this.onValueChangeHandler,
 					attribute: options.attribute,
+					attrKey: options.attrKey,
 					options: this.linkOptions,
 					disabled: BX.Text.toBoolean(options.disabled)
 				});
@@ -144,7 +153,7 @@
 					disabled: BX.Text.toBoolean(options.disabled)
 				});
 
-				return new BX.Landing.UI.Field.LinkURL(options);
+				return new BX.Landing.UI.Field.LinkUrl(options);
 			}
 
 			if (options.type === "dynamic_source")
@@ -169,7 +178,7 @@
 					disabled: BX.Text.toBoolean(options.disabled)
 				});
 
-				return new BX.Landing.UI.Field.LinkURL(options);
+				return new BX.Landing.UI.Field.LinkUrl(options);
 			}
 
 			if (options.type === "slider" || options.type === "range-slider")
@@ -182,6 +191,8 @@
 					onChange: this.onChangeHandler,
 					onValueChange: this.onValueChangeHandler,
 					attribute: options.attribute,
+					attrKey: options.attrKey,
+					frame: window,
 					type: options.type === "range-slider" ? "multiple" : null,
 					disabled: BX.Text.toBoolean(options.disabled)
 				});
@@ -189,7 +200,7 @@
 
 			if (options.type === "palette")
 			{
-				return new BX.Landing.UI.Field.Color({
+				return new BX.Landing.UI.Field.ColorPalette({
 					title: options.name,
 					selector: this.selector,
 					items: options.items,
@@ -197,7 +208,26 @@
 					onChange: this.onChangeHandler,
 					onValueChange: this.onValueChangeHandler,
 					attribute: options.attribute,
+					attrKey: options.attrKey,
 					property: options.property,
+					disabled: BX.Text.toBoolean(options.disabled)
+				});
+			}
+
+			// todo: need save Backward compatibility for "pallette"?
+			if (options.type === "color")
+			{
+				return new BX.Landing.UI.Field.ColorField({
+					title: options.name,
+					selector: this.selector,
+					subtype: options.subtype,
+					// items: options.items,
+					content: options.value,
+					onChange: this.onChangeHandler,
+					onValueChange: this.onValueChangeHandler,
+					attribute: options.attribute,
+					attrKey: options.attrKey,
+					// property: options.property,
 					disabled: BX.Text.toBoolean(options.disabled)
 				});
 			}
@@ -212,6 +242,7 @@
 					onChange: this.onChangeHandler,
 					onValueChange: this.onValueChangeHandler,
 					attribute: options.attribute,
+					attrKey: options.attrKey,
 					property: options.property,
 					disabled: BX.Text.toBoolean(options.disabled)
 				});
@@ -227,6 +258,7 @@
 					onChange: this.onChangeHandler,
 					onValueChange: this.onValueChangeHandler,
 					attribute: options.attribute,
+					attrKey: options.attrKey,
 					property: options.property,
 					disabled: BX.Text.toBoolean(options.disabled)
 				});
@@ -242,6 +274,7 @@
 					onChange: this.onChangeHandler,
 					onValueChange: this.onValueChangeHandler,
 					attribute: options.attribute,
+					attrKey: options.attrKey,
 					property: options.property,
 					mode: options.mode,
 					disabled: BX.Text.toBoolean(options.disabled)
@@ -258,6 +291,7 @@
 					onChange: this.onChangeHandler,
 					onValueChange: this.onValueChangeHandler,
 					attribute: options.attribute,
+					attrKey: options.attrKey,
 					property: options.property,
 					compact: options.compact,
 					disabled: BX.Text.toBoolean(options.disabled)
@@ -274,6 +308,7 @@
 					onChange: this.onChangeHandler,
 					onValueChange: this.onValueChangeHandler,
 					attribute: options.attribute,
+					attrKey: options.attrKey,
 					property: options.property,
 					compact: options.compact,
 					disabled: BX.Text.toBoolean(options.disabled)
@@ -290,6 +325,7 @@
 					onChange: this.onChangeHandler,
 					onValueChange: this.onValueChangeHandler,
 					attribute: options.attribute,
+					attrKey: options.attrKey,
 					property: options.property,
 					disabled: BX.Text.toBoolean(options.disabled)
 				});
@@ -307,6 +343,7 @@
 					onChange: this.onChangeHandler,
 					onValueChange: this.onValueChangeHandler,
 					attribute: options.attribute,
+					attrKey: options.attrKey,
 					property: options.property,
 					disabled: BX.Text.toBoolean(options.disabled)
 				});

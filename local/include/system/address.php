@@ -20,7 +20,7 @@ if (count($arResult['ITEMS']) == 0) return;
 ?>
 
 <?php $arAddress = [] ?>
-<section class="address">
+<section class="address<?= $arParams['CLASS'] ?: ''?>">
     <div class="content">
         <div class="heading">
             <div class="heading__content">

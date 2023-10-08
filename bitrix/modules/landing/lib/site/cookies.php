@@ -6,6 +6,7 @@ use \Bitrix\Landing\Manager;
 use \Bitrix\Landing\Site;
 use \Bitrix\Landing\Internals\BlockTable;
 use \Bitrix\Landing\Internals\HookDataTable;
+use \Bitrix\Main\Loader;
 use \Bitrix\Main\Localization\Loc;
 use \Bitrix\Main\ORM\Data\AddResult;
 use \Bitrix\Main\ORM\Data\UpdateResult;
@@ -130,10 +131,26 @@ class Cookies
 			return $agreements;
 		}
 
+		//get zone
+		$zone = '';
+		if (Loader::includeModule('bitrix24'))
+		{
+			$zone = \CBitrix24::getPortalZone();
+		}
+		elseif (file_exists($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/lang/ru")
+			&& !file_exists($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/lang/ua"))
+		{
+			$zone = 'ru';
+		}
+
 		// first get system messages
 		foreach (self::SYSTEM_COOKIES as $code => $cookieItem)
 		{
 			if (in_array($code, ['ym', 'vkp']) && !Manager::availableOnlyForZone('ru'))
+			{
+				continue;
+			}
+			if ($code === 'fbp' && $zone === 'ru')
 			{
 				continue;
 			}
@@ -149,6 +166,11 @@ class Cookies
 				'CONTENT' => Loc::getMessage('LANDING_COOKIES_SYS_' . $codeUp . '_TEXT'),
 				'~CONTENT' => $viewMode ? '' : Loc::getMessage('LANDING_COOKIES_SYS_' . $codeUp . '_TEXT')
 			];
+		}
+
+		if ($siteId < 0)
+		{
+			return $agreements;
 		}
 
 		// then get custom messages from DB
@@ -410,7 +432,8 @@ class Cookies
 								'ID', 'TITLE'
 							],
 							'filter' => [
-								'ID' => $id
+								'ID' => $id,
+								'=DELETED' => ['Y', 'N']
 							],
 							'limit' => 1
 						])->fetch();
@@ -433,7 +456,13 @@ class Cookies
 				},
 				'ITEMS' => function ($code = null) use(&$currentSite)
 				{
-					return $currentSite['AGREEMENTS'][$code]['TITLE'] ?? null;
+					if (!$currentSite)
+					{
+						$currentSite = [
+							'AGREEMENTS' => self::getAgreements(-1)
+						];
+					}
+					return $currentSite['AGREEMENTS'][$code]['TITLE'] ?? $code;
 				},
 			]
 		];

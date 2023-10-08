@@ -1,4 +1,6 @@
 <?php
+define('ADMIN_SECTION', false);
+define('B24CONNECTOR_SKIP', true);
 if (
 	isset($_GET['template']) &&
 	preg_match('/^[a-z0-9_]+$/i', $_GET['template'])
@@ -9,6 +11,13 @@ if (
 else
 {
 	define('SITE_TEMPLATE_ID', 'landing24');
+}
+if (
+	isset($_GET['site']) &&
+	preg_match('/^[a-z0-9_]+$/i', $_GET['site'])
+)
+{
+	define('SITE_ID', $_GET['site']);
 }
 
 require_once($_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/main/include/prolog_admin_before.php');
@@ -28,6 +37,8 @@ Loc::loadMessages(__FILE__);
 Loader::includeModule('landing');
 define('ADMIN_MODULE_NAME', 'landing');
 
+/** @var \CMain $APPLICATION */
+
 // vars
 $request = Application::getInstance()->getContext()->getRequest();
 $server = Application::getInstance()->getContext()->getServer();
@@ -38,6 +49,7 @@ $landing = $request->get('id');
 $cmp = $request->get('cmp');
 $isFrame = $request->get('IFRAME') == 'Y';
 $isAjax = $request->get('IS_AJAX') == 'Y';
+$storeEnabled = !Manager::isB24() && Manager::isStoreEnabled();
 $actionFolder = 'folderId';
 $type = 'SMN';
 $siteTemplate = Manager::getTemplateId($site);
@@ -131,12 +143,28 @@ else
 
 // paths
 $landingsPage = 'landing_site.php?lang=' . LANGUAGE_ID . '&site=' . $site;
+
+$siteSettings = $landingsPage . '&cmp=landing_settings';
+$landingSettings = $landingsPage . '&cmp=landing_settings&id=#landing_edit#';
+
 $editPage = $landingsPage . '&cmp=landing_edit&id=#landing_edit#';
 $editPage .= ($siteTemplate ? '&template=' . $siteTemplate : '');
+
+$editFolder = $landingsPage . '&cmp=folder_edit&' . $actionFolder . '=#folder_edit#';
+$editFolder .= ($siteTemplate ? '&template=' . $siteTemplate : '');
+
+$designPage = $landingsPage . '&cmp=landing_edit&id=#landing_edit#&componentTemplate=design';
+$designPage .= ($siteTemplate ? '&template=' . $siteTemplate : '');
+
 $editSite = $landingsPage . '&cmp=site_edit';
 $editSite .= ($siteTemplate ? '&template=' . $siteTemplate : '');
+
+$designSite = $landingsPage . '&cmp=site_edit&componentTemplate=design';
+$designSite .= ($siteTemplate ? '&template=' . $siteTemplate : '');
+
 $editCookies = $landingsPage . '&cmp=cookies_edit';
 $editCookies .= ($siteTemplate ? '&template=' . $siteTemplate : '');
+
 $viewPage ='landing_view.php?lang=' . LANGUAGE_ID . '&id=#landing_edit#&site=' . $site . '&template=' . $siteTemplate;
 
 if ($isFrame)
@@ -176,8 +204,6 @@ echo '<div class="landing-content-title-admin">';
 
 if (!$cmp && !$isFrame)
 {
-	$storeEnabled = !Manager::isB24() && Manager::isStoreEnabled();
-
 	// create buttons
 	if (!Rights::hasAccessForSite($siteId, Rights::ACCESS_TYPES['edit']))
 	{
@@ -216,21 +242,21 @@ if (!$cmp && !$isFrame)
 	{
 		$settingsLink[] = [
 			'TITLE' => Loc::getMessage('LANDING_ADMIN_ACTION_SETTINGS'),
-			'LINK' => $editSite
+			'LINK' => $siteSettings
 		];
-		if ($storeEnabled)
-		{
-			$uriSettCatalog = new \Bitrix\Main\Web\Uri($editSite);
-			$uriSettCatalog->addParams(['tpl' => 'catalog']);
-			$settingsLink[] = [
-				'TITLE' => Loc::getMessage('LANDING_ADMIN_ACTION_CATALOG'),
-				'LINK' => $uriSettCatalog->getUri()
-			];
-			unset($uriSettCatalog);
-		}
 	}
 
 	$folderId = $request->get($actionFolder);
+
+	// folder
+	if ($folderId)
+	{
+		$settingsLink[] = [
+			'TITLE' => Loc::getMessage('LANDING_TPL_FOLDER_EDIT'),
+			'LINK' => str_replace('#folder_edit#', $folderId, $editFolder)
+		];
+	}
+
 	$APPLICATION->IncludeComponent(
 		'bitrix:landing.filter',
 		'.default',
@@ -239,7 +265,8 @@ if (!$cmp && !$isFrame)
 			'TYPE' => $type,
 			'SETTING_LINK' => $settingsLink,
 			'BUTTONS' => $buttons,
-			'FOLDER_SITE_ID' => !$folderId ? $siteId : 0
+			'FOLDER_ID' => $folderId,
+			'FOLDER_SITE_ID' => $siteId
 		),
 		false
 	);
@@ -256,23 +283,45 @@ echo '<div id="workarea-content" class="landing-content-admin">';
 
 \Bitrix\Landing\Update\Stepper::show();
 
+$component = null;
+
 if ($cmp == 'landing_edit')
 {
 	if ($landing > 0)
 	{
-		$APPLICATION->IncludeComponent(
-			'bitrix:landing.landing_edit',
-			'.default',
-			array(
-				'TYPE' => $type,
-				'SITE_ID' => $siteId,
-				'LANDING_ID' => $landing,
-				'PAGE_URL_LANDINGS' => $landingsPage,
-				'PAGE_URL_LANDING_VIEW' => $viewPage,
-				'PAGE_URL_SITE_EDIT' => $editSite
-			),
-			$component
-		);
+		$componentTemplate = $request->get('componentTemplate');
+		if ($componentTemplate === 'design')
+		{
+			$APPLICATION->IncludeComponent(
+				'bitrix:landing.landing_edit',
+				'design',
+				array(
+					'TYPE' => $type,
+					'SITE_ID' => $siteId,
+					'LANDING_ID' => $landing,
+					'PAGE_URL_LANDINGS' => $landingsPage,
+					'PAGE_URL_LANDING_VIEW' => $viewPage,
+					'PAGE_URL_SITE_EDIT' => $editSite
+				),
+				$component
+			);
+		}
+		else
+		{
+			$APPLICATION->IncludeComponent(
+				'bitrix:landing.landing_edit',
+				'.default',
+				array(
+					'TYPE' => $type,
+					'SITE_ID' => $siteId,
+					'LANDING_ID' => $landing,
+					'PAGE_URL_LANDINGS' => $landingsPage,
+					'PAGE_URL_LANDING_VIEW' => $viewPage,
+					'PAGE_URL_SITE_EDIT' => $editSite
+				),
+				$component
+			);
+		}
 	}
 	else
 	{
@@ -291,7 +340,10 @@ if ($cmp == 'landing_edit')
 					'CODE' => $tpl,
 					'SITE_ID' => $siteId,
 					'PAGE_URL_BACK' => $landingsPage,
-					'SITE_WORK_MODE' => 'Y'
+					'SITE_WORK_MODE' => 'Y',
+					'LANG_ID' => LANGUAGE_ID,
+					'ADMIN_SECTION' => 'Y',
+					'ACTION_FOLDER' => $actionFolder,
 				),
 				$component
 			);
@@ -317,16 +369,92 @@ if ($cmp == 'landing_edit')
 elseif ($cmp == 'site_edit')
 {
 	$tpl = $request->get('tpl');
+	$componentTemplate = $request->get('componentTemplate');
+	if ($componentTemplate === 'design')
+	{
+		$APPLICATION->IncludeComponent(
+			'bitrix:landing.site_edit',
+			'design',
+			array(
+				'TYPE' => $type,
+				'SITE_ID' => $siteId,
+				'PAGE_URL_SITES' => '',
+				'PAGE_URL_LANDING_VIEW' => $viewPage,
+				'PAGE_URL_SITE_COOKIES' => $editCookies,
+				'TEMPLATE' => $tpl
+			),
+			$component
+		);
+	}
+	else
+	{
+		$APPLICATION->IncludeComponent(
+			'bitrix:landing.site_edit',
+			'.default',
+			array(
+				'TYPE' => $type,
+				'SITE_ID' => $siteId,
+				'PAGE_URL_SITES' => '',
+				'PAGE_URL_LANDING_VIEW' => $viewPage,
+				'PAGE_URL_SITE_COOKIES' => $editCookies,
+				'TEMPLATE' => $tpl
+			),
+			$component
+		);
+	}
+}
+elseif ($cmp == 'landing_settings')
+{
+	$pages = [
+		'PAGE_URL_SITE_EDIT' => $editSite,
+		'PAGE_URL_SITE_DESIGN' => $designSite,
+	];
+	if ($storeEnabled)
+	{
+		$uriSettCatalog = new \Bitrix\Main\Web\Uri($editSite);
+		$uriSettCatalog->addParams(['tpl' => 'catalog']);
+		$pages['PAGE_URL_CATALOG_EDIT'] = $uriSettCatalog->getUri();
+		unset($uriSettCatalog);
+	}
+
+	$componentParams = [
+		'POPUP_COMPONENT_NAME' => 'bitrix:landing.settings',
+		'POPUP_COMPONENT_TEMPLATE_NAME' => '',
+		'POPUP_COMPONENT_PARAMS' => [
+			'SITE_ID' => $siteId,
+			'TYPE' => $storeEnabled ? 'STORE' : $type,
+			'PAGES' => $pages,
+		],
+		'USE_PADDING' => false,
+		'PAGE_MODE' => false,
+		'CLOSE_AFTER_SAVE' => false,
+		'RELOAD_GRID_AFTER_SAVE' => false,
+		'RELOAD_PAGE_AFTER_SAVE' => true,
+	];
+	if ($landing > 0)
+	{
+		$componentParams['POPUP_COMPONENT_PARAMS']['LANDING_ID'] = $landing;
+		$componentParams['POPUP_COMPONENT_PARAMS']['PAGES']['PAGE_URL_LANDING_EDIT'] = $editPage;
+		$componentParams['POPUP_COMPONENT_PARAMS']['PAGES']['PAGE_URL_LANDING_DESIGN'] = $designPage;
+	}
+
+	$APPLICATION->includeComponent(
+		'bitrix:ui.sidepanel.wrapper',
+		'',
+		$componentParams,
+	);
+}
+elseif ($cmp == 'folder_edit')
+{
 	$APPLICATION->IncludeComponent(
-		'bitrix:landing.site_edit',
+		'bitrix:landing.folder_edit',
 		'.default',
 		array(
 			'TYPE' => $type,
-			'SITE_ID' => $siteId,
-			'PAGE_URL_SITES' => '',
-			'PAGE_URL_LANDING_VIEW' => $viewPage,
-			'PAGE_URL_SITE_COOKIES' => $editCookies,
-			'TEMPLATE' => $tpl
+			'FOLDER_ID' => $request->get($actionFolder),
+			'ACTION_FOLDER' => $actionFolder,
+			'PAGE_URL_LANDING_EDIT' => $editPage,
+			'PAGE_URL_LANDING_VIEW' => $viewPage
 		),
 		$component
 	);
@@ -348,13 +476,16 @@ else
 	$APPLICATION->IncludeComponent(
 		'bitrix:landing.landings',
 		'.default',
-		array(
+		[
 			'TYPE' => $type,
 			'SITE_ID' => $siteId,
 			'ACTION_FOLDER' => $actionFolder,
 			'PAGE_URL_LANDING_EDIT' => $editPage,
-			'PAGE_URL_LANDING_VIEW' => $viewPage
-		),
+			'PAGE_URL_LANDING_VIEW' => $viewPage,
+			'PAGE_URL_LANDING_DESIGN' => $designPage,
+			'PAGE_URL_FOLDER_EDIT' => $editFolder,
+			'PAGE_URL_LANDING_SETTINGS' => $landingSettings,
+		],
 		false
 	);
 }

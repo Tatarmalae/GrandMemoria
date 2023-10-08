@@ -2,6 +2,9 @@ this.BX = this.BX || {};
 (function (exports,main_core,landing_env) {
 	'use strict';
 
+	function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+	function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { babelHelpers.defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 	var additionalRequestCompleted = true;
 	/**
 	 * @memberOf BX.Landing
@@ -70,17 +73,21 @@ this.BX = this.BX || {};
 	      var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 	      var queryParams = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 	      var uploadParams = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-	      queryParams.site_id = this.getSiteId();
+
+	      if (!queryParams.site_id) {
+	        queryParams.site_id = this.getSiteId();
+	      }
+
 	      var requestBody = {
 	        sessid: main_core.Loc.getMessage('bitrix_sessid'),
 	        action: uploadParams.action || _action.replace('Landing\\Block', 'Block'),
-	        data: babelHelpers.objectSpread({}, data, {
+	        data: _objectSpread(_objectSpread({}, data), {}, {
 	          uploadParams: uploadParams,
 	          lid: data.lid || this.getLandingId()
 	        })
 	      };
 	      var uri = new main_core.Uri(this.getControllerUrl());
-	      uri.setQueryParams(babelHelpers.objectSpread({
+	      uri.setQueryParams(_objectSpread({
 	        action: requestBody.action
 	      }, queryParams));
 	      return Backend.request({
@@ -92,18 +99,27 @@ this.BX = this.BX || {};
 	          BX.Landing.UI.Panel.StatusPanel.getInstance().update();
 	        }
 
+	        BX.onCustomEvent(BX.Landing.PageObject.getRootWindow(), 'BX.Landing.Backend:action', [_action, data]);
+	        /*if (!response.result) {
+	        	BX.Landing.ErrorManager.getInstance().add({
+	        		type: 'error'
+	        	});
+	        }*/
+
 	        return response.result;
-	      }).catch(function (err) {
-	        if (requestBody.action !== 'Block::getById') {
-	          var error = main_core.Type.isString(err) ? {
-	            type: 'error'
-	          } : err;
-	          err.action = requestBody.action; // eslint-disable-next-line
+	      })["catch"](function (err) {
+	        if (requestBody.action !== 'Landing::downBlock' && requestBody.action !== 'Landing::upBlock') {
+	          if (requestBody.action !== 'Block::getById' && requestBody.action !== 'Block::publication' && requestBody.action !== 'Landing::move' && requestBody.action !== 'Landing::copy' && requestBody.action !== 'Landing::publication' && requestBody.action !== 'Site::publication' && requestBody.action !== 'Site::moveFolder' && requestBody.action !== 'Site::markDelete' && requestBody.action !== 'Vk::getVideoInfo') {
+	            var error = main_core.Type.isString(err) ? {
+	              type: 'error'
+	            } : err;
+	            err.action = requestBody.action; // eslint-disable-next-line
 
-	          BX.Landing.ErrorManager.getInstance().add(error);
+	            BX.Landing.ErrorManager.getInstance().add(error);
+	          }
+
+	          return Promise.reject(err);
 	        }
-
-	        return Promise.reject(err);
 	      });
 	    }
 	  }, {
@@ -121,7 +137,7 @@ this.BX = this.BX || {};
 	        batch: data
 	      };
 	      var uri = new main_core.Uri(this.getControllerUrl());
-	      uri.setQueryParams(babelHelpers.objectSpread({
+	      uri.setQueryParams(_objectSpread({
 	        action: requestBody.action
 	      }, queryParams));
 	      return Backend.request({
@@ -130,18 +146,27 @@ this.BX = this.BX || {};
 	      }).then(function (response) {
 	        // eslint-disable-next-line
 	        BX.Landing.UI.Panel.StatusPanel.getInstance().update();
+	        BX.onCustomEvent(BX.Landing.PageObject.getRootWindow(), 'BX.Landing.Backend:batch', [action, data]);
+	        /*if (!response.result) {
+	        	BX.Landing.ErrorManager.getInstance().add({
+	        		type: 'error'
+	        	});
+	        }*/
+
 	        return response;
-	      }).catch(function (err) {
-	        if (requestBody.action !== 'Block::getById') {
-	          var error = main_core.Type.isString(err) ? {
-	            type: 'error'
-	          } : err;
-	          error.action = requestBody.action; // eslint-disable-next-line
+	      })["catch"](function (err) {
+	        if (requestBody.action !== 'Landing::downBlock' && requestBody.action !== 'Landing::upBlock') {
+	          if (requestBody.action !== 'Block::getById') {
+	            var error = main_core.Type.isString(err) ? {
+	              type: 'error'
+	            } : err;
+	            error.action = requestBody.action; // eslint-disable-next-line
 
-	          BX.Landing.ErrorManager.getInstance().add(error);
+	            BX.Landing.ErrorManager.getInstance().add(error);
+	          }
+
+	          return Promise.reject(err);
 	        }
-
-	        return Promise.reject(err);
 	      });
 	    }
 	  }, {
@@ -167,6 +192,10 @@ this.BX = this.BX || {};
 	        formData.append('data[id]', uploadParams.id);
 	      }
 
+	      if ('temp' in uploadParams) {
+	        formData.append('data[temp]', true);
+	      }
+
 	      var uri = new main_core.Uri(this.getControllerUrl());
 	      uri.setQueryParams({
 	        action: formData.get('action'),
@@ -182,7 +211,7 @@ this.BX = this.BX || {};
 	        data: formData
 	      }).then(function (response) {
 	        return response.result;
-	      }).catch(function (err) {
+	      })["catch"](function (err) {
 	        var error = main_core.Type.isString(err) ? {
 	          type: 'error'
 	        } : err;
@@ -204,6 +233,7 @@ this.BX = this.BX || {};
 	      return this.cache.remember("sites+".concat(JSON.stringify(filter)), function () {
 	        return _this2.action('Site::getList', {
 	          params: {
+	            filter: filter,
 	            order: {
 	              ID: 'DESC'
 	            }
@@ -222,16 +252,33 @@ this.BX = this.BX || {};
 	          _ref2$siteId = _ref2.siteId,
 	          siteId = _ref2$siteId === void 0 ? [] : _ref2$siteId;
 
+	      var filter = arguments.length > 1 ? arguments[1] : undefined;
+	      var skipFilter = false;
+
+	      if (!BX.Type.isPlainObject(filter)) {
+	        filter = {};
+	        skipFilter = true;
+	      }
+
 	      var ids = main_core.Type.isArray(siteId) ? siteId : [siteId];
+	      filter.SITE_ID = ids;
 
 	      var getBathItem = function getBathItem(id) {
 	        return {
 	          action: 'Landing::getList',
 	          data: {
 	            params: {
-	              filter: {
-	                SITE_ID: id
-	              },
+	              filter: function () {
+	                if (skipFilter) {
+	                  return {
+	                    SITE_ID: id,
+	                    DELETED: 'N',
+	                    FOLDER: 'N'
+	                  };
+	                }
+
+	                return filter;
+	              }(),
 	              order: {
 	                ID: 'DESC'
 	              },
@@ -460,10 +507,10 @@ this.BX = this.BX || {};
 	        return sourceResponse;
 	      }
 
-	      return babelHelpers.objectSpread({
+	      return _objectSpread(_objectSpread({
 	        result: null,
 	        type: type
-	      }, sourceResponse, {
+	      }, sourceResponse), {}, {
 	        status: xhr.status,
 	        authorized: xhr.getResponseHeader('X-Bitrix-Ajax-Status') !== 'Authorize'
 	      });
@@ -485,19 +532,21 @@ this.BX = this.BX || {};
 	          onsuccess: function onsuccess(sourceResponse) {
 	            var response = Backend.makeResponse(xhr, sourceResponse);
 
-	            if (main_core.Type.isStringFilled(response.sessid) && additionalRequestCompleted) {
+	            if (main_core.Type.isStringFilled(response.sessid) && main_core.Loc.getMessage('bitrix_sessid') !== response.sessid && additionalRequestCompleted) {
 	              main_core.Loc.setMessage('bitrix_sessid', response.sessid);
 	              additionalRequestCompleted = false;
-	              var newData = babelHelpers.objectSpread({}, data, {
+
+	              var newData = _objectSpread(_objectSpread({}, data), {}, {
 	                sessid: main_core.Loc.getMessage('bitrix_sessid')
 	              });
+
 	              Backend.request({
 	                url: url,
 	                data: newData
 	              }).then(function (newResponse) {
 	                additionalRequestCompleted = true;
 	                resolve(newResponse);
-	              }).catch(function (newResponse) {
+	              })["catch"](function (newResponse) {
 	                additionalRequestCompleted = true;
 	                reject(newResponse);
 	              });
@@ -510,7 +559,12 @@ this.BX = this.BX || {};
 	            }
 
 	            if (response.type === 'error' || response.authorized === false) {
-	              reject(response);
+	              if (response.authorized === false) {
+	                top.window.location.reload();
+	              } else {
+	                reject(response);
+	              }
+
 	              return;
 	            }
 
@@ -518,7 +572,7 @@ this.BX = this.BX || {};
 	          },
 	          onfailure: function onfailure(sourceResponse) {
 	            if (sourceResponse === 'auth') {
-	              reject(Backend.makeResponse(xhr));
+	              top.window.location.reload();
 	            } else {
 	              reject(Backend.makeResponse(xhr, sourceResponse));
 	            }
@@ -530,6 +584,7 @@ this.BX = this.BX || {};
 	  }]);
 	  return Backend;
 	}();
+	babelHelpers.defineProperty(Backend, "instance", null);
 
 	exports.Backend = Backend;
 

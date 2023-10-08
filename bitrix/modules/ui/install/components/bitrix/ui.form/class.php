@@ -40,7 +40,13 @@ class UIFormComponent extends \CBitrixComponent
 	{
 		$this->initialize();
 		$this->emitOnUIFormInitializeEvent();
-		$this->includeComponentTemplate();
+
+		if (!$this->arParams['SKIP_TEMPLATE'])
+		{
+			$this->includeComponentTemplate();
+		}
+
+		return $this->arResult;
 	}
 
 	protected function getConfiguration(): UI\Form\EntityEditorConfiguration
@@ -76,10 +82,12 @@ class UIFormComponent extends \CBitrixComponent
 			'CONFIG_ID' => null,
 			'READ_ONLY' => null,
 			'INITIAL_MODE' => '',
+			'SKIP_TEMPLATE' => false,
 			'ENABLE_MODE_TOGGLE' => true,
 			'ENABLE_CONFIG_CONTROL' => true,
 			'ENABLE_VISIBILITY_POLICY' => true,
 			'ENABLE_TOOL_PANEL' => true,
+			'IS_TOOL_PANEL_ALWAYS_VISIBLE' => false,
 			'ENABLE_BOTTOM_PANEL' => true,
 			'ENABLE_FIELDS_CONTEXT_MENU' => true,
 			'IS_EMBEDDED' => null,
@@ -100,6 +108,7 @@ class UIFormComponent extends \CBitrixComponent
 			'ENABLE_REQUIRED_USER_FIELD_CHECK' => true,
 			'ENABLE_USER_FIELD_CREATION' => false,
 			'ENABLE_USER_FIELD_MANDATORY_CONTROL' => true,
+			'ENABLE_PAGE_TITLE_CONTROLS' => false,
 			'USER_FIELD_ENTITY_ID' => '',
 			'USER_FIELD_PREFIX' => '',
 			'USER_FIELD_CREATE_PAGE_URL' => '',
@@ -114,6 +123,13 @@ class UIFormComponent extends \CBitrixComponent
 			'CONTEXT_ID' => '',
 			'CONTEXT' => [],
 			'COMPONENT_AJAX_DATA' => [],
+			'CUSTOM_TOOL_PANEL_BUTTONS' => [],
+			'TOOL_PANEL_BUTTONS_ORDER' => [
+				'VIEW' => [],
+				'EDIT' => [
+					UI\EntityEditor\Action::DEFAULT_ACTION_BUTTON_ID, UI\EntityEditor\Action::CANCEL_ACTION_BUTTON_ID,
+				],
+			],
 			'SCOPE' => null,
 			'SCOPE_PREFIX' => '',
 		];
@@ -189,12 +205,12 @@ class UIFormComponent extends \CBitrixComponent
 		$config = null;
 		if (!$isForceDefaultConfig)
 		{
-			if(
-				$configScope === UI\Form\EntityEditorConfigScope::CUSTOM
-				&& array_key_exists($userScopeId, $userScopes)
-			)
+			if($configScope === UI\Form\EntityEditorConfigScope::CUSTOM)
 			{
-				$config = Scope::getInstance()->getScopeById($userScopeId);
+				if (array_key_exists($userScopeId, $userScopes))
+				{
+					$config = Scope::getInstance()->getScopeById($userScopeId);
+				}
 				if(!$config)
 				{
 					$configScope = UI\Form\EntityEditorConfigScope::UNDEFINED;
@@ -250,8 +266,9 @@ class UIFormComponent extends \CBitrixComponent
 			{
 				$defaultConfig[$section['name']] = $section;
 			}
-		}
 
+			$config = $this->getFilteredConfig($config, $this->buildConfigMap($defaultConfig));
+		}
 		if (!empty($defaultConfig) && $isForceDefaultSectionName)
 		{
 			foreach ($config as $key => $section)
@@ -263,7 +280,127 @@ class UIFormComponent extends \CBitrixComponent
 			}
 		}
 
+		if (!empty($defaultConfig))
+		{
+			foreach ($defaultConfig as $defaultConfigKey => $defaultConfigSection)
+			{
+				if (!(isset($defaultConfigSection['forceInclude']) && $defaultConfigSection['forceInclude'] === true))
+				{
+					continue;
+				}
+
+				$isIncluded = false;
+				$configSections = $this->getConfigSections($config);
+				foreach ($configSections as $key => $section)
+				{
+					if ($section['name'] === $defaultConfigSection['name'])
+					{
+						$isIncluded = true;
+						break;
+					}
+				}
+
+				if ($isIncluded)
+				{
+					continue;
+				}
+
+				$this->addConfigSection($config, $defaultConfigSection);
+			}
+		}
+
 		return [$config, $defaultConfig];
+	}
+
+	/**
+	 * @param array $config
+	 * @return array
+	 */
+	private function getConfigSections(array $config): array
+	{
+		if (isset($config[0]) && $config[0]['type'] === self::COLUMN_TYPE)
+		{
+			return isset($config[0]['elements']) && is_array($config[0]['elements']) ? $config[0]['elements'] : [];
+		}
+
+		return $config;
+	}
+
+	/**
+	 * @param array $config
+	 * @param array $section
+	 */
+	private function addConfigSection(array &$config, array $section): void
+	{
+		if (isset($config[0]) && $config[0]['type'] === self::COLUMN_TYPE)
+		{
+			$config[0]['elements'][] = $section;
+		}
+		else
+		{
+			$config[] = $section;
+		}
+	}
+
+	/**
+	 * @param array $configItems
+	 * @param string|null $parent
+	 * @return array
+	 */
+	private function buildConfigMap(array $configItems, ?string $parent = null)
+	{
+		$result = [];
+
+		foreach ($configItems as $configItem)
+		{
+			$key = $this->getConfigKey($configItem, $parent);
+
+			$result[$key] = true;
+
+			if (isset($configItem['elements']) && is_array($configItem['elements']))
+			{
+				$result = array_merge($result, $this->buildConfigMap($configItem['elements'], $key));
+			}
+		}
+
+		return $result;
+	}
+
+	private function getFilteredConfig(array $configItems, array $defaultConfigMap, ?string $parent = null)
+	{
+		$result = [];
+
+		foreach ($configItems as $configItem)
+		{
+			$key = $this->getConfigKey($configItem, $parent);
+
+			$onlyDefault = (isset($configItem['data']['onlyDefault']) && $configItem['data']['onlyDefault'] === 'Y');
+			if ($onlyDefault && !isset($defaultConfigMap[$key]))
+			{
+				continue;
+			}
+
+			$resultItem = $configItem;
+
+			if (isset($configItem['elements']) && is_array($configItem['elements']))
+			{
+				$resultItem['elements'] = $this->getFilteredConfig($configItem['elements'], $defaultConfigMap, $key);
+			}
+
+			$result[] = $resultItem;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @param array $configItem
+	 * @param string|null $parent
+	 * @return string
+	 */
+	private function getConfigKey(array $configItem, ?string $parent = null)
+	{
+		return (is_null($parent) || $parent === self::COLUMN_DEFAULT ? '' : $parent . '.') . $configItem['name'];
 	}
 
 	protected function getFieldsInfo(array $entityFields, array $entityData): array
@@ -521,7 +658,6 @@ class UIFormComponent extends \CBitrixComponent
 		}
 
 		[$config, $defaultConfig] = $this->processParamsConfig($config, $this->arResult['FORCE_DEFAULT_SECTION_NAME'], $this->arResult['ENTITY_CONFIG']);
-
 		$fieldsInfo = $this->getFieldsInfo($this->arResult['ENTITY_FIELDS'], $this->arResult['ENTITY_DATA']);
 
 		$config = $this->initializeConfigWithColumns($config);
@@ -540,10 +676,7 @@ class UIFormComponent extends \CBitrixComponent
 	{
 		$languages = [];
 
-		$by = '';
-		$order = '';
-		$dbResultLangs = \CLanguage::GetList($by, $order);
-		unset($by, $order);
+		$dbResultLangs = \CLanguage::GetList();
 
 		while($lang = $dbResultLangs->Fetch())
 		{

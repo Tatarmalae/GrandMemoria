@@ -130,7 +130,6 @@ class CJSCore
 			$coreLang = self::_loadLang($config['lang'], true);
 			$coreSettings = self::loadSettings('main.core', $config['settings'], true);
             $coreJs = self::_loadJS($config['js'], true);
-			$coreCss = self::_loadCSS($config['css'], true);
 
 			if ($bReturn)
 			{
@@ -138,7 +137,6 @@ class CJSCore
 			    $ret .= $coreSettings;
 				$ret .= $relativities;
 			    $ret .= $coreJs;
-			    $ret .= $coreCss;
 			    $ret .= $includes;
             }
 
@@ -148,16 +146,6 @@ class CJSCore
             $asset->addString($relativities, true, AssetLocation::AFTER_CSS);
             $asset->addString($coreJs, true, AssetLocation::AFTER_CSS);
             $asset->addString($includes, true, AssetLocation::AFTER_CSS);
-
-			// Asset addString before_css doesn't works in admin section
-            if (!defined('ADMIN_SECTION') || ADMIN_SECTION !== true)
-			{
-				$asset->addString($coreCss, true, AssetLocation::BEFORE_CSS);
-			}
-            else
-			{
-				self::_loadCSS($config['css'], false);
-			}
 		}
 
 		for ($i = 0, $len = count($arExt); $i < $len; $i++)
@@ -241,6 +229,7 @@ class CJSCore
 			"FORMAT_DATETIME" => FORMAT_DATETIME,
 			"COOKIE_PREFIX" => COption::GetOptionString("main", "cookie_name", "BITRIX_SM"),
 			"SERVER_TZ_OFFSET" => date("Z"),
+			"UTF_MODE" => Main\Application::isUtfMode()? 'Y': 'N',
 		);
 
 		if (!defined("ADMIN_SECTION") || ADMIN_SECTION !== true)
@@ -305,6 +294,18 @@ class CJSCore
 			{
 				cl += " bx-ios";
 			}
+			else if (/Windows/i.test(ua))
+			{
+				cl += ' bx-win';
+			}
+			else if (/Macintosh/i.test(ua))
+			{
+				cl += " bx-mac";
+			}
+			else if (/Linux/i.test(ua) && !/Android/i.test(ua))
+			{
+				cl += " bx-linux";
+			}
 			else if (/Android/i.test(ua))
 			{
 				cl += " bx-android";
@@ -321,89 +322,16 @@ class CJSCore
 			{
 				cl += " bx-chrome";
 			}
-			else if ((ieVersion = getIeVersion()) > 0)
-			{
-				cl += " bx-ie bx-ie" + ieVersion;
-				if (ieVersion > 7 && ieVersion < 10 && !isDoctype())
-				{
-					cl += " bx-quirks";
-				}
-			}
 			else if (/Opera/.test(ua))
 			{
 				cl += " bx-opera";
 			}
-			else if (/Gecko/.test(ua))
+			else if (/Firefox/.test(ua))
 			{
 				cl += " bx-firefox";
 			}
 
-			if (/Macintosh/i.test(ua))
-			{
-				cl += " bx-mac";
-			}
-
 			ht.className = htc ? htc + " " + cl : cl;
-
-			function isDoctype()
-			{
-				if (d.compatMode)
-				{
-					return d.compatMode == "CSS1Compat";
-				}
-
-				return d.documentElement && d.documentElement.clientHeight;
-			}
-
-			function getIeVersion()
-			{
-				if (/Opera/i.test(ua) || /Webkit/i.test(ua) || /Firefox/i.test(ua) || /Chrome/i.test(ua))
-				{
-					return -1;
-				}
-
-				var rv = -1;
-				if (!!(w.MSStream) && !(w.ActiveXObject) && ("ActiveXObject" in w))
-				{
-					rv = 11;
-				}
-				else if (!!d.documentMode && d.documentMode >= 10)
-				{
-					rv = 10;
-				}
-				else if (!!d.documentMode && d.documentMode >= 9)
-				{
-					rv = 9;
-				}
-				else if (d.attachEvent && !/Opera/.test(ua))
-				{
-					rv = 8;
-				}
-
-				if (rv == -1 || rv == 8)
-				{
-					var re;
-					if (n.appName == "Microsoft Internet Explorer")
-					{
-						re = new RegExp("MSIE ([0-9]+[\.0-9]*)");
-						if (re.exec(ua) != null)
-						{
-							rv = parseFloat(RegExp.$1);
-						}
-					}
-					else if (n.appName == "Netscape")
-					{
-						rv = 11;
-						re = new RegExp("Trident/.*rv:([0-9]+[\.0-9]*)");
-						if (re.exec(ua) != null)
-						{
-							rv = parseFloat(RegExp.$1);
-						}
-					}
-				}
-
-				return rv;
-			}
 
 		})(window, document, navigator);
 JS;
@@ -439,18 +367,7 @@ JS;
 	{
 		$ret = '';
 
-		if (preg_match("/^((?P<MODULE_ID>[\w\.]+):)?(?P<EXT_NAME>[\w\.\-]+)$/", $ext, $matches))
-		{
-			if ($matches['MODULE_ID'] <> '' && $matches['MODULE_ID'] !== 'main')
-			{
-				\Bitrix\Main\Loader::includeModule($matches['MODULE_ID']);
-			}
-			$ext = $matches['EXT_NAME'];
-		}
-		else
-		{
-			$ext = preg_replace('/[^a-z0-9_\.\-]/i', '', $ext);
-		}
+		$ext = preg_replace('/[^a-z0-9_\.\-]/i', '', $ext);
 
 		if (!self::IsExtRegistered($ext))
 		{

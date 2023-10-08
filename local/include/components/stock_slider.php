@@ -20,11 +20,15 @@ if ($arParams['STOCK_SLIDER']) {
     }
 }
 if (count($arResult['STOCK_SLIDER']) == 0) return;
+$sort = array_flip($arParams['STOCK_SLIDER']);
+uasort($arResult['STOCK_SLIDER'], function($a, $b) use ($sort) {
+    return $sort[$a['ID']] - $sort[$b['ID']];
+});
 ?>
 <div class="poster<?= $arParams['SLIDER_CATALOG'] ? ' poster--catalog' : '' ?>">
     <?= !$arParams['SLIDER_CATALOG'] ? '<div class="content">' : '' ?>
     <div class="poster-wrap">
-        <div class="swiper-container poster-slider">
+        <div class="swiper-container poster-slider"<?= $arParams['SLIDER_CATALOG'] ? ' data-delay="3000"' : '' ?>>
             <div class="slider-wrap swiper-wrapper">
                 <?php foreach ($arResult['STOCK_SLIDER'] as $slider): ?>
                     <div class="slider-slide swiper-slide">

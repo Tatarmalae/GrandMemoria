@@ -14,20 +14,16 @@ class PhraseIndexSearch
 	const SEARCH_METHOD_EXACT_WORD = 'exact_word';
 	const SEARCH_METHOD_START_WITH = 'start_with';
 	const SEARCH_METHOD_END_WITH = 'end_with';
-	const SEARCH_METHOD_ALL_PART = 'all_part';
-	const SEARCH_METHOD_ANY_PART = 'any_part';
-
 
 	/**
 	 * Performs search query and returns result.
 	 *
 	 * @param array $params Orm type params for the query.
 	 * @return Main\ORM\Query\Query
-	 * @throws Main\SystemException
 	 */
-	public static function query($params = [])
+	public static function query(array $params = []): Main\ORM\Query\Query
 	{
-		list($select, $runtime, $filter) = self::processParams($params);
+		[$select, $runtime, $filter] = self::processParams($params);
 
 		/** @var \Bitrix\Main\ORM\Entity $entity */
 		$entity = Index\Internals\PathPhraseIndexReferenceTable::getEntity();
@@ -45,11 +41,10 @@ class PhraseIndexSearch
 	 *
 	 * @param array $filterIn Filter params.
 	 * @return int
-	 * @throws Main\SystemException
 	 */
-	public static function getCount($filterIn)
+	public static function getCount(array $filterIn): int
 	{
-		list($select, $runtime, $filter) = self::processParams(['filter' => $filterIn]);
+		[$select, $runtime, $filter] = self::processParams(['filter' => $filterIn]);
 
 		/** @var \Bitrix\Main\ORM\Entity $entity */
 		$entity = Index\Internals\PathPhraseIndexReferenceTable::getEntity();
@@ -75,14 +70,13 @@ class PhraseIndexSearch
 	 *
 	 * @param array $params Orm type params for the query.
 	 * @return Main\ORM\Query\Result
-	 * @throws Main\SystemException
 	 */
-	public static function getList($params)
+	public static function getList(array $params): Main\ORM\Query\Result
 	{
-		list($select, $runtime, $filter) = self::processParams($params);
+		[$select, $runtime, $filter] = self::processParams($params);
 
 		$executeParams = array(
-			'select' => array_merge(
+			'select' => \array_merge(
 				[
 					'PATH_ID' => 'PATH_ID',
 					'PHRASE_CODE' => 'CODE',
@@ -121,15 +115,17 @@ class PhraseIndexSearch
 	 *
 	 * @param array $params Orm type params for the query.
 	 * @return array
-	 * @throws Main\ArgumentException
-	 * @throws Main\SystemException
 	 */
-	private static function processParams($params)
+	private static function processParams(array $params): array
 	{
-		$select = $runtime = $filterIn = $filterOut = array();
+		$select = [];
+		$runtime = [];
+		$filterIn = [];
+		$filterOut = [];
+
 		if (isset($params['filter']))
 		{
-			if (is_object($params['filter']))
+			if (\is_object($params['filter']))
 			{
 				$filterIn = clone $params['filter'];
 			}
@@ -140,13 +136,13 @@ class PhraseIndexSearch
 		}
 
 		$enabledLanguages = Translate\Config::getEnabledLanguages();
-		$languageUpperKeys = array_combine($enabledLanguages, array_map('mb_strtoupper', $enabledLanguages));
+		$languageUpperKeys = \array_combine($enabledLanguages, \array_map('mb_strtoupper', $enabledLanguages));
 
 		$selectedLanguages = array();
 		foreach ($languageUpperKeys as $langId => $langUpper)
 		{
 			$alias = "{$langUpper}_LANG";
-			if (isset($params['select']) && in_array($alias, $params['select']))
+			if (isset($params['select']) && \in_array($alias, $params['select']))
 			{
 				$selectedLanguages[] = $langId;
 			}
@@ -161,7 +157,7 @@ class PhraseIndexSearch
 		}
 		if (empty($selectedLanguages))
 		{
-			$selectedLanguages = $enabledLanguages;
+			$selectedLanguages = [Loc::getCurrentLang()];
 		}
 
 		if (!isset($filterIn['PHRASE_ENTRY']))
@@ -185,7 +181,7 @@ class PhraseIndexSearch
 		}
 
 		// pathId + code
-		if (!class_exists('Bitrix\\Translate\\Index\\Internals\\PathPhraseIndexReferenceTable'))
+		if (!\class_exists('Bitrix\\Translate\\Index\\Internals\\PathPhraseIndexReferenceTable'))
 		{
 			$subQuery = (new Main\ORM\Query\Query(Index\Internals\PhraseIndexTable::getEntity()))
 				->setSelect(['PATH_ID', 'CODE'])
@@ -207,14 +203,14 @@ class PhraseIndexSearch
 		// search by code
 		if (!empty($filterIn['INCLUDE_PHRASE_CODES']))
 		{
-			$codes = preg_split("/[\r\n\t,; ]+/".BX_UTF_PCRE_MODIFIER, $filterIn['INCLUDE_PHRASE_CODES']);
-			$codes = array_filter($codes);
-			if (count($codes) > 0)
+			$codes = \preg_split("/[\r\n\t,; ]+/".\BX_UTF_PCRE_MODIFIER, $filterIn['INCLUDE_PHRASE_CODES']);
+			$codes = \array_filter($codes);
+			if (\count($codes) > 0)
 			{
 				$useLike = false;
 				foreach ($codes as $code)
 				{
-					if (mb_strpos($code, '%') !== false)
+					if (\mb_strpos($code, '%') !== false)
 					{
 						$useLike = true;
 						break;
@@ -233,14 +229,14 @@ class PhraseIndexSearch
 		}
 		if (!empty($filterIn['EXCLUDE_PHRASE_CODES']))
 		{
-			$codes = preg_split("/[\r\n\t,; ]+/".BX_UTF_PCRE_MODIFIER, $filterIn['EXCLUDE_PHRASE_CODES']);
-			$codes = array_filter($codes);
-			if (count($codes) > 0)
+			$codes = \preg_split("/[\r\n\t,; ]+/".\BX_UTF_PCRE_MODIFIER, $filterIn['EXCLUDE_PHRASE_CODES']);
+			$codes = \array_filter($codes);
+			if (\count($codes) > 0)
 			{
 				$useLike = false;
 				foreach ($codes as $code)
 				{
-					if (mb_strpos($code, '%') !== false)
+					if (\mb_strpos($code, '%') !== false)
 					{
 						$useLike = true;
 						break;
@@ -260,17 +256,17 @@ class PhraseIndexSearch
 
 		if (!empty($filterIn['PHRASE_CODE']))
 		{
-			if (in_array(self::SEARCH_METHOD_CASE_SENSITIVE, $filterIn['CODE_ENTRY']))
+			if (\in_array(self::SEARCH_METHOD_CASE_SENSITIVE, $filterIn['CODE_ENTRY']))
 			{
-				if (in_array(self::SEARCH_METHOD_EQUAL, $filterIn['CODE_ENTRY']))
+				if (\in_array(self::SEARCH_METHOD_EQUAL, $filterIn['CODE_ENTRY']))
 				{
 					$filterOut["=CODE"] = $filterIn['PHRASE_CODE'];
 				}
-				elseif (in_array(self::SEARCH_METHOD_START_WITH, $filterIn['CODE_ENTRY']))
+				elseif (\in_array(self::SEARCH_METHOD_START_WITH, $filterIn['CODE_ENTRY']))
 				{
 					$filterOut["=%CODE"] = $filterIn['PHRASE_CODE'].'%';
 				}
-				elseif (in_array(self::SEARCH_METHOD_END_WITH, $filterIn['CODE_ENTRY']))
+				elseif (\in_array(self::SEARCH_METHOD_END_WITH, $filterIn['CODE_ENTRY']))
 				{
 					$filterOut["=%CODE"] = '%'.$filterIn['PHRASE_CODE'];
 				}
@@ -282,21 +278,21 @@ class PhraseIndexSearch
 			else
 			{
 				$runtime[] = new Main\ORM\Fields\ExpressionField('CODE_UPPER', 'UPPER(%s)', 'CODE');
-				if (in_array(self::SEARCH_METHOD_EQUAL, $filterIn['CODE_ENTRY']))
+				if (\in_array(self::SEARCH_METHOD_EQUAL, $filterIn['CODE_ENTRY']))
 				{
-					$filterOut['=CODE_UPPER'] = mb_strtoupper($filterIn['PHRASE_CODE']);
+					$filterOut['=CODE_UPPER'] = \mb_strtoupper($filterIn['PHRASE_CODE']);
 				}
-				elseif (in_array(self::SEARCH_METHOD_START_WITH, $filterIn['CODE_ENTRY']))
+				elseif (\in_array(self::SEARCH_METHOD_START_WITH, $filterIn['CODE_ENTRY']))
 				{
-					$filterOut['=%CODE_UPPER'] = mb_strtoupper($filterIn['PHRASE_CODE']).'%';
+					$filterOut['=%CODE_UPPER'] = \mb_strtoupper($filterIn['PHRASE_CODE']).'%';
 				}
-				elseif (in_array(self::SEARCH_METHOD_END_WITH, $filterIn['CODE_ENTRY']))
+				elseif (\in_array(self::SEARCH_METHOD_END_WITH, $filterIn['CODE_ENTRY']))
 				{
-					$filterOut['=%CODE_UPPER'] = '%'.mb_strtoupper($filterIn['PHRASE_CODE']);
+					$filterOut['=%CODE_UPPER'] = '%'.\mb_strtoupper($filterIn['PHRASE_CODE']);
 				}
 				else
 				{
-					$filterOut['=%CODE_UPPER'] = '%'.mb_strtoupper($filterIn['PHRASE_CODE']).'%';
+					$filterOut['=%CODE_UPPER'] = '%'.\mb_strtoupper($filterIn['PHRASE_CODE']).'%';
 				}
 			}
 		}
@@ -317,32 +313,32 @@ class PhraseIndexSearch
 		};
 		$trimSlash = function(&$val)
 		{
-			if (mb_strpos($val, '%') === false)
+			if (\mb_strpos($val, '%') === false)
 			{
-				if (mb_substr($val, -4) === '.php')
+				if (\mb_substr($val, -4) === '.php')
 				{
-					$val = '/'. trim($val, '/');
+					$val = '/'. \trim($val, '/');
 				}
 				else
 				{
-					$val = '/'. trim($val, '/'). '/%';
+					$val = '/'. \trim($val, '/'). '/%';
 				}
 			}
 		};
 
 		if (!empty($filterIn['INCLUDE_PATHS']))
 		{
-			$pathIncludes = preg_split("/[\r\n\t,; ]+/".BX_UTF_PCRE_MODIFIER, $filterIn['INCLUDE_PATHS']);
-			$pathIncludes = array_filter($pathIncludes);
-			if (count($pathIncludes) > 0)
+			$pathIncludes = \preg_split("/[\r\n\t,; ]+/".\BX_UTF_PCRE_MODIFIER, $filterIn['INCLUDE_PATHS']);
+			$pathIncludes = \array_filter($pathIncludes);
+			if (\count($pathIncludes) > 0)
 			{
-				$pathPathIncludes = array();
-				$pathNameIncludes = array();
+				$pathPathIncludes = [];
+				$pathNameIncludes = [];
 				foreach ($pathIncludes as $testPath)
 				{
-					if (!empty($testPath) && trim($testPath) !== '')
+					if (!empty($testPath) && \trim($testPath) !== '')
 					{
-						if (mb_strpos($testPath, '/') === false)
+						if (\mb_strpos($testPath, '/') === false)
 						{
 							$pathNameIncludes[] = $testPath;
 						}
@@ -352,30 +348,30 @@ class PhraseIndexSearch
 						}
 					}
 				}
-				if (count($pathNameIncludes) > 0 && count($pathPathIncludes) > 0)
+				if (\count($pathNameIncludes) > 0 && \count($pathPathIncludes) > 0)
 				{
-					array_walk($pathNameIncludes, $replaceLangId);
-					array_walk($pathPathIncludes, $replaceLangId);
-					array_walk($pathPathIncludes, $trimSlash);
+					\array_walk($pathNameIncludes, $replaceLangId);
+					\array_walk($pathPathIncludes, $replaceLangId);
+					\array_walk($pathPathIncludes, $trimSlash);
 					$filterOut[] = array(
 						'LOGIC' => 'OR',
 						'%=PATH.NAME' => $pathNameIncludes,
 						'%=PATH.PATH' => $pathPathIncludes,
 					);
 				}
-				elseif (count($pathNameIncludes) > 0)
+				elseif (\count($pathNameIncludes) > 0)
 				{
-					array_walk($pathNameIncludes, $replaceLangId);
+					\array_walk($pathNameIncludes, $replaceLangId);
 					$filterOut[] = array(
 						'LOGIC' => 'OR',
 						'%=PATH.NAME' => $pathNameIncludes,
 						'%=PATH.PATH' => $pathNameIncludes,
 					);
 				}
-				elseif (count($pathPathIncludes) > 0)
+				elseif (\count($pathPathIncludes) > 0)
 				{
-					array_walk($pathPathIncludes, $replaceLangId);
-					array_walk($pathPathIncludes, $trimSlash);
+					\array_walk($pathPathIncludes, $replaceLangId);
+					\array_walk($pathPathIncludes, $trimSlash);
 					$filterOut['%=PATH.PATH'] = $pathPathIncludes;
 				}
 			}
@@ -383,17 +379,17 @@ class PhraseIndexSearch
 		}
 		if (!empty($filterIn['EXCLUDE_PATHS']))
 		{
-			$pathExcludes = preg_split("/[\r\n\t,; ]+/".BX_UTF_PCRE_MODIFIER, $filterIn['EXCLUDE_PATHS']);
-			$pathExcludes = array_filter($pathExcludes);
-			if (count($pathExcludes) > 0)
+			$pathExcludes = \preg_split("/[\r\n\t,; ]+/".\BX_UTF_PCRE_MODIFIER, $filterIn['EXCLUDE_PATHS']);
+			$pathExcludes = \array_filter($pathExcludes);
+			if (\count($pathExcludes) > 0)
 			{
-				$pathPathExcludes = array();
-				$pathNameExcludes = array();
+				$pathPathExcludes = [];
+				$pathNameExcludes = [];
 				foreach ($pathExcludes as $testPath)
 				{
-					if (!empty($testPath) && trim($testPath) !== '')
+					if (!empty($testPath) && \trim($testPath) !== '')
 					{
-						if (mb_strpos($testPath, '/') === false)
+						if (\mb_strpos($testPath, '/') === false)
 						{
 							$pathNameExcludes[] = $testPath;
 						}
@@ -403,30 +399,30 @@ class PhraseIndexSearch
 						}
 					}
 				}
-				if (count($pathNameExcludes) > 0 && count($pathPathExcludes) > 0)
+				if (\count($pathNameExcludes) > 0 && \count($pathPathExcludes) > 0)
 				{
-					array_walk($pathNameExcludes, $replaceLangId);
-					array_walk($pathPathExcludes, $replaceLangId);
-					array_walk($pathPathExcludes, $trimSlash);
+					\array_walk($pathNameExcludes, $replaceLangId);
+					\array_walk($pathPathExcludes, $replaceLangId);
+					\array_walk($pathPathExcludes, $trimSlash);
 					$filterOut[] = array(
 						'LOGIC' => 'AND',
 						'!=%PATH.NAME' => $pathNameExcludes,
 						'!=%PATH.PATH' => $pathPathExcludes,
 					);
 				}
-				elseif (count($pathNameExcludes) > 0)
+				elseif (\count($pathNameExcludes) > 0)
 				{
-					array_walk($pathNameExcludes, $replaceLangId);
+					\array_walk($pathNameExcludes, $replaceLangId);
 					$filterOut[] = array(
 						'LOGIC' => 'AND',
 						'!=%PATH.NAME' => $pathNameExcludes,
 						'!=%PATH.PATH' => $pathNameExcludes,
 					);
 				}
-				elseif (count($pathPathExcludes) > 0)
+				elseif (\count($pathPathExcludes) > 0)
 				{
-					array_walk($pathPathExcludes, $replaceLangId);
-					array_walk($pathPathExcludes, $trimSlash);
+					\array_walk($pathPathExcludes, $replaceLangId);
+					\array_walk($pathPathExcludes, $trimSlash);
 					$filterOut["!=%PATH.PATH"] = $pathPathExcludes;
 				}
 			}
@@ -447,11 +443,7 @@ class PhraseIndexSearch
 		foreach ($languageUpperKeys as $langId => $langUpper)
 		{
 			$searchPhraseByLang = ($langId == $filterIn['LANGUAGE_ID']);
-			if (
-				!in_array($langId, $selectedLanguages) &&
-				!$searchPhraseByLang &&
-				!Main\Localization\Translation::isDefaultTranslationLang($langId)
-			)
+			if (!\in_array($langId, $selectedLanguages) && !$searchPhraseByLang)
 			{
 				continue;
 			}
@@ -464,9 +456,9 @@ class PhraseIndexSearch
 				$tblAlias,
 				Index\Internals\PhraseIndexTable::class,
 				Main\ORM\Query\Join::on('ref.PATH_ID', '=', 'this.PATH_ID')
-								   ->whereColumn('ref.CODE', '=', 'this.CODE')
-								   ->where('ref.LANG_ID', '=', $langId),
-				array('join_type' => $searchPhraseByLang ? 'INNER' : 'LEFT')
+					->whereColumn('ref.CODE', '=', 'this.CODE')
+					->where('ref.LANG_ID', '=', $langId),
+				['join_type' => $searchPhraseByLang ? 'INNER' : 'LEFT']
 			);
 
 			$select[$alias] = "{$tblAlias}.PHRASE";
@@ -477,18 +469,18 @@ class PhraseIndexSearch
 				$sqlHelper = Main\Application::getConnection()->getSqlHelper();
 				$str = $sqlHelper->forSql($filterIn['PHRASE_TEXT']);
 
-				$exact = in_array(self::SEARCH_METHOD_EXACT_WORD, $filterIn['PHRASE_ENTRY']);
-				$case = in_array(self::SEARCH_METHOD_CASE_SENSITIVE, $filterIn['PHRASE_ENTRY']);
-				$start = in_array(self::SEARCH_METHOD_START_WITH, $filterIn['PHRASE_ENTRY']);
-				$end = in_array(self::SEARCH_METHOD_END_WITH, $filterIn['PHRASE_ENTRY']);
-				$equal = in_array(self::SEARCH_METHOD_EQUAL, $filterIn['PHRASE_ENTRY']);
+				$exact = \in_array(self::SEARCH_METHOD_EXACT_WORD, $filterIn['PHRASE_ENTRY']);
+				$case = \in_array(self::SEARCH_METHOD_CASE_SENSITIVE, $filterIn['PHRASE_ENTRY']);
+				$start = \in_array(self::SEARCH_METHOD_START_WITH, $filterIn['PHRASE_ENTRY']);
+				$end = \in_array(self::SEARCH_METHOD_END_WITH, $filterIn['PHRASE_ENTRY']);
+				$equal = \in_array(self::SEARCH_METHOD_EQUAL, $filterIn['PHRASE_ENTRY']);
 
 				// use fulltext index to help like operator
-				$textStr = preg_replace("/^\W+/i".BX_UTF_PCRE_MODIFIER, '', $filterIn['PHRASE_TEXT']);
-				$textStr = preg_replace("/\W+$/i".BX_UTF_PCRE_MODIFIER, '', $textStr);
-				$textStr = preg_replace("/\b\w{1,4}\b/i".BX_UTF_PCRE_MODIFIER, '', $textStr);
-				$textStr = preg_replace("/\W+/i".BX_UTF_PCRE_MODIFIER, ' ', $textStr);
-				if (mb_strlen($textStr) > 4)
+				$textStr = \preg_replace("/^\W+/i".\BX_UTF_PCRE_MODIFIER, '', $filterIn['PHRASE_TEXT']);
+				$textStr = \preg_replace("/\W+$/i".\BX_UTF_PCRE_MODIFIER, '', $textStr);
+				$textStr = \preg_replace("/\b\w{1,4}\b/i".\BX_UTF_PCRE_MODIFIER, '', $textStr);
+				$textStr = \preg_replace("/\W+/i".\BX_UTF_PCRE_MODIFIER, ' ', $textStr);
+				if (\mb_strlen($textStr) > 4)
 				{
 					if ($exact)
 					{
@@ -523,53 +515,73 @@ class PhraseIndexSearch
 				}
 				else
 				{
-					$likeStr = "%%". preg_replace("/\W+/i".BX_UTF_PCRE_MODIFIER, "%%", $str). "%%";
+					$likeStr = "%%". \preg_replace("/\W+/i".\BX_UTF_PCRE_MODIFIER, "%%", $str). "%%";
 				}
 
-				if ($case)
+				if (self::allowICURegularExpression())
 				{
-					$binarySensitive = 'BINARY';
-					$regStr = preg_replace("/\s+/i".BX_UTF_PCRE_MODIFIER, '.+', $str);
+					$regStr = \preg_replace("/\s+/i".\BX_UTF_PCRE_MODIFIER, '[[:blank:]]+', $str);
 				}
 				else
 				{
-					$binarySensitive = '';
-					$regStr = '';
-					$regChars = ['?', '*', '|', '[', ']', '(', ')', '-', '+', '.'];
-					for ($p = 0, $len = Translate\Text\StringHelper::getLength($str); $p < $len; $p++)
+					if ($case)
 					{
-						$c0 = Translate\Text\StringHelper::getSubstring($str, $p, 1);
-						if (in_array($c0, $regChars))
+						$regStr = \preg_replace("/\s+/i".\BX_UTF_PCRE_MODIFIER, '[[:blank:]]+', $str);
+					}
+					else
+					{
+						$regStr = '';
+						$regChars = ['?', '*', '|', '[', ']', '(', ')', '-', '+', '.'];
+						for ($p = 0, $len = Translate\Text\StringHelper::getLength($str); $p < $len; $p++)
 						{
-							$regStr .= "\\\\". $c0;
-							continue;
+							$c0 = Translate\Text\StringHelper::getSubstring($str, $p, 1);
+							if (\in_array($c0, $regChars))
+							{
+								$regStr .= "\\\\".$c0;
+								continue;
+							}
+							$c1 = Translate\Text\StringHelper::changeCaseToLower($c0);
+							$c2 = Translate\Text\StringHelper::changeCaseToUpper($c0);
+							if ($c0 != $c1)
+							{
+								$regStr .= '('.$c0.'|'.$c1.'){1}';
+							}
+							elseif ($c0 != $c2)
+							{
+								$regStr .= '('.$c0.'|'.$c2.'){1}';
+							}
+							else
+							{
+								$regStr .= $c0;
+							}
 						}
-						$c1 = Translate\Text\StringHelper::changeCaseToLower($c0);
-						$c2 = Translate\Text\StringHelper::changeCaseToUpper($c0);
-						if ($c0 != $c1)
-						{
-							$regStr .= '('.$c0.'|'.$c1.'){1}';
-						}
-						elseif ($c0 != $c2)
-						{
-							$regStr .= '('.$c0.'|'.$c2.'){1}';
-						}
-						else
-						{
-							$regStr .= $c0;
-						}
+						$regStr = \preg_replace("/\s+/i".\BX_UTF_PCRE_MODIFIER, '[[:blank:]]+', $regStr);
 					}
 				}
 
 				$regExpStart = '';
 				$regExpEnd = '';
-				if (preg_match("/^[[:alnum:]]+/i".BX_UTF_PCRE_MODIFIER, $str))
+				if (\preg_match("/^[[:alnum:]]+/i".\BX_UTF_PCRE_MODIFIER, $str))
 				{
-					$regExpStart = '[[:<:]]';
+					if (self::allowICURegularExpression())
+					{
+						$regExpStart = '\\\\b';
+					}
+					else
+					{
+						$regExpStart = '[[:<:]]';
+					}
 				}
-				if (preg_match("/[[:alnum:]]+$/i".BX_UTF_PCRE_MODIFIER, $str))
+				if (\preg_match("/[[:alnum:]]+$/i".\BX_UTF_PCRE_MODIFIER, $str))
 				{
-					$regExpEnd = '[[:>:]]';
+					if (self::allowICURegularExpression())
+					{
+						$regExpEnd = '\\\\b';
+					}
+					else
+					{
+						$regExpEnd = '[[:>:]]';
+					}
 				}
 
 				// Exact word match
@@ -579,37 +591,48 @@ class PhraseIndexSearch
 				}
 				elseif ($start)
 				{
-					$regStr = "[[:blank:]]*{$regExpStart}({$regStr}){$regExpEnd}.*";
+					$regStr = "[[:blank:]]*{$regExpStart}({$regStr}){$regExpEnd}";
 				}
 				elseif ($end)
 				{
-					$regStr = ".*{$regExpStart}({$regStr}){$regExpEnd}[[:blank:]]*";
+					$regStr = "{$regExpStart}({$regStr}){$regExpEnd}[[:blank:]]*";
 				}
 				elseif ($exact)
 				{
 					$regStr = "[[:blank:]]*{$regExpStart}({$regStr}){$regExpEnd}[[:blank:]]*";
 				}
-				else
-				{
-					$regStr = ".*(". preg_replace("/\s+/i".BX_UTF_PCRE_MODIFIER, ").+(", $regStr). ").*";
-				}
 
 				// regexp binary mode works not exactly we want using like binary to fix it
+				$binarySensitive = $case ? 'BINARY' : '';
 				$runtime[] =
 					new Main\ORM\Fields\ExpressionField(
 						'PHRASE_LIKE',
-						"CASE WHEN %s LIKE $binarySensitive '{$likeStr}' THEN 1 ELSE 0 END",
+						"CASE WHEN %s LIKE {$binarySensitive} '{$likeStr}' THEN 1 ELSE 0 END",
 						"{$fieldAlias}"
 					);
 				$phraseSearch["=PHRASE_LIKE"] = 1;
 
-				$runtime[] =
-					new Main\ORM\Fields\ExpressionField(
-						'PHRASE_REGEXP',
-						"CASE WHEN %s REGEXP '{$regStr}' THEN 1 ELSE 0 END",
-						"{$fieldAlias}"
-					);
-
+				if (self::allowICURegularExpression())
+				{
+					// c meaning case-sensitive matching
+					// i meaning case-insensitive matching
+					$regCaseSensitive = $case ? 'c' : 'i';
+					$runtime[] =
+						new Main\ORM\Fields\ExpressionField(
+							'PHRASE_REGEXP',
+							"REGEXP_LIKE(%s, '{$regStr}', '{$regCaseSensitive}')",
+							"{$fieldAlias}"
+						);
+				}
+				else
+				{
+					$runtime[] =
+						new Main\ORM\Fields\ExpressionField(
+							'PHRASE_REGEXP',
+							"CASE WHEN %s REGEXP '{$regStr}' THEN 1 ELSE 0 END",
+							"{$fieldAlias}"
+						);
+				}
 				$phraseSearch["=PHRASE_REGEXP"] = 1;
 			}
 		}
@@ -617,6 +640,7 @@ class PhraseIndexSearch
 			$filterIn['PHRASE_ENTRY'], $filterIn['PHRASE_TEXT'], $filterIn['LANGUAGE_ID']);
 
 		// is any file exists in main rep
+		/*
 		if (Main\Localization\Translation::useTranslationRepository())
 		{
 			$statement = '';
@@ -640,8 +664,9 @@ class PhraseIndexSearch
 				);
 			$select[] = 'IS_EXIST';
 		}
+		*/
 
-		if (count($phraseSearch) > 1)
+		if (\count($phraseSearch) > 1)
 		{
 			$filterOut[] = $phraseSearch;
 		}
@@ -659,13 +684,31 @@ class PhraseIndexSearch
 
 		foreach ($filterIn as $key => $value)
 		{
-			if (in_array($key, ['tabId', 'FILTER_ID', 'PRESET_ID', 'FILTER_APPLIED', 'FIND']))
+			if (\in_array($key, ['tabId', 'FILTER_ID', 'PRESET_ID', 'FILTER_APPLIED', 'FIND']))
 			{
 				continue;
 			}
 			$filterOut[$key] = $value;
 		}
 
-		return array($select, $runtime, $filterOut);
+		return [$select, $runtime, $filterOut];
+	}
+
+	/**
+	 * MySQL8 implements regular expression support using International Components for Unicode (ICU)
+	 * against MySQL5 with Henry Spencer's implementation of regular expressions.
+	 *
+	 * @return bool
+	 */
+	protected static function allowICURegularExpression(): bool
+	{
+		static $allowICURE;
+		if ($allowICURE === null)
+		{
+			$majorVersion = \mb_substr(\Bitrix\Main\Application::getConnection()->getVersion()[0], 0, 1);
+			$allowICURE = (int)$majorVersion >= 8;
+		}
+
+		return $allowICURE;
 	}
 }

@@ -39,7 +39,7 @@
 	/>
  */
 
-import {Vue} from "ui.vue";
+import {BitrixVue} from "ui.vue";
 import 'main.polyfill.intersectionobserver';
 
 const WATCH = 'bx-lazyload-watch';
@@ -112,6 +112,10 @@ let lazyloadLoadImage = function(currentImage, callback)
 			currentImage.lazyloadCallback({element: currentImage, state: 'error'});
 			delete currentImage.lazyloadCallback;
 		}
+		else
+		{
+			currentImage.src = BLANK_IMAGE;
+		}
 	};
 
 	if (typeof currentImage.dataset.lazyloadDontHide !== 'undefined')
@@ -133,6 +137,11 @@ if (typeof window.IntersectionObserver !== 'undefined')
 		entries.forEach(function(entry)
 		{
 			const currentImage = entry.target;
+
+			if (currentImage.classList.contains(ERROR))
+			{
+				return true;
+			}
 
 			if (entry.isIntersecting)
 			{
@@ -178,7 +187,7 @@ if (typeof window.IntersectionObserver !== 'undefined')
 	});
 }
 
-Vue.directive('bx-lazyload',
+BitrixVue.directive('bx-lazyload',
 {
 	bind(element, bindings)
 	{

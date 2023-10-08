@@ -37,10 +37,12 @@ class Service
 	const REDIRECT_URI = "/bitrix/tools/seo_client.php";
 
 	const SERVICE_AUTH_CACHE_TLL = 86400;
+	const SERVICE_AUTH_CACHE_TLL_ERROR = 3600;
 	const SERVICE_AUTH_CACHE_ID = 'seo|service_auth';
+	const SERVICE_AUTH_CACHE_ID_ERROR = 'seo|service_auth_error';
 
 	const CLIENT_LIST_CACHE_TLL = 86400;
-	const CLIENT_LIST_CACHE_ID = 'seo|client_list';
+	const CLIENT_LIST_CACHE_ID = 'seo|client_list|2';
 
 	const  CLIENT_TYPE_SINGLE = 'S';
 	const  CLIENT_TYPE_MULTIPLE = 'M';
@@ -62,27 +64,41 @@ class Service
 	/**
 	 * Get client info
 	 * @use \Bitrix\Seo\Service::getClientList(...)
+	 *
 	 * @param string $engineCode Provider code.
-	 * @return array
+	 * @return boolean|array
 	 * @deprecated
 	 */
-	public static function getAuth($engineCode)
+	public static function getAuth(string $engineCode)
 	{
 		global $CACHE_MANAGER;
-		if(static::$auth === null)
+		if (static::$auth === null)
 		{
-			if($CACHE_MANAGER->Read(static::SERVICE_AUTH_CACHE_TLL, static::SERVICE_AUTH_CACHE_ID))
+			if ($CACHE_MANAGER->Read(static::SERVICE_AUTH_CACHE_TLL, static::SERVICE_AUTH_CACHE_ID))
 			{
 				static::$auth = $CACHE_MANAGER->Get(static::SERVICE_AUTH_CACHE_ID);
 			}
-			else
+			elseif (!$CACHE_MANAGER->Read(static::SERVICE_AUTH_CACHE_TLL_ERROR, static::SERVICE_AUTH_CACHE_ID_ERROR))
 			{
 				static::$auth = static::getEngine()->getInterface()->getClientInfo();
-				$CACHE_MANAGER->Set(static::SERVICE_AUTH_CACHE_ID, static::$auth);
+				if (!static::$auth)
+				{
+					static::$auth = false;
+					$CACHE_MANAGER->Read(static::SERVICE_AUTH_CACHE_TLL_ERROR, static::SERVICE_AUTH_CACHE_ID_ERROR);
+					$CACHE_MANAGER->Set(static::SERVICE_AUTH_CACHE_ID_ERROR, static::$auth);
+				}
+				else
+				{
+					$CACHE_MANAGER->Set(static::SERVICE_AUTH_CACHE_ID, static::$auth);
+				}
+			}
+			else
+			{
+				static::$auth = false;
 			}
 		}
 
-		if(static::$auth)
+		if (static::$auth)
 		{
 			return static::$auth["engine"][$engineCode];
 		}
@@ -168,8 +184,9 @@ class Service
 		$cache = Application::getInstance()->getManagedCache();
 		$cache->Clean(static::CLIENT_LIST_CACHE_ID);
 		$cache->Clean(static::SERVICE_AUTH_CACHE_ID);
+		$cache->Clean(static::SERVICE_AUTH_CACHE_ID_ERROR);
 
-		list($group, $type) = explode('.', $engine, 2);
+		[$group, $type] = explode('.', $engine, 2);
 
 		if ($group == \Bitrix\Seo\Retargeting\Service::GROUP)
 		{
@@ -211,7 +228,6 @@ class Service
 	 */
 	public static function clearAuthForClient($client, $localOnly = false)
 	{
-
 		if(!$localOnly)
 		{
 			static::getEngine()->getInterface()->clearClientAuth($client['engine_code'], $client['proxy_client_id']);
@@ -280,11 +296,11 @@ class Service
 
 		$httpClient = new HttpClient();
 
-		$queryParams = array(
+		$queryParams = [
 			"key" => static::getLicense(),
 			"scope" => static::getEngine()->getInterface()->getScopeEncode(),
 			"redirect_uri" => static::getRedirectUri(),
-		);
+		];
 
 		$result = $httpClient->post(static::SERVICE_URL.static::REGISTER, $queryParams);
 		$result = Json::decode($result);
@@ -293,10 +309,8 @@ class Service
 		{
 			throw new SystemException($result["error"]);
 		}
-		else
-		{
-			static::setAccessSettings($result);
-		}
+
+		static::setAccessSettings($result);
 	}
 
 	/**
@@ -327,7 +341,7 @@ class Service
 	 * @return array
 	 * @throws \Bitrix\Main\LoaderException
 	 */
-	public static function getAuthorizeData($engine, $clientType = false)
+	public static function getAuthorizeData($engine, $clientType = false): array
 	{
 		$checkKey = "";
 		if(Loader::includeModule("socialservices"))
@@ -352,11 +366,14 @@ class Service
 	/**
 	 * @return string
 	 */
-	protected static function getRedirectUri()
+	protected static function getRedirectUri(): string
 	{
 		$request = Context::getCurrent()->getRequest();
 
 		$host = $request->getHttpHost();
+		$port = (int)$request->getServerPort();
+		$host .= ($port && $port !== 80 && $port !== 443) ? ":{$port}" : '';
+
 		$isHttps = $request->isHttps();
 
 		return ($isHttps ? 'https' : 'http').'://'.$host.static::REDIRECT_URI;
@@ -365,7 +382,7 @@ class Service
 	/**
 	 * @return string
 	 */
-	protected static function getLicense()
+	protected static function getLicense(): string
 	{
 		return md5(LICENSE_KEY);
 	}

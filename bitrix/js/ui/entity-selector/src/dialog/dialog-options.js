@@ -7,6 +7,7 @@ import type { BaseEvent } from 'main.core.events';
 import type { ItemId } from '../item/item-id';
 import type { SearchOptions } from './search-options';
 import type TagSelector from '../tag-selector/tag-selector';
+import type { HeaderContent, HeaderOptions } from './header/header-content';
 import type { FooterContent, FooterOptions } from './footer/footer-content';
 
 export type DialogOptions = {
@@ -36,13 +37,17 @@ export type DialogOptions = {
 	width?: number,
 	height?: number,
 	autoHide?: boolean,
+	autoHideHandler?: (event: MouseEvent, dialog: Dialog) => boolean,
 	hideByEsc?: boolean,
 	offsetTop?: number,
 	offsetLeft?: number,
-	zIndex?: number,
 	cacheable?: boolean,
 	focusOnFirst?: boolean,
+	header?: HeaderContent,
+	headerOptions?: HeaderOptions,
 	footer?: FooterContent,
 	footerOptions?: FooterOptions,
-	clearUnavailableItems?: boolean
+	clearUnavailableItems?: boolean,
+	showAvatars?: boolean,
+	compactView?: boolean
 };

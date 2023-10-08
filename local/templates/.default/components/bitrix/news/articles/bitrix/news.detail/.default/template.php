@@ -15,18 +15,24 @@ $this->SetViewTarget('no_bg');
 echo ' title_not-bg';
 $this->EndViewTarget();
 ?>
-<?php $this->SetViewTarget('before_parent_sect') ?>
-<div class="article-bg">
-    <div class="img">
-        <div class="img__inner object-fit">
-            <img src="" class="lazy" data-src="<?= CFile::GetPath($arResult['PREVIEW_PICTURE']['ID']) ?>" alt="<?= $arResult['NAME'] ?>">
+<?php if (!empty($arResult['PREVIEW_PICTURE']['ID'])): ?>
+    <?php $this->SetViewTarget('before_parent_sect') ?>
+    <div class="article-bg">
+        <div class="img">
+            <div class="img__inner object-fit">
+                <img src="" class="lazy" data-src="<?= CFile::GetPath($arResult['PREVIEW_PICTURE']['ID']) ?>"
+                     alt="<?= $arResult['NAME'] ?>">
+            </div>
         </div>
     </div>
-</div>
+<?php endif ?>
 <?php $this->EndViewTarget() ?>
 <article>
     <?= $arResult['DETAIL_TEXT'] ?>
 </article>
+<?php if (!empty($arResult['PROPERTIES']['STOCK_SLIDER']['VALUE'])): ?>
+    <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/components/stock_slider.php", ['STOCK_SLIDER' => $arResult['PROPERTIES']['STOCK_SLIDER']['VALUE'], 'SLIDER_CATALOG' => 'Y'], ['SHOW_BORDER' => true]); ?>
+<?php endif ?>
 <?php if ($arParams["USE_SHARE"] == "Y"): ?>
     <div class="article-socials">
         <span class="h4">Поделиться в соц. сетях:</span>

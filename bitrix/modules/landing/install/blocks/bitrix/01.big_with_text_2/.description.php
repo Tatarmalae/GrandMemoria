@@ -24,17 +24,21 @@ return array(
 		'.landing-block-img' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_1_BIG_WITH_TEXT_2_NODES_LANDINGBLOCKIMG'),
 			'type' => 'img',
+			'editInStyle' => true,
+			'allowInlineEdit' => false,
 			'dimensions' => array('width' => 1920, 'height' => 1080),
+			'create2xByDefault' => false,
+			'isWrapper' => true,
 		),
 	),
 	'style' => array(
 		'block' => array(
-			'type' => array('block-default-wo-background-height-vh', 'background-attachment', 'background-overlay'),
+			'type' => array('block-default-background-height-vh'),
 		),
 		'nodes' => array(
 			'.landing-block-title' => array(
 				'name' => Loc::getMessage('LANDING_BLOCK_1_BIG_WITH_TEXT_2_STYLE_LANDINGBLOCKTITLE'),
-				'type' => array('typo', 'animation'),
+				'type' => ['typo', 'animation', 'heading'],
 			),
 			'.landing-block-button' => array(
 				'name' => Loc::getMessage('LANDING_BLOCK_1_BIG_WITH_TEXT_2_STYLE_LANDINGBLOCKBUTTON'),

@@ -1,28 +1,14 @@
 this.BX = this.BX || {};
 this.BX.Landing = this.BX.Landing || {};
 this.BX.Landing.UI = this.BX.Landing.UI || {};
-(function (exports,landing_ui_field_textfield,main_core,landing_ui_button_basebutton,main_popup) {
+(function (exports,landing_ui_field_textfield,main_core,landing_ui_button_basebutton,main_popup,landing_pageobject) {
 	'use strict';
 
-	function _templateObject2() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div \n\t\t\t\t\tclass=\"landing-ui-field-variables-button\" \n\t\t\t\t\tonclick=\"", "\"\n\t\t\t\t></div>\n\t\t\t"]);
+	var _templateObject, _templateObject2;
 
-	  _templateObject2 = function _templateObject2() {
-	    return data;
-	  };
+	function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-	  return data;
-	}
-
-	function _templateObject() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field landing-ui-field-variables\">\n\t\t\t\t\t<div class=\"landing-ui-field-variables-left\">", "</div>\n\t\t\t\t\t<div class=\"landing-ui-field-variables-right\">", "</div>\n\t\t\t\t</div>\n\t\t\t"]);
-
-	  _templateObject = function _templateObject() {
-	    return data;
-	  };
-
-	  return data;
-	}
+	function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { babelHelpers.defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 	var instances = Symbol('instances');
 	/**
 	 * @memberOf BX.Landing.UI.Field
@@ -35,7 +21,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	    var _this;
 
 	    babelHelpers.classCallCheck(this, VariablesField);
-	    _this = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(VariablesField).call(this, babelHelpers.objectSpread({}, options, {
+	    _this = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(VariablesField).call(this, _objectSpread(_objectSpread({}, options), {}, {
 	      textOnly: true
 	    })));
 
@@ -51,14 +37,17 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 
 	  babelHelpers.createClass(VariablesField, [{
 	    key: "onTopDocumentClick",
-	    value: function onTopDocumentClick() {
-	      this.getMenu().close();
-	      babelHelpers.get(babelHelpers.getPrototypeOf(VariablesField.prototype), "onDocumentClick", this).call(this);
+	    value: function onTopDocumentClick() {// const rootWindowDocument = PageObject.getRootWindow().document;
+	      // if (rootWindowDocument !== this.input.ownerDocument)
+	      // {
+	      // 	this.getMenu().close();
+	      // 	super.onDocumentClick();
+	      // }
 	    }
 	  }, {
 	    key: "onInputClick",
 	    value: function onInputClick(event) {
-	      event.preventDefault();
+	      // event.preventDefault();
 	      this.lastRange = this.input.ownerDocument.createRange(this.input.innerText.length, this.input.innerText.length);
 	      this.lastRange = this.input.ownerDocument.getSelection().getRangeAt(0);
 	    }
@@ -68,7 +57,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      var _this2 = this;
 
 	      return this.cache.remember('layout', function () {
-	        return main_core.Tag.render(_templateObject(), _this2.input, _this2.getButton());
+	        return main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"landing-ui-field landing-ui-field-variables\">\n\t\t\t\t\t<div class=\"landing-ui-field-variables-left\">", "</div>\n\t\t\t\t\t<div class=\"landing-ui-field-variables-right\">", "</div>\n\t\t\t\t</div>\n\t\t\t"])), _this2.input, _this2.getButton());
 	      });
 	    }
 	  }, {
@@ -77,7 +66,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      var _this3 = this;
 
 	      return this.cache.remember('button', function () {
-	        return main_core.Tag.render(_templateObject2(), _this3.onButtonClick);
+	        return main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div \n\t\t\t\t\tclass=\"landing-ui-field-variables-button\" \n\t\t\t\t\tonclick=\"", "\"\n\t\t\t\t></div>\n\t\t\t"])), _this3.onButtonClick);
 	      });
 	    }
 	  }, {
@@ -86,10 +75,19 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      var _this4 = this;
 
 	      return this.cache.remember('menu', function () {
-	        var menu = new main_popup.Menu({
+	        var rootWindow = landing_pageobject.PageObject.getRootWindow();
+	        var menu = new rootWindow.BX.Main.Menu({
 	          bindElement: _this4.getButton(),
+	          targetContainer: _this4.getLayout(),
 	          autoHide: true,
+	          maxHeight: 250,
 	          items: _this4.options.variables.map(function (variable) {
+	            if (variable.delimiter) {
+	              return {
+	                delimiter: true
+	              };
+	            }
+
 	            return {
 	              text: variable.name,
 	              onclick: function onclick() {
@@ -102,7 +100,9 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	          events: {
 	            onPopupShow: function onPopupShow() {
 	              VariablesField[instances].forEach(function (item) {
-	                item.getMenu().close();
+	                if (item !== _this4) {
+	                  item.getMenu().close();
+	                }
 	              });
 	              setTimeout(function () {
 	                main_core.Dom.style(menu.getMenuContainer(), {
@@ -114,7 +114,6 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	            }
 	          }
 	        });
-	        main_core.Dom.append(menu.getMenuContainer(), _this4.getLayout());
 	        return menu;
 	      });
 	    }
@@ -159,6 +158,11 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	        this.getMenu().show();
 	      }
 	    }
+	  }, {
+	    key: "getValue",
+	    value: function getValue() {
+	      return this.input.innerText;
+	    }
 	  }]);
 	  return VariablesField;
 	}(landing_ui_field_textfield.TextField);
@@ -166,5 +170,5 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 
 	exports.VariablesField = VariablesField;
 
-}((this.BX.Landing.UI.Field = this.BX.Landing.UI.Field || {}),BX.Landing.UI.Field,BX,BX.Landing.UI.Button,BX.Main));
+}((this.BX.Landing.UI.Field = this.BX.Landing.UI.Field || {}),BX.Landing.UI.Field,BX,BX.Landing.UI.Button,BX.Main,BX.Landing));
 //# sourceMappingURL=variablesfield.bundle.js.map

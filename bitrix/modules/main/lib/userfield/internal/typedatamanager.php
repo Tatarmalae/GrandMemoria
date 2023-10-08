@@ -7,6 +7,7 @@ use Bitrix\Main\DB\MssqlConnection;
 use Bitrix\Main\DB\SqlQueryException;
 use Bitrix\Main\Entity\Validator\RegExp;
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\ORM\Data\DataManager;
 use Bitrix\Main\ORM\Entity;
 use Bitrix\Main\ORM\EntityError;
 use Bitrix\Main\ORM\Event;
@@ -24,16 +25,15 @@ use Bitrix\Main\Text\StringHelper;
 /**
  * @deprecated
  */
-abstract class TypeDataManager extends \Bitrix\Main\ORM\Data\DataManager
+abstract class TypeDataManager extends DataManager
 {
+	public const MAXIMUM_TABLE_NAME_LENGTH = 64;
+
 	protected static $temporaryStorage;
 
 	public static function getMap(): array
 	{
-		$sqlHelper = Application::getConnection()->getSqlHelper();
-
-		/** @noinspection PhpMethodParametersCountMismatchInspection */
-		$fieldsMap = [
+		return [
 			(new IntegerField('ID'))
 				->configurePrimary()
 				->configureAutocomplete(),
@@ -51,10 +51,7 @@ abstract class TypeDataManager extends \Bitrix\Main\ORM\Data\DataManager
 				->configureSize(64)
 				->configureFormat('/^[a-z0-9_]+$/')
 				->addValidator([get_called_class(), 'validateTableExisting']),
-			(new ExpressionField('FIELDS_COUNT', '(SELECT COUNT(ID) FROM b_user_field WHERE b_user_field.ENTITY_ID = '.$sqlHelper->getConcatFunction("'".static::getFactory()->getUserFieldEntityPrefix()."'", $sqlHelper->castToChar('%s')).')', 'ID'))
 		];
-
-		return $fieldsMap;
 	}
 
 	public static function getFactory(): TypeFactory
@@ -353,7 +350,7 @@ abstract class TypeDataManager extends \Bitrix\Main\ORM\Data\DataManager
 
 		$userFields = $userFieldManager->getUserFields($factory->getUserFieldEntityId($type['ID']));
 
-		$entityName = $factory->getUserFieldEntityPrefix().$type['NAME'];
+		$entityName = $type['code'] . '_items_' . $type['ID'];
 		$entityClassName = $entityName.'Table';
 		$entityTableName = $type['TABLE_NAME'];
 		if(class_exists($entityClassName))
@@ -489,7 +486,7 @@ abstract class TypeDataManager extends \Bitrix\Main\ORM\Data\DataManager
 	 */
 	public static function getUtmEntityClassName(Entity $typeEntity, array $userField): string
 	{
-		return $typeEntity->getName().'Utm'.StringHelper::snake2camel($userField['FIELD_NAME']);
+		return $typeEntity->getName() . 'Utm' . StringHelper::snake2camel($userField['FIELD_NAME']);
 	}
 
 	/**
@@ -499,7 +496,14 @@ abstract class TypeDataManager extends \Bitrix\Main\ORM\Data\DataManager
 	 */
 	public static function getMultipleValueTableName(array $type, array $userField): string
 	{
-		return $type['TABLE_NAME'].'_'.mb_strtolower($userField['FIELD_NAME']);
+		$tableName = $type['TABLE_NAME'] . '_' . mb_strtolower($userField['FIELD_NAME']);
+
+		if (mb_strlen($tableName) > static::MAXIMUM_TABLE_NAME_LENGTH && !empty($userField['ID']))
+		{
+			$tableName = $type['TABLE_NAME'] . '_' . $userField['ID'];
+		}
+
+		return $tableName;
 	}
 
 	public static function validateTableExisting($value, $primary, array $row, Field $field)

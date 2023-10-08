@@ -6,8 +6,6 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 
 use \Bitrix\Main\Localization\Loc;
 
-$buttons = \Bitrix\Landing\Hook\Page\B24button::getButtons();
-$buttons = array_keys($buttons);
 
 return array(
 	'name' => Loc::getMessage("LANDING_DEMO___XMAS-TITLE"),
@@ -24,8 +22,8 @@ return array(
 			'VIEW_TYPE' => 'no',
 			'UP_SHOW' => 'Y',
 			'THEME_CODE' => 'travel',
-			'THEMEFONTS_CODE' => 'g-font-montserrat',
-			'THEMEFONTS_CODE_H' => 'g-font-alegreya-sans',
+			'THEMEFONTS_CODE' => 'Montserrat',
+			'THEMEFONTS_CODE_H' => 'Alegreya Sans',
 			'THEMEFONTS_SIZE' => '1',
 			'THEMEFONTS_USE' => 'Y',
 			'COPYRIGHT_SHOW' => 'Y',

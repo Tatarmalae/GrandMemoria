@@ -18,6 +18,8 @@ Loc::loadMessages(__FILE__);
 
 class SmsLineBy extends Sender\BaseConfigurable
 {
+	public const ID = 'smslineby';
+
 	const JSON_API_URL = 'https://api.smsline.by/v3/';
 
 	public static function isSupported()
@@ -27,7 +29,7 @@ class SmsLineBy extends Sender\BaseConfigurable
 
 	public function getId()
 	{
-		return 'smslineby';
+		return static::ID;
 	}
 
 	public function getName()
@@ -99,12 +101,14 @@ class SmsLineBy extends Sender\BaseConfigurable
 		$message = [
 			'target' => $messageFields['MESSAGE_FROM'],
 			'msisdn' => str_replace('+', '', $messageFields['MESSAGE_TO']),
-			'text' => $messageFields['MESSAGE_BODY'],
+			'text' => $this->prepareMessageBodyForSend($messageFields['MESSAGE_BODY']),
 			'callback_url' => $this->getCallbackUrl()
 		];
 
 		$result = new SendMessage();
 		$apiResult = $this->sendPostRequest('messages/single/sms', $message);
+		$result->setServiceRequest($apiResult->getHttpRequest());
+		$result->setServiceResponse($apiResult->getHttpResponse());
 
 		if (!$apiResult->isSuccess())
 		{
@@ -271,11 +275,11 @@ class SmsLineBy extends Sender\BaseConfigurable
 	}
 
 
-	private function sendHttpRequest($method, $login, $signature, $path, $body = null)
+	private function sendHttpRequest($method, $login, $signature, $path, $body = null): Sender\Result\HttpRequestResult
 	{
 		$httpClient = new HttpClient(array(
-			"socketTimeout" => 10,
-			"streamTimeout" => 30,
+			"socketTimeout" => $this->socketTimeout,
+			"streamTimeout" => $this->streamTimeout,
 			"waitResponse" => true,
 		));
 		$httpClient->setCharset('UTF-8');
@@ -284,11 +288,17 @@ class SmsLineBy extends Sender\BaseConfigurable
 		$httpClient->setHeader('Authorization-User', $login);
 		$httpClient->setHeader('Authorization', "Bearer $signature");
 
-		$result = new Result();
+		$result = new Sender\Result\HttpRequestResult();
 		$answer = ['error' => -1000];
 
 		$url = self::JSON_API_URL.$path;
 
+		$result->setHttpRequest(new MessageService\DTO\Request([
+			'method' => $method,
+			'uri' => $url,
+			'headers' => method_exists($httpClient, 'getRequestHeaders') ? $httpClient->getRequestHeaders()->toArray() : [],
+			'body' => $body,
+		]));
 		if ($httpClient->query($method, $url, $body))
 		{
 			try
@@ -304,6 +314,13 @@ class SmsLineBy extends Sender\BaseConfigurable
 		{
 			$result->addError(new Error($this->getErrorMessage($answer['error']['code'], $answer['error']['message'])));
 		}
+
+		$result->setHttpResponse(new MessageService\DTO\Response([
+			'statusCode' => $httpClient->getStatus(),
+			'headers' => $httpClient->getHeaders()->toArray(),
+			'body' => $httpClient->getResult(),
+			'error' => Sender\Util::getHttpClientErrorString($httpClient)
+		]));
 
 		$result->setData($answer);
 

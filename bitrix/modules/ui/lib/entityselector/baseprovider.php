@@ -24,16 +24,30 @@ abstract class BaseProvider
 	 *
 	 * @return Item[]
 	 */
-	public abstract function getSelectedItems(array $ids): array;
+	public function getPreselectedItems(array $ids): array
+	{
+		return $this->getSelectedItems($ids);
+	}
+
+	/**
+	 * @param array $ids
+	 * @return Item[]
+	 *@deprecated
+	 * @see getPreselectedItems
+ */
+	public function getSelectedItems(array $ids): array
+	{
+		return $this->getItems($ids);
+	}
 
 	public function getOptions(): array
 	{
 		return $this->options;
 	}
 
-	public function getOption(string $option)
+	public function getOption(string $option, $defaultValue = null)
 	{
-		return array_key_exists($option, $this->options) ? $this->options[$option] : null;
+		return array_key_exists($option, $this->options) ? $this->options[$option] : $defaultValue;
 	}
 
 	public function fillDialog(Dialog $dialog): void

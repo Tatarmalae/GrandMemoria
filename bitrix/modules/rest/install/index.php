@@ -33,16 +33,9 @@ class rest extends CModule
 
 		$this->errors = false;
 
-		// Database tables creation
-		if($DB->type !== 'MYSQL')
+		if(!$DB->Query("SELECT 'x' FROM b_rest_app WHERE 1=0", true))
 		{
-			$this->errors = array(
-				GetMessage('REST_DB_NOT_SUPPORTED'),
-			);
-		}
-		elseif(!$DB->Query("SELECT 'x' FROM b_rest_app WHERE 1=0", true))
-		{
-			$this->errors = $DB->RunSQLBatch($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/rest/install/db/".mb_strtolower($DB->type)."/install.sql");
+			$this->errors = $DB->RunSQLBatch($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/rest/install/db/mysql/install.sql");
 		}
 
 		if($this->errors !== false)
@@ -74,6 +67,7 @@ class rest extends CModule
 		$eventManager->registerEventHandler('rest', 'OnRestApplicationConfigurationClear', 'rest', '\Bitrix\Rest\Configuration\AppConfiguration', 'onEventClearController');
 		$eventManager->registerEventHandler('rest', 'OnRestApplicationConfigurationEntity', 'rest', '\Bitrix\Rest\Configuration\AppConfiguration', 'getEntityList');
 		$eventManager->registerEventHandler('rest', 'OnRestApplicationConfigurationGetManifest', 'rest', '\Bitrix\Rest\Configuration\AppConfiguration', 'getManifestList');
+		$eventManager->registerEventHandler('main', 'OnAfterSetOption_~mp24_paid_date', 'rest', '\Bitrix\Rest\Marketplace\Client', 'onChangeSubscriptionDate');
 		if(CModule::IncludeModule('iblock'))
 		{
 			COption::SetOptionString("rest", "entity_iblock_type", "rest_entity");
@@ -121,6 +115,20 @@ class rest extends CModule
 			'\Bitrix\Rest\Engine\ScopeManager',
 			'onChangeRegisterModule'
 		);
+		$eventManager->registerEventHandler(
+			'main',
+			'OnAfterRegisterModule',
+			'rest',
+			'\Bitrix\Rest\Marketplace\TagTable',
+			'onAfterRegisterModule'
+		);
+		$eventManager->registerEventHandler(
+			'main',
+			'OnAfterUnRegisterModule',
+			'rest',
+			'\Bitrix\Rest\Marketplace\TagTable',
+			'onAfterUnRegisterModule'
+		);
 
 		\CAgent::AddAgent("Bitrix\\Rest\\Marketplace\\Client::getNumUpdates();", "rest", "N", 86400);
 		\CAgent::AddAgent("Bitrix\\Rest\\EventOfflineTable::cleanProcessAgent();", "rest", "N", 86400);
@@ -130,6 +138,8 @@ class rest extends CModule
 		\CAgent::AddAgent('\\Bitrix\\Rest\\UsageStatTable::cleanUpAgent();', "rest", "N", 3600);
 		\CAgent::AddAgent('\Bitrix\Rest\Marketplace\Notification::checkAgent();', "rest", "N", 86400);
 		\CAgent::AddAgent('\Bitrix\Rest\Marketplace\Immune::load();', "rest", "N", 86400);
+		\CAgent::AddAgent('\Bitrix\Rest\Configuration\Structure::clearContentAgent();', 'rest', 'N', 86400);
+		\CAgent::AddAgent('\Bitrix\Rest\Helper::recoveryAgents();','rest','N',604800);
 
 		return true;
 	}
@@ -142,7 +152,7 @@ class rest extends CModule
 
 		if(!array_key_exists("savedata", $arParams) || $arParams["savedata"] != "Y")
 		{
-			$this->errors = $DB->RunSQLBatch($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/rest/install/db/".mb_strtolower($DB->type)."/uninstall.sql");
+			$this->errors = $DB->RunSQLBatch($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/rest/install/db/mysql/uninstall.sql");
 		}
 
 		if($this->errors !== false)
@@ -174,6 +184,7 @@ class rest extends CModule
 		$eventManager->unRegisterEventHandler('rest', 'OnRestApplicationConfigurationClear', 'rest', '\Bitrix\Rest\Configuration\AppConfiguration', 'onEventClearController');
 		$eventManager->unRegisterEventHandler('rest', 'OnRestApplicationConfigurationEntity', 'rest', '\Bitrix\Rest\Configuration\AppConfiguration', 'getEntityList');
 		$eventManager->unRegisterEventHandler('rest', 'OnRestApplicationConfigurationGetManifest', 'rest', '\Bitrix\Rest\Configuration\AppConfiguration', 'getManifestList');
+		$eventManager->unRegisterEventHandler('main', 'OnAfterSetOption_~mp24_paid_date', 'rest', '\Bitrix\Rest\Marketplace\Client', 'onChangeSubscriptionDate');
 		$eventManager->unRegisterEventHandler(
 			'main',
 			'OnAfterRegisterModule',
@@ -187,6 +198,20 @@ class rest extends CModule
 			'rest',
 			'\Bitrix\Rest\Engine\ScopeManager',
 			'onChangeRegisterModule'
+		);
+		$eventManager->unRegisterEventHandler(
+			'main',
+			'OnAfterRegisterModule',
+			'rest',
+			'\Bitrix\Rest\Marketplace\TagTable',
+			'onAfterRegisterModule'
+		);
+		$eventManager->unRegisterEventHandler(
+			'main',
+			'OnAfterUnRegisterModule',
+			'rest',
+			'\Bitrix\Rest\Marketplace\TagTable',
+			'onAfterUnRegisterModule'
 		);
 
 		CAgent::RemoveModuleAgents("rest");
@@ -208,6 +233,7 @@ class rest extends CModule
 
 	function InstallFiles($arParams = array())
 	{
+		CopyDirFiles($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/rest/install/admin", $_SERVER["DOCUMENT_ROOT"]."/bitrix/admin", true, true);
 		CopyDirFiles($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/rest/install/components", $_SERVER["DOCUMENT_ROOT"]."/bitrix/components", true, true);
 		CopyDirFiles($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/rest/install/js", $_SERVER["DOCUMENT_ROOT"]."/bitrix/js", true, true);
 		CopyDirFiles($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/rest/install/tools", $_SERVER["DOCUMENT_ROOT"]."/bitrix/tools", true, true);
@@ -284,32 +310,23 @@ class rest extends CModule
 		if(!$USER->IsAdmin())
 			return;
 
-		if($DB->type !== 'MYSQL')
+		if(!check_bitrix_sessid())
 		{
-			$APPLICATION->ThrowException(GetMessage('REST_DB_NOT_SUPPORTED'));
-			$APPLICATION->IncludeAdminFile(GetMessage("REST_INSTALL_TITLE"), $_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/rest/install/step1.php");
+			$step = 1;
 		}
 
-		else
+		if($step < 2)
 		{
-			if(!check_bitrix_sessid())
-			{
-				$step = 1;
-			}
+			$APPLICATION->IncludeAdminFile(GetMessage("REST_INSTALL_TITLE"), $_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/rest/install/step1.php");
+		}
+		elseif($step == 2)
+		{
+			$this->InstallDB(array());
+			$this->InstallFiles(array());
 
-			if($step < 2)
-			{
-				$APPLICATION->IncludeAdminFile(GetMessage("REST_INSTALL_TITLE"), $_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/rest/install/step1.php");
-			}
-			elseif($step == 2)
-			{
-				$this->InstallDB(array());
-				$this->InstallFiles(array());
+			$GLOBALS["errors"] = $this->errors;
 
-				$GLOBALS["errors"] = $this->errors;
-
-				$APPLICATION->IncludeAdminFile(GetMessage("REST_INSTALL_TITLE"), $_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/rest/install/step2.php");
-			}
+			$APPLICATION->IncludeAdminFile(GetMessage("REST_INSTALL_TITLE"), $_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/rest/install/step2.php");
 		}
 	}
 
@@ -337,7 +354,7 @@ class rest extends CModule
 		}
 	}
 
-	function OnGetTableSchema()
+	public static function OnGetTableSchema()
 	{
 		return array(
 			"rest" => array(

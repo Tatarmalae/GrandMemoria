@@ -28,6 +28,7 @@ BX.Kanban.Column = function(options)
 	this.data = Object.create(null);
 	this.total = null;
 	this.isTotalFrozen = false;
+	this.animate = options.animate || null;
 
 	this.canEdit = null;
 	this.canSort = null;
@@ -46,6 +47,8 @@ BX.Kanban.Column = function(options)
 	/** @var {BX.Kanban.Grid} **/
 	this.grid = null;
 
+	this.selectedItems = [];
+
 	this.page = 1;
 
 	this.layout = {
@@ -63,8 +66,11 @@ BX.Kanban.Column = function(options)
 		fillColorButton: null,
 		titleTextBox: null,
 		addColumnButton: null,
+		addColumnButtonAfter: null,
+		addColumnButtonBefore: null,
 		editButton: null,
-		removeButton: null
+		removeButton: null,
+		ahaItem: null
 	};
 
 	this.rectArea = null;
@@ -76,8 +82,12 @@ BX.Kanban.Column = function(options)
 	this.confirmDialog = null;
 	this.textBoxTimeout = null;
 	this.colorChanged = false;
+	this.hasBeenEdt = null;
+	this.addItemTitleText = null;
 
 	this.pagination = new BX.Kanban.Pagination(this);
+
+	this.handleScrollWithThrottle =  BX.Runtime.throttle(this.handleScroll, 100, this);
 };
 
 BX.Kanban.Column.DEFAULT_COLOR = "ace9fb";
@@ -162,6 +172,11 @@ BX.Kanban.Column.prototype =
 		return this.pagination;
 	},
 
+	addSelectedItems: function()
+	{
+
+	},
+
 	/**
 	 *
 	 * @param {BX.Kanban.Item} item
@@ -199,34 +214,37 @@ BX.Kanban.Column.prototype =
 		}
 	},
 
-	addItems: function(items, beforeItem)
+	addItems: function(items, startBeforeItem)
 	{
-		var index = BX.util.array_search(beforeItem, this.items);
+		this.selectedItems = items;
 
-		items.forEach(function(item, key) {
+		for (var itemId in this.selectedItems)
+		{
+			var item = this.selectedItems[itemId];
 			item.setColumnId(this.getId());
-			//? setGrid
 
-			if(index >= 0)
+			var index = BX.util.array_search(startBeforeItem, this.items);
+
+			if (index >= 0)
 			{
 				this.items.splice(index, 0, item);
-				index++;
 			}
 			else
 			{
 				this.items.push(item);
 			}
 
-
 			if (item.isCountable())
 			{
 				this.incrementTotal();
 			}
-		}.bind(this));
+		}
 
 		if (this.getGrid().isRendered())
 		{
 			this.render();
+			this.getGrid().cleanSelectedItems();
+			this.getGrid().adjustMultiSelectMode();
 		}
 	},
 
@@ -382,6 +400,39 @@ BX.Kanban.Column.prototype =
 		}
 	},
 
+	removeSelectedItems: function(itemsToRemove)
+	{
+		var found = false;
+		for(var itemId in itemsToRemove)
+		{
+			var itemToRemove =  itemsToRemove[itemId];
+
+			this.items = this.items.filter(function(item) {
+
+				if (item === itemToRemove)
+				{
+					found = true;
+					return false;
+				}
+
+				return true;
+			});
+
+			if (found)
+			{
+				if (itemToRemove.isCountable() && itemToRemove.isVisible())
+				{
+					this.decrementTotal();
+				}
+			}
+		}
+
+		if (this.getGrid().isRendered())
+		{
+			this.render();
+		}
+	},
+
 	removeItems: function()
 	{
 		this.items = [];
@@ -524,6 +575,7 @@ BX.Kanban.Column.prototype =
 	render: function()
 	{
 		var title = this.getTitleContainer();
+
 		BX.cleanNode(title);
 		title.appendChild(this.renderTitle());
 
@@ -541,7 +593,8 @@ BX.Kanban.Column.prototype =
 			subTitle.appendChild(subTitleContent);
 		}
 
-		BX.cleanNode(this.layout.items);
+		this.cleanLayoutItems();
+
 		var isEmptyColumn = true;
 		var items = document.createDocumentFragment();
 		for (var i = 0; i < this.items.length; i++)
@@ -563,13 +616,31 @@ BX.Kanban.Column.prototype =
 		columnContainer.classList[isEmptyColumn ? "add" : "remove"]("main-kanban-column-empty");
 		columnContainer.classList[this.isDroppable() ? "add" : "remove"]("main-kanban-column-droppable");
 
+		if(!this.getGrid().firstRenderComplete)
+		{
+			this.hasBeenEdt = true;
+		}
+
+		if(	(this.getContainer().classList.contains("main-kanban-column-droppable")
+			|| this.getContainer().classList.contains("main-kanban-column-draggable"))
+			&& this.getGrid().firstRenderComplete && !this.hasBeenEdt)
+		{
+			title.classList.add("--animate-complete");
+			var cleanAnimate = function() {
+				title.classList.remove("--animate-complete");
+				title.removeEventListener("animationend", cleanAnimate);
+			}.bind(this);
+			title.addEventListener("animationend", cleanAnimate);
+			this.hasBeenEdt = true;
+		}
+
 		if (this.getGrid().isRendered())
 		{
 			this.getPagination().adjust();
 			this.getGrid().adjustEmptyStub();
 		}
 
-		BX.onCustomEvent(this, "Kanban.Column:render", [this]);
+		BX.onCustomEvent(this.getGrid(), "Kanban.Column:render", [this]);
 
 		return columnContainer;
 	},
@@ -763,7 +834,9 @@ BX.Kanban.Column.prototype =
 			attrs: {
 				className: "main-kanban-column-title-input-edit",
 				type: "text",
-				placeholder: this.getGrid().getMessage("COLUMN_TITLE_PLACEHOLDER")
+				placeholder: this.getGrid().getMessage("COLUMN_TITLE_PLACEHOLDER2"),
+				autocomplete: "off",
+				disabled: true
 			},
 			events: {
 				blur: this.handleTextBoxBlur.bind(this),
@@ -797,12 +870,24 @@ BX.Kanban.Column.prototype =
 	{
 		this.disableDragging();
 		this.getContainer().classList.add("main-kanban-column-edit-mode");
+		this.getTitleTextBox().disabled = false;
 		this.getTitleTextBox().value = this.getName();
+
 		this.focusTextBox();
+	},
+
+	isEditModeEnabled: function()
+	{
+		return this.getContainer().classList.contains("main-kanban-column-edit-mode");
 	},
 
 	applyEditMode: function()
 	{
+		if (!this.isEditModeEnabled())
+		{
+			return;
+		}
+
 		var title = BX.util.trim(this.getTitleTextBox().value);
 		var titleChanged = false;
 		if (title.length > 0 && this.getName() !== title)
@@ -823,7 +908,21 @@ BX.Kanban.Column.prototype =
 
 		this.colorChanged = false;
 		this.enableDragging();
+
+		this.getTitleTextBox().disabled = true;
 		this.getContainer().classList.remove("main-kanban-column-edit-mode");
+	},
+
+	cleanAnimate: function()
+	{
+		if(!this.animate)
+		{
+			return;
+		}
+
+		this.animate = null;
+		this.getContainer().classList.remove("--animate-" + this.animate);
+		this.getContainer().removeEventListener('animationend');
 	},
 
 	handleTextBoxBlur: function(event)
@@ -863,6 +962,9 @@ BX.Kanban.Column.prototype =
 		this.showRemoveConfirmDialog();
 	},
 
+	handleScroll(event) {
+		BX.Event.EventEmitter.emit(this.getGrid(), 'Kanban.Column:onScroll', { event });
+	},
 	showColorPicker: function()
 	{
 		this.stopTextBoxBlur();
@@ -1022,19 +1124,30 @@ BX.Kanban.Column.prototype =
 			return this.layout.subTitleAddButton;
 		}
 
+		var button;
 		this.layout.subTitleAddButton = BX.create("div", {
 			attrs: {
 				className: "main-kanban-column-subtitle-box"
 			},
 			children: [
 				this.canAddItems()
-				? BX.create("div", {
+				? button = BX.create("div", {
 						attrs: {
 							className: "main-kanban-column-add-item-button"
 						},
 						events: {
 							click: this.handleAddItemButtonClick.bind(this)
-						}
+						},
+						children: [
+							this.getGrid().getAddItemTitleText()
+							? BX.create("div", {
+								props: {
+									className: "main-kanban-column-add-item-button-text"
+								},
+								text: this.getGrid().getAddItemTitleText()
+							})
+							: null
+						]
 					})
 				: null
 			]
@@ -1048,6 +1161,11 @@ BX.Kanban.Column.prototype =
 		this.addDraftItem(this.getFirstItem(false));
 	},
 
+	cleanLayoutItems: function()
+	{
+		BX.cleanNode(this.layout.items);
+	},
+
 	getDraftItem: function()
 	{
 		return this.draftItem;
@@ -1055,7 +1173,6 @@ BX.Kanban.Column.prototype =
 
 	/**
 	 *
-	 * @param {BX.Kanban.Item} [targetItem]
 	 * @returns {BX.Kanban.DraftItem|null}
 	 */
 	addDraftItem: function(targetItem)
@@ -1064,6 +1181,11 @@ BX.Kanban.Column.prototype =
 		if (this.getGrid().getItem(id))
 		{
 			return null;
+		}
+
+		if(!targetItem)
+		{
+			targetItem = this.getFirstItem(false);
 		}
 
 		var targetId = null;
@@ -1112,7 +1234,7 @@ BX.Kanban.Column.prototype =
 
 		this.layout.container = BX.create("div", {
 			attrs: {
-				className: "main-kanban-column"
+				className: this.animate ? "main-kanban-column" + " --animate-" + this.animate : "main-kanban-column"
 			},
 			children: [
 				this.getHeader(),
@@ -1168,7 +1290,8 @@ BX.Kanban.Column.prototype =
 				"data-type": "column"
 			},
 			events: {
-				wheel: BX.delegate(this.blockPageScroll, this)
+				wheel: BX.delegate(this.blockPageScroll, this),
+				scroll: this.handleScrollWithThrottle.bind(this),
 			},
 			children: [
 				this.getItemsContainer(),
@@ -1183,7 +1306,7 @@ BX.Kanban.Column.prototype =
 	 *
 	 * @returns {Element}
 	 */
-	getTitleContainer: function()
+	getTitleContainer: function(event)
 	{
 		if (this.layout.title)
 		{
@@ -1223,17 +1346,46 @@ BX.Kanban.Column.prototype =
 		{
 			return this.layout.addColumnButton;
 		}
-
 		this.layout.addColumnButton = BX.create("div", {
 			attrs: {
 				className: "main-kanban-column-title-add-column"
 			},
+			children: [
+				this.layout.addColumnButtonBefore = BX.create("div", {
+					props: {
+						className: 'main-kanban-column-title-add-column-before'
+					}
+				}),
+				this.layout.addColumnButtonAfter = BX.create("div", {
+					props: {
+						className: 'main-kanban-column-title-add-column-after'
+					}
+				})
+			],
 			events: {
 				click: this.handleAddColumnButtonClick.bind(this)
 			}
 		});
 
 		return this.layout.addColumnButton;
+	},
+
+	handlerHoverClass: function(node)
+	{
+		if(!node)
+		{
+			return;
+		}
+
+		node.addEventListener("mouseenter", function()
+		{
+			node.classList.add("--hover");
+		});
+
+		node.addEventListener("mouseleave", function()
+		{
+			node.classList.remove("--hover");
+		});
 	},
 
 	/**
@@ -1252,6 +1404,30 @@ BX.Kanban.Column.prototype =
 		}
 
 		return this.layout.items;
+	},
+
+	onAhaMode: function()
+	{
+		this.getBody().appendChild(this.getAhaItem());
+	},
+
+	offAhaMode: function()
+	{
+		this.getBody().removeChild(this.getAhaItem());
+	},
+
+	getAhaItem: function()
+	{
+		if (!this.layout.ahaItem)
+		{
+			this.layout.ahaItem = BX.create("div", {
+				props: {
+					className: "main-kanban-item-aha"
+				}
+			})
+		}
+
+		return this.layout.ahaItem;
 	},
 
 	/**
@@ -1413,9 +1589,10 @@ BX.Kanban.Column.prototype =
 	 */
 	onDragDrop: function(itemNode, x, y)
 	{
-		if(this.getGrid().isMultiSelect() && this.getGrid().getSelectedItems().size > 1)
+		if(this.getGrid().getSelectedItems().length > 0)
 		{
-			return this.onDragDropMultiple();
+			this.onDragDropMulti(this.getGrid().getSelectedItems());
+			return;
 		}
 
 		this.hideDragTarget();
@@ -1438,16 +1615,23 @@ BX.Kanban.Column.prototype =
 		}
 	},
 
-	onDragDropMultiple: function()
+	/**
+	 *
+	 * @param {Object} items
+	 * @param {number} x
+	 * @param {number} y
+	 */
+	onDragDropMulti: function(items, x, y)
 	{
 		this.hideDragTarget();
-		var draggableItems = this.getGrid().getSelectedItems();
+
+		var draggableItems = items;
 
 		var event = new BX.Kanban.DragEvent();
-		// event.setItem(draggableItem);
+		event.setItems(draggableItems);
 		event.setTargetColumn(this);
 
-		BX.onCustomEvent(this.getGrid(), "Kanban.Grid:onBeforeItemMovedMultiple", [event]);
+		BX.onCustomEvent(this.getGrid(), "Kanban.Grid:onBeforeItemMoved", [event]);
 		if (!event.isActionAllowed())
 		{
 			return;
@@ -1456,7 +1640,7 @@ BX.Kanban.Column.prototype =
 		var success = this.getGrid().moveItems(draggableItems, this);
 		if (success)
 		{
-			BX.onCustomEvent(this.getGrid(), "Kanban.Grid:onItemMovedMultiple", [draggableItems, this, null]);
+			BX.onCustomEvent(this.getGrid(), "Kanban.Grid:onItemsMoved", [draggableItems, this, null]);
 		}
 	},
 

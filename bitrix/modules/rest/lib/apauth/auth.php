@@ -11,9 +11,11 @@ namespace Bitrix\Rest\APAuth;
 use Bitrix\Main\Authentication\ApplicationManager;
 use Bitrix\Main\Authentication\ApplicationPasswordTable;
 use Bitrix\Main\Context;
+use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Type\DateTime;
 use Bitrix\Main\UserTable;
 use Bitrix\Rest\Engine\Access;
+use Bitrix\Rest\Engine\Access\HoldEntity;
 
 class Auth
 {
@@ -53,6 +55,15 @@ class Auth
 			{
 				$error = array_key_exists('error', $tokenInfo);
 
+				if (!$error && HoldEntity::is(HoldEntity::TYPE_WEBHOOK, $auth[static::$authQueryParams['PASSWORD']]))
+				{
+					$tokenInfo = [
+						'error' => 'OVERLOAD_LIMIT',
+						'error_description' => 'REST API is blocked due to overload.'
+					];
+					$error = true;
+				}
+
 				if (
 					!$error
 					&& (
@@ -75,7 +86,19 @@ class Auth
 				{
 					$tokenInfo['scope'] = implode(',', static::getPasswordScope($tokenInfo['password_id']));
 
-					if(!\CRestUtil::makeAuth($tokenInfo))
+					global $USER;
+					if ($USER instanceof \CUser && $USER->isAuthorized())
+					{
+						if ((int)$USER->GetID() !== (int)$tokenInfo['user_id'])
+						{
+							$tokenInfo = [
+								'error' => 'authorization_error',
+								'error_description' => Loc::getMessage('REST_AP_AUTH_ERROR_LOGOUT_BEFORE'),
+							];
+							$error = true;
+						}
+					}
+					elseif (!\CRestUtil::makeAuth($tokenInfo))
 					{
 						$tokenInfo = array('error' => 'authorization_error', 'error_description' => 'Unable to authorize user');
 						$error = true;
@@ -226,7 +249,9 @@ class Auth
 			return true;
 		}
 
-		return in_array($scope, static::getPasswordScope($passwordId));
+		$scopeList = static::getPasswordScope($passwordId);
+		$scopeList = \Bitrix\Rest\Engine\RestManager::fillAlternativeScope($scope, $scopeList);
+		return in_array($scope, $scopeList);
 	}
 
 	protected static function getPasswordScope($passwordId)

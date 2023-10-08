@@ -176,7 +176,7 @@ class CloudStorage extends Storage implements Storable
 		if (is_array($params))
 		{
 			$params = array_change_key_case($params, CASE_LOWER);
-			$this->moduleId = ($params["moduleId"] ?: $this->moduleId);
+			$this->moduleId = ($params["moduleid"] ?: $this->moduleId);
 		}
 	}
 
@@ -186,7 +186,7 @@ class CloudStorage extends Storage implements Storable
 	 */
 	private function findBucket($file)
 	{
-		/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 		$bucket = \CCloudStorage::findBucketForFile(array('FILE_SIZE' => $file['size'], 'MODULE_ID' => $this->moduleId), $file["name"]);
 		if(!$bucket || !$bucket->init())
 		{
@@ -233,7 +233,7 @@ class CloudStorage extends Storage implements Storable
 			$success = false;
 			while ($upload->hasRetries())
 			{
-				if (method_exists($upload, "part") && $upload->part($fileContent, $file["number"]) ||
+				if (method_exists($upload, "part") && $upload->part($fileContent, ($file["number"] ?? 0)) ||
 					!method_exists($upload, "part") && $upload->next($fileContent))
 				{
 					$success = true;

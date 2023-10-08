@@ -8,8 +8,6 @@ use \Bitrix\Main\Localization\Loc;
 
 Loc::loadLanguageFile(__FILE__);
 
-$buttons = \Bitrix\Landing\Hook\Page\B24button::getButtons();
-$buttons = array_keys($buttons);
 
 return array(
 	'name' => Loc::getMessage("LANDING_DEMO___NEWYEAR-TITLE"),
@@ -26,8 +24,8 @@ return array(
 			'VIEW_TYPE' => 'no',
 			'UP_SHOW' => 'Y',
 			'THEME_CODE' => 'real-estate',
-			'THEMEFONTS_CODE' => 'g-font-montserrat',
-			'THEMEFONTS_CODE_H' => 'g-font-roboto-slab',
+			'THEMEFONTS_CODE' => 'Montserrat',
+			'THEMEFONTS_CODE_H' => 'Roboto Slab',
 			'THEMEFONTS_SIZE' => '1',
 			'THEMEFONTS_USE' => 'Y',
 			'COPYRIGHT_SHOW' => 'Y',

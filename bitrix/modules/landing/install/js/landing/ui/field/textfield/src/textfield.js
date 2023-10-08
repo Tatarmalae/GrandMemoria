@@ -93,6 +93,11 @@ export class TextField extends BaseField
 		return this.textOnly;
 	}
 
+	isContentEditable()
+	{
+		return this.contentEditable !== false;
+	}
+
 	onDocumentClick()
 	{
 		if (this.isEditable() && !this.fromInput)
@@ -170,6 +175,11 @@ export class TextField extends BaseField
 				BX.Landing.UI.Panel.EditorPanel.getInstance().hide();
 				this.input.contentEditable = true;
 			}
+
+			if (!this.isContentEditable())
+			{
+				this.input.contentEditable = false;
+			}
 		}
 	}
 
@@ -206,6 +216,11 @@ export class TextField extends BaseField
 
 	getValue()
 	{
+		if (this.textOnly)
+		{
+			return this.input.innerText;
+		}
+
 		return this.adjustTags(Runtime.clone(this.input)).innerHTML.replace(/&nbsp;/g, '');
 	}
 }

@@ -11,6 +11,7 @@
 /** @var string $componentPath */
 /** @var CBitrixComponent $component */
 $this->setFrameMode(true);
+\Bitrix\Main\UI\Extension::load('ui.bootstrap4');
 
 $INPUT_ID = trim($arParams["~INPUT_ID"]);
 if($INPUT_ID == '')
@@ -30,7 +31,7 @@ if($arParams["SHOW_INPUT"] !== "N"):?>
 		<div class="input-group">
 			<input id="<?echo $INPUT_ID?>" type="text" name="q" value="<?=htmlspecialcharsbx($_REQUEST["q"])?>" autocomplete="off" class="form-control"/>
 			<div class="input-group-append">
-				<button class="btn btn-primary search-title-button" type="submit" name="s"></button>
+				<button class="btn btn-primary search-title-button" type="submit" name="s">&nbsp;</button>
 			</div>
 		</div>
 	</form>

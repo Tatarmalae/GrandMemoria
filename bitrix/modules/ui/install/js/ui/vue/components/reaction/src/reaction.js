@@ -7,10 +7,12 @@
  * @copyright 2001-2019 Bitrix
  */
 
+import 'ui.fonts.opensans';
 import "./reaction.css";
 import "./icons.css";
 
-import {Vue} from 'ui.vue';
+import {BitrixVue} from 'ui.vue';
+import { BaseEvent, EventEmitter } from 'main.core.events';
 
 const ReactionType = Object.freeze({
 	none: 'none',
@@ -24,7 +26,7 @@ const ReactionType = Object.freeze({
 
 const ReactionOrder = ['like', 'kiss', 'laugh', 'wonder', 'cry', 'angry'];
 
-Vue.component('bx-reaction',
+BitrixVue.component('bx-reaction',
 {
 	/**
 	 * @emits 'set' {values: object}
@@ -32,6 +34,7 @@ Vue.component('bx-reaction',
 	 */
 	props:
 	{
+		id: { default: ''},
 		values: { default: {}},
 		userId: { default: 0},
 		openList: { default: true},
@@ -47,6 +50,11 @@ Vue.component('bx-reaction',
 	created()
 	{
 		this.localValues = Object.assign({}, this.values);
+		EventEmitter.subscribe('ui:reaction:press', this.onPress);
+	},
+	destroy()
+	{
+		EventEmitter.unsubscribe('ui:reaction:press', this.onPress);
 	},
 	watch:
 	{
@@ -66,11 +74,10 @@ Vue.component('bx-reaction',
 			this.$emit('list', {values: this.localValues});
 		},
 
-		likeIt(emotion = ReactionType.like)
+		press(emotion = ReactionType.like)
 		{
 			if (this.userReaction === ReactionType.none)
 			{
-				emotion = ReactionType.like;
 				if (!this.localValues[emotion])
 				{
 					this.localValues = Object.assign({}, this.localValues, {[emotion]: []});
@@ -93,6 +100,22 @@ Vue.component('bx-reaction',
 
 				this.$emit('set', {action: 'remove', type: this.userReaction});
 			}
+		},
+
+		onPress(event: BaseEvent)
+		{
+			const data = event.getData();
+			if (!this.id || data.id !== this.id)
+			{
+				return false;
+			}
+
+			if (!data.emotion)
+			{
+				data.emotion = ReactionType.like
+			}
+
+			this.press(data.emotion);
 		}
 	},
 	computed:
@@ -170,7 +193,7 @@ Vue.component('bx-reaction',
 					<div class="ui-vue-reaction-result-counter">{{counter}}</div>
 				</div>
 			</transition>
-			<div v-if="userId > 0"  class="ui-vue-reaction-button" @click="likeIt">
+			<div v-if="userId > 0"  class="ui-vue-reaction-button" @click.prevent="press()">
 				<div class="ui-vue-reaction-button-container">
 					<div :class="['ui-vue-reaction-button-icon', 'ui-vue-reaction-icon-'+userReaction, {'ui-vue-reaction-button-pressed': buttonAnimate}]"></div>
 				</div>

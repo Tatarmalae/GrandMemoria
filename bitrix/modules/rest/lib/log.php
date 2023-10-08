@@ -20,7 +20,20 @@ use Bitrix\Main;
  * </ul>
  *
  * @package Bitrix\Rest
- **/
+ *
+ * DO NOT WRITE ANYTHING BELOW THIS
+ *
+ * <<< ORMENTITYANNOTATION
+ * @method static EO_Log_Query query()
+ * @method static EO_Log_Result getByPrimary($primary, array $parameters = array())
+ * @method static EO_Log_Result getById($id)
+ * @method static EO_Log_Result getList(array $parameters = array())
+ * @method static EO_Log_Entity getEntity()
+ * @method static \Bitrix\Rest\EO_Log createObject($setDefaultValues = true)
+ * @method static \Bitrix\Rest\EO_Log_Collection createCollection()
+ * @method static \Bitrix\Rest\EO_Log wakeUpObject($row)
+ * @method static \Bitrix\Rest\EO_Log_Collection wakeUpCollection($rows)
+ */
 class LogTable extends Main\Entity\DataManager
 {
 	/**
@@ -157,6 +170,7 @@ class LogTable extends Main\Entity\DataManager
 	public static function addEntry(\CRestServer $server, $data)
 	{
 		$request = Main\Context::getCurrent()->getRequest();
+		static::filterResponseData($data);
 
 		static::add(array(
 			'CLIENT_ID' => $server->getClientId(),
@@ -170,6 +184,22 @@ class LogTable extends Main\Entity\DataManager
 			'RESPONSE_STATUS' => \CHTTP::getLastStatus(),
 			'RESPONSE_DATA' => $data,
 		));
+	}
+
+	public static function filterResponseData(&$data)
+	{
+		//filter non-searizable objects
+		if (is_object($data) && !method_exists($data, '__serialize'))
+		{
+			$data = '';
+		}
+		else if (is_array($data))
+		{
+			foreach ($data as &$oneData)
+			{
+				static::filterResponseData($oneData);
+			}
+		}
 	}
 
 	public static function getCountAll()

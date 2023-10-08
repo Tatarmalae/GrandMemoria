@@ -1,5 +1,5 @@
 <?php
-abstract class CAllBitrixCloudOption
+class CBitrixCloudOption
 {
 	private $name = "";
 	private $value = /*.(array[string]string).*/ null;
@@ -12,6 +12,18 @@ abstract class CAllBitrixCloudOption
 	public function __construct($name)
 	{
 		$this->name = $name;
+	}
+	/**
+	 * Fabric method
+	 *
+	 * @param string $name
+	 * @return CBitrixCloudOption
+	 *
+	 */
+	public static function getOption($name)
+	{
+		$ob = new CBitrixCloudOption($name);
+		return $ob;
 	}
 	/**
 	 *
@@ -116,7 +128,7 @@ abstract class CAllBitrixCloudOption
 		");
 
 		$sort = 0;
-		while (list($key, $val) = each($value))
+		foreach ($value as $key => $val)
 		{
 			if ($db_row = $rs->fetch())
 			{

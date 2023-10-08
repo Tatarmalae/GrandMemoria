@@ -5,13 +5,13 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 }
 
 /**
- * @var StoreCatalogListBlock $classBlock
+ * @var StoreCatalogDetailBlock $classBlock
  */
 
 $elementCode = $classBlock->get('ELEMENT_CODE');
 ?>
 
-<?if ($classBlock->get('SHOW_CART')):?>
+<?if ($classBlock->get('SHOW_CART') && $classBlock->get('FIRST_TIME')):?>
 	<?$APPLICATION->IncludeComponent(
 		'bitrix:sale.basket.basket.line',
 		'.default',
@@ -40,7 +40,7 @@ $elementCode = $classBlock->get('ELEMENT_CODE');
 	);?>
 <?endif;?>
 
-<?if ($classBlock->get('DISPLAY_COMPARE') == 'Y'):?>
+<?if ($classBlock->get('DISPLAY_COMPARE') == 'Y' && $classBlock->get('FIRST_TIME')):?>
 	<?$APPLICATION->IncludeComponent(
 		'bitrix:catalog.compare.list',
 		'',
@@ -131,7 +131,7 @@ $elementCode = $classBlock->get('ELEMENT_CODE');
 						'SECTION_ID_VARIABLE' => 'SECTION_CODE',
 						'CACHE_TYPE' => 'A',
 						'CACHE_TIME' => '3600000',
-						'CACHE_GROUPS' => 'N',
+						'CACHE_GROUPS' => 'Y',
 						'META_KEYWORDS' => '-',
 						'META_DESCRIPTION' => '-',
 						'BROWSER_TITLE' => '-',
@@ -259,7 +259,8 @@ $elementCode = $classBlock->get('ELEMENT_CODE');
 						'CUSTOM_SITE_ID' => $classBlock->get('SITE_ID'),
 						'CONTEXT_SITE_ID' => $classBlock->get('SITE_ID'),
 						'SECTIONS_CHAIN_START_FROM' => 1,
-						'ALLOW_SEO_DATA' => 'N'
+						'ALLOW_SEO_DATA' => 'N',
+						'ADDITIONAL_FILTER_NAME' => $classBlock->get('ADDITIONAL_FILTER_NAME'),
 					),
 					false
 				);?>

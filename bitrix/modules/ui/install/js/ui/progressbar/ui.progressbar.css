@@ -39,10 +39,11 @@
 	width: 100%;
 	height: var(--ui-current-bar-size);
 	border-radius: calc(var(--ui-current-bar-size) / 2);
-	background-color: #edeef0;
+	background-color: var(--ui-current-bar-bg-track-color, #edeef0);
 	transition: 250ms linear all;
 	order: 2;
 	flex: 1;
+	overflow: hidden;
 }
 
 .ui-progressbar-bg .ui-progressbar-track { background-color: var(--ui-current-bar-bg-track-color); }
@@ -63,7 +64,8 @@
 .ui-progressbar-text-before {
 	padding: 0 17px;
 	color: #535c69;
-	font: 13px/16px "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font: 13px/16px var(--ui-font-family-secondary, var(--ui-font-family-open-sans));
+	font-weight: var(--ui-font-weight-regular, 400);
 }
 
 .ui-progressbar-text-after {
@@ -105,7 +107,8 @@
 
 .ui-progressbar-column .ui-progressbar-status-percent {
 	color: #333;
-	font: 300 16px/20px "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font: 16px/20px var(--ui-font-family-secondary, var(--ui-font-family-open-sans));
+	font-weight: var(--ui-font-weight-regular, 400);
 	order: 2;
 }
 
@@ -116,24 +119,36 @@
 .ui-progressbar-primary {
 	--ui-current-bar-color: var(--ui-progressbar-color-primary);
 	--ui-current-bar-bg-color: var(--ui-progressbar-bg-color-primary);
+}
+
+.ui-progressbar-bg .ui-progressbar-primary {
 	--ui-current-bar-bg-track-color: var(--ui-progressbar-bg-track-color-primary)
 }
 
 .ui-progressbar-danger {
 	--ui-current-bar-color: var(--ui-progressbar-color-danger);
 	--ui-current-bar-bg-color: var(--ui-progressbar-bg-color-danger);
+}
+
+.ui-progressbar-bg .ui-progressbar-danger {
 	--ui-current-bar-bg-track-color: var(--ui-progressbar-bg-track-color-danger)
 }
 
 .ui-progressbar-warning {
 	--ui-current-bar-color: var(--ui-progressbar-color-warning);
 	--ui-current-bar-bg-color: var(--ui-progressbar-bg-color-warning);
+}
+
+.ui-progressbar-bg .ui-progressbar-warning {
 	--ui-current-bar-bg-track-color: var(--ui-progressbar-bg-track-color-warning)
 }
 
 .ui-progressbar-success {
 	--ui-current-bar-color: var(--ui-progressbar-color-success);
 	--ui-current-bar-bg-color: var(--ui-progressbar-bg-color-success);
+}
+
+.ui-progressbar-bg .ui-progressbar-success {
 	--ui-current-bar-bg-track-color: var(--ui-progressbar-bg-track-color-success)
 }
 

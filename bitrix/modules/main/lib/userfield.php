@@ -17,6 +17,19 @@ use Bitrix\Main\Type;
  * Entity representation of UserFields.
  * @package bitrix
  * @subpackage main
+ *
+ * DO NOT WRITE ANYTHING BELOW THIS
+ *
+ * <<< ORMENTITYANNOTATION
+ * @method static EO_UserField_Query query()
+ * @method static EO_UserField_Result getByPrimary($primary, array $parameters = [])
+ * @method static EO_UserField_Result getById($id)
+ * @method static EO_UserField_Result getList(array $parameters = [])
+ * @method static EO_UserField_Entity getEntity()
+ * @method static \Bitrix\Main\EO_UserField createObject($setDefaultValues = true)
+ * @method static \Bitrix\Main\EO_UserField_Collection createCollection()
+ * @method static \Bitrix\Main\EO_UserField wakeUpObject($row)
+ * @method static \Bitrix\Main\EO_UserField_Collection wakeUpCollection($rows)
  */
 class UserFieldTable extends ORM\Data\DataManager
 {
@@ -294,10 +307,11 @@ class UserFieldTable extends ORM\Data\DataManager
 					array('data_type' => get_class($utsField))
 				);
 
+				$aliasField->configureValueField($utsField);
+
 				if ($userfield['MULTIPLE'] == 'Y')
 				{
 					$aliasField->configureMultiple();
-					static::setMultipleFieldSerialization($aliasField, $userfield);
 				}
 
 				$entity->addField($aliasField);
@@ -419,10 +433,15 @@ class UserFieldTable extends ORM\Data\DataManager
 			}
 		}
 
-		foreach ($utmFields as $utmField)
+		foreach ($utmFields as $utmFieldMeta)
 		{
+			// better to get field from UtmEntity
+			$utmField = $USER_FIELD_MANAGER->getEntityField($utmFieldMeta);
+
 			// add serialized utm cache-fields
-			$cacheField = new ORM\Fields\TextField($utmField['FIELD_NAME']);
+			$cacheField = (new ORM\Fields\UserTypeUtsMultipleField($utmField->getName()))
+				->configureUtmField($utmField);
+
 			static::setMultipleFieldSerialization($cacheField, $utmField);
 			$entity->addField($cacheField);
 		}
@@ -678,7 +697,7 @@ class UserFieldTable extends ORM\Data\DataManager
 	{
 		if($value <> '')
 		{
-			$value = unserialize($value);
+			$value = unserialize($value, ["allowed_classes" => false]);
 
 			foreach($value as &$singleValue)
 			{
@@ -731,7 +750,7 @@ class UserFieldTable extends ORM\Data\DataManager
 	{
 		if($value <> '')
 		{
-			$value = unserialize($value);
+			$value = unserialize($value, ["allowed_classes" => false]);
 
 			foreach($value as &$singleValue)
 			{

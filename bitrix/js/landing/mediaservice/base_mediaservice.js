@@ -33,6 +33,8 @@
 		this.idPlace = 0;
 		this.type = "iframe";
 		this.params = {};
+		this.isDataLoaded = true;
+		this.isBgVideoMode = false;
 	};
 
 	BX.Landing.MediaService.BaseMediaService.prototype = {
@@ -44,7 +46,6 @@
 		{
 			return this.url.match(this.matcher)[this.idPlace];
 		},
-
 
 		/**
 		 * Gets user settings from settings form
@@ -119,11 +120,11 @@
 		 */
 		getEmbedPreview: function ()
 		{
+			var result = this.previewURL;
+			var matchedUrl = this.url.match(this.matcher);
+
 			if (typeof this.previewURL === "string")
 			{
-				var result = this.previewURL;
-				var matchedUrl = this.url.match(this.matcher);
-
 				[].slice.call(matchedUrl).forEach(function (value, index)
 				{
 					result = result.replace(new RegExp("\\$" + index, "g"), value);
@@ -131,10 +132,12 @@
 
 				return result;
 			}
-			else
+			else if (typeof this.previewURL === "function")
 			{
-				return false;
+				return this.previewURL(matchedUrl);
 			}
+
+			return false;
 		},
 
 
@@ -225,6 +228,15 @@
 		getSettingsForm: function()
 		{
 			return null;
+		},
+
+		/**
+		 * Set true if current service used for BG video
+		 * @param {bool} value
+		 */
+		setBgVideoMode(value)
+		{
+			this.isBgVideoMode = !!value;
 		}
 	}
 })();

@@ -10,6 +10,8 @@ return array(
 	'block' => array(
 		'name' => Loc::getMessage('LANDING_BLOCK_7_TWO_COLS_FIX_IMG_TEXT_ACCORDEON_NAME'),
 		'section' => array('about', 'text_image'),
+		'type' => 'null',
+		//new block with code '68.6.faq'
 	),
 	'cards' => array(
 		'.landing-block-card-accordeon-element' => array(
@@ -47,7 +49,7 @@ return array(
 	'style' => array(
 		'.landing-block-node-title' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_7_TWO_COLS_FIX_IMG_TEXT_ACCORDEON_STYLE_LANDINGBLOCKNODETITLE'),
-			'type' => 'typo',
+			'type' => ['typo', 'heading'],
 		),
 		'.landing-block-node-text' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_7_TWO_COLS_FIX_IMG_TEXT_ACCORDEON_STYLE_LANDINGBLOCKNODETEXT'),
@@ -67,7 +69,7 @@ return array(
 		),
 		'.landing-block-card-accordeon-element-title-link' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_7_TWO_COLS_FIX_IMG_TEXT_ACCORDEON_NODES_LANDINGBLOCKNODEELEMENTTITLE'),
-			'type' => 'border-color',
+			'type' => 'border-colors',
 		),
 		'.landing-block-node-accordeon-element-title' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_7_TWO_COLS_FIX_IMG_TEXT_ACCORDEON_NODES_LANDINGBLOCKNODEELEMENTTITLE'),

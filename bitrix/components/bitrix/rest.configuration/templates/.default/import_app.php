@@ -26,7 +26,9 @@ if($arResult['ERROR'])
 		'',
 		array(
 			'APP' => $arResult['VARIABLES']['APP'],
-			'SET_TITLE' => 'Y'
+			'SET_TITLE' => 'Y',
+			'ADDITIONAL' => $arResult['VARIABLES']['ADDITIONAL_PARAMS'],
+			'FROM' => $arResult['FROM'],
 		)
 	);
 ?>

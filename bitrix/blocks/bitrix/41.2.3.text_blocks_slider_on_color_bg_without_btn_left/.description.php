@@ -47,7 +47,7 @@ return array(
 		),
 		'.landing-block-node-card-title' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_41.7.TEXT_BLOCKS_SLIDER_ON_COLOR_BG_STYLE_LANDINGBLOCKNODECARDTITLE'),
-			'type' => array('typo', 'background-color-before', 'animation'),
+			'type' => ['typo', 'animation', 'heading'],
 		),
 		'.landing-block-node-card-text' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_41.7.TEXT_BLOCKS_SLIDER_ON_COLOR_BG_STYLE_LANDINGBLOCKNODECARDTEXT'),
@@ -65,6 +65,12 @@ return array(
 			'name' => Loc::getMessage('LANDING_BLOCK_41.7.TEXT_BLOCKS_SLIDER_ON_COLOR_BG_CARDS_LANDINGBLOCKNODECARD'),
 			'type' => array('align-self'),
 		),
+		'.landing-block-slider' => [
+			'additional' => [
+				'name' => Loc::getMessage('LANDING_BLOCK_41_7_TEXT_BLOCKS_SLIDER_ON_COLOR_BG_STYLE_SLIDER'),
+				'attrsType' => ['autoplay', 'autoplay-speed', 'animation', 'pause-hover', 'slides-show', 'dots'],
+			]
+		],
 	),
 	'assets' => array(
 		'ext' => array('landing_carousel'),

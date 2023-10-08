@@ -3,12 +3,22 @@
 if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
 use Bitrix\Iblock\UserField\Types\ElementType;
+use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Text\HtmlFilter;
 
 /**
  * @var ElementUfComponent $component
  * @var array $arResult
  */
+
+if (!$arResult['hasAccessToCatalog'])
+{
+	$message = Loc::getMessage('IBLOCK_FIELD_ELEMENT_CATALOG_ACCESS_DENIED');
+	echo "<span class='field-wrap'>{$message}</span>";
+
+	return;
+}
+
 $component = $this->getComponent();
 ?>
 
@@ -41,8 +51,7 @@ $component = $this->getComponent();
 						&&
 						(
 							!$isWasSelect
-                            ||
-                            ($arResult['userField']['MULTIPLE'] === 'Y')
+							|| $arResult['userField']['MULTIPLE'] === 'Y'
 						)
 					);
 					$isWasSelect = $isWasSelect || $isSelected;
@@ -131,7 +140,7 @@ $component = $this->getComponent();
 
 		BX.ready(function(){
 
-			var params = {$arResult['params']};			
+			var params = {$arResult['params']};
 
 			BX('{$arResult['controlNodeIdJs']}').appendChild(BX.decl({
 				block: '{$arResult['block']}',
@@ -141,7 +150,7 @@ $component = $this->getComponent();
 				params: params,
 				valueDelete: false
 			}));
-			
+
 			BX.addCustomEvent(
 				window,
 				'UI::Select::change',
@@ -175,7 +184,7 @@ EOT;
 		}
 
 		$isWasSelect = false;
-		foreach($arResult['userField']['USER_TYPE']['FIELDS'] as $key => $val)
+		foreach((array)$arResult['userField']['USER_TYPE']['FIELDS'] as $key => $val)
 		{
 			?>
 			<span
@@ -193,11 +202,10 @@ EOT;
 
 			$isSelected = (
 				in_array($key, $arResult['value'])
-                &&
+				&&
 				(
 					!$isWasSelect
-                    ||
-                    ($arResult['userField']['MULTIPLE'] === 'Y')
+					|| $arResult['userField']['MULTIPLE'] === 'Y'
 				));
 
 			$isWasSelect = $isWasSelect || $isSelected;

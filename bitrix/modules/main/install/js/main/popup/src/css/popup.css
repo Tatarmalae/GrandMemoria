@@ -2,20 +2,26 @@
 	background-color: #fff;
 	box-shadow: 0 7px 21px rgba(83, 92, 105, .12), 0 -1px 6px 0 rgba(83, 92, 105, .06);
 	padding: 10px;
-	font: 13px "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font: 13px var(--ui-font-family-primary, var(--ui-font-family-helvetica));
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
 	justify-content: stretch;
+	border-radius: var(--popup-window-border-radius);
+	will-change: opacity;
+}
+
+.popup-window-disable-scroll {
+	overflow: hidden;
+}
+
+.popup-window.--fixed {
+	position: fixed !important;
 }
 
 /* A super hack for legacy code which directly reads and writes popupContainer.style.display */
 .popup-window[style*="block"] {
 	display: flex !important;
-}
-
-.bx-ie .popup-window[style*="block"] {
-	display: block !important;
 }
 
 .popup-window.popup-window-with-titlebar {
@@ -54,7 +60,7 @@
 	background: #fff;
 	color: #b1b6bc;
 	font-size: 10px;
-	font-weight: bold;
+	font-weight: var(--ui-font-weight-bold);
 	text-transform: uppercase;
 	white-space: nowrap;
 	overflow-x: hidden;
@@ -75,12 +81,12 @@
 	line-height: 39px;
 	margin: 0 12px 0 0;
 	background: #ecedef;
-	border-radius: 2px;
+	border-radius: var(--popup-window-button-border-radius, 2px);
 	cursor: pointer;
 	color: #7a818a;
-	font-family: "OpenSans-Bold", Helvetica, Arial, sans-serif;
+	font-family: var(--ui-font-family-secondary, var(--ui-font-family-open-sans));
+	font-weight: var(--ui-font-weight-bold, 700);
 	font-size: 12px;
-	font-weight: normal;
 	outline: none;
 	padding: 0 18px;
 	vertical-align: middle;
@@ -140,7 +146,7 @@
 	display: block !important;
 	content: '_' !important;
 	font-size: 10px;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-family: var(--ui-font-family-primary, var(--ui-font-family-helvetica));
 	line-height: 10px;
 	height: 21px;
 	top: 10px;
@@ -276,7 +282,7 @@
 	color: #80868e;
 	display: inline-block;
 	font-size: 14px;
-	font-weight: bold;
+	font-weight: var(--ui-font-weight-bold);
 	max-width: 100%;
 	line-height: 49px;
 	overflow: hidden;
@@ -293,8 +299,34 @@
 
 .popup-window-content {
 	box-sizing: border-box;
-	background-color: #fff;
 	flex: 1;
+	border-radius: var(--popup-window-content-border-radius);
+	scrollbar-width: thin;
+	scrollbar-color: var(--popup-window-scrollbar-thumb-background, rgba(82, 92, 105, 0.2));
+}
+
+.popup-window-content::-webkit-scrollbar {
+	width: 12px;
+}
+
+.popup-window-content::-webkit-scrollbar-track {
+	background-color: var(--popup-window-scrollbar-track-background, rgba(82, 92, 105, 0.05));
+	margin: 8px 0;
+	border-right: 4px solid transparent;
+	border-left: 4px solid transparent;
+	background-clip: content-box;
+}
+
+.popup-window-content::-webkit-scrollbar-thumb {
+	background-color: var(--popup-window-scrollbar-thumb-background, rgba(82, 92, 105, 0.2));
+	margin: 8px 0;
+	border-right: 4px solid transparent;
+	border-left: 4px solid transparent;
+	background-clip: content-box;
+}
+
+.popup-window-content::-webkit-scrollbar-thumb:hover {
+	background-color: var(--popup-window-scrollbar-thumb-hover-background, rgba(82, 92, 105, 0.5));
 }
 
 .popup-window-with-titlebar .popup-window-content,
@@ -331,7 +363,7 @@
 	transform: translate3d(-50%, -50%, 0);
 	width: 10px;
 	height: 10px;
-	background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMCAxMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy43ODcgMUw1IDMuNzg3IDIuMjEzIDEgMSAyLjIxMyAzLjc4NyA1IDEgNy43ODcgMi4yMTMgOSA1IDYuMjEzIDcuNzg3IDkgOSA3Ljc4NyA2LjIxMyA1IDkgMi4yMTMiIGZpbGw9IiM5OTkiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==);
+	background-image: url(images/close-icon.svg);
 	background-repeat: no-repeat;
 	background-size: cover;
 	content: "";
@@ -352,9 +384,10 @@
 	position: absolute;
 	overflow: hidden;
 	width: 33px;
+	pointer-events: none;
 }
 
-.popup-window-angly:before {
+.popup-window-angly--arrow {
 	background-color: #fff;
 	-webkit-box-shadow: 0 0 21px rgba(83, 92, 105, .13);
 	box-shadow: 0 0 21px rgba(83, 92, 105, .13);
@@ -375,7 +408,7 @@
 	top: -22px;
 }
 
-.popup-window-angly-top:before { }
+.popup-window-angly-top .popup-window-angly--arrow { }
 
 .popup-window-angly-right {
 	display: block;
@@ -385,7 +418,7 @@
 	width: 17px;
 }
 
-.popup-window-angly-right::before {
+.popup-window-angly-right .popup-window-angly--arrow {
 	left: -9px;
 	top: 8px;
 }
@@ -397,7 +430,7 @@
 	margin-left: 10px;
 }
 
-.popup-window-angly-bottom::before {
+.popup-window-angly-bottom .popup-window-angly--arrow {
 	top: -9px;
 }
 
@@ -409,7 +442,7 @@
 	width: 14px;
 }
 
-.popup-window-angly-left::before {
+.popup-window-angly-left .popup-window-angly--arrow {
 	left: 8px;
 	top: 8px;
 }
@@ -429,11 +462,13 @@
 	opacity: 0;
 	transition: opacity .3s;
 	position: absolute;
-	right: 0;
-	bottom: 0;
-	width: 10px;
-	height: 10px;
-	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAAXNSR0IArs4c6QAAADBJREFUGBljYMADLl269B+PNESKNopwmoosgcxGcSeyBDKbKEUoGpA5uNgoplKNAwBv1DPc646T+wAAAABJRU5ErkJggg==");
+	right: 2px;
+	bottom: 2px;
+	width: 12px;
+	height: 12px;
+	background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAAXNSR0IArs4c6QAAADBJREFUGBljYMADLl269B+PNESKNopwmoosgcxGcSeyBDKbKEUoGpA5uNgoplKNAwBv1DPc646T+wAAAABJRU5ErkJggg==");
+	background-repeat: no-repeat;
+	background-position: center;
 	cursor: nwse-resize;
 }
 
@@ -451,20 +486,24 @@
 	padding: 0 0 0 4px;
 	color: #4c4c4c;
 	white-space: nowrap;
-	font: normal normal normal 12px/normal Arial, Helvetica, sans-serif;
+	font: normal normal normal 12px/normal var(--ui-font-family-primary, var(--ui-font-family-helvetica));
 }
 
 .menu-popup .menu-popup-item {
 	background-color: transparent;
-	display: block;
+	display: flex;
+	align-items: center;
 	cursor: pointer;
 	height: 36px;
 	position: relative;
 	text-decoration: none;
 	outline: none;
 	white-space: nowrap;
-	-webkit-transition: background-color 0.3s linear;
-	transition: background-color 0.3s linear;
+}
+
+/* A super hack for legacy code which directly reads and writes menu-popup-item.style.display */
+.menu-popup .menu-popup-item[style*="block"] {
+	display: flex !important;
 }
 
 .menu-popup .menu-popup-item-disabled {
@@ -488,7 +527,8 @@
 
 .menu-popup-item-text {
 	display: inline-block;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	flex: 1;
+	font-family: var(--ui-font-family-primary, var(--ui-font-family-helvetica));
 	color: #525c68;
 	line-height: 36px;
 	padding: 0 15px 0 9px;
@@ -496,6 +536,11 @@
 	vertical-align: middle;
 	-webkit-transition: color 0.2s linear;
 	transition: color 0.2s linear;
+}
+
+/* A temporary hack for the custom menu separators */
+.menu-popup .menu-popup-items .main-buttons-submenu-item.main-buttons-submenu-separator.main-buttons-hidden-label .menu-popup-item-text span {
+	top: -10px !important;
 }
 
 .menu-popup-item-text .tariff-lock {
@@ -520,7 +565,7 @@
 
 .menu-popup-item:hover,
 .menu-popup-item.menu-popup-item-open {
-	background-color: #f6f8f9;
+	background-color: #f5f5f6;
 }
 
 .menu-popup-item:hover .menu-popup-item-text {
@@ -623,8 +668,7 @@
 /* ========Popup Window Darken==========*/
 .popup-window-dark {
 	background-color: rgba(0, 0, 0, 0.8);
-	-webkit-border-radius: 4px;
-	border-radius: 4px;
+	border-radius: var(--popup-window-border-radius, 4px);
 	box-shadow: 0 19px 24px rgba(88, 112, 118, 0.17);
 }
 
@@ -634,7 +678,7 @@
 	margin: 0;
 }
 
-.popup-window-dark .popup-window-angly:before {
+.popup-window-dark .popup-window-angly--arrow {
 	background-color: rgba(0, 0, 0, 0.8);
 }
 
@@ -643,7 +687,7 @@
 }
 
 .popup-window-dark .popup-window-close-icon:after {
-	background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMCAxMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy43ODcgMUw1IDMuNzg3IDIuMjEzIDEgMSAyLjIxMyAzLjc4NyA1IDEgNy43ODcgMi4yMTMgOSA1IDYuMjEzIDcuNzg3IDkgOSA3Ljc4NyA2LjIxMyA1IDkgMi4yMTMiIGZpbGw9IiM1MzVDNkEiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==);
+	background-image: url(images/close-icon-dark.svg);
 }
 
 /*===========TABS==========*/
@@ -668,8 +712,8 @@
 	border: none;
 	vertical-align: top;
 	font-size: 14px;
-	font-weight: bold;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: var(--ui-font-weight-bold);
+	font-family: var(--ui-font-family-primary, var(--ui-font-family-helvetica));
 	line-height: 41px;
 	color: #535c69;
 	background-color: #ecf2f3;

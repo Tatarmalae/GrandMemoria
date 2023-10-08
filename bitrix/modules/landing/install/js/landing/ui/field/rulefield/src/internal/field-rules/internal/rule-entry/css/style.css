@@ -111,7 +111,7 @@
 .landing-ui-rule-entry-expression-link-text {
 	background-color: #F4F6F8;
 	display: inline-block;
-	font: 14px/16px "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font: 14px/16px var(--ui-font-family-primary, var(--ui-font-family-helvetica));
 	color: #80868e;
 	border-bottom: 1px dashed #d8d8d8;
 	transition: all 200ms ease;
@@ -137,7 +137,7 @@
 }
 
 .landing-ui-rule-entry-condition-value-operator {
-	font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+	font-family: var(--ui-font-family-primary, var(--ui-font-family-helvetica));
 	font-size: 14px;
 	color: #333333;
 	line-height: 20px;
@@ -145,7 +145,7 @@
 }
 
 .landing-ui-rule-entry-condition-value-value-label {
-	font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+	font-family: var(--ui-font-family-primary, var(--ui-font-family-helvetica));
 	font-size: 15px;
 	color: #333333;
 	line-height: 22px;
@@ -193,7 +193,7 @@
 .value-settings-item {
 	display: flex;
 	align-items: center;
-	height: 35px;
+	min-height: 35px;
 	padding-left: 11px;
 	padding-right: 9px;
 	cursor: pointer;
@@ -208,7 +208,6 @@
 	margin-bottom: 0;
 	margin-left: 8px;
 	flex-grow: 1;
-	line-height: 35px;
 }
 
 .value-settings-item-separator {
@@ -241,4 +240,9 @@
 	background-position: left center;
 	background-repeat: no-repeat;
 	padding-left: 20px;
+}
+
+.landing-ui-field-checkbox[data-selector="operator"] {
+	padding-left: 5px;
+	margin-bottom: 0;
 }

@@ -337,9 +337,8 @@ export default class Type
 	{
 		return (
 			Type.isBlob(value)
-			&& Type.isObjectLike(value.lastModifiedDate)
-			&& Type.isNumber(value.lastModified)
 			&& Type.isString(value.name)
+			&& (Type.isNumber(value.lastModified) || Type.isObjectLike(value.lastModifiedDate))
 		);
 	}
 

@@ -1,3 +1,6 @@
+import 'ui.design-tokens';
+import 'ui.fonts.opensans';
+
 import {Cache, Dom, Tag, Text, Type} from 'main.core';
 import {BaseForm, BaseFormOptions} from 'landing.ui.form.baseform';
 import {SmallSwitch} from 'landing.ui.field.smallswitch';
@@ -79,6 +82,15 @@ export class FormSettingsForm extends BaseForm
 		}
 
 		super.addField(field);
+	}
+
+	replaceField(oldField, newField) {
+		if (Type.isFunction(newField.subscribe))
+		{
+			newField.subscribe('onChange', this.onFieldChange.bind(this));
+		}
+
+		super.replaceField(oldField, newField);
 	}
 
 	onFieldChange(event: BaseEvent)

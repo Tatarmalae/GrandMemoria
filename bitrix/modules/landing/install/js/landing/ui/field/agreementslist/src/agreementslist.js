@@ -1,3 +1,5 @@
+import 'ui.design-tokens';
+
 import {Dom, Loc, Reflection, Runtime, Tag, Type} from 'main.core';
 import {Menu} from 'main.popup';
 import {BaseField} from 'landing.ui.field.basefield';
@@ -10,9 +12,9 @@ import {ActionPanel} from 'landing.ui.component.actionpanel';
 import {BaseEvent} from 'main.core.events';
 import {Loader} from 'main.loader';
 import {Backend} from 'landing.backend';
+import {FormSettingsPanel} from 'landing.ui.panel.formsettingspanel';
 
 import './css/style.css';
-
 
 type Agreement = {
 	id: string,
@@ -68,11 +70,9 @@ export class AgreementsList extends BaseField
 			})
 			.then((agreements) => {
 				void this.hideAgreementLoader();
-				setTimeout(() => {
-					agreements.forEach((agreement) => {
-						this.addItem(agreement);
-					});
-				}, 200);
+				agreements.forEach((agreement) => {
+					this.addItem(agreement);
+				});
 			});
 
 		this.draggable = new Draggable({
@@ -367,13 +367,16 @@ export class AgreementsList extends BaseField
 	showAgreementLoader(): Promise
 	{
 		const loader = this.getAgreementLoader();
-		Dom.append(loader.layout, this.getListContainer());
-		return this.getAgreementLoader().show(this.getListContainer());
+		const container = this.getListContainer();
+		Dom.append(loader.layout, container);
+		return loader.show(container);
 	}
 
 	hideAgreementLoader(): Promise
 	{
-		return this.getAgreementLoader().hide();
+		const loader = this.getAgreementLoader();
+		Dom.remove(loader.layout);
+		return loader.hide();
 	}
 
 	onAgreementsMenuItemClick(itemOptions)
@@ -385,10 +388,8 @@ export class AgreementsList extends BaseField
 			.prepareOptions(this.options.formOptions, {agreements: [{id: itemOptions.id}]})
 			.then((result) => {
 				void this.hideAgreementLoader();
-				setTimeout(() => {
-					this.addItem(result.data.agreements[0]);
-					this.emit('onChange', {skipPrepare: true});
-				}, 200);
+				this.addItem(result.data.agreements[0]);
+				this.emit('onChange', {skipPrepare: true});
 			});
 
 		this.refreshAgreementsMenu();
@@ -519,6 +520,7 @@ export class AgreementsList extends BaseField
 		this.loadAgreementsList()
 			.then((agreements) => {
 				this.setAgreementsList(agreements);
+				FormSettingsPanel.getInstance().setAgreements(agreements);
 
 				const currentlyEdited = this.getCurrentlyEdited();
 				if (currentlyEdited && currentlyEdited.id === 0)

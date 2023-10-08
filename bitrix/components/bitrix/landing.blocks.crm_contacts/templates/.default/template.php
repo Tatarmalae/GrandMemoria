@@ -1,4 +1,7 @@
 <?php
+
+use Bitrix\Main\Text\HtmlFilter;
+
 if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 {
 	die();
@@ -39,6 +42,7 @@ if (!empty($arResult['ALERTS']))
 	$alerts .= '</div></div>';
 }
 
+$arResult['CONTACTS']['phones'][0] = HtmlFilter::encode($arResult['CONTACTS']['phones'][0]);
 $textAlign = $arParams['BUTTON_POSITION'] === 'right' ? 'text-left' : 'text-right';
 $textBlock = <<<HTML
 		<div class="crmcontacts-text-block {$textAlign} col-8">
@@ -56,7 +60,7 @@ HTML;
 $buttonAlign = $arParams['BUTTON_POSITION'] === 'right' ? 'text-right d-flex justify-content-end' : 'text-left';
 $buttonBlock = <<<HTML
 		<div class="crmcontacts-button-block {$buttonAlign} col-4">
-			<a class="crmcontacts-button-button btn btn-sm u-theme-bitrix-btn-v6 g-brd-5 g-rounded-20 g-color-white"
+			<a class="crmcontacts-button-button btn g-color-white g-rounded-50 g-btn-px-m g-btn-size-md g-theme-bitrix-btn-v6"
 				href="tel:{$arResult['CONTACTS']['phones'][0]}">
 				{$arParams['BUTTON_TITLE']}
 			</a>

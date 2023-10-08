@@ -4,11 +4,17 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 	die();
 }
 
-use \Bitrix\Landing\Hook\Page\Settings;
-use \Bitrix\Main\ModuleManager;
+use Bitrix\Landing\Hook\Page\Settings;
+use Bitrix\Landing\Landing;
+use Bitrix\Landing\Site;
+use Bitrix\Main\ModuleManager;
+use Bitrix\Main\Loader;
+use Bitrix\Catalog;
 
 class StoreCatalogListBlock extends \Bitrix\Landing\LandingBlock
 {
+	protected $catalogIncluded;
+
 	/**
 	 * Set cart position (top, left, ...).
 	 * @return void
@@ -82,12 +88,37 @@ class StoreCatalogListBlock extends \Bitrix\Landing\LandingBlock
 	}
 
 	/**
+	 * Redirects to site 404 page, if that page exists.
+	 * @param int $siteId Site id.
+	 * @return void
+	 */
+	private function redirectTo404ifExists(int $siteId): void
+	{
+		$res = Site::getList([
+			'select' => [
+				'LANDING_ID_404'
+			],
+			'filter' => [
+				'=ID' => $siteId,
+				'>LANDING_ID_404' => 0
+			],
+			'limit' => 1
+		]);
+		if ($row = $res->fetch())
+		{
+			localRedirect(Landing::createInstance($row['LANDING_ID_404'])->getPublicUrl(), true, '301 Moved Permanently');
+		}
+	}
+
+	/**
 	 * Method, which will be called once time.
 	 * @param array Params array.
 	 * @return void
 	 */
 	public function init(array $params = [])
 	{
+		$this->catalogIncluded = Loader::includeModule('catalog');
+
 		$this->params = Settings::getDataForSite(
 			$params['site_id']
 		);
@@ -100,15 +131,20 @@ class StoreCatalogListBlock extends \Bitrix\Landing\LandingBlock
 		$sectionId = 0;
 		$sectionCode = '';
 		$variables = \Bitrix\Landing\Landing::getVariables();
-		if (isset($variables['sef'][0]))
+		if (isset($variables['sef'][0]) && $variables['sef'][0] !== 'item')
 		{
 			$sectionCode = $variables['sef'][0];
-			if (\Bitrix\Main\Loader::includeModule('iblock'))
+			if (Loader::includeModule('iblock'))
 			{
 				$sectionId = \CIBlockFindTools::GetSectionIDByCodePath(
 					$this->params['IBLOCK_ID'],
 					$sectionCode
 				);
+
+				if (!$sectionId)
+				{
+					$this->redirectTo404ifExists($this->params['SITE_ID']);
+				}
 			}
 		}
 
@@ -227,5 +263,50 @@ class StoreCatalogListBlock extends \Bitrix\Landing\LandingBlock
 			$this->params['FIRST_TIME'] = false;
 		}
 		$this->params['ACTION_VARIABLE'] = 'action_' . $block->getId();
+
+		$this->params['FILTER_NAME'] = 'arrFilter';
+
+		$this->setElementListFilter();
+	}
+
+	private function setFilter(string $name, array $filter): void
+	{
+		$currentFilter = $GLOBALS[$name] ?? [];
+		if (!is_array($currentFilter))
+		{
+			$currentFilter = [];
+		}
+
+		$GLOBALS[$name] = array_merge(
+			$currentFilter,
+			$filter
+		);
+	}
+
+	private function setElementListFilter(): void
+	{
+		$filterName = $this->get('FILTER_NAME');
+		if ($filterName === null || $filterName === '')
+		{
+			return;
+		}
+
+		$listFilter = [];
+
+		if ($this->catalogIncluded)
+		{
+			if (class_exists('\Bitrix\Catalog\Product\SystemField\ProductMapping'))
+			{
+				$listFilter = Catalog\Product\SystemField\ProductMapping::getExtendedFilterByArea(
+					$listFilter,
+					Catalog\Product\SystemField\ProductMapping::MAP_LANDING
+				);
+			}
+		}
+
+		if (!empty($listFilter))
+		{
+			$this->setFilter($filterName, $listFilter);
+		}
 	}
 }

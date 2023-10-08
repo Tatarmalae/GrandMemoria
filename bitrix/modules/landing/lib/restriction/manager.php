@@ -79,7 +79,23 @@ class Manager
 				'\Bitrix\Landing\Restriction\Block', 'isDynamicEnabled'
 			]
 		],
+		'limit_crm_free_superblock1' => [
+			'check_callback' => [
+				'\Bitrix\Landing\Restriction\Block', 'isDesignerAllowed'
+			]
+		],
+		'limit_crm_free_knowledge_base_project' => [
+			'check_callback' => [
+				'\Bitrix\Landing\Restriction\Knowledge', 'isAllowedInGroup'
+			]
+		]
 	];
+
+	/**
+	 * Current temporary functions.
+	 * @var array
+	 */
+	protected static $tmpFeatures = [];
 
 	/**
 	 * Returns map's item by code.
@@ -187,21 +203,65 @@ class Manager
 	 * Checks restriction existing by code.
 	 * @param string $code Restriction code.
 	 * @param array $params Additional params.
+	 * @param string $cacheSalt Additional cache salt.
 	 * @return bool
 	 */
-	public static function isAllowed(string $code, array $params = []): bool
+	public static function isAllowed(string $code, array $params = [], string $cacheSalt = ''): bool
 	{
 		static $cache = [];
+		if (
+			isset(self::$tmpFeatures[$code]) &&
+			self::$tmpFeatures[$code]
+		)
+		{
+			return true;
+		}
+
+		$cacheCode = $code . ($cacheSalt ? '_' : '') . $cacheSalt;
+
+		if (array_key_exists($cacheCode, $cache))
+		{
+			return $cache[$cacheCode];
+		}
 
 		if ($mapItem = self::getMapItem($code))
 		{
-			if (!array_key_exists($code, $cache))
-			{
-				$cache[$code] = call_user_func_array($mapItem['check_callback'], [$mapItem['code'], $params]);
-			}
-			return $cache[$code];
+			$cache[$cacheCode] = call_user_func_array($mapItem['check_callback'], [$mapItem['code'], $params]);
+			return $cache[$cacheCode];
 		}
 
 		return true;
+	}
+
+	/**
+	 * Enable some feature for moment.
+	 * @param string $feature Feature code.
+	 * @return void
+	 */
+	public static function enableFeatureTmp($feature)
+	{
+		self::$tmpFeatures[$feature] = true;
+	}
+
+	/**
+	 * Disable some tmp feature.
+	 * @param string $feature Feature code.
+	 * @return void
+	 */
+	public static function disableFeatureTmp($feature)
+	{
+		if (isset(self::$tmpFeatures[$feature]))
+		{
+			unset(self::$tmpFeatures[$feature]);
+		}
+	}
+
+	/**
+	 * Disable all tmp feature.
+	 * @return void
+	 */
+	public static function disableAllFeaturesTmp()
+	{
+		self::$tmpFeatures = [];
 	}
 }

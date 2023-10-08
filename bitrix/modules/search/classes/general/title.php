@@ -6,9 +6,10 @@ class CAllSearchTitle extends CDBResult
 	var $_arStemFunc;
 	var $minLength = 1;
 
-	function __construct()
+	function __construct($res = null)
 	{
 		$this->_arStemFunc = stemming_init(LANGUAGE_ID);
+		parent::__construct($res);
 	}
 
 	function Search($phrase = "", $nTopCount = 5, $arParams = array(), $bNotFilter = false, $order = "")
@@ -51,7 +52,7 @@ class CAllSearchTitle extends CDBResult
 				";
 
 				$r = $DB->Query($DB->TopSql($strSql, $nTopCount + 1));
-				parent::CDBResult($r);
+				parent::__construct($r);
 				return true;
 			}
 		}
@@ -84,9 +85,7 @@ class CAllSearchTitle extends CDBResult
 			$site_id = $r["SITE_ID"];
 			if (!isset($arSite[$site_id]))
 			{
-				$b = "sort";
-				$o = "asc";
-				$rsSite = CSite::GetList($b, $o, array("ID" => $site_id));
+				$rsSite = CSite::GetList('', '', array("ID" => $site_id));
 				$arSite[$site_id] = $rsSite->Fetch();
 			}
 			$r["DIR"] = $arSite[$site_id]["DIR"];
@@ -98,7 +97,13 @@ class CAllSearchTitle extends CDBResult
 			if (mb_substr($r["URL"], 0, 1) == "=")
 			{
 				foreach (GetModuleEvents("search", "OnSearchGetURL", true) as $arEvent)
-					$r["URL"] = ExecuteModuleEventEx($arEvent, array($r));
+				{
+					$newUrl = ExecuteModuleEventEx($arEvent, array($r));
+					if (isset($newUrl))
+					{
+						$r["URL"] = $newUrl;
+					}
+				}
 			}
 
 			$r["URL"] = str_replace(

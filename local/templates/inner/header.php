@@ -40,7 +40,7 @@
             <div class="title<?php $APPLICATION->ShowViewContent('no_bg'); ?>">
                 <div class="title-bg">
                     <div class="content">
-                        <img class="lazy" src="" data-src="<?= SITE_STYLE_PATH ?>/img/content/title/bg.svg" alt="<?= SITE_SERVER_NAME ?>">
+                        <img class="lazy" src="" data-src="<?= SITE_STYLE_PATH ?>/img/content/title/bg.svg" width="290" height="483" alt="<?= SITE_SERVER_NAME ?>">
                     </div>
                 </div>
                 <div class="content">

@@ -35,7 +35,6 @@ other parameters:
 any of the default parameters can be overridden. defaults can be changed by BX.ajax.Setup() - for all further requests!
 */
 	},
-	ajax_session = null,
 	loadedScripts = {},
 	loadedScriptsQueue = [],
 	r = {
@@ -143,6 +142,16 @@ BX.ajax = function(config)
 			BX.localStorage.set('ajax-' + config.lsId, 'BXAJAXWAIT', config.lsTimeout);
 		}
 
+		if (BX.Type.isFunction(config.onprogress))
+		{
+			BX.bind(config.xhr, 'progress', config.onprogress);
+		}
+
+		if (BX.Type.isFunction(config.onprogressupload) && config.xhr.upload)
+		{
+			BX.bind(config.xhr.upload, 'progress', config.onprogressupload);
+		}
+
 		config.xhr.open(config.method, config.url, config.async);
 
 		if (!config.skipBxHeader && !BX.ajax.isCrossDomain(config.url))
@@ -158,11 +167,6 @@ BX.ajax = function(config)
 		{
 			for (i = 0; i < config.headers.length; i++)
 				config.xhr.setRequestHeader(config.headers[i].name, config.headers[i].value);
-		}
-
-		if(!!config.onprogress)
-		{
-			BX.bind(config.xhr, 'progress', config.onprogress);
 		}
 
 		var bRequestCompleted = false;
@@ -333,7 +337,7 @@ BX.ajax.getHostPort = function(protocol, host)
 	return "";
 };
 
-BX.ajax.__prepareOnload = function(scripts)
+BX.ajax.__prepareOnload = function(scripts, ajax_session)
 {
 	if (scripts.length > 0)
 	{
@@ -352,7 +356,7 @@ BX.ajax.__prepareOnload = function(scripts)
 	BX.CaptureEvents(window, 'load');
 };
 
-BX.ajax.__runOnload = function()
+BX.ajax.__runOnload = function(ajax_session)
 {
 	if (null != BX.ajax['onload_' + ajax_session])
 	{
@@ -442,31 +446,27 @@ BX.ajax.processRequestData = function(data, config)
 		break;
 	}
 
-	var bSessionCreated = false;
-	if (null == ajax_session)
+	if (styles.length > 0)
+	{
+		BX.loadCSS(styles);
+	}
+
+	let ajax_session = null;
+	if (config.emulateOnload)
 	{
 		ajax_session = parseInt(Math.random() * 1000000);
-		bSessionCreated = true;
+		BX.ajax.__prepareOnload(scripts, ajax_session);
 	}
 
-	if (styles.length > 0)
-		BX.loadCSS(styles);
-
-	if (config.emulateOnload)
-			BX.ajax.__prepareOnload(scripts);
-
-	var cb = BX.DoNothing;
-	if(config.emulateOnload || bSessionCreated)
+	const cb = BX.defer(function()
 	{
-		cb = BX.defer(function()
+		if (config.emulateOnload)
 		{
-			if (config.emulateOnload)
-				BX.ajax.__runOnload();
-			if (bSessionCreated)
-				ajax_session = null;
-			BX.onCustomEvent(config.xhr, 'onAjaxSuccessFinish', [config]);
-		});
-	}
+			BX.ajax.__runOnload(ajax_session);
+		}
+
+		BX.onCustomEvent(config.xhr, 'onAjaxSuccessFinish', [config]);
+	});
 
 	try
 	{
@@ -671,22 +671,14 @@ BX.ajax.promise = function(config)
 	{
 		result.fulfill(data);
 	};
-	config.onfailure = function(reason, data)
+	config.onfailure = function(reason, httpStatus, config)
 	{
 		result.reject({
 			reason: reason,
-			data: data
+			data: httpStatus,
+			ajaxConfig: config,
+			xhr: config.xhr
 		});
-	};
-	config.onprogress = function(data)
-	{
-		if (data.position == 0 && data.totalSize == 0)
-		{
-			result.reject({
-				reason: 'progress',
-				data: data
-			});
-		}
 	};
 
 	var xhr = BX.ajax(config);
@@ -842,6 +834,13 @@ var prepareAjaxConfig = function(config)
 {
 	config = BX.type.isPlainObject(config) ? config : {};
 
+	config.headers = config.headers || [];
+	config.headers.push({name: 'X-Bitrix-Csrf-Token', value: BX.bitrix_sessid()});
+	if (BX.message.SITE_ID)
+	{
+		config.headers.push({name: 'X-Bitrix-Site-Id', value: BX.message.SITE_ID});
+	}
+
 	if (typeof config.json !== 'undefined')
 	{
 		if (!BX.type.isPlainObject(config.json))
@@ -849,39 +848,21 @@ var prepareAjaxConfig = function(config)
 			throw new Error('Wrong `config.json`, plain object expected.')
 		}
 
-		config.headers = config.headers || [];
 		config.headers.push({name: 'Content-Type', value: 'application/json'});
-		config.headers.push({name: 'X-Bitrix-Csrf-Token', value: BX.bitrix_sessid()});
-		if (BX.message.SITE_ID)
-		{
-			config.headers.push({name: 'X-Bitrix-Site-Id', value: BX.message.SITE_ID});
-		}
-
 		config.data = config.json;
 		config.preparePost = false;
 	}
 	else if (config.data instanceof FormData)
 	{
 		config.preparePost = false;
-
-		config.data.append('sessid', BX.bitrix_sessid());
-		if (BX.message.SITE_ID)
-		{
-			config.data.append('SITE_ID', BX.message.SITE_ID);
-		}
 		if (typeof config.signedParameters !== 'undefined')
 		{
 			config.data.append('signedParameters', config.signedParameters);
 		}
 	}
-	else
+	else if (BX.type.isPlainObject(config.data) || BX.Type.isNil(config.data))
 	{
 		config.data = BX.type.isPlainObject(config.data) ? config.data : {};
-		if (BX.message.SITE_ID)
-		{
-			config.data.SITE_ID = BX.message.SITE_ID;
-		}
-		config.data.sessid = BX.bitrix_sessid();
 		if (typeof config.signedParameters !== 'undefined')
 		{
 			config.data.signedParameters = config.signedParameters;
@@ -929,7 +910,12 @@ var buildAjaxPromiseToRestoreCsrf = function(config, withoutRestoringCsrf)
 				if (error.code === 'invalid_csrf' && error.customData.csrf)
 				{
 					BX.message({'bitrix_sessid': error.customData.csrf});
-					originalConfig.data.sessid = BX.bitrix_sessid();
+
+					originalConfig.headers = originalConfig.headers || [];
+					originalConfig.headers = originalConfig.headers.filter(function(header) {
+						return header && header.name !== 'X-Bitrix-Csrf-Token';
+					});
+					originalConfig.headers.push({name: 'X-Bitrix-Csrf-Token', value: BX.bitrix_sessid()});
 
 					csrfProblem = true;
 				}
@@ -952,6 +938,18 @@ var buildAjaxPromiseToRestoreCsrf = function(config, withoutRestoringCsrf)
 		return response;
 	}).catch(function(data) {
 		var ajaxReject = new BX.Promise();
+
+		var originalJsonResponse;
+		if (BX.type.isPlainObject(data) && data.xhr && data.xhr.responseText)
+		{
+			try
+			{
+				originalJsonResponse = JSON.parse(data.xhr.responseText);
+				data = originalJsonResponse;
+			}
+			catch (err)
+			{}
+		}
 
 		if (BX.type.isPlainObject(data) && data.status && data.hasOwnProperty('data'))
 		{
@@ -1043,7 +1041,9 @@ BX.ajax.runAction = function(action, config)
 		timeout: config.timeout,
 		preparePost: config.preparePost,
 		headers: config.headers,
-		onrequeststart: config.onrequeststart
+		onrequeststart: config.onrequeststart,
+		onprogress: config.onprogress,
+		onprogressupload: config.onprogressupload
 	});
 };
 
@@ -1081,7 +1081,9 @@ BX.ajax.runComponentAction = function (component, action, config)
 		timeout: config.timeout,
 		preparePost: config.preparePost,
 		headers: config.headers,
-		onrequeststart: (config.onrequeststart ? config.onrequeststart : null)
+		onrequeststart: (config.onrequeststart ? config.onrequeststart : null),
+		onprogress: config.onprogress,
+		onprogressupload: config.onprogressupload
 	});
 };
 

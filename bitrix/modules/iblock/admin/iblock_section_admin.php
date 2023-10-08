@@ -2,8 +2,11 @@
 /** @global CMain $APPLICATION */
 /** @global $DB CDatabase */
 /** @global CUserTypeManager $USER_FIELD_MANAGER */
+
 use Bitrix\Main,
 	Bitrix\Main\Loader,
+	Bitrix\Catalog\Access\ActionDictionary,
+	Bitrix\Catalog\Access\AccessController,
 	Bitrix\Iblock,
 	Bitrix\Iblock\Grid\ActionType,
 	Bitrix\Catalog;
@@ -46,7 +49,21 @@ if($bBadBlock)
 
 $useTree = (isset($_GET['tree']) && $_GET['tree'] === 'Y');
 
-$urlBuilder = Iblock\Url\AdminPage\BuilderManager::getInstance()->getBuilder();
+$request = Main\Context::getCurrent()->getRequest();
+// TODO: hack for psevdo-excel export in crm (\CAdminUiList::GetSystemContextMenu)
+$urlBuilderManager = Iblock\Url\AdminPage\BuilderManager::getInstance();
+$urlBuilder = null;
+$urlBuilderId = (string)$request->get('urlBuilderId') ;
+if ($urlBuilderId !== '')
+{
+	$urlBuilder = $urlBuilderManager->getBuilder($urlBuilderId);
+}
+// TODO end
+if ($urlBuilder === null)
+{
+	$urlBuilder = $urlBuilderManager->getBuilder();
+}
+unset($urlBuilderManager);
 if ($urlBuilder === null)
 {
 	$APPLICATION->SetTitle($arIBTYPE["NAME"]);
@@ -55,6 +72,13 @@ if ($urlBuilder === null)
 	require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/epilog_admin.php");
 	die();
 }
+$urlBuilderId = $urlBuilder->getId();
+//TODO: hack fo compensation BX.adminSidePanel.prototype.checkActionByUrl where remove IFRAME=Y&IFRAME_TYPE=SIDE_SLIDER from url
+if ($urlBuilderId === 'INVENTORY')
+{
+	$urlBuilder->setSliderMode(true);
+}
+// end hack
 $urlBuilder->setIblockId($IBLOCK_ID);
 $urlBuilder->setUrlParams(array());
 
@@ -63,6 +87,8 @@ $pageConfig = array(
 	'CHECK_NEW_CARD' => false,
 	'USE_NEW_CARD' => false,
 	'CATALOG' => false,
+	'PUBLIC_CRM_CATALOG' => false,
+	'PUBLIC_MODE' => false,
 
 	'LIST_ID_PREFIX' => '',
 	'LIST_ID' => $type.'.'.$IBLOCK_ID,
@@ -71,16 +97,22 @@ $pageConfig = array(
 
 	'ALLOW_USER_EDIT' => true
 );
-switch ($urlBuilder->getId())
+switch ($urlBuilderId)
 {
 	case 'CRM':
 	case 'SHOP':
+	case 'INVENTORY':
 		$pageConfig['LIST_ID_PREFIX'] = 'tbl_catalog_section_';
 		$pageConfig['CHECK_NEW_CARD'] = true;
 		$pageConfig['SHOW_NAVCHAIN'] = false;
-		$pageConfig['CONTEXT_PATH'] = '/shop/settings/cat_section_admin.php'; // TODO: temporary hack
+		$pageConfig['CONTEXT_PATH'] = '/shop/settings/cat_section_admin.php?' . $urlBuilder->getUrlBuilderIdParam(); // TODO: temporary hack
 		$pageConfig['CATALOG'] = true;
 		$pageConfig['ALLOW_USER_EDIT'] = false;
+		if (Loader::includeModule('crm'))
+		{
+			$pageConfig['PUBLIC_CRM_CATALOG'] = \Bitrix\Crm\Product\Catalog::getDefaultId() === $IBLOCK_ID;
+		}
+		$pageConfig['PUBLIC_MODE'] = true;
 		break;
 	case 'CATALOG':
 		$pageConfig['LIST_ID_PREFIX'] = 'tbl_catalog_section_';
@@ -132,14 +164,9 @@ $catalog = false;
 if ($catalogIncluded)
 {
 	$catalog = CCatalogSKU::GetInfoByIBlock($arIBlock["ID"]);
-	if (empty($catalog))
+	if (empty($catalog) || !AccessController::getCurrent()->check(ActionDictionary::ACTION_PRICE_EDIT))
 	{
 		$useCatalog = false;
-	}
-	else
-	{
-		if (!$USER->CanDoOperation('catalog_price'))
-			$useCatalog = false;
 	}
 }
 
@@ -153,6 +180,7 @@ $oSort = new CAdminUiSorting($sTableID, "timestamp_x", "desc");
 global $by, $order;
 $arOrder = (mb_strtoupper($by) === "ID"? array($by => $order): array($by => $order, "ID" => "ASC"));
 $lAdmin = new CAdminUiList($sTableID, $oSort);
+$lAdmin->setPublicModeState($pageConfig['PUBLIC_MODE']);
 
 $groupParams = array(
 	'ENTITY_ID' => $sTableID,
@@ -172,6 +200,8 @@ if ($useTree)
 {
 	$lAdmin->AddVisibleHeaderColumn("DEPTH_LEVEL");
 }
+
+// region Filter definitions
 
 $sectionItems = array(
 	"" => GetMessage("IBLOCK_ALL"),
@@ -210,32 +240,26 @@ $filterFields = array(
 		"filterable" => ""
 	)
 );
-if ($canViewUserList)
-{
-	$filterFields[] = array(
-		"id" => "MODIFIED_BY",
-		"name" => GetMessage("IBSEC_A_MODIFIED_BY"),
-		"type" => "custom_entity",
-		"selector" => array("type" => "user"),
-		"filterable" => ""
-	);
-}
+$filterFields[] = array(
+	"id" => "MODIFIED_BY",
+	"name" => GetMessage("IBSEC_A_MODIFIED_BY"),
+	"type" => "custom_entity",
+	"selector" => array("type" => "user"),
+	"filterable" => ""
+);
 $filterFields[] = array(
 	"id" => "DATE_CREATE",
 	"name" => GetMessage("IBSEC_A_DATE_CREATE"),
 	"type" => "date",
 	"filterable" => ""
 );
-if ($canViewUserList)
-{
-	$filterFields[] = array(
-		"id" => "CREATED_BY",
-		"name" => GetMessage("IBSEC_A_CREATED_BY"),
-		"type" => "custom_entity",
-		"selector" => array("type" => "user"),
-		"filterable" => ""
-	);
-}
+$filterFields[] = array(
+	"id" => "CREATED_BY",
+	"name" => GetMessage("IBSEC_A_CREATED_BY"),
+	"type" => "custom_entity",
+	"selector" => array("type" => "user"),
+	"filterable" => ""
+);
 $filterFields[] = array(
 	"id" => "ACTIVE",
 	"name" => GetMessage("IBSEC_A_ACTIVE"),
@@ -260,6 +284,8 @@ $filterFields[] = array(
 
 global $USER_FIELD_MANAGER;
 $USER_FIELD_MANAGER->AdminListAddFilterFieldsV2($entity_id, $filterFields);
+
+// endregion
 
 //We have to handle current section in a special way
 $parent_section_id = $find_section_section === '' || $find_section_section === null ? '' : (int)$find_section_section;
@@ -527,6 +553,7 @@ if ($arID = $lAdmin->GroupAction())
 	}
 }
 
+// region Columns definition
 // list header
 $arHeaders = array(
 	array(
@@ -635,6 +662,8 @@ if ($useTree)
 			unset($arHeaders[$i]["sort"]);
 }
 
+// endregion
+
 $lAdmin->AddHeaders($arHeaders);
 
 $arVisibleColumns = $lAdmin->GetVisibleHeaderColumns();
@@ -651,7 +680,7 @@ $arVisibleColumnsMap = array();
 foreach($arVisibleColumns as $value)
 	$arVisibleColumnsMap[$value] = true;
 
-if (isset($_REQUEST["mode"]) && $_REQUEST["mode"] == "excel")
+if ($lAdmin->isExportMode())
 {
 	$arNavParams = false;
 }
@@ -724,6 +753,9 @@ while ($arRes = $rsData->Fetch())
 	));
 
 	$arRows[$arRes["ID"]] = $row = $lAdmin->AddRow($arRes["ID"], $arRes, $sec_list_url, GetMessage("IBSEC_A_LIST"));
+	$row->setConfig([
+		CAdminUiListRow::DEFAULT_ACTION_TYPE_FIELD => CAdminUiListRow::LINK_TYPE_URL,
+	]);
 	$USER_FIELD_MANAGER->AddUserFields($entity_id, $arRes, $row);
 
 	$row->AddViewField("ID", '<a href="'.$edit_url.'" title="'.GetMessage("IBSEC_A_EDIT").'">'.$arRes["ID"].'</a>');
@@ -812,6 +844,7 @@ while ($arRes = $rsData->Fetch())
 		$row->AddViewField("DESCRIPTION", ($row->arRes["DESCRIPTION_TYPE"] == "text" ? htmlspecialcharsEx($row->arRes["DESCRIPTION"]) : HTMLToTxt($row->arRes["DESCRIPTION"])));
 	}
 }
+unset($row);
 
 $arSectionOps = CIBlockSectionRights::UserHasRightTo(
 	$IBLOCK_ID,
@@ -915,6 +948,7 @@ foreach ($arRows as $id => $row)
 
 	$row->AddActions($arActions);
 }
+unset($row);
 
 $actionList = [];
 foreach ($arSectionOps as $arOps)
@@ -979,7 +1013,7 @@ if (CIBlockSectionRights::UserHasRightTo($IBLOCK_ID, $find_section_section, "sec
 				'from' => 'iblock_section_admin',
 			)
 		),
-		"PUBLIC" => $pageConfig['USE_NEW_CARD'],
+		"PUBLIC" => $pageConfig['PUBLIC_MODE'],
 		"SHOW_TITLE" => true,
 		"TITLE" => GetMessage("IBSEC_A_SECTADD_PRESS")
 	);
@@ -1025,7 +1059,7 @@ $aContext[] = array(
 	"LINK" => $urlBuilder->getElementListUrl($parent_section_id),
 	"TITLE" => GetMessage("IBSEC_A_LISTEL_TITLE")
 );
-if ($urlBuilder->getId() == 'IBLOCK')
+if ($urlBuilderId === Iblock\Url\AdminPage\IblockBuilder::TYPE_ID)
 {
 	if ($useTree)
 		$aContext[] = array(
@@ -1049,7 +1083,7 @@ if ($urlBuilder->getId() == 'IBLOCK')
 
 $lAdmin->setContextSettings(array("pagePath" => $pageConfig['CONTEXT_PATH']));
 $contextConfig = array();
-$excelExport = ((string)Main\Config\Option::get("iblock", "excel_export_rights") == "Y"
+$excelExport = (Main\Config\Option::get("iblock", "excel_export_rights") == "Y"
 	? CIBlockRights::UserHasRightTo($IBLOCK_ID, $IBLOCK_ID, "iblock_export")
 	: true
 );
@@ -1112,7 +1146,7 @@ if($pageConfig['CATALOG'])
 	if($parent_section_id > 0)
 	{
 		$rsSection = CIBlockSection::GetList(array(), array("=ID" => $parent_section_id), false, array("NAME"));
-		$arSection = $rsSection->GetNext();
+		$arSection = $rsSection->Fetch();
 		if($arSection)
 			$sSectionName = $arSection["NAME"];
 	}
@@ -1127,7 +1161,7 @@ require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_aft
 
 
 $lAdmin->DisplayFilter($filterFields);
-$lAdmin->DisplayList(array("default_action" => true));
+$lAdmin->DisplayList();
 if($pageConfig['IBLOCK_EDIT'] && CIBlockRights::UserHasRightTo($IBLOCK_ID, $IBLOCK_ID, 'iblock_edit'))
 {
 	echo

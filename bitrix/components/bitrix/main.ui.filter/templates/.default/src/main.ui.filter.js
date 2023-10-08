@@ -12,6 +12,7 @@ import './blocks/sidebar-item';
 
 import './utils';
 import './destination-selector';
+import './entity-selector';
 import './field-controller';
 import './main-ui-control-custom-entity';
 import './search';
@@ -24,3 +25,4 @@ export * from './field/field';
 export * from './api';
 export * from './fields';
 export * from './presets';
+export * from './additional-filter';

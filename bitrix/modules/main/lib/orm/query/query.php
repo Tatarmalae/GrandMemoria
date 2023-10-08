@@ -68,6 +68,9 @@ use Bitrix\Main\Text\StringHelper;
  * @method $this whereNotMatch($column, $value)
  * @see Filter::whereNotMatch()
  *
+ * @method $this whereExpr($expr, $arguments)
+ * @see Filter::whereExpr()
+ *
  * Virtual HAVING methods (proxy to Filter):
  *
  * @method $this having(...$filter)
@@ -778,11 +781,11 @@ class Query
 				{
 					$columnField = $chain->getLastElement()->getValue();
 
-					trigger_error(sprintf(
+					throw new SystemException(sprintf(
 						'Private field %s.%s is restricted in query, use Query::enablePrivateFields() to allow it',
 						$columnField->getEntity()->getDataClass(),
 						$columnField->getName()
-					), E_USER_WARNING);
+					));
 				}
 			}
 		}
@@ -818,7 +821,7 @@ class Query
 	/**
 	 * Adds a runtime field (being created dynamically, opposite to being described statically in the entity map)
 	 *
-	 * @param string|null $name
+	 * @param string|null|Field $name
 	 * @param array|Field $fieldInfo
 	 *
 	 * @return $this
@@ -1154,6 +1157,12 @@ class Query
 						&& fnmatch($localDefinition, $field->getName())
 					)
 					{
+						// skip private fields
+						if ($field instanceof ScalarField && $field->isPrivate())
+						{
+							continue;
+						}
+
 						// skip uf utm single
 						if (
 							substr($field->getName(), 0, 3) == 'UF_' && substr($field->getName(), -7) == '_SINGLE'
@@ -1255,6 +1264,12 @@ class Query
 					// except for references and expressions
 					if ($exp_field instanceof ScalarField)
 					{
+						// skip private fields
+						if ($exp_field->isPrivate())
+						{
+							continue;
+						}
+
 						$exp_chain = clone $chain;
 						$exp_chain->addElement(new ChainElement(
 							$exp_field
@@ -2486,7 +2501,10 @@ class Query
 		// union
 		if (!empty($this->unionHandler))
 		{
-			$query = "({$query})";
+			if ($this->order || $this->limit)
+			{
+				$query = "({$query})";
+			}
 
 			foreach ($this->unionHandler->getQueries() as $union)
 			{

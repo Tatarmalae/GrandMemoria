@@ -1,10 +1,12 @@
 <?php
 namespace Bitrix\Rest\Event;
 
+use Bitrix\Main\Application;
 use Bitrix\Main\Loader;
 use Bitrix\Pull;
 use Bitrix\Rest\EventOfflineTable;
 use Bitrix\Main\EventManager;
+use Bitrix\Rest\Tools\Diagnostics\LoggerManager;
 
 class ProviderOffline implements ProviderOfflineInterface
 {
@@ -13,9 +15,12 @@ class ProviderOffline implements ProviderOfflineInterface
 	 */
 	protected static $instance = null;
 
-	public static function instance()
+	private array $eventList = [];
+	private bool $isFinaliseInit = false;
+
+	public static function instance(): ProviderOffline
 	{
-		if(static::$instance === null)
+		if (static::$instance === null)
 		{
 			static::$instance = new static();
 		}
@@ -25,50 +30,100 @@ class ProviderOffline implements ProviderOfflineInterface
 
 	public function send(array $eventList)
 	{
+		$this->eventList = array_merge($this->eventList, $eventList);
+		$this->registerFinalize();
+	}
+
+	/**
+	 * Registers background saving events.
+	 */
+	public function registerFinalize(): void
+	{
+		if (!$this->isFinaliseInit)
+		{
+			$this->isFinaliseInit = true;
+			Application::getInstance()->addBackgroundJob([__CLASS__, 'runFinalize']);
+		}
+	}
+
+	/**
+	 * Runs finalize
+	 */
+	public static function runFinalize(): void
+	{
+		$instance = static::instance();
+		$instance->finalize();
+	}
+
+	/**
+	 * Saves events,
+	 */
+	public function finalize(): void
+	{
 		$serverAuthData = $this->getServerAuthData();
 
-		$offlineEventsCount = array();
-		$offlineEventsApp = array();
+		$offlineEventsCount = [];
+		$offlineEventsApp = [];
 
-		foreach($eventList as $item)
+		foreach ($this->eventList as $item)
 		{
 			$application = $item['APPLICATION'];
 			$handler = $item['HANDLER'];
 
-			if(
+			if (
 				$serverAuthData['client_id'] !== $application['CLIENT_ID']
 				|| $serverAuthData['auth_connector'] !== $handler['CONNECTOR_ID']
 			)
 			{
-				if(!isset($offlineEventsCount[$application['CLIENT_ID']]))
+				if (!isset($offlineEventsCount[$application['CLIENT_ID']]))
 				{
-					$offlineEventsCount[$application['CLIENT_ID']] = array();
+					$offlineEventsCount[$application['CLIENT_ID']] = [];
 				}
 
-				if(!isset($offlineEventsCount[$application['CLIENT_ID']][$handler['CONNECTOR_ID']]))
+				if (!isset($offlineEventsCount[$application['CLIENT_ID']][$handler['CONNECTOR_ID']]))
 				{
 					$offlineEventsCount[$application['CLIENT_ID']][$handler['CONNECTOR_ID']] = 0;
 				}
 
-				EventOfflineTable::callEvent(array(
-					'APP_ID' => $application['ID'],
-					'EVENT_NAME' => $handler['EVENT_NAME'],
-					'EVENT_DATA' => $item['DATA'],
-					'EVENT_ADDITIONAL' => $item['AUTH'],
-					'CONNECTOR_ID' => $handler['CONNECTOR_ID'],
-				));
+				EventOfflineTable::callEvent(
+					[
+						'APP_ID' => $application['ID'],
+						'EVENT_NAME' => $handler['EVENT_NAME'],
+						'EVENT_DATA' => $item['DATA'],
+						'EVENT_ADDITIONAL' => $item['AUTH'],
+						'CONNECTOR_ID' => $handler['CONNECTOR_ID'],
+					]
+				);
 
 				$offlineEventsCount[$application['CLIENT_ID']][$handler['CONNECTOR_ID']]++;
 				$offlineEventsApp[$application['ID']] = true;
 			}
+			else
+			{
+				$logger = LoggerManager::getInstance()->getLogger();
+				if ($logger)
+				{
+					$logger->debug(
+						"\n{delimiter}\n"
+						. "{date} - {host}\n{delimiter}\n"
+						. "Event skipped because initializer is current application. \n"
+						. "auth: {serverAuthData}"
+						. "app: {application}\n",
+						[
+							'serverAuthData' => $serverAuthData,
+							'application' => $application,
+						]
+					);
+				}
+			}
 		}
 
-		if(count($offlineEventsCount) > 0)
+		if (!empty($offlineEventsCount))
 		{
 			$this->notifyApplications($offlineEventsCount);
 		}
 
-		if(count($offlineEventsApp) > 0)
+		if (!empty($offlineEventsApp))
 		{
 			$this->sendOfflineEvent(array_keys($offlineEventsApp));
 		}
@@ -92,8 +147,6 @@ class ProviderOffline implements ProviderOfflineInterface
 		return $serverAuthData;
 	}
 
-
-
 	protected function sendOfflineEvent(array $appList)
 	{
 		foreach (EventManager::getInstance()->findEventHandlers(
@@ -109,7 +162,7 @@ class ProviderOffline implements ProviderOfflineInterface
 	{
 		foreach($counters as $clientId => $connectorCounters)
 		{
-			if(is_array($connectorCounters) && count($connectorCounters) > 0)
+			if(is_array($connectorCounters) && !empty($connectorCounters))
 			{
 				$this->notifyApplication($clientId, $connectorCounters);
 			}
@@ -137,6 +190,4 @@ class ProviderOffline implements ProviderOfflineInterface
 			), $clientId);
 		}
 	}
-
 }
-

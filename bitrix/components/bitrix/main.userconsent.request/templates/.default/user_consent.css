@@ -14,13 +14,15 @@
 }
 
 .main-user-consent-request-popup-cont {
-	min-height: 290px; /* loader magic */
+	min-height: 290px;
 	position: absolute;
 	top: 50%;
 	left: 50%;
 	margin: 0 auto;
 	padding: 20px;
 	min-width: 320px;
+	width: 100%;
+	max-width: 600px;
 	background: #fff;
 	text-align: center;
 	-webkit-transform: translate(-50%, -50%);
@@ -34,7 +36,7 @@
 
 .main-user-consent-request-popup-header {
 	margin: 0 0 10px 0;
-	font: normal 18px "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font: normal 18px var(--ui-font-family-primary, var(--ui-font-family-helvetica));
 	color: #000;
 	text-align: left;
 	text-overflow: ellipsis;
@@ -68,7 +70,7 @@
 	padding: 0 18px;
 	border: none;
 	border-radius: 2px;
-	font: normal 12px/39px "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font: normal 12px/39px var(--ui-font-family-primary, var(--ui-font-family-helvetica));
 	color: #535c69;
 	outline: none;
 	vertical-align: middle;
@@ -104,7 +106,6 @@
 	border: 1px solid #999;
 	overflow: auto;
 	padding: 8px;
-	width: 600px;
 	text-align: left;
 	color: rgb(84, 84, 84);
 }
@@ -207,5 +208,11 @@
 	}
 	.main-user-consent-request-popup-link a {
 		max-width: 200px;
+	}
+}
+
+@media (max-width: 768px) {
+	.main-user-consent-request-popup-cont {
+		height: 100%;
 	}
 }

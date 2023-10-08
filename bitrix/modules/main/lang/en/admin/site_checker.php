@@ -77,15 +77,16 @@ $MESS["MAIN_SC_NO_IM"] = "The Web Messenger module is not installed.";
 $MESS["MAIN_SC_NO_LDAP_INTEGRATION"] = "AD server integration is not configured.";
 $MESS["MAIN_SC_NO_LDAP_MODULE"] = "The LDAP module is not installed.";
 $MESS["MAIN_SC_NO_NTLM"] = "Current connection does not use NTLM authentication";
-$MESS["MAIN_SC_NO_PULL_EXTERNAL"] = "External connection to the Intranet was a success but the nginx-push-stream message read port is unavailable. Mobile instant messaging is unavailable.";
-$MESS["MAIN_SC_NO_PUSH_STREAM"] = "nginx-push-stream module is required to show comments in real time but not configured properly.";
+$MESS["MAIN_SC_NO_PULL_EXTERNAL_2"] = "External connection to your Bitrix24 was established. However, the Push server read port is unavailable. Instant messaging will not be available in mobile app.";
+$MESS["MAIN_SC_NO_PUSH_STREAM_2"] = "Push server is not configured in the Push and Pull module settings. This server is required to show the Feed comments in real time.";
 $MESS["MAIN_SC_NO_PUSH_STREAM_CONNECTION"] = "Cannot connect to nginx-push-stream module for sending instant messages";
-$MESS["MAIN_SC_NO_PUSH_STREAM_VIDEO"] = "nginx-push-stream module is required to make video calls but not configured properly.";
+$MESS["MAIN_SC_NO_PUSH_STREAM_CONNECTION_2"] = "Cannot connect to the Push server to send instant messages";
+$MESS["MAIN_SC_NO_PUSH_STREAM_VIDEO_2"] = "Push server is not configured in the Push and Pull module settings. This server is required to make video calls.";
 $MESS["MAIN_SC_NO_REST_MODULE"] = "The Rest module is not installed.";
 $MESS["MAIN_SC_NO_SOCIAL_MODULE"] = "The social networking module is not installed.";
 $MESS["MAIN_SC_NO_SOCIAL_SERVICES"] = "No social networking service configured in the social networking module settings.";
 $MESS["MAIN_SC_NO_SOCIAL_SERVICES_24NET"] = "bitrix24.net integration is not configured in the Social Service module settings.";
-$MESS["MAIN_SC_NO_SUB_CONNECTION"] = "Cannot connect to nginx-push-stream module for reading instant messages";
+$MESS["MAIN_SC_NO_SUB_CONNECTION_2"] = "Cannot connect to the Push server to read instant messages";
 $MESS["MAIN_SC_NO_WEBDAV_MODULE"] = "The Document Library module is not installed.";
 $MESS["MAIN_SC_NTLM_SUCCESS"] = "NTLM authentication is OK, current user: ";
 $MESS["MAIN_SC_OPTION_SWITCHED_OFF"] = "NTLM authentication is enabled in the LDAP module settings.";
@@ -94,6 +95,7 @@ $MESS["MAIN_SC_PATH_SUB"] = "The message read URL is incorrect in the Push and P
 $MESS["MAIN_SC_PERFORM"] = "Performance";
 $MESS["MAIN_SC_PERF_TEST"] = "Server performance test";
 $MESS["MAIN_SC_PULL_NOT_REGISTERED"] = "Error registering on Bitrix provided push server";
+$MESS["MAIN_SC_PULL_UNSUPPORTED_VERSION"] = "The Push and Pull module settings specify a deprecated version of Push server. You have to update your Push server. <a href=\"https://training.bitrix24.com/support/training/course/index.php?COURSE_ID=26&LESSON_ID=21596\">Learn more.</a> ";
 $MESS["MAIN_SC_PUSH_INCORRECT"] = "nginx-push-stream module functions incorrectly.";
 $MESS["MAIN_SC_REAL_TIME"] = "Real time communications and video calls";
 $MESS["MAIN_SC_REQUIRED_MODS_DESC"] = "Checks that all the required modules are installed and the most essential settings are correct. Otherwise, intranet may not function properly.";
@@ -101,9 +103,8 @@ $MESS["MAIN_SC_SEARCH_INCORRECT"] = "Document contents indexing does not functio
 $MESS["MAIN_SC_SITE_GOT_ERRORS"] = "The site has errors. <a href=\"#LINK#\">Check and repair</a>";
 $MESS["MAIN_SC_SOME_WARNING"] = "Warning";
 $MESS["MAIN_SC_SSL_NOT_VALID"] = "The server's SSL certificate is invalid";
-$MESS["MAIN_SC_STREAM_DISABLED"] = "The nginx-push-stream-module option is disabled in the Push and Pull module settings.";
+$MESS["MAIN_SC_STREAM_DISABLED_2"] = "Push server is not configured in the Push and Pull module settings.";
 $MESS["MAIN_SC_SYSTEST_LOG"] = "System check log";
-$MESS["MAIN_SC_TEST_CHAT"] = "Real time business chat";
 $MESS["MAIN_SC_TEST_COMMENTS"] = "Live comments";
 $MESS["MAIN_SC_TEST_DOCS"] = "Editing documents in Google Docs and Microsoft Office Online";
 $MESS["MAIN_SC_TEST_FAST_FILES"] = "Bitrix24.Drive. Fast file operations";
@@ -114,6 +115,7 @@ $MESS["MAIN_SC_TEST_MAIL_PUSH"] = "Relay e-mail messages to Activity Stream";
 $MESS["MAIN_SC_TEST_MOBILE"] = "Bitrix24 mobile app";
 $MESS["MAIN_SC_TEST_NTLM"] = "Windows NTLM authentication";
 $MESS["MAIN_SC_TEST_PUSH"] = "Notifications to mobile devices (push notifications)";
+$MESS["MAIN_SC_TEST_PUSH_SERVER"] = "Push and Pull server";
 $MESS["MAIN_SC_TEST_REST"] = "REST API Usage";
 $MESS["MAIN_SC_TEST_RESULT"] = "Test result:";
 $MESS["MAIN_SC_TEST_SEARCH_CONTENTS"] = "Search document contents";
@@ -299,7 +301,7 @@ Misconfiguration will lead to numerous issues: texts will be haphazardly truncat
 
 Add this code to <i>/bitrix/php_interface/dbconn.php</I> to enable UTF-8 on your site:
 <code>define('BX_UTF', true);</code>
-and add this code to <i>/bitrix/settings.php</i>:
+and add this code to <i>/bitrix/.settings.php</i>:
 <code>'utf_mode' => 
   array (
     'value' => true,
@@ -344,10 +346,8 @@ $MESS["SC_HELP_CHECK_MYSQL_MODE"] = "The parameter <i>sql_mode</i> specifies the
 <code>\$connection = Bitrix\\Main\\Application::getConnection();
 \$connection-&gt;queryExecute(&quot;SET sql_mode=''&quot;);
 \$connection-&gt;queryExecute(&quot;SET innodb_strict_mode=0&quot;);</code>
-And this code to <i>/bitrix/php_interface/after_connect.php</i>:
-<code>\$DB->Query(&quot;SET sql_mode=''&quot;);
-\$DB->Query(&quot;SET innodb_strict_mode=0&quot;);</code>
-";
+
+Note that you may need to have database user privilege SESSION_VARIABLES_ADMIN on MySQL 8.0.26 and newer. If your current privilege is insufficient, you have to contact your database administrator or edit the MySQL configuration file.";
 $MESS["SC_HELP_CHECK_MYSQL_TABLE_CHARSET"] = "The charset of all the tables and fields must match the database charset. If the charset of any of the tables is defferent, you have to fix it manually using the SQL commands.
 
 The table collation should match the database collations as well. If the charsets are configured correctly, mismatching collation will be fixed automatically.
@@ -410,7 +410,7 @@ Sending notification to Apple and Android devices is performed using the secure 
 
 Your Intranet needs access to this server for push notifications to work as designed.
 ";
-$MESS["SC_HELP_CHECK_REST"] = "The REST module is required to integrate external applications and run a number of Bitrix24.Market applications. To integrate your own applications into Bitrix24, please follow <a href=\"https://training.bitrix24.com/support/training/course/?COURSE_ID=68&INDEX=Y\" target=\"_blank\">the guidelines</a>.";
+$MESS["SC_HELP_CHECK_REST"] = "The REST module is required to integrate external applications and run a number of Bitrix24.Market applications. To integrate your own applications into Bitrix24, please follow <a href=\"https://training.bitrix24.com/rest_help/\" target=\"_blank\">the guidelines</a>.";
 $MESS["SC_HELP_CHECK_SEARCH"] = "The system can search text in documents in Open XML format (introduced in Microsoft Office 2007) out of the box. To support other file formats, specify paths to parsing applications <a href=\"/bitrix/admin/settings.php?mid=intranet\">in the Intranet module settings</a>. Otherwise, the system will be able to search filenames only.
 
 <a href=\"http://www.1c-bitrix.ru/products/vmbitrix/index.php\">Bitrix Virtual Appliance</a> supports it by default.";
@@ -438,7 +438,7 @@ A certificate is valid if it was verified by the issuing authority and is owned 
 
 If you use a self-issued certificate on a HTTPS connection, your visitors may experience problems using external software when connecting a WebDav drive or communicating with Microsoft Outlook.
 ";
-$MESS["SC_HELP_CHECK_SOCNET"] = "To receive updates from social resources, the <a href=\"http://www.bitrixsoft.com/company/blog/news/integration-with-social-networks.php\">Social Website Integration</a> module has to be configured providing authentication keys for each service that are going to be used.";
+$MESS["SC_HELP_CHECK_SOCNET"] = "To receive updates from social resources, the Social Website Integration module has to be configured providing authentication keys for each service that are going to be used.";
 $MESS["SC_HELP_CHECK_TURN"] = "Video calling requires that the involved users' browsers can connect to each other. If the callers sit on different networks - for example, in offices  in different locations - and no direct connection is possible, you will need a special TURN server to establish connection.
 
 Bitrix24 provides the preconfigured TURN server free of charge at turn.calls.bitrix24.com. 

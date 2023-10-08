@@ -11,15 +11,13 @@ $pathTemplate24 = getLocalPath($pathTemplate24);
 $pathCSS = '/bitrix/js/landing/css';
 $pathLang = BX_ROOT . '/modules/landing/lang/' . LANGUAGE_ID;
 
-$jsConfig = array(
-	'landing_master' => array(
-		'rel' => array(
+$jsConfig = [
+	'landing_master' => [
+		'rel' => [
 			'landing.master',
 			'landing_icon_fonts',
-			// 'landing_jquery',		// need jq?
-			// 'landing_popup_link', 	// todo: in editor need fancybox for video?
-		),
-	),
+		],
+	],
 
 	'landing_note' => [
 		'js' => [
@@ -34,10 +32,9 @@ $jsConfig = array(
 
 	'mediaplayer' => [
 		'js' => [
-			'https://www.youtube.com/iframe_api',
 			$pathJS . '/mediaplayer/base_mediaplayer.js',
 			$pathJS . '/mediaplayer/youtube_mediaplayer.js',
-			$pathJS . '/mediaplayer/mediaplayer_factory.js'
+			$pathJS . '/mediaplayer/mediaplayer_factory.js',
 		],
 		'rel' => [
 			'landing.utils',
@@ -48,47 +45,29 @@ $jsConfig = array(
 		'js' => [
 			$pathTemplate24 . '/assets/js/helpers/inline-video.js',
 		],
-		'rel' => ['mediaplayer']
+		'lang' => $pathLang . '/js/video_alert.php',
+		'rel' => ['mediaplayer', 'loader']
 	],
-	'map_provider' => array(
-		'js' => array(
-			$pathJS . '/provider/map/base-map-provider.js',
-			$pathJS . '/provider/map/google-map.js',
-			$pathJS . '/provider/map/google-map/theme/silver.theme.js',
-			$pathJS . '/provider/map/google-map/theme/retro.theme.js',
-			$pathJS . '/provider/map/google-map/theme/dark.theme.js',
-			$pathJS . '/provider/map/google-map/theme/night.theme.js',
-			$pathJS . '/provider/map/google-map/theme/aubergine.theme.js'
-		),
-		'css' => array(
-			$pathCSS . '/provider/map/google-map.css',
-		),
-		'rel' => [
-			'landing.collection.basecollection',
-			'landing.utils',
-			'landing.loc'
-		],
-	),
 
-	'polyfill' => array(
-		'js' => array(
+	'polyfill' => [
+		'js' => [
 			$pathJS . '/polyfill.js',
-		)
-	),
+		]
+	],
 
-	'action_dialog' => array(
-		'js' => array(
+	'action_dialog' => [
+		'js' => [
 			$pathJS . '/ui/tool/action_dialog.js'
-		),
-		'css' => array(
+		],
+		'css' => [
 			$pathCSS . '/ui/tool/action_dialog.css',
-		),
-		'rel' => array(
+		],
+		'rel' => [
 			'polyfill',
 			'popup'
-		),
+		],
 		'lang' => $pathLang . '/js/action_dialog.php'
-	),
+	],
 
 	'landing_public' => [
 		'js' => [
@@ -105,16 +84,16 @@ $jsConfig = array(
 		],
 	],
 
-	'landing_event_tracker' => array(
-		'js' => array(
+	'landing_event_tracker' => [
+		'js' => [
 			$pathJS . '/event-tracker/event-tracker.js',
 			$pathJS . '/event-tracker/services/base-service.js',
 			$pathJS . '/event-tracker/services/google-analytics-service.js'
-		),
+		],
 		'rel' => [
 			'landing.utils',
 		],
-	),
+	],
 
 	// vendors scripts for ALL blocks, included always
 	'landing_core' => [
@@ -125,13 +104,13 @@ $jsConfig = array(
 			$pathTemplate24 . '/assets/vendor/bootstrap/bootstrap.css',
 			$pathTemplate24 . '/theme.css',
 			$pathTemplate24 . '/assets/css/custom.css',
-			$pathTemplate24 . '/assets/css/themes_custom.css',
 			$pathTemplate24 . '/assets/vendor/animate.css',
 		],
 		'rel' => [
 			'main.core',
 			'main.polyfill.intersectionobserver',
 			'landing.utils',
+			'ui.fonts.opensans',
 		],
 	],
 
@@ -142,18 +121,21 @@ $jsConfig = array(
 			$pathTemplate24 . '/theme.css',
 			$pathCSS . '/landing_public.css',
 		],
+		'rel' => [
+			'ui.fonts.opensans',
+		],
 	],
 
 	'landing_jquery' => [
 		'js' => [
-			$pathTemplate24 . '/assets/vendor/jquery/jquery-3.2.1.js',
-			$pathTemplate24 . '/assets/vendor/jquery.easing/js/jquery.easing.js',
+			$pathTemplate24 . '/assets/vendor/jquery/jquery_landing.js',
+			$pathTemplate24 . '/assets/vendor/jquery.easing/js/jquery.easing_landing.js',
 		],
 	],
 
 	'landing_fancybox' => [
 		'js' => [
-			$pathTemplate24 . '/assets/vendor/fancybox/jquery.fancybox.js',
+			$pathTemplate24 . '/assets/vendor/fancybox/jquery.fancybox_landing.js',
 		],
 		'css' => [
 			$pathTemplate24 . '/assets/vendor/fancybox/jquery.fancybox.css',
@@ -168,27 +150,69 @@ $jsConfig = array(
 		'rel' => ['mediaplayer', 'landing_fancybox'],
 	],
 
-	'landing_upper' => array(
-		'js' => array(
+	'landing_upper' => [
+		'js' => [
 			$pathTemplate24 . '/assets/js/helpers/upper_init.js',
-		),
-	),
+		],
+	],
 
-	'landing_icon_fonts' => array(
-		'css' => array(
-			$pathTemplate24 . '/assets/vendor/icon-awesome/css/font-awesome.css',
-			$pathTemplate24 . '/assets/vendor/icon-etlinefont/style.css',
-			$pathTemplate24 . '/assets/vendor/icon-hs/style.css',
-			$pathTemplate24 . '/assets/vendor/icon-line/css/simple-line-icons.css',
-			$pathTemplate24 . '/assets/vendor/icon-line-pro/style.css'
-		),
-	),
+	'landing_icon_fonts' => [
+		'css' => [
+			$pathTemplate24 . '/assets/vendor/icon/et-icon/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/et-icon/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/hs-icon/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/hs-icon/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-christmas/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-christmas/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-clothes/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-clothes/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-communication/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-communication/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-education/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-education/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-electronics/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-electronics/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-finance/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-finance/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-food/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-food/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-furniture/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-furniture/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-hotel-restaurant/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-hotel-restaurant/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-media/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-media/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-medical/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-medical/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-music/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-music/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-real-estate/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-real-estate/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-science/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-science/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-sport/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-sport/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-transport/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-transport/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-travel/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-travel/content.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-weather/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/icon-weather/content.css',
+
+			// one common styles for all FA types - for editor
+			$pathTemplate24 . '/assets/vendor/icon/fa6/all.css',
+			$pathTemplate24 . '/assets/vendor/icon/fa6/v4-shims.css',
+			$pathTemplate24 . '/assets/vendor/icon/fab/style.css',
+			$pathTemplate24 . '/assets/vendor/icon/fab/content.css',
+		],
+	],
 
 	'landing_menu' => [
 		'js' => [
 			$pathTemplate24 . '/assets/vendor/bootstrap/js/dist/util.js',
 			$pathTemplate24 . '/assets/vendor/bootstrap/js/dist/collapse.js',
-			$pathTemplate24 . '/assets/js/helpers/menu/hamburgers.js',
 			$pathTemplate24 . '/assets/js/helpers/menu/scrollspy.js',
 			$pathTemplate24 . '/assets/js/helpers/menu/menu_init.js',
 		],
@@ -200,6 +224,15 @@ $jsConfig = array(
 		'rel' => ['landing_core', 'landing_jquery'],
 	],
 
+	'landing_faq' => [
+		'js' => [
+			$pathTemplate24 . '/assets/js/helpers/faq/faq.js',
+		],
+		'css' => [
+			$pathTemplate24 . '/assets/css/faq.css',
+		],
+	],
+
 	'landing_header' => [
 		'js' => [
 			$pathTemplate24 . '/assets/js/helpers/menu/block-header-entry.js',
@@ -208,12 +241,19 @@ $jsConfig = array(
 		'rel' => ['landing_core'],
 	],
 
-	'landing_form' => array(
-		'js' => array(
+	'landing_header_sidebar' => [
+		'js' => [
+			$pathTemplate24 . '/assets/js/helpers/header-sidebar.js',
+		],
+		'rel' => ['landing_core'],
+	],
+
+	'landing_form' => [
+		'js' => [
 			$pathTemplate24 . '/assets/js/helpers/form_init.js',
-		),
+		],
 		'lang' => $pathLang . '/js/webform_alerts.php',
-	),
+	],
 
 	'landing_gallery_cards' => [
 		'js' => [
@@ -222,50 +262,59 @@ $jsConfig = array(
 		'rel' => ['landing_core', 'landing_fancybox'],
 	],
 
-	'landing_chat' => array(
-		'js' => array(
+	'landing_chat' => [
+		'js' => [
 			$pathTemplate24 . '/assets/js/helpers/chat_init.js',
-		)
-	),
+		]
+	],
 
-	'landing_carousel' => array(
-		'js' => array(
-			$pathTemplate24 . '/assets/vendor/slick-carousel/slick/slick.js',
+	'landing_carousel' => [
+		'js' => [
+			$pathTemplate24 . '/assets/vendor/slick-carousel/slick/slick_landing.js',
 			$pathTemplate24 . '/assets/js/components/hs.core_landing.js',
 			$pathTemplate24 . '/assets/js/components/hs.carousel.js',
 			$pathTemplate24 . '/assets/js/helpers/carousel/carousel_helper.js',
 			$pathTemplate24 . '/assets/js/helpers/carousel/base_carousel_init.js',
-		),
-		'css' => array(
+		],
+		'css' => [
 			$pathTemplate24 . '/assets/vendor/slick-carousel/slick/slick.css',
 			$pathTemplate24 . '/assets/vendor/slick-carousel/slick/landing-slick.css',
-		),
+		],
 		'rel' => ['landing_core','landing_jquery'],
-	),
+],
 
-	'landing_countdown' => array(
-		'js' => array(
-			$pathTemplate24 . '/assets/vendor/jquery.countdown/jquery.countdown.js',
+	'landing_countdown' => [
+		'js' => [
+			$pathTemplate24 . '/assets/vendor/jquery.countdown/jquery.countdown_landing.js',
 			$pathTemplate24 . '/assets/js/components/hs.core_landing.js',
 			$pathTemplate24 . '/assets/js/components/hs.countdown.js',
 			$pathTemplate24 . '/assets/js/helpers/countdown_init.js',
-		),
+		],
 		'rel' => ['landing_core', 'landing_jquery'],
-	),
+],
 
-	'landing_google_maps_new' => array(
-		'js' => array(
-			$pathTemplate24 . '/assets/js/helpers/google_maps_new.js'
-		),
-		'rel' => array(
-			'map_provider'
-		)
-	),
+	'landing_google_maps_new' => [
+		'rel' => [
+			'landing_map'
+		]
+	],
+
+	'landing_map' => [
+		'js' => [
+			$pathTemplate24 . '/assets/js/helpers/map_init.js'
+		],
+		'rel' => [
+			'landing.provider.map'
+		]
+	],
 
 	'landing_lazyload' => [
 		'js' => [
 			$pathTemplate24 . '/assets/js/helpers/lazyload.js',
 		],
+		'rel' => [
+			'main.polyfill.intersectionobserver',
+		]
 	],
 
 	'landing_auto_font_scale' => [
@@ -276,14 +325,21 @@ $jsConfig = array(
 		],
 	],
 
-	'landing_bootstrap_modal' => array(
-		'js' => array(
-			$pathTemplate24 . '/assets/vendor/bootstrap/js/dist/util.js',
-			$pathTemplate24 . '/assets/vendor/bootstrap/js/dist/modal.js',
-		),
-		'rel' => ['landing_core','landing_jquery'],
-	),
-);
+	'landing_backlinks' => [
+		'js' => [
+			$pathTemplate24 . '/assets/js/helpers/backlinks/backlinks.js',
+		],
+	],
+
+	// todo: not used? can del?
+	// 'landing_bootstrap_modal' => array(
+	// 	'js' => array(
+	// 		$pathTemplate24 . '/assets/vendor/bootstrap/js/dist/util.js',
+	// 		$pathTemplate24 . '/assets/vendor/bootstrap/js/dist/modal.js',
+	// 	),
+	// 	'rel' => ['landing_core','landing_jquery'],
+	// ),
+];
 
 
 foreach ($jsConfig as $code => $ext)

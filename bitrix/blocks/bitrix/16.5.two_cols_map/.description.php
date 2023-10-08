@@ -13,9 +13,6 @@ return [
 		'dynamic' => false,
 		'version' => '18.5.0', // old param for backward compatibility. Can used for old versions of module via repo. Do not delete!
 		'subtype' => 'map',
-		'subtype_params' => [
-			'required' => 'google',
-		],
 	],
 	'cards' => [
 		'.landing-block-card-address' => [
@@ -30,10 +27,6 @@ return [
 		],
 	],
 	'nodes' => [
-		'.landing-block-node-map' => [
-			'name' => 'Map',
-			'type' => 'map',
-		],
 		'.landing-block-node-address-subtitle' => [
 			'name' => Loc::getMessage("LANDING_BLOCK_16_5_TWO_COLS_MAP--SUBTITLE"),
 			'type' => 'text',
@@ -88,7 +81,7 @@ return [
 			],
 			'.landing-block-node-address-title' => [
 				'name' => Loc::getMessage("LANDING_BLOCK_16_5_TWO_COLS_MAP--TITLE"),
-				'type' => 'typo',
+				'type' => ['typo', 'heading'],
 			],
 			'.landing-block-node-address-text' => [
 				'name' => Loc::getMessage("LANDING_BLOCK_16_5_TWO_COLS_MAP--TEXT"),
@@ -115,6 +108,6 @@ return [
 		],
 	],
 	'assets' => [
-		'ext' => ['landing_google_maps_new'],
+		'ext' => ['landing_map'],
 	],
 ];

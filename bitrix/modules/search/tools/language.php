@@ -37,8 +37,17 @@ class CSearchLanguage
 						//Then module class
 						$strDirName = $_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/search/tools/".$sLang;
 						$strFileName = $strDirName."/language.php";
-						if(file_exists($strFileName))
-							@include($strFileName);
+						if (file_exists($strFileName))
+						{
+							if (\Bitrix\Main\Localization\Translation::allowConvertEncoding())
+							{
+								\Bitrix\Main\Localization\StreamConverter::include($strFileName, $sLang);
+							}
+							else
+							{
+								@include($strFileName);
+							}
+						}
 						if(!class_exists($class_name))
 						{
 							$class_name = "CSearchLanguage";
@@ -170,7 +179,7 @@ class CSearchLanguage
 		return $result;
 	}
 
-	function StrToArray($str)
+	public static function StrToArray($str)
 	{
 		if(defined("BX_UTF"))
 		{
@@ -187,7 +196,7 @@ class CSearchLanguage
 	}
 
 	//This function converts text between layouts
-	static function ConvertKeyboardLayout($text, $from, $to)
+	public static function ConvertKeyboardLayout($text, $from, $to)
 	{
 		static $keyboards = array();
 		$combo = $from."|".$to;
@@ -316,7 +325,7 @@ class CSearchLanguage
 		if(empty($cache))
 		{
 			$cache[] = "en";//English is always in mind and on the first place
-			$rsLanguages = CLanguage::GetList(($b=""), ($o=""));
+			$rsLanguages = CLanguage::GetList();
 			while($arLanguage = $rsLanguages->Fetch())
 				if($arLanguage["LID"] != "en")
 					$cache[] = $arLanguage["LID"];

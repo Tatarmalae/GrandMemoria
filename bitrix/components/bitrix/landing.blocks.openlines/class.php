@@ -8,6 +8,7 @@ use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Landing;
 use Bitrix\Landing\Hook\Page\B24button;
+use Bitrix\Main\Text\HtmlFilter;
 use Bitrix\Socialservices\ApClient;
 use Bitrix\Crm\UI\Webpack\Button;
 
@@ -33,6 +34,7 @@ class LandingBlocksOlComponent extends \CBitrixComponent
 		{
 			$widgetsData = $this->getWidgetsForButton($this->arParams['BUTTON_ID']);
 			$this->arParams['WIDGETS'] = $widgetsData['widgets'];
+			$this->arParams['IS_MOBILE'] = $this->isMobile();
 			$this->prepareWidgetsToPrint();
 		}
 		$this->includeComponentTemplate();
@@ -93,15 +95,32 @@ class LandingBlocksOlComponent extends \CBitrixComponent
 			return false;
 		}
 
+		$errorData = [];
+		
+		if ($this->arParams["SITE_TYPE"] !== 'crm_forms')
+		{
+			$errorData['title'] = Loc::getMessage('LANDING_CMP_OL_BUTTON_NO_CHOOSE_SITE_1');
+			$errorData['text'] = Loc::getMessage('LANDING_CMP_OL_BUTTON_NO_CHOOSE_SITE_TEXT_1');
+			$urlParams = 'SITE_EDIT';
+		}
+		else
+		{
+			$errorData['title'] = Loc::getMessage('LANDING_CMP_OL_BUTTON_NO_CHOOSE_PAGE_1');
+			$errorData['text'] = Loc::getMessage('LANDING_CMP_OL_BUTTON_NO_CHOOSE_PAGE_TEXT_1');
+			$urlParams = 'LANDING_EDIT';
+		}
+		$errorData['button']['onclick'] = 'BX.PreventDefault(); BX.SidePanel.Instance.open(landingParams[\'PAGE_URL_LANDING_SETTINGS\'] + \'?PAGE=';
+		$errorData['button']['onclick'] .= $urlParams . '\' + \'#b24widget\');';
+
 		if ($this->arParams['BUTTON_ID'] === 'N')
 		{
 			$this->arParams['ERRORS'][] = [
-				'title' => Loc::getMessage('LANDING_CMP_OL_BUTTON_NO_CHOOSE'),
-				'text' => Loc::getMessage('LANDING_CMP_OL_BUTTON_NO_CHOOSE_TEXT'),
+				'title' => $errorData['title'],
+				'text' => $errorData['text'],
 				'button' => [
 					'text' => Loc::getMessage('LANDING_CMP_OL_BUTTON_NO_CHOOSE_BUTTON'),
 					'href' => '',
-					'onclick' => 'BX.PreventDefault(); BX.SidePanel.Instance.open(landingParams[\'PAGE_URL_SITE_EDIT\'] + \'#b24widget\');',
+					'onclick' => $errorData['button']['onclick'],
 				],
 			];
 
@@ -190,6 +209,14 @@ class LandingBlocksOlComponent extends \CBitrixComponent
 			$classList = 'landing-b24-widget-button-social-item ' . implode(' ', $widget['classList']) . ' ';
 			$classList = trim(str_replace(['ui-icon ', 'connector-icon-45 '], '', $classList));
 			$this->arParams['WIDGETS'][$key]['classList'] = $classList;
+			$this->arParams['WIDGETS'][$key]['title'] =
+				HtmlFilter::encode(strip_tags($this->arParams['WIDGETS'][$key]['title']));
 		}
+	}
+
+	protected function isMobile()
+	{
+		return false !== strpos($_SERVER['HTTP_USER_AGENT'], "Android")
+			|| preg_match('#\biPhone.*Mobile|\biPod|\biPad#', $_SERVER['HTTP_USER_AGENT']);
 	}
 }

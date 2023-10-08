@@ -143,10 +143,10 @@ class CSocServBitrixOAuth extends CSocServAuth
 
 		echo $JSScript;
 
-		die();
+		CMain::FinalActions();
 	}
 
-	public function gadgetAuthorize()
+	public static function gadgetAuthorize()
 	{
 		global $APPLICATION;
 		$APPLICATION->RestartBuffer();

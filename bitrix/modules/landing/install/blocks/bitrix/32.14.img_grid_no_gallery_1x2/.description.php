@@ -18,14 +18,18 @@ return array(
 		'.landing-block-node-img-small' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_32_14-IMG2'),
 			'type' => 'img',
+			'useInDesigner' => false,
 			'dimensions' => array('width' => 370),
 			'allowInlineEdit' => false,
+			'create2xByDefault' => false,
 		),
 		'.landing-block-node-img-big' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_32_14-IMG1'),
 			'type' => 'img',
+			'useInDesigner' => false,
 			'dimensions' => array('width' => 710),
 			'allowInlineEdit' => false,
+			'create2xByDefault' => false,
 		),
 		'.landing-block-node-img-title' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_32_14-TXT'),

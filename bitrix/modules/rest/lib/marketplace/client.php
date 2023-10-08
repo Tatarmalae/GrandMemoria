@@ -3,11 +3,14 @@ namespace Bitrix\Rest\Marketplace;
 
 use Bitrix\Main\Application;
 use Bitrix\Main\Config\Option;
+use Bitrix\Main\Event;
+use Bitrix\Main\EventManager;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ModuleManager;
 use Bitrix\Rest\AppTable;
 use Bitrix\Rest\Engine\Access;
+use Bitrix\Bitrix24\Feature;
 
 if(!defined('REST_MP_CATEGORIES_CACHE_TTL'))
 {
@@ -17,6 +20,15 @@ if(!defined('REST_MP_CATEGORIES_CACHE_TTL'))
 class Client
 {
 	const CATEGORIES_CACHE_TTL = REST_MP_CATEGORIES_CACHE_TTL;
+	private const SUBSCRIPTION_REGION = [
+		'ru',
+		'ua',
+		'by',
+	];
+	private const SUBSCRIPTION_DEFAULT_START_TIME = [
+		'ua' => 1625090400,
+		'by' => 1660514400,
+	];
 
 	protected static $buyLinkList = array(
 		'bitrix24' => '/settings/order/make.php?limit=#NUM#&module=#CODE#',
@@ -27,6 +39,7 @@ class Client
 	);
 
 	private static $appTop = null;
+	private static $isPayApplicationAvailable;
 
 	public static function getTop($action, $fields = array())
 	{
@@ -83,11 +96,6 @@ class Client
 				"code" => serialize($codeList)
 			)
 		);
-
-		if(is_array($updatesList) && is_array($updatesList["ITEMS"]))
-		{
-			static::setAvailableUpdate($updatesList["ITEMS"]);
-		}
 
 		return $updatesList;
 	}
@@ -286,6 +294,42 @@ class Client
 		return Transport::instance()->call(
 			Transport::METHOD_GET_APP,
 			$queryFields
+		);
+	}
+
+	/**
+	 * Returns site by id.
+	 * @param $id
+	 *
+	 * @return array|false|mixed
+	 */
+	public static function getSite($id)
+	{
+		$query = [
+			'site_id' => $id
+		];
+
+		return Transport::instance()->call(
+			Transport::METHOD_GET_SITE_ITEM,
+			$query
+		);
+	}
+
+	/**
+	 * Returns list of sites.
+	 *
+	 * @param array $query
+	 *
+	 * @return array|false|mixed
+	 */
+	public static function getSiteList(array $query = [])
+	{
+		$query['onPageSize'] = (int)$query['pageSize'] ?: 50;
+		$query['page'] = (int)$query['page'] ?: 1;
+
+		return Transport::instance()->call(
+			Transport::METHOD_GET_SITE_LIST,
+			$query
 		);
 	}
 
@@ -540,15 +584,27 @@ class Client
 		return $result;
 	}
 
+	private static function checkSubscriptionAccessStart($region): bool
+	{
+		$canStart = true;
+		if (!empty(static::SUBSCRIPTION_DEFAULT_START_TIME[$region]))
+		{
+			$time = Option::get(
+				'rest',
+				'subscription_region_start_time_' . $region,
+				static::SUBSCRIPTION_DEFAULT_START_TIME[$region]
+			);
+			$canStart =  $time < time();
+		}
+
+		return $canStart && in_array($region, static::SUBSCRIPTION_REGION, true);
+	}
+
 	public static function isSubscriptionAccess()
 	{
-		$result = false;
-		if (ModuleManager::isModuleInstalled('bitrix24'))
+		if (ModuleManager::isModuleInstalled('bitrix24') && Loader::includeModule('bitrix24'))
 		{
-			if (Loader::includeModule('bitrix24') && \CBitrix24::getLicensePrefix() === 'ru')
-			{
-				$result = true;
-			}
+			$result = static::checkSubscriptionAccessStart(\CBitrix24::getLicensePrefix());
 		}
 		else
 		{
@@ -567,7 +623,7 @@ class Client
 			&& !(
 				ModuleManager::isModuleInstalled('bitrix24')
 				&& Loader::includeModule('bitrix24')
-				&& \CBitrix24::getLicenseFamily() === "demo"
+				&& !Feature::isFeatureEnabled('rest_can_buy_subscription')
 			)
 		)
 		{
@@ -588,6 +644,52 @@ class Client
 			$used = Option::get('main', '~mp24_used_trial', 'N') === 'Y';
 		}
 
-		return !$used;
+		return !$used && static::isSubscriptionAccess();
+	}
+
+	/**
+	 * Returns available pay application
+	 * @return bool
+	 */
+	public static function isPayApplicationAvailable() : bool
+	{
+		if (is_null(static::$isPayApplicationAvailable))
+		{
+			static::$isPayApplicationAvailable = true;
+			$time = (int) Option::get('rest', 'time_pay_application_off', 1621029600);
+			if (time() > $time)
+			{
+				if (Loader::includeModule('bitrix24'))
+				{
+					$region = \CBitrix24::getLicensePrefix();
+				}
+				else
+				{
+					$region = Option::get('main', '~PARAM_CLIENT_LANG', '');
+				}
+
+				if ($region === 'ru')
+				{
+					static::$isPayApplicationAvailable = false;
+				}
+			}
+		}
+
+		return static::$isPayApplicationAvailable;
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public static function onChangeSubscriptionDate(Event $event): void
+	{
+		if (static::isSubscriptionAvailable())
+		{
+			$event = new Event(
+				'rest',
+				'onSubscriptionRenew',
+			);
+			EventManager::getInstance()->send($event);
+		}
 	}
 }

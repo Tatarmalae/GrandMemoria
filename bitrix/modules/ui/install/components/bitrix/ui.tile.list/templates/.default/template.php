@@ -15,7 +15,7 @@ use Bitrix\Main\Web\Json;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\UI\Extension;
 
-Extension::load('ui.icons');
+Extension::load(['ui.icons', 'ui.design-tokens', 'ui.fonts.opensans']);
 
 $getTileLayout = function (array $tile = [])
 {
@@ -45,11 +45,19 @@ $getTileLayout = function (array $tile = [])
 			</span>
 		</div>
 		<div class="ui-tile-list-name">
-			<span data-role="tile/item/name" class="ui-tile-list-name-text" style="<?=$color?>"><?=$name?></span>
+			<span data-role="tile/item/name" class="ui-tile-list-name-text" title="<?=$name?>" style="<?=$color?>"><?=$name?></span>
 		</div>
+		<? if ($tile['badgeNew']): ?>
+		<div class="ui-tile-badge ui-tile-badge--new"><?=Loc::getMessage('UI_TILE_LIST_NEW')?></div>
+		<? endif ?>
 		<? if ($tile['comingSoon']): ?>
 		<div class="ui-tile-list-label">
 			<span class="ui-tile-list-label-text"><?=Loc::getMessage('UI_TILE_LIST_COMMING_SOON')?></span>
+		</div>
+		<? endif ?>
+		<? if ($tile['button']): ?>
+		<div class="ui-tile-list-btn-block">
+			<button class="ui-btn ui-btn-primary"><?=$tile['data']['buttonName']?></button>
 		</div>
 		<? endif ?>
 	</div>

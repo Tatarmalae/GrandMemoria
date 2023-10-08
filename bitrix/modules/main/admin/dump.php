@@ -13,6 +13,8 @@
  * @global CDatabase $DB
  */
 
+use Bitrix\Main\Security\Random;
+
 define('NO_AGENT_CHECK', true);
 define("STATISTIC_SKIP_ACTIVITY_CHECK", true);
 require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_before.php");
@@ -226,7 +228,7 @@ elseif($_REQUEST['process'] == "Y")
 
 		if ($NS['BUCKET_ID'] == -1) // Bitrixcloud
 		{
-			$name = DOCUMENT_ROOT.BX_ROOT."/backup/".date('Ymd_His_').rand(11111111,99999999);
+			$name = DOCUMENT_ROOT . BX_ROOT . "/backup/" . date('Ymd_His_') . Random::getStringByAlphabet(16, Random::ALPHABET_NUM);
 			$NS['arc_name'] = $name.'.enc'.($bUseCompression ? ".gz" : '');
 			$NS['dump_name'] = $name.'.sql';
 		}
@@ -235,7 +237,7 @@ elseif($_REQUEST['process'] == "Y")
 			$prefix = '';
 			if (count($NS['dump_site_id']) == 1)
 			{
-				$rs = CSite::GetList($by='sort', $order='asc', array('ID' => $NS['dump_site_id'][0], 'ACTIVE' => 'Y'));
+				$rs = CSite::GetList('sort', 'asc', array('ID' => $NS['dump_site_id'][0], 'ACTIVE' => 'Y'));
 				if ($f = $rs->Fetch())
 					$prefix = str_replace('/', '', $f['SERVER_NAME']);
 			}
@@ -258,7 +260,8 @@ elseif($_REQUEST['process'] == "Y")
 		$NS['arc_name'] = $name = DOCUMENT_ROOT.BX_ROOT.'/backup/'.str_replace(array('..','/','\\'),'',$_REQUEST['f_id']);
 		$NS['arc_size'] = filesize($NS['arc_name']);
 		$NS['BUCKET_ID'] = intval($_REQUEST['dump_bucket_id']);
-		while(file_exists($name = CTar::getNextName($name)))
+		$tar = new CTar;
+		while(file_exists($name = $tar->getNextName($name)))
 			$NS['arc_size'] += filesize($name);
 		$NS['step'] = 6;
 	}
@@ -291,7 +294,9 @@ elseif($_REQUEST['process'] == "Y")
 		if (IntOption('dump_base'))
 		{
 			if (!CBackup::MakeDump($NS['dump_name'], $NS['dump_state']))
+			{
 				RaiseErrorAndDie(GetMessage('DUMP_NO_PERMS'));
+			}
 
 			$TotalTables = $NS['dump_state']['TableCount'];
 			$FinishedTables = $TotalTables - count($NS['dump_state']['TABLES']);
@@ -336,7 +341,9 @@ elseif($_REQUEST['process'] == "Y")
 				$tar->ReadBlockCurrent = intval($NS['ReadBlockCurrent']);
 
 				if (!$tar->openWrite($NS["arc_name"]))
+				{
 					RaiseErrorAndDie(GetMessage('DUMP_NO_PERMS'));
+				}
 
 				if (!$tar->ReadBlockCurrent && file_exists($f = DOCUMENT_ROOT.BX_ROOT.'/.config.php'))
 					$tar->addFile($f);
@@ -387,7 +394,7 @@ elseif($_REQUEST['process'] == "Y")
 							$NS['arc_size'] += $size;
 							if (IntOption("disk_space") > 0)
 								CDiskQuota::updateDiskQuota("file", $size, "add");
-							$name = CTar::getNextName($name);
+							$name = $tar->getNextName($name);
 						}
 
 						$NS["step"]++;
@@ -464,7 +471,7 @@ elseif($_REQUEST['process'] == "Y")
 				if (is_array($NS['dump_site_id']))
 				{
 					$SITE_ID = reset($NS['dump_site_id']);
-					$rs = CSite::GetList($by='sort', $order='asc', array('ID' => $SITE_ID, 'ACTIVE' => 'Y'));
+					$rs = CSite::GetList('sort', 'asc', array('ID' => $SITE_ID, 'ACTIVE' => 'Y'));
 					if ($f = $rs->Fetch())
 					{
 						$DOCUMENT_ROOT_SITE = rtrim(str_replace('\\','/',$f['ABS_DOC_ROOT']),'/');
@@ -488,7 +495,9 @@ elseif($_REQUEST['process'] == "Y")
 				$tar->ReadFileSize = intval($NS['ReadFileSize']);
 
 				if (!$tar->openWrite($NS["arc_name"]))
+				{
 					RaiseErrorAndDie(GetMessage('DUMP_NO_PERMS'));
+				}
 
 				$Block = $tar->Block;
 
@@ -539,7 +548,7 @@ elseif($_REQUEST['process'] == "Y")
 							$NS['arc_size'] += $size;
 							if (IntOption("disk_space") > 0)
 								CDiskQuota::updateDiskQuota("file", $size, "add");
-							$name = CTar::getNextName($name);
+							$name = $tar->getNextName($name);
 						}
 						DeleteDirFilesEx(BX_ROOT.'/backup/clouds');
 						$NS["step"]++;
@@ -709,7 +718,9 @@ elseif($_REQUEST['process'] == "Y")
 									$oBucket->IncFileCounter($file_size);
 								}
 
-								if (file_exists($arc_name = CTar::getNextName($NS['arc_name'])))
+								$tar = new CTar;
+
+								if (file_exists($arc_name = $tar->getNextName($NS['arc_name'])))
 								{
 									unset($NS['obBucket']);
 									$NS['arc_name'] = $arc_name;
@@ -724,7 +735,7 @@ elseif($_REQUEST['process'] == "Y")
 										$size = filesize($name);
 										if (unlink($name) && IntOption("disk_space") > 0)
 											CDiskQuota::updateDiskQuota("file",$size , "del");
-										$name = CTar::getNextName($name);
+										$name = $tar->getNextName($name);
 									}
 
 									$NS["step"]++;
@@ -1317,7 +1328,7 @@ function getTableSize()
 	</tr>
 <?
 	$arSitePath = array();
-	$res = CSite::GetList($by='sort', $order='asc', array('ACTIVE'=>'Y'));
+	$res = CSite::GetList('sort', 'asc', array('ACTIVE'=>'Y'));
 	while($f = $res->Fetch())
 	{
 		$root = rtrim($f['ABS_DOC_ROOT'],'/');

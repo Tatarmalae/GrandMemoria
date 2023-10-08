@@ -50,6 +50,9 @@ abstract class DataManager
 	/** @var Collection[] Cache of class names */
 	protected static $collectionClass;
 
+	/** @var EntityObject[][] Objects that called delete() method themself */
+	protected static $currentDeletingObjects;
+
 	/** @var array Restricted words for object class name */
 	protected static $reservedWords = [
 		// keywords
@@ -485,6 +488,16 @@ abstract class DataManager
 						$query->disableDataDoubling();
 					}
 					break;
+				case 'private_fields':
+					if($value)
+					{
+						$query->enablePrivateFields();
+					}
+					else
+					{
+						$query->disablePrivateFields();
+					}
+					break;
 				case 'cache':
 					$query->setCacheTtl($value["ttl"]);
 					if(isset($value["cache_joins"]))
@@ -533,7 +546,7 @@ abstract class DataManager
 
 		$result = $query->exec()->fetch();
 
-		return $result['CNT'];
+		return (int)$result['CNT'];
 	}
 
 	/**
@@ -810,9 +823,9 @@ abstract class DataManager
 	}
 
 	/**
-	 * @param EntityObject                 $object
-	 * @param                              $ufdata
-	 * @param \Bitrix\Main\ORM\Data\Result $result
+	 * @param EntityObject $object
+	 * @param $ufdata
+	 * @param Result $result
 	 */
 	protected static function checkUfFields($object, $ufdata, $result)
 	{
@@ -891,7 +904,7 @@ abstract class DataManager
 			}
 
 			// check if there is still some data
-			if (!count($fields + $ufdata))
+			if (empty($fields) && empty($ufdata))
 			{
 				$result->addError(new EntityError("There is no data to add."));
 			}
@@ -962,10 +975,17 @@ abstract class DataManager
 			// save uf data
 			if (!empty($ufdata))
 			{
-				$USER_FIELD_MANAGER->update($entity->getUfId(), end($primary), $ufdata);
+				$ufUserId = false;
+
+				if ($object->authContext)
+				{
+					$ufUserId = $object->authContext->getUserId();
+				}
+
+				$USER_FIELD_MANAGER->update($entity->getUfId(), end($primary), $ufdata, $ufUserId);
 			}
 
-			$entity->cleanCache();
+			static::cleanCache();
 
 			static::callOnAfterAddEvent($object, $fields + $ufdata, $id);
 		}
@@ -1058,7 +1078,7 @@ abstract class DataManager
 				}
 
 				// check if there is still some data
-				if (!count($fields + $ufdata))
+				if (empty($fields) && empty($ufdata))
 				{
 					$result->addError(new EntityError("There is no data to add."));
 				}
@@ -1160,15 +1180,22 @@ abstract class DataManager
 			}
 
 			// save uf data
-			foreach ($allUfData as $ufdata)
+			foreach ($allUfData as $k => $ufdata)
 			{
 				if (!empty($ufdata))
 				{
-					$USER_FIELD_MANAGER->update($entity->getUfId(), end($primary), $ufdata);
+					$ufUserId = false;
+
+					if ($objects[$k]->authContext)
+					{
+						$ufUserId = $objects[$k]->authContext->getUserId();
+					}
+
+					$USER_FIELD_MANAGER->update($entity->getUfId(), end($primary), $ufdata, $ufUserId);
 				}
 			}
 
-			$entity->cleanCache();
+			static::cleanCache();
 
 			// after event
 			if (!$ignoreEvents)
@@ -1224,7 +1251,7 @@ abstract class DataManager
 		// compatibility
 		$fields = $data;
 
-		/** @var EntityObject $object prepare entity object for compatibility with new code */
+		// prepare entity object for compatibility with new code
 		$object = static::convertArrayToObject($fields, false, $primary);
 
 		$entity = static::getEntity();
@@ -1250,7 +1277,7 @@ abstract class DataManager
 			}
 
 			// check if there is still some data
-			if (!count($fields + $ufdata))
+			if (empty($fields) && empty($ufdata))
 			{
 				return $result;
 			}
@@ -1304,10 +1331,17 @@ abstract class DataManager
 			// save uf data
 			if (!empty($ufdata))
 			{
-				$USER_FIELD_MANAGER->update($entity->getUfId(), end($primary), $ufdata);
+				$ufUserId = false;
+
+				if ($object->authContext)
+				{
+					$ufUserId = $object->authContext->getUserId();
+				}
+
+				$USER_FIELD_MANAGER->update($entity->getUfId(), end($primary), $ufdata, $ufUserId);
 			}
 
-			$entity->cleanCache();
+			static::cleanCache();
 
 			// event after update
 			static::callOnAfterUpdateEvent($object, $fields + $ufdata);
@@ -1398,7 +1432,7 @@ abstract class DataManager
 				}
 
 				// check if there is still some data
-				if (!count($fields + $ufdata))
+				if (empty($fields) && empty($ufdata))
 				{
 					$result->addError(new EntityError("There is no data to add."));
 				}
@@ -1447,90 +1481,94 @@ abstract class DataManager
 			$dataSample = $allSqlData[0];
 			asort($dataSample);
 
-			foreach ($allSqlData as $data)
+			if (!empty($allSqlData[0]))
 			{
-				asort($data);
 
-				if ($data !== $dataSample)
+				foreach ($allSqlData as $data)
 				{
-					$areEqual = false;
-					break;
+					asort($data);
+
+					if ($data !== $dataSample)
+					{
+						$areEqual = false;
+						break;
+					}
 				}
-			}
 
-			// save data
-			$connection = $entity->getConnection();
-			$helper = $connection->getSqlHelper();
-			$tableName = $entity->getDBTableName();
+				// save data
+				$connection = $entity->getConnection();
+				$helper = $connection->getSqlHelper();
+				$tableName = $entity->getDBTableName();
 
-			// save data
-			if ($areEqual)
-			{
-				// one query
-				$update = $helper->prepareUpdate($tableName, $dataSample);
-				$where = [];
-				$isSinglePrimary = (count($entity->getPrimaryArray()) == 1);
-
-				foreach ($allSqlData as $k => $data)
+				// save data
+				if ($areEqual)
 				{
-					$replacedPrimary = static::replaceFieldName($objects[$k]->primary);
+					// one query
+					$update = $helper->prepareUpdate($tableName, $dataSample);
+					$where = [];
+					$isSinglePrimary = (count($entity->getPrimaryArray()) == 1);
+
+					foreach ($allSqlData as $k => $data)
+					{
+						$replacedPrimary = static::replaceFieldName($objects[$k]->primary);
+
+						if ($isSinglePrimary)
+						{
+							// for single primary IN is better
+							$primaryName = key($replacedPrimary);
+							$primaryValue = current($replacedPrimary);
+							$tableField = $entity->getConnection()->getTableField($tableName, $primaryName);
+
+							$where[] = $helper->convertToDb($primaryValue, $tableField);
+						}
+						else
+						{
+							$id = [];
+
+							foreach ($replacedPrimary as $primaryName => $primaryValue)
+							{
+								$id[] = $helper->prepareAssignment($tableName, $primaryName, $primaryValue);
+							}
+							$where[] = implode(' AND ', $id);
+						}
+					}
 
 					if ($isSinglePrimary)
 					{
-						// for single primary IN is better
-						$primaryName = key($replacedPrimary);
-						$primaryValue = current($replacedPrimary);
-						$tableField = $entity->getConnection()->getTableField($tableName, $primaryName);
-
-						$where[] = $helper->convertToDb($primaryValue, $tableField);
+						$where = $helper->quote($entity->getPrimary()).' IN ('.join(', ', $where).')';
 					}
 					else
 					{
+						$where = '('.join(') OR (', $where).')';
+					}
+
+					$sql = "UPDATE ".$helper->quote($tableName)." SET ".$update[0]." WHERE ".$where;
+					$connection->queryExecute($sql, $update[1]);
+
+					$result->setAffectedRowsCount($connection);
+				}
+				else
+				{
+					// query for each row
+					foreach ($allSqlData as $k => $dataReplacedColumn)
+					{
+						$update = $helper->prepareUpdate($tableName, $dataReplacedColumn);
+
+						$replacedPrimary = static::replaceFieldName($objects[$k]->primary);
+
 						$id = [];
 
 						foreach ($replacedPrimary as $primaryName => $primaryValue)
 						{
 							$id[] = $helper->prepareAssignment($tableName, $primaryName, $primaryValue);
 						}
-						$where[] = implode(' AND ', $id);
+						$where = implode(' AND ', $id);
+
+						$sql = "UPDATE ".$helper->quote($tableName)." SET ".$update[0]." WHERE ".$where;
+						$connection->queryExecute($sql, $update[1]);
+
+						$result->setAffectedRowsCount($connection);
 					}
-				}
-
-				if ($isSinglePrimary)
-				{
-					$where = $helper->quote($entity->getPrimary()).' IN ('.join(', ', $where).')';
-				}
-				else
-				{
-					$where = '('.join(') OR (', $where).')';
-				}
-
-				$sql = "UPDATE ".$helper->quote($tableName)." SET ".$update[0]." WHERE ".$where;
-				$connection->queryExecute($sql, $update[1]);
-
-				$result->setAffectedRowsCount($connection);
-			}
-			else
-			{
-				// query for each row
-				foreach ($allSqlData as $k => $dataReplacedColumn)
-				{
-					$update = $helper->prepareUpdate($tableName, $dataReplacedColumn);
-
-					$replacedPrimary = static::replaceFieldName($objects[$k]->primary);
-
-					$id = [];
-
-					foreach ($replacedPrimary as $primaryName => $primaryValue)
-					{
-						$id[] = $helper->prepareAssignment($tableName, $primaryName, $primaryValue);
-					}
-					$where = implode(' AND ', $id);
-
-					$sql = "UPDATE ".$helper->quote($tableName)." SET ".$update[0]." WHERE ".$where;
-					$connection->queryExecute($sql, $update[1]);
-
-					$result->setAffectedRowsCount($connection);
 				}
 			}
 
@@ -1553,7 +1591,7 @@ abstract class DataManager
 				}
 			}
 
-			$entity->cleanCache();
+			static::cleanCache();
 
 			// event after update
 			if (!$ignoreEvents)
@@ -1597,10 +1635,17 @@ abstract class DataManager
 		$entity = static::getEntity();
 		$result = new DeleteResult();
 
+		$entityClass = static::getEntity()->getDataClass();
+		$primaryAsString = EntityObject::sysSerializePrimary($primary, static::getEntity());
+
+		$object = !empty(static::$currentDeletingObjects[$entityClass][$primaryAsString])
+			? static::$currentDeletingObjects[$entityClass][$primaryAsString]
+			: static::wakeUpObject($primary);
+
 		try
 		{
 			//event before delete
-			static::callOnBeforeDeleteEvent($primary, $entity, $result);
+			static::callOnBeforeDeleteEvent($object, $entity, $result);
 
 			// return if any error
 			if (!$result->isSuccess(true))
@@ -1609,7 +1654,7 @@ abstract class DataManager
 			}
 
 			//event on delete
-			static::callOnDeleteEvent($primary, $entity);
+			static::callOnDeleteEvent($object, $entity);
 
 			// delete
 			$connection = $entity->getConnection();
@@ -1634,10 +1679,10 @@ abstract class DataManager
 				$USER_FIELD_MANAGER->delete($entity->getUfId(), end($primary));
 			}
 
-			$entity->cleanCache();
+			static::cleanCache();
 
 			//event after delete
-			static::callOnAfterDeleteEvent($primary, $entity);
+			static::callOnAfterDeleteEvent($object, $entity);
 		}
 		catch (\Exception $e)
 		{
@@ -1645,6 +1690,14 @@ abstract class DataManager
 			$result->isSuccess();
 
 			throw $e;
+		}
+		finally
+		{
+			// clean temporary objects
+			if (!empty(static::$currentDeletingObjects[$entityClass][$primaryAsString]))
+			{
+				unset(static::$currentDeletingObjects[$entityClass][$primaryAsString]);
+			}
 		}
 
 		return $result;
@@ -1802,47 +1855,47 @@ abstract class DataManager
 	}
 
 	/**
-	 * @param $primary
+	 * @param $object
 	 * @param $entity
 	 * @param $result
 	 */
-	protected static function callOnBeforeDeleteEvent($primary, $entity, $result)
+	protected static function callOnBeforeDeleteEvent($object, $entity, $result)
 	{
-		$event = new Event($entity, self::EVENT_ON_BEFORE_DELETE, array("id" => $primary));
+		$event = new Event($entity, self::EVENT_ON_BEFORE_DELETE, array("id" => $object->primary));
 		$event->send();
 		$event->getErrors($result);
 
 		//event before delete (modern with namespace)
-		$event = new Event($entity, self::EVENT_ON_BEFORE_DELETE, array("id" => $primary, "primary" => $primary), true);
+		$event = new Event($entity, self::EVENT_ON_BEFORE_DELETE, array("id" => $object->primary, "primary" => $object->primary, "object" => clone $object), true);
 		$event->send();
 		$event->getErrors($result);
 	}
 
 	/**
-	 * @param $primary
+	 * @param $object
 	 * @param $entity
 	 */
-	protected static function callOnDeleteEvent($primary, $entity)
+	protected static function callOnDeleteEvent($object, $entity)
 	{
-		$event = new Event($entity, self::EVENT_ON_DELETE, array("id" => $primary));
+		$event = new Event($entity, self::EVENT_ON_DELETE, array("id" => $object->primary));
 		$event->send();
 
 		//event on delete (modern with namespace)
-		$event = new Event($entity, self::EVENT_ON_DELETE, array("id" => $primary, "primary" => $primary), true);
+		$event = new Event($entity, self::EVENT_ON_DELETE, array("id" => $object->primary, "primary" => $object->primary, "object" => clone $object), true);
 		$event->send();
 	}
 
 	/**
-	 * @param $primary
+	 * @param $object
 	 * @param $entity
 	 */
-	protected static function callOnAfterDeleteEvent($primary, $entity)
+	protected static function callOnAfterDeleteEvent($object, $entity)
 	{
-		$event = new Event($entity, self::EVENT_ON_AFTER_DELETE, array("id" => $primary));
+		$event = new Event($entity, self::EVENT_ON_AFTER_DELETE, array("id" => $object->primary));
 		$event->send();
 
 		//event after delete (modern with namespace)
-		$event = new Event($entity, self::EVENT_ON_AFTER_DELETE, array("id" => $primary, "primary" => $primary), true);
+		$event = new Event($entity, self::EVENT_ON_AFTER_DELETE, array("id" => $object->primary, "primary" => $object->primary, "object" => clone $object), true);
 		$event->send();
 	}
 
@@ -1852,9 +1905,6 @@ abstract class DataManager
 	 * @param string $field
 	 * @param string $table
 	 * @param bool   $mode
-	 *
-	 * @throws Main\ArgumentNullException
-	 * @throws Main\ArgumentOutOfRangeException
 	 */
 	public static function enableCrypto($field, $table = null, $mode = true)
 	{
@@ -1879,8 +1929,6 @@ abstract class DataManager
 	 * @param string $table
 	 *
 	 * @return bool
-	 * @throws Main\ArgumentNullException
-	 * @throws Main\ArgumentOutOfRangeException
 	 */
 	public static function cryptoEnabled($field, $table = null)
 	{
@@ -1899,6 +1947,21 @@ abstract class DataManager
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * @param EntityObject $object
+	 */
+	public static function setCurrentDeletingObject($object): void
+	{
+		$entityClass = static::getEntity()->getDataClass();
+		self::$currentDeletingObjects[$entityClass][$object->primaryAsString] = $object;
+	}
+
+	public static function cleanCache(): void
+	{
+		$entity = static::getEntity();
+		$entity->cleanCache();
 	}
 
 	/*

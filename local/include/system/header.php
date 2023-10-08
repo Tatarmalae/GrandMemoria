@@ -13,7 +13,7 @@ use Dev\Basket;
             <div class="logo-link">
                 <div class="logo-wrap">
                     <a class="logo" href="<?= SITE_DIR ?>">
-                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" alt="<?= SITE_SERVER_NAME ?>"/>
+                        <img src="<?= SITE_STYLE_PATH ?>/img/general/logo.svg" width="139" height="57" alt="<?= SITE_SERVER_NAME ?>"/>
                     </a>
                     <div class="logo-text">
                         <?= Option::get("askaron.settings", "UF_LOGO_TEXT"); ?>

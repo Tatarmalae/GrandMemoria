@@ -11,6 +11,7 @@
 		this.params = {
 			firstRun: !!params.firstRun,
 			appHost: params.appHost,
+			appPort: params.appPort,
 			appProto: params.appProto,
 			authId: params.authId,
 			authExpires: params.authExpires,
@@ -237,6 +238,67 @@
 		});
 	};
 
+	BX.rest.AppLayout.openPath = function(applicationCode, params, callback)
+	{
+		var path = BX.type.isString(params['path']) ? params['path'] : '';
+		var availablePath = /^\/(crm\/(deal|lead|contact|company|type)|marketplace|company\/personal\/user\/[0-9]+|workgroups\/group\/[0-9]+)\//;
+
+		if (!BX.browser.IsMobile())
+		{
+			if (path !== '' && availablePath.test(path))
+			{
+				var from = 'from=rest_placement&from_app=' + applicationCode;
+				path += (path.indexOf('?') === -1 ? '?' : '&') + from;
+				var link = {
+					url : path,
+					anchor : null,
+					target : null,
+				};
+				var rule = BX.SidePanel.Instance.getUrlRule(path, link);
+				var options = rule && rule.options ? BX.clone(rule.options) : {};
+				options["cacheable"] = false;
+
+				if (!('events' in options))
+				{
+					options['events'] = {};
+				}
+				options["events"]["onClose"] = function()
+				{
+					if(!!callback && BX.type.isFunction(callback))
+					{
+						callback(
+							{
+								'result': 'close',
+							}
+						);
+					}
+				};
+				BX.SidePanel.Instance.open(path, options);
+			}
+			else
+			{
+				if (!!callback && BX.type.isFunction(callback))
+				{
+					callback(
+						{
+							'result': 'error',
+							'errorCode': 'PATH_NOT_AVAILABLE'
+						}
+					);
+				}
+			}
+		}
+		else
+		{
+			callback(
+				{
+					'result': 'error',
+					'errorCode': 'METHOD_NOT_SUPPORTED_ON_DEVICE'
+				}
+			);
+		}
+	};
+
 	BX.rest.AppLayout.prototype = {
 		init: function()
 		{
@@ -247,11 +309,7 @@
 				{
 					BX.addClass(loader, 'app-loading-msg-loaded');
 					BX.removeClass(this, 'app-loading');
-
-					setTimeout(function()
-					{
-						BX.remove(loader);
-					}, 300);
+					BX.remove(loader);
 				});
 
 				if(this.params.staticHtml)
@@ -308,30 +366,54 @@
 		{
 			e = e || window.event;
 
-			if(e.origin != this.params.appProto + '://' + this.params.appHost || !BX.type.isString(e.data))
+			if (
+				(
+					e.origin !== this.params.appProto + '://' + this.params.appHost
+					&& e.origin + ':' + this.params.appPort !== this.params.appProto + '://' + this.params.appHost
+				)
+				|| (!BX.type.isString(e.data) && !BX.type.isObject(e.data))
+			)
 			{
 				return;
 			}
 
-			var cmd = split(e.data, ':'), args = [];
+			var cmd = {},
+				args = [],
+				appSid = '',
+				method = '',
+				cb = false
+			;
 
-			if(cmd[3] != this.params.appSid)
+			if (BX.type.isObject(e.data))
+			{
+				method = e.data.method;
+				appSid = e.data.appSid;
+				cb = e.data.callback;
+				args = !!e.data.params ? e.data.params : [];
+			}
+			else
+			{
+				cmd = split(e.data, ':');
+				method = cmd[0];
+				cb = cmd[2];
+				appSid = cmd[3];
+				if (cmd[1])
+				{
+					args = JSON.parse(cmd[1]);
+				}
+			}
+
+			if (appSid != this.params.appSid)
 			{
 				return;
 			}
 
-			if(cmd[1])
+			if (!!this.messageInterface[method] && !BX.util.in_array(method, this.deniedInterface))
 			{
-				args = JSON.parse(cmd[1]);
-			}
-
-			if(!!this.messageInterface[cmd[0]] && !BX.util.in_array(cmd[0], this.deniedInterface))
-			{
-				var cb = cmd[2];
 				var _cb = !cb ? BX.DoNothing : BX.delegate(function(res)
 				{
 					var f = BX(this.params.frameName);
-					if(!!f && !!f.contentWindow)
+					if (!!f && !!f.contentWindow)
 					{
 						f.contentWindow.postMessage(
 							cb + ':' + (typeof res == 'undefined' ? '' : JSON.stringify(res)),
@@ -340,7 +422,7 @@
 					}
 				}, this);
 
-				this.messageInterface[cmd[0]].apply(this, [args, _cb, this]);
+				this.messageInterface[method].apply(this, [args, _cb, this]);
 			}
 		},
 
@@ -847,6 +929,11 @@
 		openApplication: function(params, cb)
 		{
 			BX.rest.AppLayout.openApplication(this.params.id, params, {}, cb);
+		},
+
+		openPath: function(params, callback)
+		{
+			BX.rest.AppLayout.openPath(this.params.appId, params, callback);
 		},
 
 		closeApplication: function(params, cb)

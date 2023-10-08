@@ -15,7 +15,7 @@
 
 use Bitrix\Main\Mail\Internal\EventTypeTable;
 
-require_once(dirname(__FILE__)."/../include/prolog_admin_before.php");
+require_once(__DIR__."/../include/prolog_admin_before.php");
 require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/prolog.php");
 define("HELP_FILE", "settings/mail_events/message_admin.php");
 
@@ -30,7 +30,7 @@ $err_mess = "File: ".__FILE__."<br>Line: ";
 // variable with ID of table
 $sTableID = "tbl_main_message";
 // sorting
-$oSort = new CAdminSorting($sTableID, "TIMESTAMP_X", "desc");
+$oSort = new CAdminSorting($sTableID, "id", "desc");
 // list
 $lAdmin = new CAdminList($sTableID, $oSort);
 
@@ -149,7 +149,7 @@ if(($arID = $lAdmin->GroupAction()) && $isAdmin)
 {
 	if($_REQUEST['action_target']=='selected')
 	{
-		$rsData = CEventMessage::GetList($by, $order, $arFilter);
+		$rsData = CEventMessage::GetList('', '', $arFilter);
 		while($arRes = $rsData->Fetch())
 			$arID[] = $arRes['ID'];
 	}
@@ -183,6 +183,8 @@ if(($arID = $lAdmin->GroupAction()) && $isAdmin)
 		}
 	}
 }
+
+global $by, $order;
 
 $rsData = CEventMessage::GetList($by, $order, $arFilter);
 $resultObject = null;

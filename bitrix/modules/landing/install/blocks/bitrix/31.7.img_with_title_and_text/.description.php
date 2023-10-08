@@ -30,6 +30,7 @@ return array(
 			'name' => Loc::getMessage('LANDING_BLOCK_31_7_IMG'),
 			'type' => 'img',
 			'dimensions' => array('width' => 1254),
+			'create2xByDefault' => false,
 		),
 		'.landing-block-node-read-more' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_31_7_READMORE'),
@@ -43,7 +44,7 @@ return array(
 	'style' => array(
 		'.landing-block-node-title' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_31_7_TITLE'),
-			'type' => array('typo', 'margin-bottom'),
+			'type' => ['typo', 'margin-bottom', 'heading'],
 		),
 		'.landing-block-node-read-more' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_31_7_READMORE'),

@@ -1,4 +1,4 @@
-<?
+<?php
 $MESS["CHECK_DATES_TIP"] = "Wenn diese Option aktiv ist, wird nur nach aktiven Elementen gesucht.";
 $MESS["CP_BCSE_ELEMENT_SORT_FIELD"] = "Elemente sortieren nach";
 $MESS["CP_BCSE_ELEMENT_SORT_FIELD2"] = "Feld für die zweite Sortierung";
@@ -49,6 +49,7 @@ $MESS["IBLOCK_SECTION_URL"] = "URL - Bereichs-Inhalte";
 $MESS["IBLOCK_SHOW_PRICE_COUNT"] = "Preis für die Menge anzeigen";
 $MESS["IBLOCK_USE_PRICE_COUNT"] = "Staffelpreise benutzen";
 $MESS["IBLOCK_VAT_INCLUDE"] = "Preis inkl. MwSt.";
+$MESS["LINE_ELEMENT_COUNT_TIP"] = "Standardvorlagen können zwei bis vier Elemente pro Tabellenzeile anzeigen";
 $MESS["RESTART_TIP"] = "Wenn diese Option aktiv ist, wird die erste Suche mit Morphologie durchgeführt. Wenn nichs gefunden wird, erfolgt eine zweite Suche ohne Morphologie.";
 $MESS["SEARCH_CHECK_DATES"] = "Nur in den nach Datum aktiven Dokumenten suchen";
 $MESS["SEARCH_RESTART"] = "Die Suche ohne Morphologie durchführen (falls keine Suchergebnisse gefunden wurden)";
@@ -58,4 +59,3 @@ $MESS["T_IBLOCK_DESC_DISPLAY_COMPARE"] = "Vergleichsbutton anzeigen";
 $MESS["T_IBLOCK_DESC_PAGER_CATALOG"] = "Produkte";
 $MESS["USE_SEARCH_RESULT_ORDER_TIP"] = "Suchergebnisse werden nach Relevanz geordnet, die relevantesten oben";
 $MESS["USE_TITLE_RANK_TIP"] = "Wenn diese Option eingeschaltet ist, werden Objekte mit relevanten Kopfzeilen oben in der Ergebnisliste angezeigt";
-?>

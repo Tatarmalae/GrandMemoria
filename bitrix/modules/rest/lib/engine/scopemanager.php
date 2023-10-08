@@ -16,10 +16,11 @@ use CRestUtil;
  */
 class ScopeManager
 {
-	private const CACHE_TIME = 604800;// 86400 * 7
-	private const CACHE_DIR = '/rest/scope/';
+	public const CACHE_TIME = 604800;// 86400 * 7
+	public const CACHE_DIR = '/rest/scope/';
 	private const CACHE_KEY = 'list';
 	private const METHOD_DELIMITER = '.';
+	private const VENDOR_DELIMITER = ':';
 
 	/** @var ScopeManager|null  */
 	private static $instance;
@@ -107,7 +108,7 @@ class ScopeManager
 
 	public static function cleanCache() : bool
 	{
-		return Cache::clearCache(false, self::CACHE_DIR);
+		return Cache::clearCache(true, self::CACHE_DIR);
 	}
 
 	public function getAlias($code) : ?string
@@ -144,7 +145,7 @@ class ScopeManager
 		return $result;
 	}
 
-	public function getMethodInfo(string $method) : array
+	public function getMethodInfo(?string $method) : array
 	{
 		if (!$this->methodInfoList[$method])
 		{
@@ -155,7 +156,7 @@ class ScopeManager
 
 			foreach ($actionParts as $partScope)
 			{
-				$scopeFind .= ($scope !== '' ? self::METHOD_DELIMITER : '') . $partScope;
+				$scopeFind .= ($scopeFind !== '' ? self::METHOD_DELIMITER : '') . $partScope;
 				$moduleFind = $this->getAlias($scopeFind);
 				if ($moduleFind)
 				{
@@ -172,6 +173,21 @@ class ScopeManager
 			elseif ($module !== $scope)
 			{
 				$method = $module . self::METHOD_DELIMITER . $method;
+			}
+
+			/**
+			 * for method with ':' doesn't add extra ':' for modules with points in the name
+			 */
+			if (
+				mb_strpos($method, self::VENDOR_DELIMITER) === false
+				&& mb_strpos($module, self::METHOD_DELIMITER) !== false
+			)
+			{
+				$moduleParts = explode(self::METHOD_DELIMITER, $module);
+				array_pop($moduleParts);
+				$vendor = implode(self::METHOD_DELIMITER, $moduleParts);
+
+				$method = preg_replace('/^' . $vendor . self::METHOD_DELIMITER . '/', $vendor . self::VENDOR_DELIMITER, $method);
 			}
 
 			$this->methodInfoList[$method] = [

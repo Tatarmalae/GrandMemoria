@@ -6,5 +6,10 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 
 return [
 	"css" => "/bitrix/js/ui/graph/circle/ui.circle.css",
-	"js" => "/bitrix/js/ui/graph/circle/ui.circle.js"
+	"js" => "/bitrix/js/ui/graph/circle/ui.circle.bundle.js",
+	'rel' => [
+		'main.core',
+		'ui.fonts.opensans',
+	],
+	'skip_core' => false,
 ];

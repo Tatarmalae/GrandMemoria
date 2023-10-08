@@ -5,7 +5,7 @@ namespace Bitrix\Translate;
 use Bitrix\Main;
 use Bitrix\Translate;
 use Bitrix\Translate\Index;
-
+use Bitrix\Translate\Text\StringHelper;
 
 class File
 	extends Translate\IO\File
@@ -29,6 +29,9 @@ class File
 	/** @var array */
 	protected $messageCodes = [];
 
+	/** @var array */
+	protected $messageEnclosure = [];
+
 	/** @var int */
 	protected $dataPosition = 0;
 
@@ -48,7 +51,7 @@ class File
 	 */
 	public static function instantiateByPath($path)
 	{
-		if (empty($path) || !is_string($path) || (mb_substr($path, -4) !== '.php') || !preg_match("#.+/lang/[a-z]{2}/.+\.php$#", $path))
+		if (empty($path) || !\is_string($path) || (\mb_substr($path, -4) !== '.php') || !\preg_match("#.+/lang/[a-z]{2}/.+\.php$#", $path))
 		{
 			throw new Main\ArgumentException("Parameter 'path' has a wrong value");
 		}
@@ -216,7 +219,7 @@ class File
 	 */
 	public function lint(
 		$content = '',
-		$validTokens = array(T_OPEN_TAG, T_CLOSE_TAG, T_WHITESPACE, T_CONSTANT_ENCAPSED_STRING, T_VARIABLE, T_COMMENT, T_DOC_COMMENT),
+		$validTokens = array(\T_OPEN_TAG, \T_CLOSE_TAG, \T_WHITESPACE, \T_CONSTANT_ENCAPSED_STRING, \T_VARIABLE, \T_COMMENT, \T_DOC_COMMENT),
 		$validChars = array('[', ']', ';', '=')
 	)
 	{
@@ -229,48 +232,45 @@ class File
 				$content = $this->getContents();
 			}
 		}
-		if (empty($content) || !is_string($content))
+		if (empty($content) || !\is_string($content))
 		{
 			$this->addError(new Main\Error("Parse Error: Empty content"));
 			return $isValid;
 		}
 
-		if (function_exists('token_get_all'))
-		{
-			$tokens = token_get_all($content);
+		$tokens = \token_get_all($content);
 
-			$line = $tokens[0][2] || 1;
-			if (!is_array($tokens[0]) || $tokens[0][0] !== T_OPEN_TAG)
+		$line = $tokens[0][2] || 1;
+		if (!is_array($tokens[0]) || $tokens[0][0] !== \T_OPEN_TAG)
+		{
+			$this->addError(new Main\Error("Parse Error: Wrong open tag ".\token_name($tokens[0][0])." '{$tokens[0][1]}' at line {$line}"));
+		}
+		else
+		{
+			$isValid = true;
+			foreach ($tokens as $token)
 			{
-				$this->addError(new Main\Error("Parse Error: Wrong open tag ".token_name($tokens[0][0])." '{$tokens[0][1]}' at line {$line}"));
-			}
-			else
-			{
-				$isValid = true;
-				foreach ($tokens as $token)
+				if (\is_array($token))
 				{
-					if (is_array($token))
+					$line = $token[2];
+					if (
+						!\in_array($token[0], $validTokens) ||
+						($token[0] === \T_VARIABLE && $token[1] != '$MESS')
+					)
 					{
-						$line = $token[2];
-						if (
-							!in_array($token[0], $validTokens) ||
-							($token[0] === T_VARIABLE && $token[1] != '$MESS')
-						)
-						{
-							$this->addError(new Main\Error("Parse Error: Wrong token ". token_name($token[0]). " '{$token[1]}' at line {$line}"));
-							$isValid = false;
-							break;
-						}
+						$this->addError(new Main\Error("Parse Error: Wrong token ". \token_name($token[0]). " '{$token[1]}' at line {$line}"));
+						$isValid = false;
+						break;
 					}
-					elseif (is_string($token))
+				}
+				elseif (\is_string($token))
+				{
+					if (!\in_array($token, $validChars))
 					{
-						if (!in_array($token, $validChars))
-						{
-							$line ++;
-							$this->addError(new Main\Error("Parse Error: Expected character '{$token}' at line {$line}"));
-							$isValid = false;
-							break;
-						}
+						$line ++;
+						$this->addError(new Main\Error("Parse Error: Expected character '{$token}' at line {$line}"));
+						$isValid = false;
+						break;
 					}
 				}
 			}
@@ -281,12 +281,13 @@ class File
 
 	// endregion
 
-	//region Load & Save
+	//region Load
 
 	/**
 	 * Loads language file for operate.
 	 *
 	 * @return bool
+	 * @throws \ParseError
 	 */
 	public function load()
 	{
@@ -307,30 +308,53 @@ class File
 			return false;
 		}
 
+		$content = $this->getContents();
+		if (
+			empty($content)
+			|| !\is_string($content)
+			|| $content === '<?'
+			|| $content === '<?php'
+		)
+		{
+			$this->addError(new Main\Error('Empty content', 'EMPTY_CONTENT'));
+			return false;
+		}
+
 		// encoding
 		$targetEncoding = $this->getOperatingEncoding();
 		$sourceEncoding = $this->getSourceEncoding();
-		$convertEncoding = (mb_strtolower($targetEncoding) != mb_strtolower($sourceEncoding));
+		$convertEncoding = (\mb_strtolower($targetEncoding) != \mb_strtolower($sourceEncoding));
 		if ($convertEncoding)
 		{
 			$path = Main\Localization\Translation::convertLangPath($this->getPhysicalPath(), $this->getLangId());
 
 			if (Main\Localization\Translation::getDeveloperRepositoryPath() !== null)
 			{
-				$convertEncoding = (stripos($path, Main\Localization\Translation::getDeveloperRepositoryPath()) === 0);
+				$convertEncoding = (\stripos($path, Main\Localization\Translation::getDeveloperRepositoryPath()) === 0);
 			}
 			if (!$convertEncoding && Main\Localization\Translation::useTranslationRepository())
 			{
-				$convertEncoding = (stripos($path, Main\Localization\Translation::getTranslationRepositoryPath()) === 0);
+				$convertEncoding = (\stripos($path, Main\Localization\Translation::getTranslationRepositoryPath()) === 0);
 			}
 		}
 
-		$MESS = array();
-		include $this->getPhysicalPath();
+		$messages = (function(){
+			if (isset($GLOBALS['MESS']))
+			{
+				unset($GLOBALS['MESS']);
+			}
 
-		if (is_array($MESS) && count($MESS) > 0)
+			$MESS = [];
+			\ob_start();
+			include $this->getPhysicalPath();
+			\ob_end_clean();
+
+			return $MESS;
+		})();
+
+		if (\is_array($messages) && \count($messages) > 0)
 		{
-			foreach ($MESS as $phraseId => $phrase)
+			foreach ($messages as $phraseId => $phrase)
 			{
 				if ($convertEncoding)
 				{
@@ -343,19 +367,236 @@ class File
 			}
 		}
 
-		// todo: Handle here developer's comment from file
+		return true;
+	}
+
+	/**
+	 * Lints php code.
+	 *
+	 * @return bool
+	 */
+	public function loadTokens()
+	{
+		$this->messages = [];
+		$this->messageCodes = [];
+		$this->messageEnclosure = [];
+		$this->messagesCount = 0;
+
+		if (!$this->isExists() || !$this->isFile() || ($this->getExtension() !== 'php'))
+		{
+			return false;
+		}
+
+		// language id
+		$langId = $this->getLangId();
+		if (empty($langId))
+		{
+			$this->addError(new Main\Error('Language Id must be filled'));
+			return false;
+		}
+
+		$content = $this->getContents();
+		if (
+			empty($content)
+			|| !\is_string($content)
+			|| $content === '<?'
+			|| $content === '<?php'
+		)
+		{
+			$this->addError(new Main\Error('Empty content', 'EMPTY_CONTENT'));
+			return false;
+		}
+
+		$is = function ($token, $type, $value = null)
+		{
+			if (\is_string($token))
+			{
+				return $token === $type;
+			}
+			if (\is_array($token))
+			{
+				if ($token[0] === $type)
+				{
+					if ($value !== null)
+					{
+						return $token[1] === $value;
+					}
+					return true;
+				}
+			}
+			return false;
+		};
+
+		$tokens = \token_get_all($content);
+
+		$hasPhraseDefinition = false;
+		foreach ($tokens as $inx => $token)
+		{
+			if ($is($token, \T_WHITESPACE))
+			{
+				unset($tokens[$inx]);
+				continue;
+			}
+			if (!$hasPhraseDefinition && $is($token, \T_VARIABLE, '$MESS'))
+			{
+				$hasPhraseDefinition = true;
+			}
+			//if (is_array($token))$tokens[$inx][] = \token_name($token[0]);
+		}
+
+		if (!$hasPhraseDefinition)
+		{
+			$this->addError(new Main\Error("There are no phrase definitions"));
+			return false;
+		}
+
+		\array_splice($tokens, 0, 0);
+
+		$addPhrase = function ($phraseId, $phraseParts, $isHeredoc = false)
+		{
+			if ($phraseId != '')
+			{
+				$len = \mb_strlen($phraseId, $this->getOperatingEncoding());
+				$phraseId = \mb_substr($phraseId, 1, $len - 2, $this->getOperatingEncoding());// strip trailing quotes
+				$phraseId = \str_replace("\\\\", "\\", $phraseId);// strip slashes in code
+
+				$enclosure = $isHeredoc ? '<<<' : \mb_substr($phraseParts[0], 0, 1);// what quote
+
+				$phrase = '';
+				if ($isHeredoc)
+				{
+					$part = $phraseParts[0];
+					$len = \mb_strlen($part, $this->getOperatingEncoding());
+					$phrase = \mb_substr($part, 0, $len - 1, $this->getOperatingEncoding());// strip final \n
+				}
+				else
+				{
+					foreach ($phraseParts as $part)
+					{
+						$enclosure = \mb_substr($part, 0, 1);// what quote
+						// strip trailing quotes
+						if ($enclosure === '"' || $enclosure === "'")
+						{
+							$len = \mb_strlen($part, $this->getOperatingEncoding());
+							$part = \mb_substr($part, 1, $len - 2, $this->getOperatingEncoding());
+						}
+						//$part = StringHelper::unescapePhp($part, $enclosure);
+						$phrase .= $part;
+					}
+				}
+
+				$this->messages[$phraseId] = $phrase;
+				$this->messageCodes[] = $phraseId;
+				$this->messageEnclosure[$phraseId] = $enclosure;
+				$this->messagesCount++;
+			}
+		};
+
+		$startPhrase = false;
+		$endPhrase = false;
+		$inPhrase = false;
+		$inCode = false;
+		$isHeredoc = false;
+		$phraseId = '';
+		$phrase = [];
+		$whereIsPhrase = [];
+
+		foreach ($tokens as $inx => &$token)
+		{
+			if (!$startPhrase && $is($token, \T_VARIABLE, '$MESS'))
+			{
+				$startPhrase = true;
+			}
+
+			if ($startPhrase)
+			{
+				if ($is($token, '['))
+				{
+					$inCode = true;
+				}
+				elseif ($is($token, ']'))
+				{
+					$inCode = false;
+				}
+				elseif ($is($token, '='))
+				{
+					$inPhrase = true;
+				}
+				elseif ($is($token, ';'))
+				{
+					$endPhrase = true;
+				}
+				elseif ($is($token, \T_CLOSE_TAG))
+				{
+					$endPhrase = true;
+				}
+				elseif ($is($token, \T_START_HEREDOC))
+				{
+					$isHeredoc = true;
+				}
+
+				if (
+					$inPhrase
+					&& $is($token, \T_VARIABLE, '$MESS')
+					&& $is($tokens[$inx + 1], '[')
+					&& $is($tokens[$inx + 2], \T_CONSTANT_ENCAPSED_STRING)
+				)
+				{
+					$clonePhraseId = $tokens[$inx + 2][1];
+					$cloneInx = $whereIsPhrase[$clonePhraseId];
+					$phrase[] = $tokens[$cloneInx][1];
+					$endPhrase = true;
+				}
+
+				if ($is($token, \T_CONSTANT_ENCAPSED_STRING) || $is($token, \T_ENCAPSED_AND_WHITESPACE))
+				{
+					if ($inPhrase)
+					{
+						$phrase[] = $token[1];
+						$whereIsPhrase[$phraseId] = $inx;
+					}
+					if ($inCode)
+					{
+						$phraseId = $token[1];
+					}
+				}
+
+				if ($endPhrase)
+				{
+					$addPhrase($phraseId, $phrase, $isHeredoc);
+
+					$phrase = [];
+					$phraseId = '';
+					$startPhrase = false;
+					$endPhrase = false;
+					$inPhrase = false;
+					$inCode = false;
+					$isHeredoc = false;
+				}
+			}
+
+			// todo: Handle here developer's comment from file
+			// \T_COMMENT T_DOC_COMMENT
+		}
+
+		if ($startPhrase)
+		{
+			$addPhrase($phraseId, $phrase, $isHeredoc);
+		}
 
 		return true;
 	}
 
 	//endregion
 
-	//region Load & Save
+	//region Save
 
 	/**
 	 * Save changes or create new file.
 	 *
 	 * @return boolean
+	 * @throws Main\IO\IoException
+	 * @throws Main\SystemException
 	 */
 	public function save()
 	{
@@ -369,18 +610,18 @@ class File
 		// encoding
 		$operatingEncoding = $this->getOperatingEncoding();
 		$sourceEncoding = $this->getSourceEncoding();
-		$convertEncoding = (mb_strtolower($operatingEncoding) != mb_strtolower($sourceEncoding));
+		$convertEncoding = (\mb_strtolower($operatingEncoding) != \mb_strtolower($sourceEncoding));
 		if ($convertEncoding)
 		{
 			$path = Main\Localization\Translation::convertLangPath($this->getPhysicalPath(), $this->getLangId());
 
 			if (Main\Localization\Translation::getDeveloperRepositoryPath() !== null)
 			{
-				$convertEncoding = (stripos($path, Main\Localization\Translation::getDeveloperRepositoryPath()) === 0);
+				$convertEncoding = (\stripos($path, Main\Localization\Translation::getDeveloperRepositoryPath()) === 0);
 			}
 			if (!$convertEncoding && Main\Localization\Translation::useTranslationRepository())
 			{
-				$convertEncoding = (stripos($path, Main\Localization\Translation::getTranslationRepositoryPath()) === 0);
+				$convertEncoding = (\stripos($path, Main\Localization\Translation::getTranslationRepositoryPath()) === 0);
 			}
 		}
 
@@ -392,19 +633,66 @@ class File
 				// remove empty
 				continue;
 			}
-			$phrase = str_replace(["\r\n", "\r"], ["\n", ''], $phrase);
+			$phrase = \str_replace(["\r\n", "\r"], ["\n", ''], $phrase);
 			if ($convertEncoding)
 			{
 				$phrase = Main\Text\Encoding::convertEncoding($phrase, $operatingEncoding, $sourceEncoding);
 			}
-			$row = "\$MESS[\"". \EscapePHPString($phraseId). "\"] = \"". \EscapePHPString($phrase). "\"";
+			$enclosure = '"';
+			if (isset($this->messageEnclosure[$phraseId]))
+			{
+				$enclosure = $this->messageEnclosure[$phraseId];// preserve origin quote
+			}
+
+			$phraseId = StringHelper::escapePhp($phraseId, '"', "\\\\");
+			if (StringHelper::hasPhpTokens($phraseId, '"'))
+			{
+				$this->addError(new Main\Error("Phrase code contains php tokens"));
+				return false;
+			}
+
+			$phrase = StringHelper::escapePhp($phrase, $enclosure);
+			if (StringHelper::hasPhpTokens($phrase, $enclosure))
+			{
+				$this->addError(new Main\Error("Phrase contains php tokens"));
+				return false;
+			}
+
+			$row = '$MESS["'. $phraseId. '"] = ';
+			if ($enclosure === '<<<')
+			{
+				$row .= "<<<HTML\n". $phrase. "\nHTML";
+			}
+			else
+			{
+				$row .= $enclosure. $phrase. $enclosure;
+			}
 			$content .= "\n". $row. ';';
 		}
 		unset($phraseId, $phrase, $row);
 
 		if ($content <> '')
 		{
-			if (parent::putContents('<?php'. $content. "\n") === false)
+			\set_error_handler(
+				function ($severity, $message, $file, $line)
+				{
+					throw new \ErrorException($message, $severity, $severity, $file, $line);
+				}
+			);
+
+			try
+			{
+				$result = parent::putContents('<?php'. $content. "\n");
+			}
+			catch (\ErrorException $exception)
+			{
+				\restore_error_handler();
+				throw new Main\IO\IoException($exception->getMessage());
+			}
+
+			\restore_error_handler();
+
+			if ($result === false)
 			{
 				$filePath = $this->getPath();
 				throw new Main\IO\IoException("Couldn't write language file '{$filePath}'");
@@ -435,7 +723,7 @@ class File
 		$parentFolder = $this->getDirectory();
 		while (true)
 		{
-			if ($parentFolder->isExists() && count($parentFolder->getChildren()) > 0)
+			if ($parentFolder->isExists() && \count($parentFolder->getChildren()) > 0)
 			{
 				$ret = false;
 				break;
@@ -476,9 +764,9 @@ class File
 
 		if (Main\Localization\Translation::useTranslationRepository() && in_array($langId, Translate\Config::getTranslationRepositoryLanguages()))
 		{
-			if (mb_strpos($langFile, Main\Localization\Translation::getTranslationRepositoryPath()) === 0)
+			if (\mb_strpos($langFile, Main\Localization\Translation::getTranslationRepositoryPath()) === 0)
 			{
-				$langFile = str_replace(
+				$langFile = \str_replace(
 					Main\Localization\Translation::getTranslationRepositoryPath(). '/',
 					'',
 					$langFile
@@ -487,46 +775,46 @@ class File
 		}
 		if (Main\Localization\Translation::getDeveloperRepositoryPath() !== null)
 		{
-			if (mb_strpos($langFile, Main\Localization\Translation::getDeveloperRepositoryPath()) === 0)
+			if (\mb_strpos($langFile, Main\Localization\Translation::getDeveloperRepositoryPath()) === 0)
 			{
-				$langFile = str_replace(
+				$langFile = \str_replace(
 					Main\Localization\Translation::getDeveloperRepositoryPath(). '/',
 					'',
 					$langFile
 				);
 			}
 		}
-		if (mb_strpos($langFile, Main\Application::getDocumentRoot()) === 0)
+		if (\mb_strpos($langFile, Main\Application::getDocumentRoot()) === 0)
 		{
-			$langFile = str_replace(
+			$langFile = \str_replace(
 				Main\Application::getDocumentRoot(). '/',
 				'',
 				$langFile
 			);
 		}
 
-		$backupFolder = Translate\Config::getBackupFolder(). '/'. dirname($langFile). '/';
+		$backupFolder = Translate\Config::getBackupFolder(). '/'. \dirname($langFile). '/';
 		if (!Translate\IO\Path::checkCreatePath($backupFolder))
 		{
 			$this->addError(new Main\Error("Couldn't create backup path '{$backupFolder}'"));
 			return false;
 		}
 
-		$sourceFilename = basename($langFile);
-		$prefix = date('YmdHi');
+		$sourceFilename = \basename($langFile);
+		$prefix = \date('YmdHi');
 		$endpointBackupFilename = $prefix. '_'. $sourceFilename;
-		if (file_exists($backupFolder. $endpointBackupFilename))
+		if (\file_exists($backupFolder. $endpointBackupFilename))
 		{
 			$i = 1;
-			while (file_exists($backupFolder. '/'. $endpointBackupFilename))
+			while (\file_exists($backupFolder. '/'. $endpointBackupFilename))
 			{
 				$i ++;
 				$endpointBackupFilename = $prefix. '_'. $i. '_'. $sourceFilename;
 			}
 		}
 
-		$isSuccessfull = (bool) @copy($fullPath, $backupFolder. '/'. $endpointBackupFilename);
-		@chmod($backupFolder. '/'. $endpointBackupFilename, BX_FILE_PERMISSIONS);
+		$isSuccessfull = (bool) @\copy($fullPath, $backupFolder. '/'. $endpointBackupFilename);
+		@\chmod($backupFolder. '/'. $endpointBackupFilename, \BX_FILE_PERMISSIONS);
 
 		if (!$isSuccessfull)
 		{
@@ -596,7 +884,7 @@ class File
 
 			Index\Internals\PhraseIndexTable::purge(new Translate\Filter(['fileId' => $this->fileIndex->getId()]));
 
-			if (count($phraseData) > 0)
+			if (\count($phraseData) > 0)
 			{
 				Index\Internals\PhraseIndexTable::bulkAdd($phraseData);
 			}
@@ -660,7 +948,7 @@ class File
 	 *
 	 * @return boolean
 	 */
-	public function offsetExists($code)
+	public function offsetExists($code): bool
 	{
 		return isset($this->messages[$code]);
 	}
@@ -672,7 +960,7 @@ class File
 	 *
 	 * @return string|null
 	 */
-	public function offsetGet($code)
+	public function offsetGet($code): ?string
 	{
 		if (isset($this->messages[$code]))
 		{
@@ -690,7 +978,7 @@ class File
 	 *
 	 * @return void
 	 */
-	public function offsetSet($code, $phrase)
+	public function offsetSet($code, $phrase): void
 	{
 		if (!isset($this->messages[$code]))
 		{
@@ -714,13 +1002,13 @@ class File
 	 *
 	 * @return void
 	 */
-	public function offsetUnset($code)
+	public function offsetUnset($code): void
 	{
 		if (isset($this->messages[$code]))
 		{
 			unset($this->messages[$code]);
 			$this->messagesCount --;
-			if (($i = array_search($code, $this->messageCodes)) !== false)
+			if (($i = \array_search($code, $this->messageCodes)) !== false)
 			{
 				unset($this->messageCodes[$i]);
 			}
@@ -755,7 +1043,23 @@ class File
 	 */
 	public function getCodes()
 	{
-		return is_array($this->messages) ? array_keys($this->messages) : [];
+		return \is_array($this->messages) ? \array_keys($this->messages) : [];
+	}
+
+	/**
+	 * Returns preserved origin quote.
+	 * @param string $phraseId
+	 * @return string
+	 */
+	public function getEnclosure(string $phraseId): string
+	{
+		$enclosure = '"';
+		if (isset($this->messageEnclosure[$phraseId]))
+		{
+			$enclosure = $this->messageEnclosure[$phraseId];
+		}
+
+		return $enclosure;
 	}
 
 	//endregion
@@ -767,11 +1071,11 @@ class File
 	 *
 	 * @return string|null
 	 */
-	public function current()
+	public function current(): ?string
 	{
 		$code = $this->messageCodes[$this->dataPosition];
 
-		if (!isset($this->messages[$code]) || !is_string($this->messages[$code]) || (empty($this->messages[$code]) && $this->messages[$code] !== '0'))
+		if (!isset($this->messages[$code]) || !\is_string($this->messages[$code]) || (empty($this->messages[$code]) && $this->messages[$code] !== '0'))
 		{
 			return null;
 		}
@@ -784,7 +1088,7 @@ class File
 	 *
 	 * @return void
 	 */
-	public function next()
+	public function next(): void
 	{
 		++ $this->dataPosition;
 	}
@@ -794,6 +1098,7 @@ class File
 	 *
 	 * @return int|null
 	 */
+	#[\ReturnTypeWillChange]
 	public function key()
 	{
 		return $this->messageCodes[$this->dataPosition] ?: null;
@@ -802,9 +1107,9 @@ class File
 	/**
 	 * Checks if current position is valid.
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
-	public function valid()
+	public function valid(): bool
 	{
 		return isset($this->messageCodes[$this->dataPosition], $this->messages[$this->messageCodes[$this->dataPosition]]);
 	}
@@ -814,10 +1119,10 @@ class File
 	 *
 	 * @return void
 	 */
-	public function rewind()
+	public function rewind(): void
 	{
 		$this->dataPosition = 0;
-		$this->messageCodes = array_keys($this->messages);
+		$this->messageCodes = \array_keys($this->messages);
 	}
 
 	//endregion
@@ -831,22 +1136,22 @@ class File
 	 *
 	 * @return int
 	 */
-	public function count($allowDirectFileAccess = false)
+	public function count($allowDirectFileAccess = false): int
 	{
 		if ($this->messagesCount === null)
 		{
-			if ($this->messages !== null && count($this->messages) > 0)
+			if ($this->messages !== null && \count($this->messages) > 0)
 			{
-				$this->messagesCount = count($this->messages);
+				$this->messagesCount = \count($this->messages);
 			}
 			elseif ($allowDirectFileAccess)
 			{
 				$MESS = array();
 				include $this->getPhysicalPath();
 
-				if (is_array($MESS) && count($MESS) > 0)
+				if (\is_array($MESS) && \count($MESS) > 0)
 				{
-					$this->messagesCount = count($MESS);
+					$this->messagesCount = \count($MESS);
 				}
 			}
 		}
@@ -856,6 +1161,7 @@ class File
 
 	//endregion
 
+	//region Content
 
 	/**
 	 * Returns string fiile content.
@@ -866,7 +1172,7 @@ class File
 	{
 		$data = parent::getContents();
 
-		if (is_string($data))
+		if (\is_string($data))
 		{
 			// encoding
 			$targetEncoding = $this->getOperatingEncoding();
@@ -888,6 +1194,7 @@ class File
 	 *
 	 * @return bool|int
 	 * @throws Main\IO\FileNotFoundException
+	 * @throws Main\IO\IoException
 	 */
 	public function putContents($data, $flags = self::REWRITE)
 	{
@@ -899,9 +1206,31 @@ class File
 			$data = Main\Text\Encoding::convertEncoding($data, $operatingEncoding, $sourceEncoding);
 		}
 
-		return parent::putContents($data, $flags);
+		\set_error_handler(
+			function ($severity, $message, $file, $line)
+			{
+				throw new \ErrorException($message, $severity, $severity, $file, $line);
+			}
+		);
+
+		try
+		{
+			$result = parent::putContents($data, $flags);
+		}
+		catch (\ErrorException $exception)
+		{
+			\restore_error_handler();
+			throw new Main\IO\IoException($exception->getMessage());
+		}
+
+		\restore_error_handler();
+
+		return $result;
 	}
 
+	//endregion
+
+	//region Excess & Deficiency
 
 	/**
 	 * Compares two files and returns excess amount of phrases.
@@ -912,7 +1241,7 @@ class File
 	 */
 	public function countExcess(self $ethalon)
 	{
-		return (int)count(array_diff($this->getCodes(), $ethalon->getCodes()));
+		return (int)\count(\array_diff($this->getCodes(), $ethalon->getCodes()));
 	}
 
 	/**
@@ -924,6 +1253,8 @@ class File
 	 */
 	public function countDeficiency(self $ethalon)
 	{
-		return (int)count(array_diff($ethalon->getCodes(), $this->getCodes()));
+		return (int)\count(\array_diff($ethalon->getCodes(), $this->getCodes()));
 	}
+
+	//endregion
 }

@@ -2,25 +2,7 @@ this.BX = this.BX || {};
 (function (exports,main_core,main_popup) {
 	'use strict';
 
-	function _templateObject2() {
-	  var data = babelHelpers.taggedTemplateLiteral(["<div \n\t\t\t\t\tclass=\"ui-stageflow-stage\" \n\t\t\t\t\tdata-stage-id=\"", "\" \n\t\t\t\t\tonmouseenter=\"", "\" \n\t\t\t\t\tonmouseleave=\"", "\"\n\t\t\t\t\tonclick=\"", "\"\n\t\t\t\t>\n\t\t\t\t<div class=\"ui-stageflow-stage-item\">\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t</div>"]);
-
-	  _templateObject2 = function _templateObject2() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _templateObject() {
-	  var data = babelHelpers.taggedTemplateLiteral(["<div style=\"border-image: ", ";\" class=\"ui-stageflow-stage-item-text\">", "</div>"]);
-
-	  _templateObject = function _templateObject() {
-	    return data;
-	  };
-
-	  return data;
-	}
+	var _templateObject, _templateObject2;
 	var Stage = /*#__PURE__*/function () {
 	  function Stage(_ref) {
 	    var id = _ref.id,
@@ -33,7 +15,7 @@ this.BX = this.BX || {};
 	        isFail = _ref.isFail,
 	        fillingColor = _ref.fillingColor;
 	    babelHelpers.classCallCheck(this, Stage);
-	    babelHelpers.defineProperty(this, "backgroundImage", 'url(data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2216px%22%20height%3D%2232px%22%20viewBox%3D%220%200%2016%2032%22%20version%3D%221.1%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20xmlns%3Axlink%3D%22http%3A//www.w3.org/1999/xlink%22%3E%3Cdefs%3E%3Cpath%20d%3D%22M0%2C2.99610022%20C0%2C1.34139976%201.3355407%2C0%202.99805158%2C0%20L6.90478569%2C0%20C8.56056385%2C0%2010.3661199%2C1.25756457%2010.9371378%2C2.80757311%20L16%2C16.5505376%20L11.0069874%2C29.2022189%20C10.3971821%2C30.7473907%208.56729657%2C32%206.90478569%2C32%20L2.99805158%2C32%20C1.34227341%2C32%200%2C30.6657405%200%2C29.0038998%20L0%2C2.99610022%20Z%22%20id%3D%22Bg%22/%3E%3C/defs%3E%3Cg%20id%3D%22Bar%22%20stroke%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cmask%20fill%3D%22white%22%20id%3D%22mask%22%3E%3Cuse%20xlink%3Ahref%3D%22%23Bg%22/%3E%3C/mask%3E%3Cuse%20fill%3D%22#COLOR2#%22%20xlink%3Ahref%3D%22%23Bg%22/%3E%3Cpolygon%20id%3D%22Ln%22%20fill%3D%22#COLOR1#%22%20mask%3D%22url%28%23mask%29%22%20points%3D%220%2030%2016%2030%2016%2032%200%2032%22/%3E%3C/g%3E%3C/svg%3E) 3 10 3 3 fill repeat');
+	    babelHelpers.defineProperty(this, "backgroundImage", "url('data:image/svg+xml;charset=UTF-8,%3csvg width=%27295%27 height=%2732%27 viewBox=%270 0 295 32%27 fill=%27none%27 xmlns=%27http://www.w3.org/2000/svg%27%3e%3cmask id=%27mask0_2_11%27 style=%27mask-type:alpha%27 maskUnits=%27userSpaceOnUse%27 x=%270%27 y=%270%27 width=%27295%27 height=%2732%27%3e%3cpath fill=%27#COLOR2#%27 d=%27M0 2.9961C0 1.3414 1.33554 0 2.99805 0L285.905 7.15256e-07C287.561 7.15256e-07 289.366 1.25757 289.937 2.80757L295 16.5505L290.007 29.2022C289.397 30.7474 287.567 32 285.905 32H2.99805C1.34227 32 0 30.6657 0 29.0039V2.9961Z%27/%3e%3c/mask%3e%3cg mask=%27url(%23mask0_2_11)%27%3e%3cpath fill=%27#COLOR2#%27 d=%27M0 2.9961C0 1.3414 1.33554 0 2.99805 0L285.905 7.15256e-07C287.561 7.15256e-07 289.366 1.25757 289.937 2.80757L295 16.5505L290.007 29.2022C289.397 30.7474 287.567 32 285.905 32H2.99805C1.34227 32 0 30.6657 0 29.0039V2.9961Z%27/%3e%3cpath d=%27M0 30H295V32H0V30Z%27 fill=%27#COLOR1#%27/%3e%3c/g%3e%3c/svg%3e') 3 10 3 3 fill repeat");
 	    this.id = id;
 	    this.name = name;
 	    this.color = color;
@@ -98,8 +80,8 @@ this.BX = this.BX || {};
 	      if (this.node) {
 	        this.textNode.style.backgroundImage = this.getBackgroundImage();
 	      } else {
-	        this.textNode = main_core.Tag.render(_templateObject(), this.getBackgroundImage(), main_core.Text.encode(this.getName()));
-	        this.node = main_core.Tag.render(_templateObject2(), this.getId(), this.onMouseEnter.bind(this), this.onMouseLeave.bind(this), this.onClick.bind(this), this.textNode);
+	        this.textNode = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["<div style=\"border-image: ", ";\" class=\"ui-stageflow-stage-item-text\">", "</div>"])), this.getBackgroundImage(), main_core.Text.encode(this.getName()));
+	        this.node = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["<div \n\t\t\t\t\tclass=\"ui-stageflow-stage\" \n\t\t\t\t\tdata-stage-id=\"", "\" \n\t\t\t\t\tonmouseenter=\"", "\" \n\t\t\t\t\tonmouseleave=\"", "\"\n\t\t\t\t\tonclick=\"", "\"\n\t\t\t\t>\n\t\t\t\t<div class=\"ui-stageflow-stage-item\">\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t</div>"])), this.getId(), this.onMouseEnter.bind(this), this.onMouseLeave.bind(this), this.onClick.bind(this), this.textNode);
 	      }
 
 	      this.textNode.style.color = Stage.calculateTextColor('#' + (this.isFilled ? this.color : this.backgroundColor));
@@ -123,12 +105,12 @@ this.BX = this.BX || {};
 	        isFilled = this.isFilled;
 	      }
 
-	      var image = this.backgroundImage.replace('#COLOR1#', encodeURIComponent('#' + color));
+	      var image = this.backgroundImage.replaceAll('#COLOR1#', encodeURIComponent('#' + color));
 
 	      if (isFilled) {
-	        image = image.replace('#COLOR2#', encodeURIComponent('#' + color));
+	        image = image.replaceAll('#COLOR2#', encodeURIComponent('#' + color));
 	      } else {
-	        image = image.replace('#COLOR2#', encodeURIComponent('#' + this.backgroundColor));
+	        image = image.replaceAll('#COLOR2#', encodeURIComponent('#' + this.backgroundColor));
 	      }
 
 	      return image;
@@ -167,7 +149,7 @@ this.BX = this.BX || {};
 	    value: function removeBackLight() {
 	      if (this.textNode) {
 	        this.textNode.style.borderImage = this.getBackgroundImage();
-	        this.textNode.style.color = Stage.calculateTextColor('#' + this.backgroundColor);
+	        this.textNode.style.color = Stage.calculateTextColor('#' + (this.isFilled ? this.fillingColor : this.backgroundColor));
 	      }
 	    }
 	  }], [{
@@ -199,7 +181,7 @@ this.BX = this.BX || {};
 	    value: function calculateTextColor(baseColor) {
 	      var r, g, b;
 
-	      if (baseColor.length > 7) {
+	      if (baseColor.length > 7 && baseColor.indexOf('(') >= 0 && baseColor.indexOf(')') >= 0) {
 	        var hexComponent = baseColor.split("(")[1].split(")")[0];
 	        hexComponent = hexComponent.split(",");
 	        r = parseInt(hexComponent[0]);
@@ -227,71 +209,17 @@ this.BX = this.BX || {};
 	  return Stage;
 	}();
 
-	function _templateObject6() {
-	  var data = babelHelpers.taggedTemplateLiteral(["<div class=\"ui-stageflow-stage-selector-block\">\n\t\t\t<span>", " </span>\n\t\t\t", "\n\t\t</div>"]);
+	var _templateObject$1, _templateObject2$1, _templateObject3, _templateObject4, _templateObject5, _templateObject6;
 
-	  _templateObject6 = function _templateObject6() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _templateObject5() {
-	  var data = babelHelpers.taggedTemplateLiteral(["<div class=\"ui-stageflow-final-fail-stage-list-section\">\n\t\t\t\t\t\t<input data-stage-id=\"", "\" id=\"ui-stageflow-final-fail-stage-", "\" name=\"ui-stageflow-final-fail-stage-input\" class=\"crm-list-fail-deal-button\" type=\"radio\" ", ">\n\t\t\t\t\t\t<label for=\"ui-stageflow-final-fail-stage-", "\">", "</label>\n\t\t\t\t\t</div>"]);
-
-	  _templateObject5 = function _templateObject5() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _templateObject4() {
-	  var data = babelHelpers.taggedTemplateLiteral(["<div class=\"ui-stageflow-final-fail-stage-list-wrapper\"></div>"]);
-
-	  _templateObject4 = function _templateObject4() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _templateObject3() {
-	  var data = babelHelpers.taggedTemplateLiteral(["<div class=\"ui-stageflow-stage-selector-option ui-stageflow-stage-selector-option-fail\" onclick=\"", "\"></div>"]);
-
-	  _templateObject3 = function _templateObject3() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _templateObject2$1() {
-	  var data = babelHelpers.taggedTemplateLiteral(["<div class=\"ui-stageflow-popup-title\">", "</div>"]);
-
-	  _templateObject2$1 = function _templateObject2() {
-	    return data;
-	  };
-
-	  return data;
-	}
-
-	function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+	function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 	function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 	function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-	function _templateObject$1() {
-	  var data = babelHelpers.taggedTemplateLiteral(["<div class=\"ui-stageflow-container\"></div>"]);
+	function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-	  _templateObject$1 = function _templateObject() {
-	    return data;
-	  };
-
-	  return data;
-	}
+	function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { babelHelpers.defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 	var semanticSelectorPopupId = 'ui-stageflow-select-semantic-popup';
 	var finalStageSelectorPopupId = 'ui-stageflow-select-final-stage-popup';
 	var FinalStageDefaultData = {
@@ -333,7 +261,7 @@ this.BX = this.BX || {};
 	      }
 
 	      if (main_core.Type.isPlainObject(params.labels)) {
-	        this.labels = babelHelpers.objectSpread({}, this.labels, params.labels);
+	        this.labels = _objectSpread(_objectSpread({}, this.labels), params.labels);
 	      }
 	    }
 
@@ -435,14 +363,14 @@ this.BX = this.BX || {};
 	  }, {
 	    key: "addFinalStage",
 	    value: function addFinalStage(data) {
-	      this.stages.set(FinalStageDefaultData.id, new Stage(babelHelpers.objectSpread({}, {
+	      this.stages.set(FinalStageDefaultData.id, new Stage(_objectSpread(_objectSpread(_objectSpread({}, {
 	        backgroundColor: this.backgroundColor,
 	        events: {
 	          onMouseEnter: this.onStageMouseHover.bind(this),
 	          onMouseLeave: this.onStageMouseLeave.bind(this),
 	          onClick: this.onFinalStageClick.bind(this)
 	        }
-	      }, FinalStageDefaultData, data)));
+	      }), FinalStageDefaultData), data)));
 	    }
 	  }, {
 	    key: "getFinalStage",
@@ -514,7 +442,7 @@ this.BX = this.BX || {};
 	        return this.container;
 	      }
 
-	      this.container = main_core.Tag.render(_templateObject$1());
+	      this.container = main_core.Tag.render(_templateObject$1 || (_templateObject$1 = babelHelpers.taggedTemplateLiteral(["<div class=\"ui-stageflow-container\"></div>"])));
 	      return this.container;
 	    }
 	  }, {
@@ -660,7 +588,7 @@ this.BX = this.BX || {};
 	          closeByEsc: true,
 	          closeIcon: true,
 	          maxWidth: 420,
-	          content: main_core.Tag.render(_templateObject2$1(), this.labels.finalStagePopupTitle),
+	          content: main_core.Tag.render(_templateObject2$1 || (_templateObject2$1 = babelHelpers.taggedTemplateLiteral(["<div class=\"ui-stageflow-popup-title\">", "</div>"])), this.labels.finalStagePopupTitle),
 	          buttons: [new BX.UI.Button({
 	            color: BX.UI.Button.Color.SUCCESS,
 	            text: this.getSuccessStage().getName(),
@@ -699,7 +627,7 @@ this.BX = this.BX || {};
 	      var isSuccess = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
 	      if (!this.finalStageSemanticSelector) {
-	        this.finalStageSemanticSelector = main_core.Tag.render(_templateObject3(), this.onSemanticSelectorClick.bind(this));
+	        this.finalStageSemanticSelector = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["<div class=\"ui-stageflow-stage-selector-option ui-stageflow-stage-selector-option-fail\" onclick=\"", "\"></div>"])), this.onSemanticSelectorClick.bind(this));
 	      }
 
 	      if (main_core.Type.isBoolean(isSuccess)) {
@@ -736,7 +664,7 @@ this.BX = this.BX || {};
 
 	      var isSuccess = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 	      var titleBar = {};
-	      var content = main_core.Tag.render(_templateObject4());
+	      var content = main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["<div class=\"ui-stageflow-final-fail-stage-list-wrapper\"></div>"])));
 
 	      if (!isSuccess) {
 	        var failStages = this.getFailStages();
@@ -744,13 +672,13 @@ this.BX = this.BX || {};
 	        if (failStages.length > 1) {
 	          var isChecked = true;
 	          failStages.forEach(function (stage) {
-	            content.appendChild(main_core.Tag.render(_templateObject5(), stage.getId(), stage.getId(), isChecked ? 'checked="checked"' : '', stage.getId(), stage.getName()));
+	            content.appendChild(main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["<div class=\"ui-stageflow-final-fail-stage-list-section\">\n\t\t\t\t\t\t<input data-stage-id=\"", "\" id=\"ui-stageflow-final-fail-stage-", "\" name=\"ui-stageflow-final-fail-stage-input\" class=\"crm-list-fail-deal-button\" type=\"radio\" ", ">\n\t\t\t\t\t\t<label for=\"ui-stageflow-final-fail-stage-", "\">", "</label>\n\t\t\t\t\t</div>"])), stage.getId(), stage.getId(), isChecked ? 'checked="checked"' : '', stage.getId(), stage.getName()));
 	            isChecked = false;
 	          });
 	        }
 	      }
 
-	      titleBar.content = main_core.Tag.render(_templateObject6(), this.labels.finalStageSelectorTitle, this.getFinalStageSemanticSelector(isSuccess));
+	      titleBar.content = main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["<div class=\"ui-stageflow-stage-selector-block\">\n\t\t\t<span>", " </span>\n\t\t\t", "\n\t\t</div>"])), this.labels.finalStageSelectorTitle, this.getFinalStageSemanticSelector(isSuccess));
 	      var popup = main_popup.PopupManager.getPopupById(finalStageSelectorPopupId);
 
 	      if (!popup) {

@@ -1,6 +1,7 @@
 <?php
 namespace Bitrix\Landing\Connector;
 
+use \Bitrix\Landing\Rights;
 use \Bitrix\Main\Localization\Loc;
 use \Bitrix\Landing\Binding;
 use \Bitrix\Intranet\Binding\Menu;
@@ -19,24 +20,30 @@ class Intranet
 	 * @param string $bindCode Binding code.
 	 * @return array
 	 */
-	protected static function getMenuItemBind($bindCode)
+	protected static function getMenuItemBind(string $bindCode): array
 	{
-		return [
-			[
+		$setItems = [];
+		if (Rights::hasAdditionalRight('extension', null, false, true))
+		{
+			$setItems[] = [
 				'id' => 'landing_bind',
 				'system' => true,
 				'text' => Loc::getMessage('LANDING_CONNECTOR_INTRANET_MENU_BIND_TITLE'),
 				'onclick' => 'BX.SidePanel.Instance.open(\'' . SITE_DIR . self::PATH_SERVICE_LIST .
-							 '?menuId=' . $bindCode . '\', {allowChangeHistory: false});'
-			],
-			[
-				'id' => 'landing_create',
-				'system' => true,
-				'text' => Loc::getMessage('LANDING_CONNECTOR_INTRANET_MENU_BIND_CREATE_TITLE'),
-				'onclick' => 'BX.SidePanel.Instance.open(\'' . SITE_DIR . self::PATH_SERVICE_LIST .
-							 '?menuId=' . $bindCode . '&create=Y\', {allowChangeHistory: false});'
-			]
-		];
+					'?menuId=' . $bindCode . '\', {allowChangeHistory: false});'
+			];
+			if (Rights::hasAdditionalRight('create', null, false, true))
+			{
+				$setItems[] = [
+					'id' => 'landing_create',
+					'system' => true,
+					'text' => Loc::getMessage('LANDING_CONNECTOR_INTRANET_MENU_BIND_CREATE_TITLE'),
+					'onclick' => 'BX.SidePanel.Instance.open(\'' . SITE_DIR . self::PATH_SERVICE_LIST .
+						'?menuId=' . $bindCode . '&create=Y\', {allowChangeHistory: false});'
+				];
+			}
+		}
+		return $setItems;
 	}
 
 	/**
@@ -46,53 +53,13 @@ class Intranet
 	 * @param string $title Custom title.
 	 * @return array
 	 */
-	protected static function getMenuItemUnbind($bindCode, $entityId,  $title)
+	protected static function getMenuItemUnbind(string $bindCode, string $entityId, string $title): array
 	{
-		static $functionInjected = false;
-
-		if (!$functionInjected)
-		{
-			$functionInjected = true;
-			\Bitrix\Main\UI\Extension::load('ui.dialogs.messagebox');
-			\Bitrix\Main\Page\Asset::getInstance()->addString('
-				<script type="text/javascript">
-					function landingBindingMenu(bindCode, entityId)
-					{
-						BX.UI.Dialogs.MessageBox.confirm(
-							"' . Loc::getMessage('LANDING_CONNECTOR_INTRANET_MENU_ALERT_MESSAGE') . '",
-							"' . Loc::getMessage('LANDING_CONNECTOR_INTRANET_MENU_ALERT_TITLE') . '", 
-							function() 
-							{
-								BX.ajax({
-									url: "' . SITE_DIR . self::PATH_SERVICE_LIST . '",
-									method: "POST",
-									data: {
-										action: "unbind",
-										param: entityId,
-										menuId: bindCode,
-										sessid: BX.message("bitrix_sessid"),
-										actionType: "json"
-									},
-									dataType: "json",
-									onsuccess: function(data)
-									{
-										if (data)
-										{
-											top.window.location.reload();
-										}
-									}.bind(this)
-								});
-							},
-							"' . Loc::getMessage('LANDING_CONNECTOR_INTRANET_MENU_ALERT_BUTTON') . '"
-						);
-					}
-				</script>
-			');
-		}
-
 		return [
+			'id' => 'landing_unbind_' . $entityId,
+			'system' => true,
 			'text' => $title,
-			'onclick' => 'landingBindingMenu("' . $bindCode . '", "' . $entityId . '");'
+			'onclick' => 'BX.Landing.Connector.Intranet.unbindMenuItem("' . $bindCode . '", "' . $entityId . '", "' . \CUtil::JSEscape($title) . '");'
 		];
 	}
 
@@ -101,7 +68,7 @@ class Intranet
 	 * @param \Bitrix\Main\Event $event Event instance.
 	 * @return array
 	 */
-	public static function onBuildBindingMenu(\Bitrix\Main\Event $event)
+	public static function onBuildBindingMenu(\Bitrix\Main\Event $event): array
 	{
 		\CJSCore::init('sidepanel');
 		\Bitrix\Landing\Site\Type::setScope(
@@ -133,6 +100,7 @@ class Intranet
 			foreach ($bindingSection['items'] as $itemCode => $foo)
 			{
 				$menuItems = [];
+				$unbindItems = [];
 				$bindingCode = $sectionCode . ':' . $itemCode;
 				if (isset($bindings[$bindingCode]))
 				{
@@ -144,12 +112,26 @@ class Intranet
 				  			'href' => $bindingItem['PUBLIC_URL'],
 				  			'sectionCode' => Menu::SECTIONS['knowledge']
 						];
+						$unbindItems[] = self::getMenuItemUnbind(
+							$bindingCode,
+							$bindingItem['ENTITY_TYPE'] . '_' . $bindingItem['ENTITY_ID'],
+							$bindingItem['TITLE']
+						);
 					}
 				}
 				$menuItems = array_merge(
 					$menuItems,
 					self::getMenuItemBind($bindingCode)
 				);
+				if (isset($bindings[$bindingCode]) && Rights::hasAdditionalRight('extension', null, false, true))
+				{
+					$menuItems[] = [
+						'id' => 'landing_unbind',
+						'extension' => 'landing.connector.intranet',
+						'text' => Loc::getMessage('LANDING_CONNECTOR_INTRANET_MENU_HIDE_TITLE'),
+						'items' => $unbindItems
+					];
+				}
 				$items[] = [
 					'bindings' => [
 						$sectionCode => [

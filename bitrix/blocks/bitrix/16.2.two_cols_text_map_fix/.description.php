@@ -12,9 +12,6 @@ return array(
 		'section' => array('contacts'),
 		'version' => '18.5.0', // old param for backward compatibility. Can used for old versions of module via repo. Do not delete!
 		'subtype' => 'map',
-		'subtype_params' =>[
-			'required' => 'google'
-		],
 	),
 	'cards' => array(),
 	'nodes' => array(
@@ -26,10 +23,6 @@ return array(
 			'name' => Loc::getMessage('LANDING_BLOCK_16_2_TWO_COLS_TEXT_MAP_FIX--LANDINGBLOCKNODETEXT'),
 			'type' => 'text',
 		),
-		'.landing-block-node-map' => array(
-			'name' => Loc::getMessage('LANDING_BLOCK_16_2_TWO_COLS_TEXT_MAP_FIX--LANDINGBLOCKNODEMAP'),
-			'type' => 'map',
-		),
 	),
 	'style' => array(
 		'.landing-block-node-text-container' => array(
@@ -38,7 +31,7 @@ return array(
 		),
 		'.landing-block-node-title' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_16_2_TWO_COLS_TEXT_MAP_FIX--LANDINGBLOCKNODETITLE'),
-			'type' => array('typo'),
+			'type' => ['typo', 'heading'],
 		),
 		'.landing-block-node-text' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_16_2_TWO_COLS_TEXT_MAP_FIX--LANDINGBLOCKNODETEXT'),
@@ -50,6 +43,6 @@ return array(
 		),
 	),
 	'assets' => array(
-		'ext' => array('landing_google_maps_new'),
+		'ext' => array('landing_map'),
 	),
 );

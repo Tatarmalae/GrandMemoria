@@ -5,7 +5,7 @@
 # http://www.bitrixsoft.com                  #
 # mailto:admin@bitrixsoft.com                #
 ##############################################
-require_once(dirname(__FILE__)."/../include/prolog_admin_before.php");
+require_once(__DIR__."/../include/prolog_admin_before.php");
 require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/prolog.php");
 define("HELP_FILE", "settings/mail_events/messagetype_admin.php");
 
@@ -80,7 +80,7 @@ if(($arID = $lAdmin->GroupAction()) && $isAdmin && check_bitrix_sessid())
 			case "clean":
 				$DB->StartTransaction();
 				$ID = array("EVENT_NAME" => $ID);
-				$db_res = CEventMessage::GetList($by, $order, $ID);
+				$db_res = CEventMessage::GetList('', '', $ID);
 				if ($db_res && ($res = $db_res->Fetch()))
 				{
 					do 
@@ -105,7 +105,7 @@ if(($arID = $lAdmin->GroupAction()) && $isAdmin && check_bitrix_sessid())
 	}
 }
 $arLID = array();
-$db_res = CLanguage::GetList($by_="sort", $order_="asc");
+$db_res = CLanguage::GetList();
 if ($db_res && $res = $db_res->GetNext())
 {
 	do 

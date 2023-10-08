@@ -26,6 +26,8 @@ abstract class BaseBuilder
 	public const ENTITY_SECTION = 'section';
 	public const ENTITY_ELEMENT = 'element';
 
+	protected const SLIDER_PATH_VARIABLE = 'slider_path';
+
 	/** @var Main\HttpRequest */
 	protected $request;
 	/** @var string */
@@ -124,6 +126,11 @@ abstract class BaseBuilder
 	{
 		$this->prefix = $prefix;
 		$this->setTemplateVariable('#PATH_PREFIX#', $this->prefix);
+	}
+
+	public function getPrefix(): string
+	{
+		return $this->prefix;
 	}
 
 	public function setUrlParams(array $list): void
@@ -253,6 +260,11 @@ abstract class BaseBuilder
 
 	public function getBaseParams(): string
 	{
+		if ($this->iblockId === null)
+		{
+			return '';
+		}
+
 		return 'IBLOCK_ID='.$this->iblockId
 			.'&type='.urlencode($this->iblock['IBLOCK_TYPE_ID'])
 			.'&lang='.urlencode($this->languageId);
@@ -268,6 +280,11 @@ abstract class BaseBuilder
 		return 'lang='.urlencode($this->languageId);
 	}
 
+	public function getUrlBuilderIdParam(): string
+	{
+		return 'urlBuilderId='.urlencode($this->id);
+	}
+
 	public function setSliderMode(bool $mode): void
 	{
 		$this->sliderMode = $mode;
@@ -276,6 +293,31 @@ abstract class BaseBuilder
 	public function isSliderMode(): bool
 	{
 		return $this->sliderMode;
+	}
+
+	public function getDetailPageSlider(): string
+	{
+		$path = $this->getSliderPath();
+		if (!$this->checkSliderPath($path))
+		{
+			return '';
+		}
+		$path = \CUtil::JSEscape($path);
+
+		return '<script>'
+			. 'window.history.replaceState({}, \'\', \'' . $path . '\');' . "\n"
+			. 'BX.ready(function () {' . "\n"
+			. '	BX.SidePanel.Instance.open(' . "\n"
+			. '		\'' . $path . '\'' . "\n"
+			. '	);' . "\n"
+			. '});' . "\n"
+			. '</script>'
+		;
+	}
+
+	public function showDetailPageSlider(): void
+	{
+		echo $this->getDetailPageSlider();
 	}
 
 	protected function checkCurrentPage(array $urlList): bool
@@ -298,7 +340,7 @@ abstract class BaseBuilder
 		$this->weight = static::TYPE_WEIGHT;
 		$this->setLanguageId(LANGUAGE_ID);
 		$this->setPrefix(static::PATH_PREFIX);
-		$this->sliderMode = $this->request->get('IFRAME') === 'Y';
+		$this->setSliderMode($this->request->get('IFRAME') === 'Y');
 	}
 
 	protected function initConfig(): void
@@ -334,7 +376,7 @@ abstract class BaseBuilder
 			&& $listMode != Iblock\IblockTable::LIST_MODE_COMBINED
 		)
 		{
-			$listMode = ((string)Main\Config\Option::get('iblock', 'combined_list_mode') === 'Y'
+			$listMode = (Main\Config\Option::get('iblock', 'combined_list_mode') === 'Y'
 				? Iblock\IblockTable::LIST_MODE_COMBINED
 				: Iblock\IblockTable::LIST_MODE_SEPARATE
 			);
@@ -447,10 +489,7 @@ abstract class BaseBuilder
 
 	protected function getUrlTemplate(string $templateId): ?string
 	{
-		return (isset($this->urlTemplates[$templateId])
-			? $this->urlTemplates[$templateId]
-			: null
-		);
+		return ($this->urlTemplates[$templateId] ?? null);
 	}
 
 	protected function fillUrlTemplate(?string $template, array $replaces): string
@@ -514,5 +553,60 @@ abstract class BaseBuilder
 			'IFRAME' => 'Y',
 			'IFRAME_TYPE' => 'SIDE_SLIDER',
 		];
+	}
+
+	protected function getSliderPath(): ?string
+	{
+		return $this->request->get(self::SLIDER_PATH_VARIABLE);
+	}
+
+	public function getSliderPathOption(string $path): ?array
+	{
+		if ($path === '')
+		{
+			return null;
+		}
+
+		return [
+			self::SLIDER_PATH_VARIABLE => $path,
+		];
+	}
+
+	public function getSliderPathString(string $path): string
+	{
+		if ($path === '')
+		{
+			return '';
+		}
+
+		return self::SLIDER_PATH_VARIABLE . '=' . $path;
+	}
+
+	protected function checkSliderPath(?string $path): bool
+	{
+		if ($path === null)
+		{
+			$path = $this->getSliderPath();
+		}
+		if ($path === null || $path === '')
+		{
+			return false;
+		}
+
+		$prepared = [];
+		foreach ($this->getSliderPathTemplates() as $mask)
+		{
+			if (preg_match($mask, $path, $prepared))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	protected function getSliderPathTemplates(): array
+	{
+		return [];
 	}
 }

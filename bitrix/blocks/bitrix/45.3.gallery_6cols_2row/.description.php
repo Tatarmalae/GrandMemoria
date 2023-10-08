@@ -24,12 +24,20 @@ return [
 			'type' => 'img',
 			'allowInlineEdit' => false,
 			'dimensions' => ['maxWidth' => 1350, 'maxHeight' => 900],
+			'disableLink' => true,
+			'create2xByDefault' => false,
 		],
 	],
 	'style' => [
 		'.landing-block-node-card' => [
 			'name' => Loc::getMessage('LANDING_BLOCK_45.3.GALLERY_6COLS_2ROW_CARDS_LANDINGBLOCKNODECARD'),
 			'type' => 'animation',
+		],
+		'.landing-block-slider' => [
+			'additional' => [
+				'name' => Loc::getMessage('LANDING_BLOCK_45_3_GALLERY_6COLS_2ROW_NODES_SLIDER'),
+				'attrsType' => ['autoplay', 'autoplay-speed', 'animation', 'pause-hover', 'slides-show', 'dots'],
+			]
 		],
 	],
 	'assets' => [

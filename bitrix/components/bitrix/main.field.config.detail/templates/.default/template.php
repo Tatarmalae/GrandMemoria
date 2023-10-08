@@ -7,13 +7,15 @@ if(!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 use Bitrix\Main\Localization\Loc;
 
 \Bitrix\Main\UI\Extension::load([
+	'ui.design-tokens',
+	'ui.fonts.opensans',
 	'ui.forms',
 	'ui.dialogs.messagebox',
 	'main.loader',
 	'ui.userfield',
 	'ui.buttons',
 	'ui.alerts',
-    'date',
+	'date',
 ]);
 
 \Bitrix\Main\Page\Asset::getInstance()->addJs('/bitrix/js/main/dd.js');
@@ -297,15 +299,16 @@ if(!$hasErrors) {
 						class="ui-ctl-element"
 						name="DEFAULT"
 						data-role="main-user-field-enumDefault"
+						<?= ($arResult['field']['MULTIPLE'] === 'Y' ? ' multiple="multiple"' : '') ?>
 				>
 					<option value="empty"><?= Loc::getMessage('MAIN_FIELD_CONFIG_LIST_ITEMS_DEFAULT_EMPTY'); ?></option>
 					<?php if(!empty($arResult['field']['ENUM'])):
 						foreach($arResult['field']['ENUM'] as $enum): ?>
 							<option
-								<?= ($enum['def'] === 'Y' ? 'selected="selected"' : ''); ?>
-								data-id="<?= (int)$enum['id'] ;?>"
-								value="<?= htmlspecialcharsbx($enum['value']); ?>"
-							><?= htmlspecialcharsbx($enum['value']); ?></option>
+								<?= ($enum['DEF'] === 'Y' ? 'selected="selected"' : ''); ?>
+								data-id="<?= (int)$enum['ID'] ;?>"
+								value="<?= htmlspecialcharsbx($enum['VALUE']); ?>"
+							><?= htmlspecialcharsbx($enum['VALUE']); ?></option>
 						<?php endforeach;;
 					endif; ?>
 				</select>

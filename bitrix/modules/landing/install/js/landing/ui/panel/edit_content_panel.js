@@ -18,6 +18,23 @@
 	{
 		BX.Landing.UI.Panel.Content.apply(this, arguments);
 		this.layout.classList.add("landing-ui-panel-content-edit");
+
+		this.appendFooterButton(
+			new BX.Landing.UI.Button.BaseButton("save_block_content", {
+				text: BX.Landing.Loc.getMessage("BLOCK_SAVE"),
+				onClick: BX.Type.isFunction(data.onSaveHandler) ? data.onSaveHandler : () => {},
+				className: "landing-ui-button-content-save",
+				attrs: {title: BX.Landing.Loc.getMessage("LANDING_TITLE_OF_SLIDER_SAVE")}
+			})
+		);
+		this.appendFooterButton(
+			new BX.Landing.UI.Button.BaseButton("cancel_block_content", {
+				text: BX.Landing.Loc.getMessage("BLOCK_CANCEL"),
+				onClick: BX.Type.isFunction(data.onCancelHandler) ? data.onCancelHandler : () => {},
+				className: "landing-ui-button-content-cancel",
+				attrs: {title: BX.Landing.Loc.getMessage("LANDING_TITLE_OF_SLIDER_CANCEL")}
+			})
+		);
 	};
 
 	BX.Landing.UI.Panel.ContentEdit.showedPanel = null;
@@ -51,6 +68,7 @@
 		{
 			this.forms.add(form);
 			this.content.appendChild(form.getNode());
+			this.checkReadyToSave();
 
 			if (form.title)
 			{
@@ -60,6 +78,7 @@
 					onClick: function()
 					{
 						this.scrollTo(form.layout);
+						this.highlightItem(form.layout);
 					}.bind(this)
 				});
 
@@ -78,6 +97,7 @@
 							event.preventDefault();
 							event.stopPropagation();
 							this.scrollTo(field.layout);
+							this.highlightItem(field.layout);
 						}.bind(this)
 					});
 					this.sidebarButtons.add(fieldButton);
@@ -90,6 +110,7 @@
 		{
 			this.forms.remove(oldForm);
 			this.forms.add(newForm);
+			this.checkReadyToSave();
 
 			BX.replace(oldForm.getNode(), newForm.getNode());
 
@@ -115,6 +136,27 @@
 		compact: function(enable)
 		{
 			this.layout.classList[enable?"add":"remove"]("landing-ui-panel-content-edit-compact");
-		}
+		},
+
+		highlightItem: function(element)
+		{
+			var highlightClass = 'landing-ui-panel-highlight';
+			this.removeHighlights(this.layout, highlightClass);
+			BX.Dom.addClass(element, highlightClass);
+			setTimeout(() => {
+				BX.Dom.removeClass(element, highlightClass);
+			}, 1500);
+		},
+
+		removeHighlights: function(element, highlightClass)
+		{
+			var nodeList = element.querySelectorAll('.' + highlightClass);
+			if (nodeList.length >= 1)
+			{
+				nodeList.forEach(function(node) {
+					BX.Dom.removeClass(node, highlightClass);
+				});
+			}
+		},
 	};
 })();

@@ -5,7 +5,6 @@ use Bitrix\Main;
 use Bitrix\Main\IO\Path;
 use Bitrix\Main\Context;
 use Bitrix\Main\Config\Configuration;
-use Bitrix\Main\Text\Encoding;
 
 class Translation
 {
@@ -36,8 +35,7 @@ class Translation
 		return
 			($lang === 'ru') ||
 			($lang === 'en') ||
-			($lang === 'de') ||
-			($lang === 'ua');
+			($lang === 'de');
 	}
 
 	/**
@@ -48,13 +46,12 @@ class Translation
 	 */
 	public static function getDefaultTranslationEncoding($lang)
 	{
-		static $sourceEncoding = array(
+		static $sourceEncoding = [
 			'ru' => 'windows-1251',
 			'en' => 'iso-8859-1',
 			'de' => 'iso-8859-15',
-			'ua' => 'windows-1251',
-		);
-		if(isset($sourceEncoding[$lang]))
+		];
+		if (isset($sourceEncoding[$lang]))
 		{
 			return $sourceEncoding[$lang];
 		}
@@ -467,7 +464,7 @@ class Translation
 			// bitrix/js/[moduleName]/[smth] -> [moduleName]/install/js/[moduleName]/[smth]
 			// bitrix/js/[moduleName]/[smth] -> [moduleName]/install/public/js/[moduleName]/[smth]
 			case 'js':
-				$libraryNamespace = $langPathParts[2];
+				$libraryNamespace = $langPathParts[2]. '/'. $langPathParts[3];
 
 				foreach (self::$map as $moduleName => $moduleEntries)
 				{
@@ -557,9 +554,13 @@ class Translation
 						foreach ($testForExistence as $testEntry)
 						{
 							$testPath = $bxRoot. '/'. $moduleName. '/install/'. $testEntry;
-							if ($testEntry === 'templates' || $testEntry === 'mobileapp' || $testEntry === 'js' || $testEntry === 'public/js')
+							if ($testEntry === 'templates' || $testEntry === 'mobileapp')
 							{
 								$testPath .= '/';
+							}
+							elseif ($testEntry === 'js' || $testEntry === 'public/js')
+							{
+								$testPath .= '/'. $moduleName. '/';
 							}
 							elseif ($testEntry === 'payment')
 							{
@@ -578,7 +579,14 @@ class Translation
 								{
 									if ($testDirectoryEntry->isDirectory())
 									{
-										self::$map[$moduleName][$testEntry][$testDirectoryEntry->getName()] = 1;
+										if ($testEntry === 'js' || $testEntry === 'public/js')
+										{
+											self::$map[$moduleName][$testEntry][$moduleName.'/'.$testDirectoryEntry->getName()] = 1;
+										}
+										else
+										{
+											self::$map[$moduleName][$testEntry][$testDirectoryEntry->getName()] = 1;
+										}
 									}
 								}
 							}

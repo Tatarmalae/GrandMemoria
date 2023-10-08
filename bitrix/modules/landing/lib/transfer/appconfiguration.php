@@ -2,6 +2,8 @@
 namespace Bitrix\Landing\Transfer;
 
 use \Bitrix\Landing\File;
+use \Bitrix\Landing\Rights;
+use \Bitrix\Landing\Landing;
 use \Bitrix\Landing\Site;
 use \Bitrix\Landing\Restriction;
 use \Bitrix\Landing\Site\Type;
@@ -54,6 +56,12 @@ class AppConfiguration
 	];
 
 	/**
+	 * Context site id (now used within import).
+	 * @var null
+	 */
+	private static $contextSiteId = null;
+
+	/**
 	 * Returns true if transfer are processing.
 	 * @return bool
 	 */
@@ -92,7 +100,10 @@ class AppConfiguration
 				'VERSION' => 1,
 				'ACTIVE' => 'Y',
 				'PLACEMENT' => [$code],
-				'USES' => [$code],
+				'USES' => [
+					$code,
+					'app',
+				],
 				'DISABLE_CLEAR_FULL' => 'Y',
 				'DISABLE_NEED_START_BTN' => 'Y',
 				'COLOR' => '#ff799c',
@@ -105,11 +116,52 @@ class AppConfiguration
 				'IMPORT_TITLE_PAGE' => Loc::getMessage('LANDING_TRANSFER_IMPORT_ACTION_TITLE_BLOCK_' . $langCode),
 				'IMPORT_TITLE_BLOCK' => Loc::getMessage('LANDING_TRANSFER_IMPORT_ACTION_TITLE_BLOCK_' . $langCode),
 				'IMPORT_DESCRIPTION_UPLOAD' => Loc::getMessage('LANDING_TRANSFER_IMPORT_DESCRIPTION_UPLOAD_' . $langCode),
-				'IMPORT_DESCRIPTION_START' => ' '
+				'IMPORT_DESCRIPTION_START' => ' ',
+				'IMPORT_INSTALL_FINISH_TEXT' => '',
+				'REST_IMPORT_AVAILABLE' => 'Y',
+				'ACCESS' => [
+					'MODULE_ID' => 'landing',
+					'CALLBACK' => [
+						'\Bitrix\Landing\Transfer\AppConfiguration',
+						'onCheckAccess'
+					]
+				]
 			];
 		}
 
 		return $manifestList;
+	}
+
+	/**
+	 * Checks access to export and import.
+	 * @param string $type Export or import.
+	 * @param array $manifest Manifest data.
+	 * @return array
+	 */
+	public static function onCheckAccess(string $type, array $manifest): array
+	{
+		if ($manifest['CODE'] ?? null)
+		{
+			$siteType = substr($manifest['CODE'], strlen(AppConfiguration::PREFIX_CODE));
+			\Bitrix\Landing\Site\Type::setScope($siteType);
+		}
+
+		if ($type === 'export')
+		{
+			$access = in_array(Rights::ACCESS_TYPES['read'], Rights::getOperationsForSite(0));
+			if ($access)
+			{
+				$access = !Rights::hasAdditionalRight(Rights::ADDITIONAL_RIGHTS['unexportable'], null, false, true);
+			}
+		}
+		else
+		{
+			$access = Rights::hasAdditionalRight(Rights::ADDITIONAL_RIGHTS['create'])
+					&& in_array(Rights::ACCESS_TYPES['edit'], Rights::getOperationsForSite(0));
+		}
+		return [
+			'result' => $access
+		];
 	}
 
 	/**
@@ -170,14 +222,19 @@ class AppConfiguration
 	 */
 	public static function onEventImportController(Event $event): ?array
 	{
+		self::$contextSiteId = $event->getParameter('RATIO')['LANDING']['SITE_ID'] ?? null;
 		$code = $event->getParameter('CODE');
 
 		self::$processing = true;
+
+		Landing::disableCheckUniqueAddress();
 
 		if (isset(static::$entityList[$code]))
 		{
 			return Import\Site::nextStep($event);
 		}
+
+		Landing::enableCheckUniqueAddress();
 
 		return null;
 	}
@@ -216,7 +273,7 @@ class AppConfiguration
 						$structure = new Configuration\Structure($context);
 						$structure->setArchiveName(\CUtil::translit(
 							trim($row['TITLE']),
-							LANGUAGE_ID,
+							'ru',
 							[
 								'replace_space' => '_',
 								'replace_other' => '_'
@@ -244,17 +301,28 @@ class AppConfiguration
 	 */
 	public static function saveFile(array $file): ?int
 	{
+		$checkExternal = self::$contextSiteId && ($file['ID'] ?? null);
+		$externalId = $checkExternal ? self::$contextSiteId . '_' . $file['ID'] : null;
+
+		if ($externalId)
+		{
+			$res = \CFile::getList([], ['EXTERNAL_ID' => $externalId]);
+			if ($row = $res->fetch())
+			{
+				return $row['ID'];
+			}
+		}
+
 		$fileId = null;
 		$fileData = \CFile::makeFileArray(
 			$file['PATH']
 		);
-		if ($fileData)
-		{
-			$fileData['name'] = $file['NAME'];
-		}
 
 		if ($fileData)
 		{
+			$fileData['name'] = $file['NAME'];
+			$fileData['external_id'] = $externalId;
+
 			if (\CFile::checkImageFile($fileData, 0, 0, 0, array('IMAGE')) === null)
 			{
 				$fileData['MODULE_ID'] = 'landing';

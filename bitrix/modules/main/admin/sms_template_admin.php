@@ -8,7 +8,7 @@ use Bitrix\Main\Sms\TemplateTable;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Mail\Internal\EventTypeTable;
 
-require_once(dirname(__FILE__)."/../include/prolog_admin_before.php");
+require_once(__DIR__."/../include/prolog_admin_before.php");
 require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/prolog.php");
 define("HELP_FILE", "settings/sms_template_admin.php");
 
@@ -296,7 +296,7 @@ $oFilter->Begin();
 	<td><select name="find_site">
 			<option value=""><?echo Loc::getMessage("sms_template_admin_all")?></option>
 			<?
-			$l = CLang::GetList($by = "sort", $order = "asc");
+			$l = CLang::GetList();
 			while(($l_arr = $l->Fetch()))
 			{
 				echo '<option value="'.$l_arr["LID"].'" '.($l_arr["LID"] == $find_site? 'selected':'').'>['.$l_arr["LID"].']&nbsp;'.Main\Text\HtmlFilter::encode($l_arr["NAME"]).'</option>'."\n";

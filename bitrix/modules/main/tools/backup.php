@@ -67,7 +67,7 @@ else
 	define('NO_AGENT_CHECK', true);
 	define("STATISTIC_SKIP_ACTIVITY_CHECK", true);
 	if (!$_SERVER['DOCUMENT_ROOT'])
-		$DOCUMENT_ROOT = $_SERVER['DOCUMENT_ROOT'] = realpath(dirname(__FILE__).'/../../../../');
+		$DOCUMENT_ROOT = $_SERVER['DOCUMENT_ROOT'] = realpath(__DIR__.'/../../../../');
 	require($_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/main/include/prolog_before.php');
 	IncludeModuleLangFile($_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/main/admin/dump.php');
 }
@@ -234,7 +234,7 @@ if (!$NS['step'])
 	if (count($arParams['dump_site_id']))
 	{
 		$NS['site_path_list'] = array();
-		$res = CSite::GetList($by='sort', $order='asc', array('ACTIVE'=>'Y'));
+		$res = CSite::GetList('sort', 'asc', array('ACTIVE'=>'Y'));
 		while($f = $res->Fetch())
 		{
 			$root = rtrim(str_replace('\\','/',$f['ABS_DOC_ROOT']),'/');
@@ -351,7 +351,7 @@ if ($NS['step'] <= 2)
 					{
 						$size = filesize($name);
 						$NS['arc_size'] += $size;
-						$name = CTar::getNextName($name);
+						$name = $tar->getNextName($name);
 					}
 					$NS['step_finished']++;
 
@@ -474,11 +474,12 @@ if ($NS['step'] == 4)
 
 		$NS['arc_size'] = 0;
 		$name = $NS["arc_name"];
+		$tar = new CTar();
 		while(file_exists($name))
 		{
 			$size = filesize($name);
 			$NS['arc_size'] += $size;
-			$name = CTar::getNextName($name);
+			$name = $tar->getNextName($name);
 		}
 		DeleteDirFilesEx(BX_ROOT.'/backup/clouds');
 		if ($arParams['dump_file_public'] && $arParams['dump_file_kernel'])
@@ -530,6 +531,7 @@ if ($NS['step'] == 6)
 		if (!CModule::IncludeModule('clouds'))
 			RaiseErrorAndDie(GetMessage("MAIN_DUMP_NO_CLOUDS_MODULE"), 600, $NS['arc_name']);
 
+		$tar = new CTar();
 		while(CheckPoint())
 		{
 			$file_size = filesize($NS["arc_name"]);
@@ -633,7 +635,7 @@ if ($NS['step'] == 6)
 					$oBucket->IncFileCounter($file_size);
 				}
 
-				if (file_exists($arc_name = CTar::getNextName($NS['arc_name'])))
+				if (file_exists($arc_name = $tar->getNextName($NS['arc_name'])))
 				{
 					unset($NS['obBucket']);
 					$NS['arc_name'] = $arc_name;
@@ -654,7 +656,7 @@ if ($NS['step'] == 6)
 							$size = filesize($name);
 							if (unlink($name) && COption::GetOptionInt('main', 'disk_space', 0) > 0)
 								CDiskQuota::updateDiskQuota("file", $size, "del");
-							$name = CTar::getNextName($name);
+							$name = $tar->getNextName($name);
 						}
 					}
 					break;
@@ -754,11 +756,12 @@ if ($NS['step'] == 7)
 if (COption::GetOptionInt('main', 'disk_space', 0) > 0)
 {
 	$name = $NS["arc_name"];
+	$tar = new CTar();
 	while(file_exists($name))
 	{
 		$size = filesize($name);
 		CDiskQuota::updateDiskQuota("file", $size, "add");
-		$name = CTar::getNextName($name);
+		$name = $tar->getNextName($name);
 	}
 }
 
@@ -792,7 +795,7 @@ function IntOption($name, $def = 0)
 	static $CACHE;
 	$name .= '_auto';
 
-	if (!$CACHE[$name])
+	if (!isset($CACHE[$name]))
 		$CACHE[$name] = COption::GetOptionInt("main", $name, $def);
 	return $CACHE[$name];
 }

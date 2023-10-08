@@ -14,25 +14,11 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	  className: null
 	};
 
-	function _templateObject2() {
-	  var data = babelHelpers.taggedTemplateLiteral(["<span class=\"landing-ui-button-text\"></span>"]);
+	var _templateObject, _templateObject2;
 
-	  _templateObject2 = function _templateObject2() {
-	    return data;
-	  };
+	function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-	  return data;
-	}
-
-	function _templateObject() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<button \n\t\t\t\t\tclass=\"landing-ui-button\" \n\t\t\t\t\ttype=\"button\"\n\t\t\t\t\tdata-id=\"", "\"\n\t\t\t\t>", "</button>\n\t\t\t"]);
-
-	  _templateObject = function _templateObject() {
-	    return data;
-	  };
-
-	  return data;
-	}
+	function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { babelHelpers.defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 	/**
 	 * @memberOf BX.Landing.UI.Button
 	 */
@@ -72,7 +58,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      return main_core.Text.getRandom();
 	    }();
 
-	    _this.options = babelHelpers.objectSpread({}, defaultOptions, compatOptions);
+	    _this.options = _objectSpread(_objectSpread({}, defaultOptions), compatOptions);
 	    _this.id = compatId;
 	    _this.cache = new main_core.Cache.MemoryCache();
 	    _this.layout = _this.getLayout();
@@ -91,12 +77,8 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      main_core.Dom.attr(_this.getLayout(), _this.options.attrs);
 	    }
 
-	    if (main_core.Type.isArray(_this.options.className)) {
-	      _this.options.className.forEach(_this.layout.classList.add, _this.layout.classList);
-	    }
-
-	    if (main_core.Type.isString(_this.options.className) && !!_this.options.className) {
-	      _this.layout.classList.add(_this.options.className);
+	    if (main_core.Type.isArray(_this.options.className) || main_core.Type.isStringFilled(_this.options.className)) {
+	      main_core.Dom.addClass(_this.layout, _this.options.className);
 	    }
 
 	    if (_this.options.active) {
@@ -121,14 +103,14 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      var _this2 = this;
 
 	      return this.cache.remember('layout', function () {
-	        return main_core.Tag.render(_templateObject(), _this2.id, _this2.getTextLayout());
+	        return main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<button \n\t\t\t\t\tclass=\"landing-ui-button\" \n\t\t\t\t\ttype=\"button\"\n\t\t\t\t\tdata-id=\"", "\"\n\t\t\t\t>", "</button>\n\t\t\t"])), _this2.id, _this2.getTextLayout());
 	      });
 	    }
 	  }, {
 	    key: "getTextLayout",
 	    value: function getTextLayout() {
 	      return this.cache.remember('textLayout', function () {
-	        return main_core.Tag.render(_templateObject2());
+	        return main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["<span class=\"landing-ui-button-text\"></span>"])));
 	      });
 	    }
 	  }, {
@@ -165,18 +147,18 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	  }, {
 	    key: "disable",
 	    value: function disable() {
-	      main_core.Dom.addClass(this.layout, 'landing-ui-disable');
+	      main_core.Dom.addClass(this.layout, 'landing-ui-disabled');
 	    }
 	  }, {
 	    key: "enable",
 	    value: function enable() {
-	      main_core.Dom.removeClass(this.layout, 'landing-ui-disable');
+	      main_core.Dom.removeClass(this.layout, 'landing-ui-disabled');
 	      main_core.Dom.attr(this.layout, 'disabled', null);
 	    }
 	  }, {
 	    key: "isEnabled",
 	    value: function isEnabled() {
-	      return !main_core.Dom.hasClass(this.layout, 'landing-ui-disable');
+	      return !main_core.Dom.hasClass(this.layout, 'landing-ui-disabled');
 	    }
 	  }, {
 	    key: "show",

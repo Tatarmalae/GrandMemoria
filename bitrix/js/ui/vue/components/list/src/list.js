@@ -7,12 +7,13 @@
  * @copyright 2001-2020 Bitrix
  */
 
+import "ui.design-tokens";
 import "./list.css";
 import "./list-element";
 
-import {Vue} from 'ui.vue';
+import {BitrixVue} from 'ui.vue';
 
-Vue.component('bx-list',
+BitrixVue.component('bx-list',
 {
 	data()
 	{
@@ -31,7 +32,6 @@ Vue.component('bx-list',
 	},
 	created()
 	{
-		this.initObserver();
 	},
 	methods:
 	{
@@ -214,18 +214,6 @@ Vue.component('bx-list',
 
 			return counter;
 		},
-
-		initObserver()
-		{
-			this.observer = new IntersectionObserver(function(entries){
-				entries.forEach(entry => {
-					if (entry.isIntersecting && entry.intersectionRatio === 1)
-					{
-						// console.warn('I SEE ', entry);
-					}
-				});
-			}, {threshold: [0, 1]});
-		},
 		/* endregion 01. Data validation */
 
 		/* region 02. Events handling */
@@ -235,6 +223,11 @@ Vue.component('bx-list',
 		},
 
 		onClick(event, id)
+		{
+
+		},
+
+		onDoubleClick(event)
 		{
 
 		}
@@ -260,7 +253,7 @@ Vue.component('bx-list',
 		sectionedList()
 		{
 			this.sections.forEach(section => {
-				Vue.set(this.resultList, section, []);
+				BitrixVue.set(this.resultList, section, []);
 
 				let listForSection = this.list.filter(item => {
 					return item.sectionCode === section;
@@ -272,16 +265,6 @@ Vue.component('bx-list',
 			return this.resultList;
 		}
 	},
-	directives:
-	{
-		'bx-list-observer':
-		{
-			inserted(element, bindings, vnode)
-			{
-				vnode.context.observer.observe(element);
-			}
-		}
-	},
 	template: `
 		<div :class="wrapperStyle" @scroll="onScroll">
 			<template v-for="section in sections">
@@ -291,9 +274,9 @@ Vue.component('bx-list',
 					:key="listItem.id"
 					@click="onClick($event, listItem.id)"
 					@click.right="onRightClick($event, listItem.id)"
-					v-bx-list-observer :data-id="listItem.id"
+					:data-id="listItem.id"
 				>
-					<component :is="elementComponent" :rawListItem="listItem" :itemTypes="itemTypes" />
+					<component :is="elementComponent" :rawListItem="listItem" :itemTypes="itemTypes" @dblclick="onDoubleClick"/>
 				</div>
 			</template>
 		</div>

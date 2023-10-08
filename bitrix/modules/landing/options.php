@@ -179,6 +179,16 @@ if ($postRight >= 'R'):
 		array('checkbox')
 	);
 	$allOptions[] = array(
+		'allow_svg_content',
+		Loc::getMessage('LANDING_OPT_ALLOW_SVG_CONTENT') . ':',
+		array('checkbox')
+	);
+	/*$allOptions[] = array(
+		'strict_verification_update',
+		Loc::getMessage('LANDING_OPT_STRICT_VERIFICATION_UPDATE') . ':',
+		array('checkbox')
+	);*/
+	$allOptions[] = array(
 		'source_iblocks',
 		Loc::getMessage('LANDING_OPT_SOURCE_IBLOCKS') . ':',
 		array(
@@ -313,6 +323,10 @@ if ($postRight >= 'R'):
 						);
 					}
 				}
+			}
+			elseif (!$val && strpos($name, 'pub_path_') === 0)
+			{
+				$val = '/';
 			}
 
 			\COption::setOptionString($module_id, $name, $val);

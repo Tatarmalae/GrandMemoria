@@ -20,6 +20,12 @@ export class ImageUploader
 		};
 	}
 
+	setSizes(sizes: Array<string>): ImageUploader
+	{
+		this.options.sizes = sizes;
+		return this;
+	}
+
 	getDimensions(): Array<number>
 	{
 		const dimensions = Object.entries(this.options.dimensions);
@@ -43,6 +49,18 @@ export class ImageUploader
 			.all(
 				this.getDimensions()
 					.map((dimensions) => {
+
+						const isSvg = (
+							this.options.allowSvg
+							&& Type.isStringFilled(file.type)
+							&& file.type.includes('svg')
+						);
+
+						if (isSvg)
+						{
+							return file;
+						}
+
 						return ImageCompressor.compress(file, dimensions);
 					}),
 			)

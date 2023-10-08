@@ -33,7 +33,7 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 		if($bVarsFromForm)
 			$arSettings = $_POST["SETTINGS"][$this->GetID()];
 		else
-			$arSettings = unserialize($arBucket["SETTINGS"]);
+			$arSettings = unserialize($arBucket["SETTINGS"], ['allowed_classes' => false]);
 
 		if(!is_array($arSettings))
 			$arSettings = array("PROJECT_ID" => "", "ACCESS_KEY" => "", "SECRET_KEY" => "");
@@ -125,9 +125,17 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 			$APPLICATION->ResetException();
 			return true;
 		}
+		elseif (is_array($response))
+		{
+			return true;
+		}
 		else
 		{
-			return is_array($response);
+			if (defined("BX_CLOUDS_ERROR_DEBUG"))
+			{
+				AddMessage2Log($this);
+			}
+			return false;
 		}
 	}
 
@@ -160,9 +168,17 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 			$APPLICATION->ResetException();
 			return true;
 		}
+		elseif (is_array($response))
+		{
+			return true;
+		}
 		else
 		{
-			return is_array($response);
+			if (defined("BX_CLOUDS_ERROR_DEBUG"))
+			{
+				AddMessage2Log($this);
+			}
+			return false;
 		}
 	}
 
@@ -200,7 +216,13 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 		}
 	}
 
-	function GetFileSRC($arBucket, $arFile)
+	/**
+	 * @param array[string]string $arBucket
+	 * @param mixed $arFile
+	 * @param boolean $encoded
+	 * @return string
+	*/
+	function GetFileSRC($arBucket, $arFile, $encoded = true)
 	{
 		global $APPLICATION;
 
@@ -237,7 +259,14 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 
 		$proto = $APPLICATION->IsHTTPS()? "https": "http";
 
-		return $proto."://$host/".CCloudUtil::URLEncode($URI, "UTF-8", true);
+		if ($encoded)
+		{
+			return $proto."://$host/".CCloudUtil::URLEncode($URI, "UTF-8", true);
+		}
+		else
+		{
+			return $proto."://$host/".$URI;
+		}
 	}
 
 	function FileExists($arBucket, $filePath)
@@ -298,7 +327,7 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 			'',
 			array(
 				"x-goog-acl"=>"public-read",
-				"x-goog-copy-source"=>CCloudUtil::URLEncode("/".$arBucket["BUCKET"]."/".($arBucket["PREFIX"]? $arBucket["PREFIX"]."/": "").($arFile["SUBDIR"]? $arFile["SUBDIR"]."/": "").$arFile["FILE_NAME"], "UTF-8"),
+				"x-goog-copy-source"=>CCloudUtil::URLEncode("/".$arBucket["BUCKET"]."/".($arBucket["PREFIX"]? $arBucket["PREFIX"]."/": "").($arFile["SUBDIR"]? $arFile["SUBDIR"]."/": "").$arFile["FILE_NAME"], "UTF-8", true),
 				"Content-Type"=>$arFile["CONTENT_TYPE"]
 			)
 		);
@@ -309,17 +338,13 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 		}
 		else//if($this->status == 404)
 		{
+			if (defined("BX_CLOUDS_ERROR_DEBUG"))
+			{
+				AddMessage2Log($this);
+			}
 			$APPLICATION->ResetException();
 			return false;
 		}
-	}
-
-	function DownloadToFile($arBucket, $arFile, $filePath)
-	{
-		$io = CBXVirtualIo::GetInstance();
-		$obRequest = new CHTTP;
-		$obRequest->follow_redirect = true;
-		return $obRequest->Download($this->GetFileSRC($arBucket, $arFile), $io->GetPhysicalName($filePath));
 	}
 
 	function DeleteFile($arBucket, $filePath)
@@ -348,6 +373,10 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 		}
 		else
 		{
+			if (defined("BX_CLOUDS_ERROR_DEBUG"))
+			{
+				AddMessage2Log($this);
+			}
 			$APPLICATION->ResetException();
 			return false;
 		}
@@ -362,7 +391,6 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 			if(mb_substr($filePath, 0, mb_strlen($arBucket["PREFIX"]) + 2) != "/".$arBucket["PREFIX"]."/")
 				$filePath = "/".$arBucket["PREFIX"]."/".ltrim($filePath, "/");
 		}
-		$filePath = str_replace("%", " ", $filePath);
 		$filePath = CCloudUtil::URLEncode($filePath, "UTF-8", true);
 
 		$response = $this->SendRequest(
@@ -376,7 +404,7 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 			array(
 				"x-goog-acl" => "public-read",
 				"Content-Type" => $arFile["type"],
-				"Content-Length" => (array_key_exists("content", $arFile)? CUtil::BinStrlen($arFile["content"]): filesize($arFile["tmp_name"])),
+				"Content-Length" => (array_key_exists("content", $arFile)? strlen($arFile["content"]): filesize($arFile["tmp_name"])),
 			)
 		);
 
@@ -386,6 +414,10 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 		}
 		else
 		{
+			if (defined("BX_CLOUDS_ERROR_DEBUG"))
+			{
+				AddMessage2Log($this);
+			}
 			$APPLICATION->ResetException();
 			return false;
 		}
@@ -401,6 +433,7 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 			"file_size" => array(),
 			"file_mtime" => array(),
 			"file_hash" => array(),
+			"last_key" => "",
 		);
 
 		$filePath = trim($filePath, '/');
@@ -426,7 +459,7 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 				'GET',
 				$arBucket["BUCKET"],
 				'/',
-				'?'.($bRecursive? '': 'delimiter=/&').'prefix='.urlencode($filePath).'&marker='.urlencode($marker)
+				'?'.($bRecursive? '': 'delimiter=/&').'prefix='.rawurlencode($filePath).'&marker='.rawurlencode($marker)
 			);
 			if(
 				$this->status == 200
@@ -445,7 +478,7 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 					foreach($response["ListBucketResult"]["#"]["CommonPrefixes"] as $a)
 					{
 						$dir_name = mb_substr(rtrim($a["#"]["Prefix"][0]["#"], "/"), mb_strlen($filePath));
-						$result["dir"][] = $APPLICATION->ConvertCharset(urldecode($dir_name), "UTF-8", LANG_CHARSET);
+						$result["dir"][] = $APPLICATION->ConvertCharset($dir_name, "UTF-8", LANG_CHARSET);
 					}
 				}
 
@@ -457,10 +490,11 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 					foreach($response["ListBucketResult"]["#"]["Contents"] as $a)
 					{
 						$file_name = mb_substr($a["#"]["Key"][0]["#"], mb_strlen($filePath));
-						$result["file"][] = $APPLICATION->ConvertCharset(urldecode($file_name), "UTF-8", LANG_CHARSET);
+						$result["file"][] = $APPLICATION->ConvertCharset($file_name, "UTF-8", LANG_CHARSET);
 						$result["file_size"][] = $a["#"]["Size"][0]["#"];
 						$result["file_mtime"][] = mb_substr($a["#"]["LastModified"][0]["#"], 0, 19);
 						$result["file_hash"][] = trim($a["#"]["ETag"][0]["#"], '"');
+						$result["last_key"] = $file_name;
 					}
 				}
 
@@ -481,6 +515,10 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 			}
 			else
 			{
+				if (defined("BX_CLOUDS_ERROR_DEBUG"))
+				{
+					AddMessage2Log($this);
+				}
 				$APPLICATION->ResetException();
 				return false;
 			}
@@ -497,7 +535,6 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 			if(mb_substr($filePath, 0, mb_strlen($arBucket["PREFIX"]) + 2) != "/".$arBucket["PREFIX"]."/")
 				$filePath = "/".$arBucket["PREFIX"].$filePath;
 		}
-		$filePath = str_replace("%", " ", $filePath);
 		$filePathU = CCloudUtil::URLEncode($filePath, "UTF-8", true);
 
 		$response = $this->SendRequest(
@@ -527,6 +564,11 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 				"filePos" => 0,
 				"upload_id" => $match[1],
 			);
+		}
+
+		if (defined("BX_CLOUDS_ERROR_DEBUG"))
+		{
+			AddMessage2Log($this);
 		}
 
 		return false;
@@ -560,7 +602,7 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 			$arBucket["SETTINGS"]["SECRET_KEY"],
 			'PUT',
 			$arBucket["BUCKET"],
-			$filePathU.'?upload_id='.urlencode($NS["upload_id"]),
+			$filePathU.'?upload_id='.rawurlencode($NS["upload_id"]),
 			'',
 			'',
 			array(
@@ -568,14 +610,14 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 			)
 		);
 
-		$data_len = CUtil::BinStrlen($data);
+		$data_len = strlen($data);
 
 		$response = $this->SendRequest(
 			$arBucket["SETTINGS"]["ACCESS_KEY"],
 			$arBucket["SETTINGS"]["SECRET_KEY"],
 			'PUT',
 			$arBucket["BUCKET"],
-			$filePathU.'?upload_id='.urlencode($NS["upload_id"]),
+			$filePathU.'?upload_id='.rawurlencode($NS["upload_id"]),
 			'',
 			$data,
 			array(
@@ -583,7 +625,7 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 			)
 		);
 	}
-	
+
 	function UploadPartNo($arBucket, &$NS, $data, $part_no)
 	{
 		global $APPLICATION;
@@ -635,7 +677,7 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 			|| (($NS["Parts"][$found]["part_no"] * $this->GetMinUploadPartSize() + $this->GetMinUploadPartSize()) >= $NS["fileSize"])
 		)
 		{
-			$data_len = CUtil::BinStrlen($data);
+			$data_len = strlen($data);
 			$NS["Parts"][$found]["fileSize"] = $NS["Parts"][$found]["filePos"] + $data_len;
 		}
 
@@ -660,6 +702,10 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 		}
 		else
 		{
+			if (defined("BX_CLOUDS_ERROR_DEBUG"))
+			{
+				AddMessage2Log($this);
+			}
 			return false;
 		}
 	}
@@ -694,6 +740,10 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 		}
 		else
 		{
+			if (defined("BX_CLOUDS_ERROR_DEBUG"))
+			{
+				AddMessage2Log($this);
+			}
 			return false;
 		}
 	}
@@ -742,7 +792,10 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 			}
 			else
 			{
-				AddMessage2Log($this);
+				if (defined("BX_CLOUDS_ERROR_DEBUG"))
+				{
+					AddMessage2Log($this);
+				}
 				return false;
 			}
 		}
@@ -786,12 +839,20 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 		$Signature = base64_encode($this->hmacsha1($StringToSign, $secret_key));
 		$Authorization = "GOOG1 ".$access_key.":".$Signature;
 
-		$obRequest = new CHTTP;
-		$obRequest->additional_headers["Date"] = $RequestDATE;
-		$obRequest->additional_headers["Authorization"] = $Authorization;
+		$request = new Bitrix\Main\Web\HttpClient(array(
+			"redirect" => false,
+			"streamTimeout" => $this->streamTimeout,
+		));
+		if (isset($additional_headers["option-file-result"]))
+		{
+			$request->setOutputStream($additional_headers["option-file-result"]);
+		}
+
+		$request->setHeader("Date", $RequestDATE);
+		$request->setHeader("Authorization", $Authorization);
 		foreach($additional_headers as $key => $value)
 			if(!preg_match("/^option-/", $key))
-				$obRequest->additional_headers[$key] = $value;
+				$request->setHeader($key, $value);
 
 		if(
 			$this->new_end_point
@@ -807,31 +868,58 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 		$was_end_point = $this->new_end_point;
 		$this->new_end_point = '';
 
-		$obRequest->Query(
-			$this->verb = $RequestMethod,
-			$host, 80,
-			$this->url = $RequestURI.$params,
-			$content, '', $ContentType
-		);
-		$this->status = $obRequest->status;
+		$this->status = 0;
 		$this->host = $host;
-		$this->verb = $verb;
-		$this->url =  $file_name.$params;
-		$this->headers = $obRequest->headers;
-		$this->errno = $obRequest->errno;
-		$this->errstr = $obRequest->errstr;
-		$this->result = $obRequest->result;
+		$this->verb = $RequestMethod;
+		$this->url =  "http://".$host.$RequestURI.$params;
+		$this->headers = array();
+		$this->errno = 0;
+		$this->errstr = '';
+		$this->result = '';
 
-		if($obRequest->status == 200)
+		$logRequest = false;
+		if (defined("BX_CLOUDS_TRACE") && $verb !== "GET" && $verb !== "HEAD")
+		{
+			$stime = microtime(1);
+			$logRequest = array(
+				"request_id" => md5((string)mt_rand()),
+				"portal" => (CModule::IncludeModule('replica')? getNameByDomain(): $_SERVER["HTTP_HOST"]),
+				"verb" => $this->verb,
+				"url" => $this->url,
+			);
+			AddMessage2Log(json_encode($logRequest), 'clouds', 20);
+		}
+
+		$request->setHeader("Content-type", $ContentType);
+		$request->query($this->verb, $this->url, $content);
+
+		$this->status = $request->getStatus();
+		foreach($request->getHeaders() as $key => $value)
+		{
+			$this->headers[$key] = $value;
+		}
+		$this->errstr = implode("\n", $request->getError());
+		$this->errno = $this->errstr? 255: 0;
+		$this->result = $request->getResult();
+
+		if ($logRequest)
+		{
+			$logRequest["status"] = $this->status;
+			$logRequest["time"] = round(microtime(true) - $stime, 6);
+			$logRequest["headers"] = $this->headers;
+			AddMessage2Log(json_encode($logRequest), 'clouds', 0);
+		}
+
+		if($this->status == 200)
 		{
 			if(isset($additional_headers["option-raw-result"]))
 			{
-				return $obRequest->result;
+				return $this->result;
 			}
-			elseif($obRequest->result)
+			elseif($this->result)
 			{
 				$obXML = new CDataXML;
-				$text = preg_replace("/<"."\\?XML.*?\\?".">/i", "", $obRequest->result);
+				$text = preg_replace("/<"."\\?XML.*?\\?".">/i", "", $this->result);
 				if($obXML->LoadString($text))
 				{
 					$arXML = $obXML->GetArray();
@@ -851,12 +939,12 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 			}
 		}
 		elseif(
-			$obRequest->status == 307  //Temporary redirect
-			&& isset($obRequest->headers["Location"])
+			$this->status == 307  //Temporary redirect
+			&& isset($this->headers["Location"])
 			&& !$was_end_point //No recurse yet
 		)
 		{
-			$this->new_end_point = $obRequest->headers["Location"];
+			$this->new_end_point = $this->headers["Location"];
 			return $this->SendRequest(
 				$access_key,
 				$secret_key,
@@ -868,12 +956,12 @@ class CCloudStorageService_GoogleStorage extends CCloudStorageService
 				$additional_headers
 			);
 		}
-		elseif($obRequest->status > 0)
+		elseif($this->status > 0)
 		{
-			if($obRequest->result)
+			if($this->result)
 			{
 				$obXML = new CDataXML;
-				if($obXML->LoadString($obRequest->result))
+				if($obXML->LoadString($this->result))
 				{
 					$arXML = $obXML->GetArray();
 					if(is_array($arXML) && is_string($arXML["Error"]["#"]["Message"][0]["#"]))

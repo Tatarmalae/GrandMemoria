@@ -1,5 +1,5 @@
 this.BX = this.BX || {};
-(function (exports,main_core) {
+(function (exports,ui_entitySelector,main_core_events,main_popup,main_core) {
 	'use strict';
 
 	(function () {
@@ -21,13 +21,30 @@ this.BX = this.BX || {};
 	    };
 
 	    if ('label' in data && BX.type.isNotEmptyString(data.label)) {
+	      var labelContent = data.label;
+
+	      if ('icon' in data && BX.Type.isPlainObject(data.icon)) {
+	        labelContent = [{
+	          block: 'main-ui-control-field-label-icon',
+	          tag: 'img',
+	          attrs: {
+	            title: data.icon.title ? data.icon.title : '',
+	            src: data.icon.url
+	          }
+	        }, {
+	          block: 'main-ui-control-field-label-text',
+	          tag: 'span',
+	          content: labelContent
+	        }];
+	      }
+
 	      label = {
 	        block: 'main-ui-control-field-label',
 	        tag: 'span',
 	        attrs: {
 	          title: data.label
 	        },
-	        content: data.label
+	        content: labelContent
 	      };
 	      group.content.push(label);
 	    }
@@ -103,13 +120,30 @@ this.BX = this.BX || {};
 	    };
 
 	    if ('label' in data && BX.type.isNotEmptyString(data.label)) {
+	      var labelContent = data.label;
+
+	      if ('icon' in data && BX.Type.isPlainObject(data.icon)) {
+	        labelContent = [{
+	          block: 'main-ui-control-field-label-icon',
+	          tag: 'img',
+	          attrs: {
+	            title: data.icon.title ? data.icon.title : '',
+	            src: data.icon.url
+	          }
+	        }, {
+	          block: 'main-ui-control-field-label-text',
+	          tag: 'span',
+	          content: labelContent
+	        }];
+	      }
+
 	      label = {
 	        block: 'main-ui-control-field-label',
 	        tag: 'span',
 	        attrs: {
 	          title: data.label
 	        },
-	        content: data.label
+	        content: labelContent
 	      };
 	      field.content.push(label);
 	    }
@@ -181,13 +215,30 @@ this.BX = this.BX || {};
 	    };
 
 	    if ('label' in data && BX.type.isNotEmptyString(data.label)) {
+	      var labelContent = data.label;
+
+	      if ('icon' in data && BX.Type.isPlainObject(data.icon)) {
+	        labelContent = [{
+	          block: 'main-ui-control-field-label-icon',
+	          tag: 'img',
+	          attrs: {
+	            title: data.icon.title ? data.icon.title : '',
+	            src: data.icon.url
+	          }
+	        }, {
+	          block: 'main-ui-control-field-label-text',
+	          tag: 'span',
+	          content: labelContent
+	        }];
+	      }
+
 	      label = {
 	        block: 'main-ui-control-field-label',
 	        tag: 'span',
 	        attrs: {
 	          title: data.label
 	        },
-	        content: data.label
+	        content: labelContent
 	      };
 	      field.content.push(label);
 	    }
@@ -371,16 +422,25 @@ this.BX = this.BX || {};
 	      mix.push('main-ui-filter-search-square-preset');
 	    }
 
+	    var title = 'title' in data ? data.title : '';
+	    var name = 'name' in data ? BX.util.htmlspecialcharsback(data.name) : '';
+
+	    if ('icon' in data && BX.Type.isPlainObject(data.icon)) {
+	      var iconTitle = data.icon.title;
+	      title = title.length ? iconTitle + ': ' + title : '';
+	      name = name.length ? iconTitle + ': ' + name : '';
+	    }
+
 	    return {
 	      block: 'main-ui-square',
 	      mix: mix,
 	      attrs: {
 	        'data-item': 'item' in data ? JSON.stringify(data.item) : '',
-	        'title': 'title' in data ? data.title : ''
+	        'title': title
 	      },
 	      content: [{
 	        block: 'main-ui-square-item',
-	        content: 'name' in data ? BX.util.htmlspecialcharsback(data.name) : ''
+	        content: name
 	      }, {
 	        block: 'main-ui-square-delete',
 	        mix: ['main-ui-item-icon']
@@ -407,13 +467,30 @@ this.BX = this.BX || {};
 	    };
 
 	    if ('label' in data && BX.type.isNotEmptyString(data.label)) {
+	      var labelContent = data.label;
+
+	      if ('icon' in data && BX.Type.isPlainObject(data.icon)) {
+	        labelContent = [{
+	          block: 'main-ui-control-field-label-icon',
+	          tag: 'img',
+	          attrs: {
+	            title: data.icon.title ? data.icon.title : '',
+	            src: data.icon.url
+	          }
+	        }, {
+	          block: 'main-ui-control-field-label-text',
+	          tag: 'span',
+	          content: labelContent
+	        }];
+	      }
+
 	      label = {
 	        block: 'main-ui-control-field-label',
 	        tag: 'span',
 	        attrs: {
 	          title: data.label
 	        },
-	        content: data.label
+	        content: labelContent
 	      };
 	      group.content.push(label);
 	    }
@@ -503,7 +580,10 @@ this.BX = this.BX || {};
 	        }, {
 	          block: 'main-ui-filter-sidebar-item-text',
 	          tag: 'span',
-	          content: 'text' in data ? data.text : ''
+	          content: 'text' in data ? data.text : '',
+	          attrs: {
+	            title: 'text' in data ? data.text : ''
+	          }
 	        }, {
 	          block: 'main-ui-filter-icon-pin',
 	          tag: 'span',
@@ -1038,6 +1118,405 @@ this.BX = this.BX || {};
 	  };
 	})();
 
+	function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+	function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { babelHelpers.defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+	var EntitySelector = /*#__PURE__*/function () {
+	  function EntitySelector(id, settings) {
+	    babelHelpers.classCallCheck(this, EntitySelector);
+	    babelHelpers.defineProperty(this, "id", null);
+	    babelHelpers.defineProperty(this, "filter", null);
+	    babelHelpers.defineProperty(this, "dialog", null);
+	    babelHelpers.defineProperty(this, "dialogOptions", null);
+	    babelHelpers.defineProperty(this, "control", null);
+	    babelHelpers.defineProperty(this, "isMultiple", false);
+	    babelHelpers.defineProperty(this, "needAddEntityIdToFilter", false);
+	    babelHelpers.defineProperty(this, "isActive", false);
+	    babelHelpers.defineProperty(this, "needShowDialogOnEmptyInput", true);
+	    this.id = id;
+	    this.settings = settings ? settings : {};
+	    this.filter = this.getSetting('filter', null);
+
+	    if (!this.filter) {
+	      throw new Error('Filter option is required for EntitySelector field');
+	    }
+
+	    this.isMultiple = !!this.getSetting('isMultiple', false);
+	    this.needAddEntityIdToFilter = this.getSetting('addEntityIdToResult', 'N') === 'Y';
+	    this.needShowDialogOnEmptyInput = !!this.getSetting('showDialogOnEmptyInput', true);
+	    this.dialogOptions = this.prepareDialogOptions();
+	    this.dialog = null;
+	    main_core_events.EventEmitter.subscribe('BX.Main.Filter:customEntityFocus', this.onCustomEntityFocus.bind(this));
+	    main_core_events.EventEmitter.subscribe('BX.Main.Filter:customEntityBlur', this.onCustomEntityBlur.bind(this));
+	    main_core_events.EventEmitter.subscribe('BX.Main.Filter:onGetStopBlur', this.onGetStopBlur.bind(this));
+	    main_core_events.EventEmitter.subscribe('BX.Main.Filter:move', this.onCustomEntityRemove.bind(this));
+	    main_core_events.EventEmitter.subscribe('BX.Main.Filter:onApplyPreset', this.onApplyPreset.bind(this));
+	    this.controlInputChangeHandler = this.onSearchInputChange.bind(this);
+	  }
+
+	  babelHelpers.createClass(EntitySelector, [{
+	    key: "open",
+	    value: function open() {
+	      var _this = this;
+
+	      this.isActive = true;
+
+	      if (!this.dialog) {
+	        this.initDialog().then(function () {
+	          if (_this.isActive) {
+	            _this.openDialog();
+	          }
+	        });
+	      } else {
+	        this.openDialog();
+	      }
+	    }
+	  }, {
+	    key: "close",
+	    value: function close() {
+	      this.isActive = false;
+
+	      if (this.dialog && this.dialog.isOpen()) {
+	        this.dialog.hide();
+	      }
+	    }
+	  }, {
+	    key: "getFilterField",
+	    value: function getFilterField() {
+	      return this.filter.getField(this.id);
+	    }
+	  }, {
+	    key: "getFilterFieldInputWrapper",
+	    value: function getFilterFieldInputWrapper() {
+	      var field = this.getFilterField();
+
+	      if (!field) {
+	        return null;
+	      }
+
+	      return BX.Filter.Utils.getBySelector(field.node, '.main-ui-control-entity');
+	    }
+	  }, {
+	    key: "getFilterFieldInput",
+	    value: function getFilterFieldInput() {
+	      var field = this.getFilterField();
+
+	      if (!field) {
+	        return null;
+	      }
+
+	      return BX.Filter.Utils.getBySelector(field.node, '.' + this.filter.settings.classStringInput + '[type="text"]');
+	    }
+	  }, {
+	    key: "setControl",
+	    value: function setControl(control) {
+	      this.control = control;
+	    }
+	  }, {
+	    key: "unsetControl",
+	    value: function unsetControl() {
+	      this.control = null;
+	    }
+	  }, {
+	    key: "getSetting",
+	    value: function getSetting(name, defaultValue) {
+	      return this.settings.hasOwnProperty(name) ? this.settings[name] : defaultValue;
+	    }
+	  }, {
+	    key: "prepareDialogOptions",
+	    value: function prepareDialogOptions() {
+	      var defaultOptions = {
+	        enableSearch: false,
+	        hideOnSelect: true,
+	        autoHide: false,
+	        hideByEsc: false
+	      };
+	      var dialogOptions = this.getSetting('dialogOptions', {});
+	      dialogOptions = Object.assign(defaultOptions, dialogOptions);
+	      return dialogOptions;
+	    }
+	  }, {
+	    key: "openDialog",
+	    value: function openDialog() {
+	      if (this.dialog.isOpen()) {
+	        return;
+	      }
+
+	      var inputWrapper = this.getFilterFieldInputWrapper();
+	      var searchInput = this.getFilterFieldInput();
+	      var searchQuery = main_core.Type.isDomNode(searchInput) ? searchInput.value.trim() : '';
+	      this.dialog.setTargetNode(inputWrapper);
+	      this.dialog.setWidth(inputWrapper.offsetWidth);
+
+	      if (this.needShowDialogOnEmptyInput || searchQuery.length) {
+	        this.dialog.show();
+	      }
+
+	      this.updateSelectedItemsInDialog(this.dialog);
+
+	      if (searchQuery.length) {
+	        this.dialog.search(searchQuery);
+	      }
+	    }
+	  }, {
+	    key: "initDialog",
+	    value: function initDialog() {
+	      var _this2 = this;
+
+	      return EntitySelector.initDialogExtension().then(function (exports) {
+	        var Dialog = exports.Dialog;
+	        _this2.dialog = new Dialog(_objectSpread(_objectSpread({}, _this2.dialogOptions), {}, {
+	          id: _this2.getDialogId(),
+	          multiple: _this2.isMultiple
+	        }));
+	        main_core_events.EventEmitter.subscribe(_this2.dialog, 'Item:onSelect', _this2.onDialogItemSelect.bind(_this2));
+	        main_core_events.EventEmitter.subscribe(_this2.dialog, 'Item:onDeselect', _this2.onDialogItemDeSelect.bind(_this2));
+	        main_core_events.EventEmitter.subscribe(_this2.dialog, 'onLoad', _this2.onDialogLoad.bind(_this2));
+
+	        var searchInput = _this2.getFilterFieldInput();
+
+	        main_core.Event.bind(searchInput, 'input', _this2.controlInputChangeHandler);
+	      });
+	    }
+	  }, {
+	    key: "addItemToFilter",
+	    value: function addItemToFilter(id, title) {
+	      if (!this.control) {
+	        return;
+	      }
+
+	      if (this.isMultiple) {
+	        var currentValues = this.control.getCurrentValues();
+
+	        if (!currentValues.filter(function (item) {
+	          return item.value === id;
+	        }).length) {
+	          currentValues.push({
+	            value: id,
+	            label: title
+	          });
+	          this.control.setMultipleData(currentValues);
+	        }
+	      } else {
+	        this.control.setSingleData(title, id);
+	      }
+	    }
+	  }, {
+	    key: "removeItemFromFilter",
+	    value: function removeItemFromFilter(id) {
+	      if (!this.control) {
+	        return;
+	      }
+
+	      if (this.isMultiple) {
+	        var currentValues = this.control.getCurrentValues();
+	        this.control.setMultipleData(currentValues.filter(function (item) {
+	          return item.value !== id;
+	        }));
+	      } else {
+	        this.control.clearValue();
+	      }
+	    }
+	  }, {
+	    key: "getDialogId",
+	    value: function getDialogId() {
+	      return this.id + '_' + this.filter.getParam('FILTER_ID');
+	    }
+	  }, {
+	    key: "getItemId",
+	    value: function getItemId(item) {
+	      if (this.needAddEntityIdToFilter) {
+	        return JSON.stringify([item.getEntityId() + '', item.getId() + '']);
+	      }
+
+	      return item.getId() + '';
+	    }
+	  }, {
+	    key: "updateSelectedItemsInDialog",
+	    value: function updateSelectedItemsInDialog(dialog) {
+	      var _this3 = this;
+
+	      if (!this.control) {
+	        return;
+	      }
+
+	      var currentValues = this.control.getCurrentValues();
+
+	      if (!this.isMultiple) {
+	        currentValues = [currentValues];
+	      }
+
+	      var selectedIds = currentValues.map(function (item) {
+	        return item.value;
+	      });
+	      dialog.getItems().forEach(function (dialogItem) {
+	        if (selectedIds.indexOf(_this3.getItemId(dialogItem)) > -1) {
+	          dialogItem.select(true);
+	        } else {
+	          dialogItem.deselect();
+	        }
+	      });
+	    }
+	  }, {
+	    key: "onCustomEntityFocus",
+	    value: function onCustomEntityFocus(event) {
+	      var _event$getData = event.getData(),
+	          _event$getData2 = babelHelpers.slicedToArray(_event$getData, 1),
+	          control = _event$getData2[0];
+
+	      if (this.id !== control.getId()) {
+	        return;
+	      }
+
+	      this.setControl(control);
+	      this.open();
+	    }
+	  }, {
+	    key: "onCustomEntityBlur",
+	    value: function onCustomEntityBlur(event) {
+	      var _event$getData3 = event.getData(),
+	          _event$getData4 = babelHelpers.slicedToArray(_event$getData3, 1),
+	          control = _event$getData4[0];
+
+	      if (this.id !== control.getId()) {
+	        return;
+	      }
+
+	      this.close();
+	      this.unsetControl();
+	    }
+	  }, {
+	    key: "onGetStopBlur",
+	    value: function onGetStopBlur(event) {
+	      var _event$getData5 = event.getData(),
+	          _event$getData6 = babelHelpers.slicedToArray(_event$getData5, 2),
+	          browserEvent = _event$getData6[0],
+	          result = _event$getData6[1];
+
+	      if (!(this.dialog && this.dialog.isOpen())) {
+	        return; // if dialog wasn't shown, cancel blur is not required
+	      }
+
+	      var field = this.getFilterField();
+
+	      if (!field) {
+	        return;
+	      }
+
+	      var target = browserEvent.target;
+
+	      if (target === field.node || // click on any child except field deletion button
+	      field.node.contains(target) && !main_core.Dom.hasClass(target, this.filter.settings.classFieldDelete) || target === document.body) {
+	        result.stopBlur = true;
+	        return;
+	      }
+
+	      var dialogContainerElement = this.dialog.getPopup().getContentContainer();
+
+	      if (target === dialogContainerElement || dialogContainerElement.contains(target)) {
+	        result.stopBlur = true;
+	      }
+	    }
+	  }, {
+	    key: "onCustomEntityRemove",
+	    value: function onCustomEntityRemove(event) {
+	      var _event$getData7 = event.getData(),
+	          _event$getData8 = babelHelpers.slicedToArray(_event$getData7, 1),
+	          control = _event$getData8[0];
+
+	      if (this.id !== control.getId()) {
+	        return;
+	      }
+
+	      if (this.dialog) {
+	        this.dialog.destroy();
+	        this.dialog = null;
+	      }
+
+	      this.unsetControl();
+	    }
+	  }, {
+	    key: "onApplyPreset",
+	    value: function onApplyPreset(event) {
+	      if (this.dialog) {
+	        this.dialog.destroy();
+	        this.dialog = null;
+	      }
+
+	      this.unsetControl();
+	    }
+	  }, {
+	    key: "onSearchInputChange",
+	    value: function onSearchInputChange(event) {
+	      if (this.dialog) {
+	        if (!this.needShowDialogOnEmptyInput) {
+	          if (event.target.value) {
+	            this.open();
+	          } else {
+	            this.close();
+	          }
+	        }
+
+	        this.dialog.search(event.target.value);
+	      }
+	    }
+	  }, {
+	    key: "onDialogItemSelect",
+	    value: function onDialogItemSelect(event) {
+	      var _event$getData9 = event.getData(),
+	          item = _event$getData9.item;
+
+	      this.addItemToFilter(this.getItemId(item), item.getTitle());
+	      this.getFilterFieldInput().value = ''; // clear search query
+	    }
+	  }, {
+	    key: "onDialogItemDeSelect",
+	    value: function onDialogItemDeSelect(event) {
+	      var _event$getData10 = event.getData(),
+	          item = _event$getData10.item;
+
+	      this.removeItemFromFilter(this.getItemId(item));
+	    }
+	  }, {
+	    key: "onDialogLoad",
+	    value: function onDialogLoad(event) {
+	      var dialog = event.getTarget();
+	      this.updateSelectedItemsInDialog(dialog);
+	    }
+	  }], [{
+	    key: "initDialogExtension",
+	    value: function initDialogExtension() {
+	      if (!EntitySelector.initExtensionPromise) {
+	        EntitySelector.initExtensionPromise = main_core.Runtime.loadExtension('ui.entity-selector');
+	      }
+
+	      return EntitySelector.initExtensionPromise;
+	    }
+	  }, {
+	    key: "create",
+	    value: function create(id, settings) {
+	      if (main_core.Type.isObject(this.items[id])) {
+	        if (main_core.Type.isObject(settings.filter)) {
+	          this.items[id].filter = settings.filter;
+	        }
+
+	        return this.items[id];
+	      }
+
+	      var self = new EntitySelector(id, settings);
+	      this.items[id] = self;
+	      return self;
+	    }
+	  }]);
+	  return EntitySelector;
+	}();
+
+	babelHelpers.defineProperty(EntitySelector, "initExtensionPromise", null);
+	babelHelpers.defineProperty(EntitySelector, "items", {});
+	var namespace = main_core.Reflection.namespace('BX.Filter');
+	namespace.EntitySelector = EntitySelector;
+
 	(function () {
 
 	  BX.namespace('BX.Filter');
@@ -1358,6 +1837,11 @@ this.BX = this.BX || {};
 	          BX.fireEvent(hiddenNode, 'input');
 	        }
 	      }
+	    },
+	    clearValue: function clearValue() {
+	      this.removeSquares();
+	      var hiddenNode = this.getHiddenNode();
+	      hiddenNode.value = this.isMultiple() ? '[]' : '';
 	    },
 	    setPopupContainer: function setPopupContainer(container) {
 	      if (BX.type.isDomNode(container)) {
@@ -1867,11 +2351,23 @@ this.BX = this.BX || {};
 
 	      if (searchString) {
 	        this.showClearButton();
+	        this.parent.setIsSetOutsideState(false);
+	        this.parent.setDefaultPresetAppliedState(false);
 	      } else {
 	        if (!this.getSquares().length && this.lastSearchString !== searchString) {
 	          this.hideClearButton();
 	          this.adjustPlaceholder();
 	        }
+
+	        if (this.parent.isAppliedDefaultPreset()) {
+	          this.parent.setDefaultPresetAppliedState(true);
+	        }
+	      }
+
+	      if (this.parent.isAppliedUserFilter()) {
+	        BX.Dom.addClass(this.container, 'main-ui-filter-search--active');
+	      } else {
+	        BX.Dom.removeClass(this.container, 'main-ui-filter-search--active');
 	      }
 	    },
 	    _onInput: function _onInput() {
@@ -1967,7 +2463,8 @@ this.BX = this.BX || {};
 	          result.moreSquares.push({
 	            type: 'control',
 	            name: current.value,
-	            title: current.title
+	            title: current.title,
+	            icon: current.icon
 	          });
 	        }
 	      }, this);
@@ -2003,7 +2500,14 @@ this.BX = this.BX || {};
 	          name: this.parent.getParam('MAIN_UI_FILTER__AND') + ' ' + this.parent.getParam('MAIN_UI_FILTER__MORE') + ' ' + moreSquares.moreSquares.length,
 	          item: moreSquares.moreSquares,
 	          title: moreSquares.moreSquares.map(function (curr) {
-	            return curr.title;
+	            var title = curr.title;
+
+	            if ('icon' in curr && BX.Type.isPlainObject(curr.icon)) {
+	              var iconTitle = curr.icon.title;
+	              title = title.length ? iconTitle + ': ' + title : '';
+	            }
+
+	            return title;
 	          }).join(', \n')
 	        };
 	        square = BX.decl(square);
@@ -2103,193 +2607,222 @@ this.BX = this.BX || {};
 	      fields.map(function (current) {
 	        value = null;
 
-	        switch (current.TYPE) {
-	          case this.parent.types.DATE:
-	            {
-	              value = current.LABEL + ': ' + current.SUB_TYPE.NAME;
+	        if (!BX.Type.isStringFilled(current.ADDITIONAL_FILTER)) {
+	          switch (current.TYPE) {
+	            case this.parent.types.DATE:
+	              {
+	                value = current.LABEL + ': ' + current.SUB_TYPE.NAME;
 
-	              if (current.SUB_TYPE.VALUE === this.parent.dateTypes.QUARTER && BX.type.isNotEmptyString(current.VALUES._quarter)) {
-	                var quarter = current.QUARTERS.filter(function (curr) {
-	                  return curr.VALUE == current.VALUES._quarter;
-	                }).map(function (curr) {
-	                  return curr.NAME;
-	                });
-	                quarter = quarter.length ? quarter.join('') : '';
-	                value = current.LABEL + ': ' + quarter + ' ' + this.parent.getParam('MAIN_UI_FILTER__QUARTER').toLocaleLowerCase() + ' ' + current.VALUES._year;
-	              }
-
-	              if (current.SUB_TYPE.VALUE === this.parent.dateTypes.YEAR && BX.type.isNotEmptyString(current.VALUES._year)) {
-	                value = current.LABEL + ': ' + current.VALUES._year;
-	              }
-
-	              if (current.SUB_TYPE.VALUE === this.parent.dateTypes.MONTH && BX.type.isNotEmptyString(current.VALUES._month)) {
-	                var month = current.MONTHS.filter(function (curr) {
-	                  return curr.VALUE == current.VALUES._month;
-	                }).map(function (curr) {
-	                  return curr.NAME;
-	                });
-	                month = month.length ? month.join('') : '';
-	                value = current.LABEL + ': ' + month + ' ' + current.VALUES._year;
-	              }
-
-	              if (current.SUB_TYPE.VALUE === this.parent.dateTypes.EXACT && BX.type.isNotEmptyString(current.VALUES._from)) {
-	                value = current.LABEL + ': ' + current.VALUES._from;
-	              }
-
-	              if (current.SUB_TYPE.VALUE === this.parent.dateTypes.RANGE) {
-	                if (BX.type.isNotEmptyString(current.VALUES._from) && BX.type.isNotEmptyString(current.VALUES._to)) {
-	                  value = current.LABEL + ': ' + current.VALUES._from + '-' + current.VALUES._to;
-	                } else if (!BX.type.isNotEmptyString(current.VALUES._from) && BX.type.isNotEmptyString(current.VALUES._to)) {
-	                  value = current.LABEL + ': ' + this.parent.getParam('MAIN_UI_FILTER__BEFORE') + ' ' + current.VALUES._to;
-	                } else if (BX.type.isNotEmptyString(current.VALUES._from) && !BX.type.isNotEmptyString(current.VALUES._to)) {
-	                  value = current.LABEL + ': ' + this.parent.getParam('MAIN_UI_FILTER__AFTER') + ' ' + current.VALUES._from;
-	                }
-	              }
-
-	              if ((current.SUB_TYPE.VALUE === this.parent.dateTypes.NEXT_DAYS || current.SUB_TYPE.VALUE === this.parent.dateTypes.PREV_DAYS) && !BX.type.isNumber(parseInt(current.VALUES._days))) {
-	                value = null;
-	              }
-
-	              if (current.SUB_TYPE.VALUE === this.parent.dateTypes.NEXT_DAYS && BX.type.isNumber(parseInt(current.VALUES._days))) {
-	                value = current.LABEL + ': ' + this.parent.getParam('MAIN_UI_FILTER__DATE_NEXT_DAYS_LABEL').replace('#N#', current.VALUES._days);
-	              }
-
-	              if (current.SUB_TYPE.VALUE === this.parent.dateTypes.PREV_DAYS && BX.type.isNumber(parseInt(current.VALUES._days))) {
-	                value = current.LABEL + ': ' + this.parent.getParam('MAIN_UI_FILTER__DATE_PREV_DAYS_LABEL').replace('#N#', current.VALUES._days);
-	              }
-
-	              if (current.SUB_TYPE.VALUE === this.parent.dateTypes.NONE) {
-	                value = null;
-	              }
-
-	              break;
-	            }
-
-	          case this.parent.types.CUSTOM_DATE:
-	            {
-	              if (BX.type.isArray(current.VALUE.days) && current.VALUE.days.length || BX.type.isArray(current.VALUE.months) && current.VALUE.months.length || BX.type.isArray(current.VALUE.years) && current.VALUE.years.length) {
-	                value = current.LABEL;
-	              }
-
-	              break;
-	            }
-
-	          case this.parent.types.SELECT:
-	            {
-	              if (BX.type.isPlainObject(current.VALUE) && current.VALUE.VALUE || current.STRICT) {
-	                value = current.LABEL + ': ' + current.VALUE.NAME;
-	              }
-
-	              break;
-	            }
-
-	          case this.parent.types.MULTI_SELECT:
-	            {
-	              if (BX.type.isArray(current.VALUE) && current.VALUE.length) {
-	                tmpValues = [];
-	                value = current.LABEL + ': ';
-	                current.VALUE.forEach(function (val, index) {
-	                  if (index < 2) {
-	                    tmpValues.push(val.NAME);
-	                  }
-	                });
-	                value += tmpValues.join(', ');
-
-	                if (current.VALUE.length > 2) {
-	                  title = [];
-	                  current.VALUE.forEach(function (val) {
-	                    title.push(val.NAME);
+	                if (current.SUB_TYPE.VALUE === this.parent.dateTypes.QUARTER && BX.type.isNotEmptyString(current.VALUES._quarter)) {
+	                  var quarter = current.QUARTERS.filter(function (curr) {
+	                    return curr.VALUE == current.VALUES._quarter;
+	                  }).map(function (curr) {
+	                    return curr.NAME;
 	                  });
-	                  value = title.join(', ');
+	                  quarter = quarter.length ? quarter.join('') : '';
+	                  value = current.LABEL + ': ' + quarter + ' ' + this.parent.getParam('MAIN_UI_FILTER__QUARTER').toLocaleLowerCase() + ' ' + current.VALUES._year;
 	                }
-	              }
 
-	              break;
-	            }
+	                if (current.SUB_TYPE.VALUE === this.parent.dateTypes.YEAR && BX.type.isNotEmptyString(current.VALUES._year)) {
+	                  value = current.LABEL + ': ' + current.VALUES._year;
+	                }
 
-	          case this.parent.types.NUMBER:
-	            {
-	              if (current.SUB_TYPE.VALUE === 'exact') {
-	                if (BX.type.isNotEmptyString(current.VALUES._from)) {
+	                if (current.SUB_TYPE.VALUE === this.parent.dateTypes.MONTH && BX.type.isNotEmptyString(current.VALUES._month)) {
+	                  var month = current.MONTHS.filter(function (curr) {
+	                    return curr.VALUE == current.VALUES._month;
+	                  }).map(function (curr) {
+	                    return curr.NAME;
+	                  });
+	                  month = month.length ? month.join('') : '';
+	                  value = current.LABEL + ': ' + month + ' ' + current.VALUES._year;
+	                }
+
+	                if (current.SUB_TYPE.VALUE === this.parent.dateTypes.EXACT && BX.type.isNotEmptyString(current.VALUES._from)) {
 	                  value = current.LABEL + ': ' + current.VALUES._from;
-	                } else {
+	                }
+
+	                if (current.SUB_TYPE.VALUE === this.parent.dateTypes.RANGE) {
+	                  if (BX.type.isNotEmptyString(current.VALUES._from) && BX.type.isNotEmptyString(current.VALUES._to)) {
+	                    value = current.LABEL + ': ' + current.VALUES._from + '-' + current.VALUES._to;
+	                  } else if (!BX.type.isNotEmptyString(current.VALUES._from) && BX.type.isNotEmptyString(current.VALUES._to)) {
+	                    value = current.LABEL + ': ' + this.parent.getParam('MAIN_UI_FILTER__BEFORE') + ' ' + current.VALUES._to;
+	                  } else if (BX.type.isNotEmptyString(current.VALUES._from) && !BX.type.isNotEmptyString(current.VALUES._to)) {
+	                    value = current.LABEL + ': ' + this.parent.getParam('MAIN_UI_FILTER__AFTER') + ' ' + current.VALUES._from;
+	                  }
+	                }
+
+	                if ((current.SUB_TYPE.VALUE === this.parent.dateTypes.NEXT_DAYS || current.SUB_TYPE.VALUE === this.parent.dateTypes.PREV_DAYS) && !BX.type.isNumber(parseInt(current.VALUES._days))) {
 	                  value = null;
 	                }
-	              }
 
-	              if (current.SUB_TYPE.VALUE === 'range') {
-	                if (BX.type.isNotEmptyString(current.VALUES._from) && BX.type.isNotEmptyString(current.VALUES._to)) {
-	                  value = current.LABEL + ': ' + current.VALUES._from + '-' + current.VALUES._to;
-	                } else if (!BX.type.isNotEmptyString(current.VALUES._from) && BX.type.isNotEmptyString(current.VALUES._to)) {
-	                  value = current.LABEL + ': ' + this.parent.getParam('MAIN_UI_FILTER__NUMBER_LESS') + ' ' + current.VALUES._to;
-	                } else if (BX.type.isNotEmptyString(current.VALUES._from) && !BX.type.isNotEmptyString(current.VALUES._to)) {
-	                  value = current.LABEL + ': ' + this.parent.getParam('MAIN_UI_FILTER__NUMBER_MORE') + ' ' + current.VALUES._from;
-	                } else {
+	                if (current.SUB_TYPE.VALUE === this.parent.dateTypes.NEXT_DAYS && BX.type.isNumber(parseInt(current.VALUES._days))) {
+	                  value = current.LABEL + ': ' + this.parent.getParam('MAIN_UI_FILTER__DATE_NEXT_DAYS_LABEL').replace('#N#', current.VALUES._days);
+	                }
+
+	                if (current.SUB_TYPE.VALUE === this.parent.dateTypes.PREV_DAYS && BX.type.isNumber(parseInt(current.VALUES._days))) {
+	                  value = current.LABEL + ': ' + this.parent.getParam('MAIN_UI_FILTER__DATE_PREV_DAYS_LABEL').replace('#N#', current.VALUES._days);
+	                }
+
+	                if (current.SUB_TYPE.VALUE === this.parent.dateTypes.NONE) {
 	                  value = null;
 	                }
+
+	                break;
 	              }
 
-	              if (current.SUB_TYPE.VALUE === 'more') {
-	                if (BX.type.isNotEmptyString(current.VALUES._from)) {
-	                  value = current.LABEL + ': > ';
-	                  value += current.VALUES._from;
+	            case this.parent.types.CUSTOM_DATE:
+	              {
+	                if (BX.type.isArray(current.VALUE.days) && current.VALUE.days.length || BX.type.isArray(current.VALUE.months) && current.VALUE.months.length || BX.type.isArray(current.VALUE.years) && current.VALUE.years.length) {
+	                  value = current.LABEL;
 	                }
+
+	                break;
 	              }
 
-	              if (current.SUB_TYPE.VALUE === 'less') {
-	                if (BX.type.isNotEmptyString(current.VALUES._to)) {
-	                  value = current.LABEL + ': < ';
-	                  value += current.VALUES._to;
+	            case this.parent.types.SELECT:
+	              {
+	                if (BX.type.isPlainObject(current.VALUE) && current.VALUE.VALUE || current.STRICT) {
+	                  value = current.LABEL + ': ' + current.VALUE.NAME;
 	                }
+
+	                break;
 	              }
 
-	              break;
-	            }
-
-	          case this.parent.types.CUSTOM_ENTITY:
-	          case this.parent.types.DEST_SELECTOR:
-	            {
-	              if (current.MULTIPLE) {
-	                var label = !!current.VALUES._label ? current.VALUES._label : [];
-
-	                if (BX.type.isPlainObject(label)) {
-	                  label = Object.keys(label).map(function (key) {
-	                    return label[key];
+	            case this.parent.types.MULTI_SELECT:
+	              {
+	                if (BX.type.isArray(current.VALUE) && current.VALUE.length) {
+	                  tmpValues = [];
+	                  value = current.LABEL + ': ';
+	                  current.VALUE.forEach(function (val, index) {
+	                    if (index < 2) {
+	                      tmpValues.push(val.NAME);
+	                    }
 	                  });
+	                  value += tmpValues.join(', ');
+
+	                  if (current.VALUE.length > 2) {
+	                    title = [];
+	                    current.VALUE.forEach(function (val) {
+	                      title.push(val.NAME);
+	                    });
+	                    value = title.join(', ');
+	                  }
 	                }
 
-	                if (!BX.type.isArray(label)) {
-	                  label = [label];
-	                }
-
-	                if (label.length > 0) {
-	                  value = current.LABEL + ': ';
-	                  value += label.join(', ');
-	                }
-	              } else {
-	                if (BX.type.isNotEmptyString(current.VALUES._value) && BX.type.isNotEmptyString(current.VALUES._label)) {
-	                  value = current.LABEL + ': ';
-	                  value += current.VALUES._label;
-	                }
+	                break;
 	              }
 
-	              break;
-	            }
+	            case this.parent.types.NUMBER:
+	              {
+	                if (current.SUB_TYPE.VALUE === 'exact') {
+	                  if (BX.type.isNotEmptyString(current.VALUES._from)) {
+	                    value = current.LABEL + ': ' + current.VALUES._from;
+	                  } else {
+	                    value = null;
+	                  }
+	                }
 
-	          case this.parent.types.CUSTOM:
-	            {
-	              value = '_VALUE' in current && BX.type.isNotEmptyString(current._VALUE) ? current.LABEL : null;
-	              break;
-	            }
+	                if (current.SUB_TYPE.VALUE === 'range') {
+	                  if (BX.type.isNotEmptyString(current.VALUES._from) && BX.type.isNotEmptyString(current.VALUES._to)) {
+	                    value = current.LABEL + ': ' + current.VALUES._from + '-' + current.VALUES._to;
+	                  } else if (!BX.type.isNotEmptyString(current.VALUES._from) && BX.type.isNotEmptyString(current.VALUES._to)) {
+	                    value = current.LABEL + ': ' + this.parent.getParam('MAIN_UI_FILTER__NUMBER_LESS') + ' ' + current.VALUES._to;
+	                  } else if (BX.type.isNotEmptyString(current.VALUES._from) && !BX.type.isNotEmptyString(current.VALUES._to)) {
+	                    value = current.LABEL + ': ' + this.parent.getParam('MAIN_UI_FILTER__NUMBER_MORE') + ' ' + current.VALUES._from;
+	                  } else {
+	                    value = null;
+	                  }
+	                }
 
-	          default:
-	            {
-	              if (BX.type.isNotEmptyString(current.VALUE)) {
-	                value = current.LABEL + ': ' + current.VALUE;
+	                if (current.SUB_TYPE.VALUE === 'more') {
+	                  if (BX.type.isNotEmptyString(current.VALUES._from)) {
+	                    value = current.LABEL + ': > ';
+	                    value += current.VALUES._from;
+	                  }
+	                }
+
+	                if (current.SUB_TYPE.VALUE === 'less') {
+	                  if (BX.type.isNotEmptyString(current.VALUES._to)) {
+	                    value = current.LABEL + ': < ';
+	                    value += current.VALUES._to;
+	                  }
+	                }
+
+	                if (current.SUB_TYPE.VALUE === 'before_n') {
+	                  if (BX.type.isNotEmptyString(current.VALUES._to)) {
+	                    value = current.LABEL + ': < ';
+	                    value += current.VALUES._to;
+	                  }
+	                }
+
+	                break;
 	              }
 
-	              break;
-	            }
+	            case this.parent.types.CUSTOM_ENTITY:
+	            case this.parent.types.DEST_SELECTOR:
+	            case this.parent.types.ENTITY_SELECTOR:
+	              {
+	                if (current.MULTIPLE) {
+	                  var label = !!current.VALUES._label ? current.VALUES._label : [];
+
+	                  if (BX.type.isPlainObject(label)) {
+	                    label = Object.keys(label).map(function (key) {
+	                      return label[key];
+	                    });
+	                  }
+
+	                  if (!BX.type.isArray(label)) {
+	                    label = [label];
+	                  }
+
+	                  if (label.length > 0) {
+	                    value = current.LABEL + ': ';
+	                    value += label.join(', ');
+	                  }
+	                } else {
+	                  if (BX.type.isNotEmptyString(current.VALUES._value) && BX.type.isNotEmptyString(current.VALUES._label)) {
+	                    value = current.LABEL + ': ';
+	                    value += current.VALUES._label;
+	                  }
+	                }
+
+	                break;
+	              }
+
+	            case this.parent.types.CUSTOM:
+	              {
+	                value = '_VALUE' in current && BX.type.isNotEmptyString(current._VALUE) ? current.LABEL : null;
+	                break;
+	              }
+
+	            default:
+	              {
+	                if (BX.type.isNotEmptyString(current.VALUE)) {
+	                  value = current.LABEL + ': ' + current.VALUE;
+	                }
+
+	                break;
+	              }
+	          }
+	        } else {
+	          var squareItem = {
+	            block: 'main-ui-search-square',
+	            name: current.LABEL + ': ' + BX.Loc.getMessage('MAIN_UI_FILTER__ADDITIONAL_FILTER_PLACEHOLDER_IS_EMPTY'),
+	            value: current.NAME,
+	            icon: 'ICON' in current ? current.ICON : null,
+	            item: {
+	              type: 'control',
+	              name: current.NAME
+	            },
+	            title: current.LABEL + ': ' + BX.Loc.getMessage('MAIN_UI_FILTER__ADDITIONAL_FILTER_PLACEHOLDER_IS_EMPTY')
+	          };
+
+	          if (current.ADDITIONAL_FILTER === BX.Filter.AdditionalFilter.Type.HAS_ANY_VALUE) {
+	            squareItem.name = current.LABEL + ': ' + BX.Loc.getMessage('MAIN_UI_FILTER__ADDITIONAL_FILTER_PLACEHOLDER_HAS_ANY_VALUE');
+	            squareItem.title = current.LABEL + ': ' + BX.Loc.getMessage('MAIN_UI_FILTER__ADDITIONAL_FILTER_PLACEHOLDER_HAS_ANY_VALUE');
+	          }
+
+	          result.push(squareItem);
 	        }
 
 	        if (value !== null) {
@@ -2297,6 +2830,7 @@ this.BX = this.BX || {};
 	            block: 'main-ui-search-square',
 	            name: value,
 	            value: current.NAME,
+	            icon: 'ICON' in current ? current.ICON : null,
 	            item: {
 	              type: 'control',
 	              name: current.NAME
@@ -2382,6 +2916,9 @@ this.BX = this.BX || {};
 	    this.classPopupFieldList1Column = 'main-ui-filter-field-list-1-column';
 	    this.classPopupFieldList2Column = 'main-ui-filter-field-list-2-column';
 	    this.classPopupFieldList3Column = 'main-ui-filter-field-list-3-column';
+	    this.classPopupFieldList4Column = 'main-ui-filter-field-list-4-column';
+	    this.classPopupFieldList5Column = 'main-ui-filter-field-list-5-column';
+	    this.classPopupFieldList6Column = 'main-ui-filter-field-list-6-column';
 	    this.classFieldListItem = 'main-ui-filter-field-list-item';
 	    this.classEditButton = 'main-ui-filter-add-edit';
 	    this.classPresetEdit = 'main-ui-filter-edit';
@@ -2416,12 +2953,18 @@ this.BX = this.BX || {};
 	    this.classRestoreButton = 'main-ui-filter-reset-link';
 	    this.classPinButton = 'main-ui-filter-icon-pin';
 	    this.classPopupOverlay = 'popup-window-overlay';
+	    this.classSidePanelContainer = 'side-panel-container';
 	    this.classPinnedPreset = 'main-ui-item-pin';
 	    this.classWaitButtonClass = 'ui-btn-clock';
 	    this.classForAllCheckbox = 'main-ui-filter-save-for-all';
 	    this.classShow = 'main-ui-show';
 	    this.classFocus = 'main-ui-focus';
 	    this.classPresetField = 'main-ui-filter-preset-field';
+	    this.classPopupSearchFieldListItemHidden = 'main-ui-filter-field-list-item-hidden';
+	    this.classPopupSearchFieldListItemVisible = 'main-ui-filter-field-list-item-visible';
+	    this.classPopupSearchSectionItem = 'main-ui-filter-popup-search-section-input';
+	    this.classPopupSearchSectionItemIcon = 'main-ui-filter-popup-search-section-item-icon';
+	    this.classPopupSearchSectionItemIconActive = 'main-ui-filter-popup-search-section-item-icon-active';
 	    this.numberPostfix = '_numsel';
 	    this.datePostfix = '_datesel';
 	    this.toPostfix = '_to';
@@ -2431,6 +2974,8 @@ this.BX = this.BX || {};
 	    this.quarterPostfix = '_quarter';
 	    this.yearPostfix = '_year';
 	    this.generalTemplateId = '';
+	    this.maxPopupColumnCount = 6;
+	    this.popupWidth = 630;
 	    this.init(options, parent);
 	  };
 
@@ -2454,6 +2999,12 @@ this.BX = this.BX || {};
 	  };
 	})();
 
+	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8;
+
+	function ownKeys$1(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+	function _objectSpread$1(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$1(Object(source), !0).forEach(function (key) { babelHelpers.defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$1(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
 	(function () {
 
 	  BX.namespace('BX.Main');
@@ -2469,6 +3020,7 @@ this.BX = this.BX || {};
 	   * @param types.MULTI_SELECT
 	   * @param types.NUMBER
 	   * @param types.DEST_SELECTOR
+	   * @param types.ENTITY_SELECTOR
 	   * @param types.CUSTOM_ENTITY
 	   * @param types.CHECKBOX
 	   * @param types.CUSTOM
@@ -2497,9 +3049,10 @@ this.BX = this.BX || {};
 	   * @param dateTypes.NEXT_MONTH
 	   * @param dateTypes.NEXT_WEEK
 	   * @param {object} numberTypes Number field types from Bitrix\Main\UI\Filter\NumberType
+	   * @memberOf {BX.Main}
 	   */
 
-	  BX.Main.Filter = function (params, options, types, dateTypes, numberTypes, additionalDateTypes) {
+	  BX.Main.Filter = function (params, options, types, dateTypes, numberTypes, additionalDateTypes, additionalNumberTypes) {
 	    this.params = params;
 	    this.search = null;
 	    this.popup = null;
@@ -2508,6 +3061,7 @@ this.BX = this.BX || {};
 	    this.types = types;
 	    this.dateTypes = dateTypes;
 	    this.additionalDateTypes = additionalDateTypes;
+	    this.additionalNumberTypes = additionalNumberTypes;
 	    this.numberTypes = numberTypes;
 	    this.settings = new BX.Filter.Settings(options, this);
 	    this.filter = null;
@@ -2522,6 +3076,8 @@ this.BX = this.BX || {};
 	      BX.Event.EventEmitter.subscribe(this.emitter, eventName.replace('BX.Filter.Field:', ''), listener);
 	    }.bind(this);
 
+	    this.enableFieldsSearch = null;
+	    this.enableHeadersSections = null;
 	    this.init();
 	  };
 	  /**
@@ -2551,6 +3107,12 @@ this.BX = this.BX || {};
 	      BX.bind(window, 'load', BX.delegate(this.onWindowLoad, this));
 	      BX.addCustomEvent('Grid::ready', BX.delegate(this._onGridReady, this));
 	      this.getSearch().updatePreset(this.getParam('CURRENT_PRESET'));
+	      this.enableFieldsSearch = this.getParam('ENABLE_FIELDS_SEARCH', false);
+	      this.enableHeadersSections = this.getParam('HEADERS_SECTIONS', false);
+
+	      if (this.isAppliedDefaultPreset()) {
+	        this.setDefaultPresetAppliedState(true);
+	      }
 	    },
 	    getEmitter: function getEmitter() {
 	      return this.emitter;
@@ -2626,7 +3188,7 @@ this.BX = this.BX || {};
 
 	      if (BX.type.isDomNode(preset)) {
 	        BX.remove(preset);
-	        BX.prepend(sidebarItem, presetsContainer);
+	        presetsContainer.insertBefore(sidebarItem, Presets.getAddPresetField());
 	      } else {
 	        presetsContainer && presetsContainer.insertBefore(sidebarItem, Presets.getAddPresetField());
 	      }
@@ -2661,6 +3223,9 @@ this.BX = this.BX || {};
 	            sort: index,
 	            name: presetData.TITLE,
 	            fields: this.preparePresetSettingsFields(presetData.FIELDS),
+	            rows: presetData.FIELDS.map(function (field) {
+	              return field.NAME;
+	            }),
 	            for_all: forAll && !BX.type.isBoolean(presetData.FOR_ALL) || forAll && presetData.FOR_ALL === true
 	          };
 	        }
@@ -2777,6 +3342,8 @@ this.BX = this.BX || {};
 	              break;
 	            }
 
+	          case this.types.DEST_SELECTOR:
+	          case this.types.ENTITY_SELECTOR:
 	          case this.types.CUSTOM_ENTITY:
 	            {
 	              if (BX.type.isPlainObject(current.VALUES)) {
@@ -2993,83 +3560,77 @@ this.BX = this.BX || {};
 	        rows = BX.type.isNotEmptyString(rows) ? rows.split(',') : [];
 	        fieldKeys = rows.length ? rows : Object.keys(dataFields);
 	        fieldKeys.forEach(function (current) {
-	          current = current.replace('_datesel', '').replace('_numsel', '');
+	          current = current.replace('_datesel', '').replace('_numsel', '').replace('_' + BX.Filter.AdditionalFilter.Type.IS_EMPTY, '').replace('_' + BX.Filter.AdditionalFilter.Type.HAS_ANY_VALUE, '');
 	          field = BX.clone(this.getFieldByName(current));
 
 	          if (BX.type.isPlainObject(field)) {
-	            if (field.TYPE === this.types.STRING) {
-	              field.VALUE = dataFields[current];
-	            }
+	            field.ADDITIONAL_FILTER = BX.Filter.AdditionalFilter.fetchAdditionalFilter(current, dataFields);
 
-	            if (field.TYPE === this.types.TEXTAREA) {
-	              field.VALUE = dataFields[current];
-	            }
-
-	            if (field.TYPE === this.types.MULTI_SELECT) {
-	              field.VALUE = this.prepareMultiSelectValue(dataFields[current], field.ITEMS);
-	            }
-
-	            if (field.TYPE === this.types.SELECT || field.TYPE === this.types.CHECKBOX) {
-	              field.VALUE = this.prepareSelectValue(dataFields[current], field.ITEMS);
-	            }
-
-	            if (field.TYPE === this.types.DATE) {
-	              field.SUB_TYPE = this.prepareSelectValue(dataFields[current + '_datesel'], field.SUB_TYPES);
-	              field.VALUES = {
-	                '_from': dataFields[current + '_from'],
-	                '_to': dataFields[current + '_to'],
-	                '_days': dataFields[current + '_days'],
-	                '_month': dataFields[current + '_month'],
-	                '_quarter': dataFields[current + '_quarter'],
-	                '_year': dataFields[current + '_year'],
-	                '_allow_year': dataFields[current + '_allow_year']
-	              };
-	            }
-
-	            if (field.TYPE === this.types.CUSTOM_DATE) {
-	              field.VALUE = {
-	                'days': Object.keys(dataFields[current + '_days'] || {}).map(function (index) {
-	                  return dataFields[current + '_days'][index];
-	                }),
-	                'months': Object.keys(dataFields[current + '_months'] || {}).map(function (index) {
-	                  return dataFields[current + '_months'][index];
-	                }),
-	                'years': Object.keys(dataFields[current + '_years'] || {}).map(function (index) {
-	                  return dataFields[current + '_years'][index];
-	                })
-	              };
-	            }
-
-	            if (field.TYPE === this.types.NUMBER) {
-	              field.SUB_TYPE = this.prepareSelectValue(dataFields[current + '_numsel'], field.SUB_TYPES);
-	              field.VALUES = {
-	                '_from': dataFields[current + '_from'],
-	                '_to': dataFields[current + '_to']
-	              };
-	            }
-
-	            if (field.TYPE === this.types.DEST_SELECTOR) {
-	              if (typeof dataFields[current + '_label'] !== 'undefined') {
-	                field.VALUES._label = dataFields[current + '_label'];
+	            if (!BX.Type.isStringFilled(field.ADDITIONAL_FILTER)) {
+	              if (field.TYPE === this.types.STRING) {
+	                field.VALUE = dataFields[current];
 	              }
 
-	              if (typeof dataFields[current] !== 'undefined') {
-	                field.VALUES._value = dataFields[current];
-	              }
-	            }
-
-	            if (field.TYPE === this.types.CUSTOM_ENTITY) {
-	              if (typeof dataFields[current + '_label'] !== 'undefined') {
-	                field.VALUES._label = dataFields[current + '_label'];
+	              if (field.TYPE === this.types.TEXTAREA) {
+	                field.VALUE = dataFields[current];
 	              }
 
-	              if (typeof dataFields[current] !== 'undefined') {
-	                field.VALUES._value = dataFields[current];
+	              if (field.TYPE === this.types.MULTI_SELECT) {
+	                field.VALUE = this.prepareMultiSelectValue(dataFields[current], field.ITEMS);
 	              }
-	            }
 
-	            if (field.TYPE === this.types.CUSTOM) {
-	              field._VALUE = dataFields[current];
+	              if (field.TYPE === this.types.SELECT || field.TYPE === this.types.CHECKBOX) {
+	                field.VALUE = this.prepareSelectValue(dataFields[current], field.ITEMS);
+	              }
+
+	              if (field.TYPE === this.types.DATE) {
+	                field.SUB_TYPE = this.prepareSelectValue(dataFields[current + '_datesel'], field.SUB_TYPES);
+	                field.VALUES = {
+	                  '_from': dataFields[current + '_from'],
+	                  '_to': dataFields[current + '_to'],
+	                  '_days': dataFields[current + '_days'],
+	                  '_month': dataFields[current + '_month'],
+	                  '_quarter': dataFields[current + '_quarter'],
+	                  '_year': dataFields[current + '_year'],
+	                  '_allow_year': dataFields[current + '_allow_year']
+	                };
+	              }
+
+	              if (field.TYPE === this.types.CUSTOM_DATE) {
+	                field.VALUE = {
+	                  'days': Object.keys(dataFields[current + '_days'] || {}).map(function (index) {
+	                    return dataFields[current + '_days'][index];
+	                  }),
+	                  'months': Object.keys(dataFields[current + '_months'] || {}).map(function (index) {
+	                    return dataFields[current + '_months'][index];
+	                  }),
+	                  'years': Object.keys(dataFields[current + '_years'] || {}).map(function (index) {
+	                    return dataFields[current + '_years'][index];
+	                  })
+	                };
+	              }
+
+	              if (field.TYPE === this.types.NUMBER) {
+	                field.SUB_TYPE = this.prepareSelectValue(dataFields[current + '_numsel'], field.SUB_TYPES);
+	                field.VALUES = {
+	                  '_from': dataFields[current + '_from'],
+	                  '_to': dataFields[current + '_to']
+	                };
+	              }
+
+	              if (field.TYPE === this.types.DEST_SELECTOR || field.TYPE === this.types.ENTITY_SELECTOR || field.TYPE === this.types.CUSTOM_ENTITY) {
+	                if (typeof dataFields[current + '_label'] !== 'undefined') {
+	                  field.VALUES._label = dataFields[current + '_label'];
+	                }
+
+	                if (typeof dataFields[current] !== 'undefined') {
+	                  field.VALUES._value = dataFields[current];
+	                }
+	              }
+
+	              if (field.TYPE === this.types.CUSTOM) {
+	                field._VALUE = dataFields[current];
+	              }
 	            }
 
 	            fields.push(field);
@@ -3182,6 +3743,7 @@ this.BX = this.BX || {};
 	      params.clear_filter = data.clear_filter || "N";
 	      params.with_preset = data.with_preset || "N";
 	      params.save = data.save || "N";
+	      params.isSetOutside = this.isSetOutside();
 	      var requestData = {
 	        params: params,
 	        data: data
@@ -3217,12 +3779,12 @@ this.BX = this.BX || {};
 	      return BX.ajax.runComponentAction('bitrix:main.ui.filter', action, {
 	        mode: 'ajax',
 	        data: data,
-	        analyticsLabel: babelHelpers.objectSpread({
+	        analyticsLabel: _objectSpread$1({
 	          FILTER_ID: this.getParam('FILTER_ID'),
 	          GRID_ID: this.getParam('GRID_ID'),
 	          PRESET_ID: data['data']['preset_id'],
 	          FIND: data['data'].hasOwnProperty('fields') && data['data']['fields'].hasOwnProperty('FIND') && !!data['data']['fields']['FIND'] ? "Y" : "N",
-	          ROWS: main_core.Type.isObject(data['data']['additional']) && Object.keys(data['data']['additional']).length == 0 ? "N" : "Y"
+	          ROWS: BX.Type.isObject(data['data']['additional']) && Object.keys(data['data']['additional']).length == 0 ? "N" : "Y"
 	        }, analyticsLabel)
 	      });
 	    },
@@ -3304,7 +3866,7 @@ this.BX = this.BX || {};
 	    isInsideFilterEvent: function isInsideFilterEvent(event) {
 	      event = this.prepareEvent(event);
 	      return (event.path || []).some(function (current) {
-	        return BX.type.isDomNode(current) && (BX.hasClass(current, this.settings.classFilterContainer) || BX.hasClass(current, this.settings.classSearchContainer) || BX.hasClass(current, this.settings.classDefaultPopup) || BX.hasClass(current, this.settings.classPopupOverlay));
+	        return BX.type.isDomNode(current) && (BX.hasClass(current, this.settings.classFilterContainer) || BX.hasClass(current, this.settings.classSearchContainer) || BX.hasClass(current, this.settings.classDefaultPopup) || BX.hasClass(current, this.settings.classPopupOverlay) || BX.hasClass(current, this.settings.classSidePanelContainer));
 	      }, this);
 	    },
 	    _onDocumentClick: function _onDocumentClick(event) {
@@ -3383,6 +3945,8 @@ this.BX = this.BX || {};
 	        if ('contentContainer' in popup && BX.type.isDomNode(popup.contentContainer)) {
 	          this.fieldsPopupItems = BX.Filter.Utils.getByClass(popup.contentContainer, this.settings.classMenuItem, true);
 	        }
+
+	        this.prepareAnimation();
 	      }
 
 	      return this.fieldsPopupItems;
@@ -3394,6 +3958,12 @@ this.BX = this.BX || {};
 	     * @return {string}
 	     */
 	    getFieldListContainerClassName: function getFieldListContainerClassName(itemsCount) {
+	      var popupColumnsCount = parseInt(this.settings.get('popupColumnsCount', 0), 10);
+
+	      if (popupColumnsCount > 0 && popupColumnsCount <= this.settings.maxPopupColumnCount) {
+	        return this.settings.get('classPopupFieldList' + popupColumnsCount + 'Column');
+	      }
+
 	      var containerClass = this.settings.classPopupFieldList1Column;
 
 	      if (itemsCount > 6 && itemsCount < 12) {
@@ -3420,6 +3990,7 @@ this.BX = this.BX || {};
 	          id: 'ID' in item ? item.ID : '',
 	          name: 'NAME' in item ? item.NAME : '',
 	          item: item,
+	          sectionId: 'SECTION_ID' in item ? item.SECTION_ID : '',
 	          onClick: BX.delegate(this._clickOnFieldListItem, this)
 	        };
 	      }, this);
@@ -3453,12 +4024,7 @@ this.BX = this.BX || {};
 
 	      if (this.getParam('LAZY_LOAD')) {
 	        var callback = function (response) {
-	          var containerDecl = {
-	            block: this.settings.classPopupFieldList,
-	            mix: this.getFieldListContainerClassName(response.length),
-	            content: this.prepareFieldsDecl(response)
-	          };
-	          p.fulfill(BX.decl(containerDecl));
+	          p.fulfill(this.getPopupContent(this.settings.classPopupFieldList, this.getFieldListContainerClassName(response.length), this.prepareFieldsDecl(response)));
 	        }.bind(this);
 
 	        if (BX.type.isNotEmptyObject(this.getParam('LAZY_LOAD')['CONTROLLER'])) {
@@ -3480,13 +4046,178 @@ this.BX = this.BX || {};
 	        return p;
 	      }
 
-	      var containerDecl = {
-	        block: this.settings.classPopupFieldList,
-	        mix: this.getFieldListContainerClassName(fieldsCount),
-	        content: this.prepareFieldsDecl(fields)
-	      };
-	      p.fulfill(BX.decl(containerDecl));
+	      p.fulfill(this.getPopupContent(this.settings.classPopupFieldList, this.getFieldListContainerClassName(fieldsCount), this.prepareFieldsDecl(fields)));
 	      return p;
+	    },
+	    getPopupContent: function getPopupContent(block, mix, content) {
+	      var wrapper = BX.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["<div></div>"])));
+
+	      if (!this.enableHeadersSections) {
+	        var fieldsContent = BX.decl({
+	          content: content,
+	          block: block,
+	          mix: mix
+	        });
+	        this.setPopupElementWidthFromSettings(fieldsContent);
+	        wrapper.appendChild(fieldsContent);
+
+	        if (this.enableFieldsSearch) {
+	          this.preparePopupContentHeader(wrapper);
+	        }
+
+	        return wrapper;
+	      }
+
+	      var defaultHeaderSection = this.getDefaultHeaderSection();
+	      var sections = {};
+	      content.forEach(function (item) {
+	        var sectionId = item.sectionId.length ? item.sectionId : defaultHeaderSection.id;
+
+	        if (sections[sectionId] === undefined) {
+	          sections[sectionId] = [];
+	        }
+
+	        sections[sectionId].push(item);
+	      });
+	      this.preparePopupContentHeader(wrapper);
+	      this.preparePopupContentFields(wrapper, sections, block, mix);
+	      return wrapper;
+	    },
+	    preparePopupContentHeader: function preparePopupContentHeader(wrapper) {
+	      var headerWrapper = BX.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"main-ui-filter-popup-search-header-wrapper\">\n\t\t\t\t\t<div class=\"ui-form-row-inline\"></div>\n\t\t\t\t</div>\n\t\t\t"])));
+	      wrapper.prepend(headerWrapper);
+	      this.preparePopupContentHeaderSections(headerWrapper);
+	      this.preparePopupContentHeaderSearch(headerWrapper);
+	    },
+	    preparePopupContentHeaderSections: function preparePopupContentHeaderSections(headerWrapper) {
+	      if (!this.enableHeadersSections) {
+	        return;
+	      }
+
+	      var headerSectionsWrapper = BX.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"ui-form-row\">\n\t\t\t\t\t<div class=\"ui-form-content main-ui-filter-popup-search-section-wrapper\"></div>\n\t\t\t\t</div>\n\t\t\t"])));
+	      headerWrapper.firstElementChild.appendChild(headerSectionsWrapper);
+	      var headersSections = this.getHeadersSections();
+
+	      for (var key in headersSections) {
+	        var itemClass = this.settings.classPopupSearchSectionItemIcon + (headersSections[key].selected ? " ".concat(this.settings.classPopupSearchSectionItemIconActive) : '');
+	        var headerSectionItem = BX.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<div class=\"main-ui-filter-popup-search-section-item\" data-ui-popup-filter-section-button=\"", "\">\n\t\t\t\t\t\t<div class=\"", "\">\n\t\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t"])), key, itemClass, BX.Text.encode(headersSections[key].name));
+	        BX.bind(headerSectionItem, 'click', this.onFilterSectionClick.bind(this, headerSectionItem));
+	        headerSectionsWrapper.firstElementChild.appendChild(headerSectionItem);
+	      }
+	    },
+	    onFilterSectionClick: function onFilterSectionClick(item) {
+	      var activeClass = this.settings.classPopupSearchSectionItemIconActive;
+	      var sectionId = item.dataset.uiPopupFilterSectionButton;
+	      var section = document.querySelectorAll("[data-ui-popup-filter-section='" + sectionId + "']");
+
+	      if (BX.Dom.hasClass(item.firstElementChild, activeClass)) {
+	        BX.Dom.removeClass(item.firstElementChild, activeClass);
+	        BX.Dom.hide(section[0]);
+	      } else {
+	        BX.Dom.addClass(item.firstElementChild, activeClass);
+	        BX.Dom.show(section[0]);
+	      }
+	    },
+	    preparePopupContentHeaderSearch: function preparePopupContentHeaderSearch(headerWrapper) {
+	      if (!this.enableFieldsSearch) {
+	        return;
+	      }
+
+	      var searchForm = BX.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"ui-form-row\">\n\t\t\t\t\t<div class=\"ui-form-content main-ui-filter-popup-search-input-wrapper\">\n\t\t\t\t\t\t<div class=\"ui-ctl ui-ctl-textbox ui-ctl-before-icon ui-ctl-after-icon\">\n\t\t\t\t\t\t\t<div class=\"ui-ctl-before ui-ctl-icon-search\"></div>\n\t\t\t\t\t\t\t<button class=\"ui-ctl-after ui-ctl-icon-clear\"></button>\n\t\t\t\t\t\t\t<input type=\"text\" class=\"ui-ctl-element ", "\">\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"])), this.settings.classPopupSearchSectionItem);
+	      headerWrapper.firstElementChild.appendChild(searchForm);
+	      var inputs = searchForm.getElementsByClassName(this.settings.classPopupSearchSectionItem);
+
+	      if (inputs.length) {
+	        var input = inputs[0];
+	        BX.bind(input, 'input', this.onFilterSectionSearchInput.bind(this, input));
+	        BX.bind(input.previousElementSibling, 'click', this.onFilterSectionSearchInputClear.bind(this, input));
+	      }
+	    },
+	    preparePopupContentFields: function preparePopupContentFields(wrapper, sections, block, mix) {
+	      if (!this.enableHeadersSections) {
+	        return;
+	      }
+
+	      var sectionsWrapper = BX.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["<div class=\"main-ui-filter-popup-search-sections-wrapper\"></div>"])));
+	      wrapper.appendChild(sectionsWrapper);
+
+	      for (var key in sections) {
+	        var sectionWrapper = BX.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<div class=\"main-ui-filter-popup-section-wrapper\" data-ui-popup-filter-section=\"", "\"></div>\n\t\t\t\t"])), key);
+	        this.setPopupElementWidthFromSettings(sectionWrapper);
+
+	        if (!this.getHeadersSectionParam(key, 'selected')) {
+	          sectionWrapper.setAttribute('hidden', '');
+	        }
+
+	        var sectionTitle = BX.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<h3 class=\"main-ui-filter-popup-title\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</h3>\n\t\t\t\t"])), BX.Text.encode(this.getHeadersSectionParam(key, 'name')));
+	        var fieldsBlock = BX.decl({
+	          block: block,
+	          mix: mix,
+	          content: sections[key]
+	        });
+	        sectionWrapper.appendChild(sectionTitle);
+	        sectionWrapper.appendChild(fieldsBlock);
+	        sectionsWrapper.appendChild(sectionWrapper);
+	      }
+	    },
+	    prepareAnimation: function prepareAnimation() {
+	      var _this = this;
+
+	      if (this.enableFieldsSearch) {
+	        this.fieldsPopupItems.forEach(function (item) {
+	          BX.bind(item, 'animationend', _this.onAnimationEnd.bind(_this, item));
+	        });
+	      }
+	    },
+	    onAnimationEnd: function onAnimationEnd(item) {
+	      item.style.display = BX.Dom.hasClass(item, this.settings.classPopupSearchFieldListItemHidden) ? 'none' : 'inline-block';
+	    },
+	    onFilterSectionSearchInput: function onFilterSectionSearchInput(input) {
+	      var search = input.value;
+
+	      if (search.length) {
+	        search = search.toLowerCase();
+	      }
+
+	      this.getFieldsPopupItems().forEach(function (item) {
+	        var title = item.innerText.toLowerCase();
+
+	        if (search.length && title.indexOf(search) === -1) {
+	          BX.Dom.removeClass(item, this.settings.classPopupSearchFieldListItemVisible);
+	          BX.Dom.addClass(item, this.settings.classPopupSearchFieldListItemHidden);
+	        } else {
+	          BX.Dom.removeClass(item, this.settings.classPopupSearchFieldListItemHidden);
+	          BX.Dom.addClass(item, this.settings.classPopupSearchFieldListItemVisible);
+	          item.style.display = 'inline-block';
+	        }
+	      }.bind(this));
+	    },
+	    onFilterSectionSearchInputClear: function onFilterSectionSearchInputClear(input) {
+	      if (input.value.length) {
+	        input.value = '';
+	        this.onFilterSectionSearchInput(input);
+	      }
+	    },
+	    getDefaultHeaderSection: function getDefaultHeaderSection() {
+	      var headersSections = this.getHeadersSections();
+
+	      for (var key in headersSections) {
+	        if ('selected' in headersSections[key] && headersSections[key].selected) {
+	          return headersSections[key];
+	        }
+	      }
+
+	      return null;
+	    },
+	    getHeadersSections: function getHeadersSections() {
+	      return this.getParam('HEADERS_SECTIONS');
+	    },
+	    getHeadersSectionParam: function getHeadersSectionParam(sectionId, paramName, defaultValue) {
+	      if (this.getHeadersSections()[sectionId] !== undefined && this.getHeadersSections()[sectionId][paramName] !== undefined) {
+	        return this.getHeadersSections()[sectionId][paramName];
+	      }
+
+	      return defaultValue;
 	    },
 
 	    /**
@@ -3521,6 +4252,18 @@ this.BX = this.BX || {};
 	        try {
 	          data = JSON.parse(BX.data(target, 'item'));
 	        } catch (err) {}
+
+	        var isChecked = BX.hasClass(target, this.settings.classMenuItemChecked);
+
+	        var _event = new BX.Event.BaseEvent({
+	          data: data
+	        });
+
+	        this.emitter.emit(isChecked ? 'onBeforeRemoveFilterItem' : 'onBeforeAddFilterItem', _event);
+
+	        if (_event.isDefaultPrevented()) {
+	          return;
+	        }
 
 	        var p = new BX.Promise();
 
@@ -3645,16 +4388,16 @@ this.BX = this.BX || {};
 	     * @return {BX.PopupWindow}
 	     */
 	    getFieldsPopup: function getFieldsPopup() {
-	      var addFiledButton = this.getAddField();
+	      var bindElement = this.settings.get('showPopupInCenter', false) ? null : this.getAddField();
 
 	      if (!this.fieldsPopup) {
-	        this.fieldsPopup = new BX.PopupWindow(this.getParam('FILTER_ID') + '_fields_popup', addFiledButton, {
+	        this.fieldsPopup = new BX.PopupWindow(this.getParam('FILTER_ID') + '_fields_popup', bindElement, {
 	          autoHide: true,
 	          offsetTop: 4,
 	          offsetLeft: 0,
 	          lightShadow: true,
-	          closeIcon: false,
-	          closeByEsc: false,
+	          closeIcon: bindElement === null,
+	          closeByEsc: bindElement === null,
 	          noAllPaddings: true,
 	          zIndex: 13
 	        });
@@ -3662,7 +4405,7 @@ this.BX = this.BX || {};
 	          target: this.fieldsPopup.contentContainer
 	        });
 	        this.fieldsPopupLoader.show();
-	        this.fieldsPopup.contentContainer.style.width = "630px";
+	        this.setPopupElementWidthFromSettings(this.fieldsPopup.contentContainer);
 	        this.fieldsPopup.contentContainer.style.height = "330px";
 	        this.getFieldsListPopupContent().then(function (res) {
 	          this.fieldsPopup.contentContainer.removeAttribute("style");
@@ -3671,10 +4414,14 @@ this.BX = this.BX || {};
 	          this.syncFields({
 	            cache: false
 	          });
+	          this.adjustFieldListPopupPosition();
 	        }.bind(this));
 	      }
 
 	      return this.fieldsPopup;
+	    },
+	    setPopupElementWidthFromSettings: function setPopupElementWidthFromSettings(element) {
+	      element.style.width = this.settings.popupWidth + 'px';
 	    },
 	    _onAddPresetClick: function _onAddPresetClick() {
 	      this.enableAddPreset();
@@ -3743,7 +4490,10 @@ this.BX = this.BX || {};
 	        if (presetNameInput.value.length) {
 	          preset.updateEditablePreset(preset.getCurrentPresetId());
 	          this.saveUserSettings(forAll);
-	          !forAll && this.disableEdit();
+
+	          if (!forAll) {
+	            this.disableEdit();
+	          }
 	        } else {
 	          var presetMask = presetNode.querySelector(".main-ui-filter-edit-mask");
 	          showLengthError(presetMask).then(function () {
@@ -3753,6 +4503,7 @@ this.BX = this.BX || {};
 	      }
 	    },
 	    _onCancelButtonClick: function _onCancelButtonClick() {
+	      this.setIsSetOutsideState(false);
 	      this.disableAddPreset();
 	      this.getPreset().clearAddPresetFieldInput();
 	      this.disableEdit();
@@ -3938,6 +4689,13 @@ this.BX = this.BX || {};
 
 	      if (BX.type.isArray(fields) && fields.length) {
 	        fields.forEach(function (current) {
+	          var additionalFilter = BX.Filter.AdditionalFilter.getInstance().getFilter(current);
+
+	          if (additionalFilter) {
+	            Object.assign(values, additionalFilter);
+	            return;
+	          }
+
 	          type = BX.data(current, 'type');
 	          name = BX.data(current, 'name');
 
@@ -3985,6 +4743,8 @@ this.BX = this.BX || {};
 	              }
 
 	            case this.types.DEST_SELECTOR:
+	            case this.types.CUSTOM_ENTITY:
+	            case this.types.ENTITY_SELECTOR:
 	              {
 	                this.prepareControlCustomEntityValue(values, name, current);
 	                break;
@@ -3993,12 +4753,6 @@ this.BX = this.BX || {};
 	            case this.types.CUSTOM:
 	              {
 	                this.prepareControlCustomValue(values, name, current);
-	                break;
-	              }
-
-	            case this.types.CUSTOM_ENTITY:
-	              {
-	                this.prepareControlCustomEntityValue(values, name, current);
 	                break;
 	              }
 
@@ -4356,14 +5110,58 @@ this.BX = this.BX || {};
 
 	      return presetId;
 	    },
+	    isAppliedUserFilter: function isAppliedUserFilter() {
+	      var _this2 = this;
+
+	      var presetOptions = this.getPreset().getCurrentPresetData();
+
+	      if (BX.Type.isPlainObject(presetOptions)) {
+	        var hasFields = BX.Type.isArrayFilled(presetOptions.FIELDS) && presetOptions.FIELDS.some(function (field) {
+	          return !_this2.getPreset().isEmptyField(field);
+	        });
+	        var hasAdditional = BX.Type.isArrayFilled(presetOptions.ADDITIONAL) && presetOptions.ADDITIONAL.some(function (field) {
+	          return !_this2.getPreset().isEmptyField(field);
+	        });
+	        return !presetOptions.IS_PINNED && (hasFields || hasAdditional) || presetOptions.IS_PINNED && BX.Type.isArrayFilled(presetOptions.ADDITIONAL) || BX.Type.isStringFilled(this.getSearch().getSearchString());
+	      }
+
+	      return false;
+	    },
+	    isAppliedDefaultPreset: function isAppliedDefaultPreset() {
+	      var _this3 = this;
+
+	      var presetData = this.getPreset().getCurrentPresetData();
+
+	      if (!presetData.IS_PINNED) {
+	        return false;
+	      }
+
+	      if (BX.Type.isArrayFilled(presetData.ADDITIONAL)) {
+	        var hasAdditional = presetData.ADDITIONAL.some(function (field) {
+	          return !_this3.getPreset().isEmptyField(field);
+	        });
+
+	        if (hasAdditional) {
+	          return false;
+	        }
+	      }
+
+	      if (BX.Type.isStringFilled(this.getSearch().getSearchString())) {
+	        return false;
+	      }
+
+	      return true;
+	    },
 
 	    /**
 	     * Applies filter
 	     * @param {?Boolean} [clear] - is need reset filter
 	     * @param {?Boolean} [applyPreset] - is need apply preset
+	     * @param {?Boolean} [isSetOutside] - is filter sets from outside
 	     * @return {BX.Promise}
 	     */
-	    applyFilter: function applyFilter(clear, applyPreset) {
+	    applyFilter: function applyFilter(clear, applyPreset, isSetOutside) {
+	      this.setIsSetOutsideState(isSetOutside);
 	      var presetId = this.getPresetId(clear, applyPreset);
 	      var filterId = this.getParam('FILTER_ID');
 	      var promise = new BX.Promise(null, this);
@@ -4373,6 +5171,14 @@ this.BX = this.BX || {};
 	        autoResolve: !this.grid
 	      };
 	      var self = this;
+	      this.setDefaultPresetAppliedState(this.isAppliedDefaultPreset());
+
+	      if (this.isAppliedUserFilter()) {
+	        BX.Dom.addClass(this.getSearch().container, 'main-ui-filter-search--active');
+	      } else {
+	        BX.Dom.removeClass(this.getSearch().container, 'main-ui-filter-search--active');
+	      }
+
 	      this.clearGet();
 	      this.showGridAnimation();
 	      var action = clear ? "clear" : "apply";
@@ -4494,14 +5300,7 @@ this.BX = this.BX || {};
 	            }
 
 	          case this.types.DEST_SELECTOR:
-	            {
-	              controlData.VALUES = {
-	                '_label': '',
-	                '_value': ''
-	              };
-	              break;
-	            }
-
+	          case this.types.ENTITY_SELECTOR:
 	          case this.types.CUSTOM_ENTITY:
 	            {
 	              controlData.VALUES = {
@@ -4573,6 +5372,7 @@ this.BX = this.BX || {};
 	      var popupContainer = popup.popupContainer;
 	      var configCloseDelay = this.settings.get('FILTER_CLOSE_DELAY');
 	      var closeDelay;
+	      BX.Dom.removeClass(this.getSearch().container, 'main-ui-filter-search--showed');
 	      setTimeout(BX.delegate(function () {
 	        if (!this.isIe()) {
 	          BX.removeClass(popupContainer, this.settings.classAnimationShow);
@@ -4607,6 +5407,7 @@ this.BX = this.BX || {};
 	      var popupContainer;
 
 	      if (!popup.isShown()) {
+	        BX.Dom.addClass(this.getSearch().container, 'main-ui-filter-search--showed');
 	        this.isOpened = true;
 	        var showDelay = this.settings.get('FILTER_SHOW_DELAY');
 
@@ -4793,7 +5594,7 @@ this.BX = this.BX || {};
 
 	      if (BX.type.isArray(defaultPresets)) {
 	        defaultPresets.sort(function (a, b) {
-	          return a.SORT < b.SORT;
+	          return a.SORT - b.SORT;
 	        });
 	        defaultPresets.forEach(function (defPreset) {
 	          isReplace = allPresets.some(function (current, index) {
@@ -4810,9 +5611,9 @@ this.BX = this.BX || {};
 	          }
 
 	          if (defPreset.ID !== 'default_filter') {
-	            this.addSidebarItem(defPreset.ID, defPreset.TITLE, defPreset.PINNED);
+	            this.addSidebarItem(defPreset.ID, defPreset.TITLE, defPreset.IS_PINNED);
 
-	            if (defPreset.PINNED) {
+	            if (defPreset.IS_PINNED) {
 	              applyPresetId = defPreset.ID;
 	            }
 	          }
@@ -4900,12 +5701,7 @@ this.BX = this.BX || {};
 	            }
 	          }
 
-	          if (current.TYPE === this.types.DEST_SELECTOR) {
-	            result[current.NAME + '_label'] = current.VALUES._label;
-	            result[current.NAME + '_value'] = current.VALUES._value;
-	          }
-
-	          if (current.TYPE === this.types.CUSTOM_ENTITY) {
+	          if (current.TYPE === this.types.DEST_SELECTOR || current.TYPE === this.types.ENTITY_SELECTOR || current.TYPE === this.types.CUSTOM_ENTITY) {
 	            result[current.NAME + '_label'] = current.VALUES._label;
 	            result[current.NAME + '_value'] = current.VALUES._value;
 	          }
@@ -4937,6 +5733,7 @@ this.BX = this.BX || {};
 	      }
 	    },
 	    _onFindButtonClick: function _onFindButtonClick() {
+	      this.setIsSetOutsideState(false);
 	      var presets = this.getPreset();
 	      var currentPresetId = presets.getCurrentPresetId();
 	      var promise;
@@ -5478,6 +6275,31 @@ this.BX = this.BX || {};
 	    getField: function getField(name) {
 	      var node = this.getFieldListContainer().querySelector('[data-name="' + name + '"]');
 	      return BX.Filter.Field.instances.get(node);
+	    },
+	    isSetOutside: function isSetOutside() {
+	      return BX.Text.toBoolean(this.isSetOutsideState);
+	    },
+	    setIsSetOutsideState: function setIsSetOutsideState(state) {
+	      this.isSetOutsideState = BX.Text.toBoolean(state);
+	      var searchContainer = this.getSearch().getContainer();
+
+	      if (this.isSetOutsideState) {
+	        BX.Dom.addClass(searchContainer, 'main-ui-filter-set-outside');
+	        BX.Dom.removeClass(searchContainer, 'main-ui-filter-set-inside');
+	      } else {
+	        BX.Dom.addClass(searchContainer, 'main-ui-filter-set-inside');
+	        BX.Dom.removeClass(searchContainer, 'main-ui-filter-set-outside');
+	      }
+	    },
+	    setDefaultPresetAppliedState: function setDefaultPresetAppliedState(state) {
+	      this.isDefaultPresetAppliedState = BX.Text.toBoolean(state);
+	      var searchContainer = this.getSearch().getContainer();
+
+	      if (this.isDefaultPresetAppliedState) {
+	        BX.Dom.addClass(searchContainer, 'main-ui-filter-default-applied');
+	      } else {
+	        BX.Dom.removeClass(searchContainer, 'main-ui-filter-default-applied');
+	      }
 	    }
 	  };
 	})();
@@ -5498,19 +6320,18 @@ this.BX = this.BX || {};
 	      }
 
 	      return result;
+	    },
+	    getList: function getList() {
+	      return Object.values(this.data);
 	    }
 	  };
 	})();
 
-	function _templateObject() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"main-ui-filter-additional-fields-container\"></div>\n\t\t\t"]);
+	var _templateObject$1;
 
-	  _templateObject = function _templateObject() {
-	    return data;
-	  };
+	function ownKeys$2(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-	  return data;
-	}
+	function _objectSpread$2(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$2(Object(source), !0).forEach(function (key) { babelHelpers.defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$2(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 	var onValueChange = Symbol('onValueChange');
 	var Field = /*#__PURE__*/function (_Event$EventEmitter) {
 	  babelHelpers.inherits(Field, _Event$EventEmitter);
@@ -5526,7 +6347,7 @@ this.BX = this.BX || {};
 	    _this.id = options.options.NAME;
 	    _this.parent = options.parent;
 	    _this.node = options.node;
-	    _this.options = babelHelpers.objectSpread({}, options.options);
+	    _this.options = _objectSpread$2({}, options.options);
 	    _this.cache = new main_core.Cache.MemoryCache();
 	    _this[onValueChange] = _this[onValueChange].bind(babelHelpers.assertThisInitialized(_this));
 	    main_core.Event.bind(_this.node, 'input', _this[onValueChange]);
@@ -5575,7 +6396,7 @@ this.BX = this.BX || {};
 	    key: "getAdditionalFieldContainer",
 	    value: function getAdditionalFieldContainer() {
 	      return this.cache.remember('additionalFieldsContainer', function () {
-	        return main_core.Tag.render(_templateObject());
+	        return main_core.Tag.render(_templateObject$1 || (_templateObject$1 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"main-ui-filter-additional-fields-container\"></div>\n\t\t\t"])));
 	      });
 	    }
 	    /**
@@ -5642,7 +6463,7 @@ this.BX = this.BX || {};
 	        });
 
 	        if (main_core.Type.isPlainObject(stub)) {
-	          var baseField = babelHelpers.objectSpread({}, stub, {
+	          var baseField = _objectSpread$2(_objectSpread$2({}, stub), {}, {
 	            NAME: options.id,
 	            LABEL: options.name,
 	            TYPE: type === 'checkbox' ? 'SELECT' : stub.TYPE,
@@ -5650,7 +6471,7 @@ this.BX = this.BX || {};
 	          });
 
 	          if (type === 'list') {
-	            return babelHelpers.objectSpread({}, baseField, {
+	            return _objectSpread$2(_objectSpread$2({}, baseField), {}, {
 	              ITEMS: [].concat(babelHelpers.toConsumableArray(baseField.ITEMS), [this.prepareListItems(options.items)]),
 	              params: {
 	                isMulti: function () {
@@ -5674,7 +6495,7 @@ this.BX = this.BX || {};
 	              return _this2.parent.dateTypes.NONE;
 	            }();
 
-	            return babelHelpers.objectSpread({}, baseField, {
+	            return _objectSpread$2(_objectSpread$2({}, baseField), {}, {
 	              SUB_TYPES: function () {
 	                if (main_core.Type.isArray(options.exclude)) {
 	                  return baseField.SUB_TYPES.filter(function (item) {
@@ -5691,7 +6512,7 @@ this.BX = this.BX || {};
 	              }(),
 	              VALUES: function () {
 	                if (main_core.Type.isPlainObject(options.value)) {
-	                  return babelHelpers.objectSpread({}, options.value);
+	                  return _objectSpread$2({}, options.value);
 	                }
 
 	                return baseField.VALUES;
@@ -5812,6 +6633,10 @@ this.BX = this.BX || {};
 	var Api = /*#__PURE__*/function () {
 	  function Api(parent) {
 	    babelHelpers.classCallCheck(this, Api);
+
+	    /**
+	     * @var {BX.Main.Filter}
+	     */
 	    this.parent = parent;
 	  }
 
@@ -5843,7 +6668,8 @@ this.BX = this.BX || {};
 	        this.parent.getPreset().applyPreset(filter.preset_id);
 
 	        if (!filter.checkFields || !this.parent.getPreset().isPresetValuesModified(filter.preset_id)) {
-	          this.parent.applyFilter(false, filter.preset_id);
+	          var isSetOutside = true;
+	          this.parent.applyFilter(false, filter.preset_id, isSetOutside);
 	        } else {
 	          var newFields = {};
 
@@ -5910,7 +6736,10 @@ this.BX = this.BX || {};
 
 	      if (!this.parent.isEditEnabled()) {
 	        if (!this.parent.isEditEnabled()) {
-	          this.parent.applyFilter();
+	          var clear = false;
+	          var applyPreset = false;
+	          var isSetOutside = true;
+	          this.parent.applyFilter(clear, applyPreset, isSetOutside);
 	        }
 
 	        this.parent.closePopup();
@@ -5999,15 +6828,258 @@ this.BX = this.BX || {};
 	  };
 	}
 
-	function _templateObject$1() {
-	  var data = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div \n\t\t\t\tclass=\"main-ui-filter-error-message\" \n\t\t\t\ttitle=\"", "\">\n\t\t\t\t", "\n\t\t\t</div>\n\t\t"]);
+	var _templateObject$2, _templateObject2$1;
 
-	  _templateObject$1 = function _templateObject() {
-	    return data;
-	  };
+	function ownKeys$3(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-	  return data;
-	}
+	function _objectSpread$3(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$3(Object(source), !0).forEach(function (key) { babelHelpers.defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$3(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+	/**
+	 * @memberOf BX.Filter
+	 */
+
+	var AdditionalFilter = /*#__PURE__*/function (_EventEmitter) {
+	  babelHelpers.inherits(AdditionalFilter, _EventEmitter);
+	  babelHelpers.createClass(AdditionalFilter, null, [{
+	    key: "getInstance",
+	    value: function getInstance() {
+	      return AdditionalFilter.cache.remember('instance', function () {
+	        return new AdditionalFilter();
+	      });
+	    }
+	  }, {
+	    key: "fetchAdditionalFilter",
+	    value: function fetchAdditionalFilter(name, fields) {
+	      if (main_core.Type.isStringFilled(name) && main_core.Type.isPlainObject(fields)) {
+	        if ("".concat(name, "_").concat(AdditionalFilter.Type.IS_EMPTY) in fields) {
+	          return AdditionalFilter.Type.IS_EMPTY;
+	        }
+
+	        if ("".concat(name, "_").concat(AdditionalFilter.Type.HAS_ANY_VALUE) in fields) {
+	          return AdditionalFilter.Type.HAS_ANY_VALUE;
+	        }
+	      }
+
+	      return null;
+	    }
+	  }]);
+
+	  function AdditionalFilter() {
+	    var _this;
+
+	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	    babelHelpers.classCallCheck(this, AdditionalFilter);
+	    _this = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(AdditionalFilter).call(this));
+	    babelHelpers.defineProperty(babelHelpers.assertThisInitialized(_this), "cache", new main_core.Cache.MemoryCache());
+
+	    _this.setEventNamespace('BX.Main.Filter.AdditionalFilter');
+
+	    _this.options = _objectSpread$3({}, options);
+	    main_core.Event.bind(document, 'click', _this.onDocumentClick.bind(babelHelpers.assertThisInitialized(_this)));
+	    return _this;
+	  }
+
+	  babelHelpers.createClass(AdditionalFilter, [{
+	    key: "getAdditionalFilterMenu",
+	    value: function getAdditionalFilterMenu() {
+	      var _this2 = this;
+
+	      return this.cache.remember('menu', function () {
+	        return new main_popup.Menu({
+	          id: 'additional_filter_menu',
+	          autoHide: false,
+	          items: [{
+	            id: 'isEmpty',
+	            text: main_core.Loc.getMessage('MAIN_UI_FILTER__ADDITIONAL_FILTER_MENU_IS_EMPTY'),
+	            onclick: _this2.onAdditionalFilterMenuItemClick.bind(_this2, AdditionalFilter.Type.IS_EMPTY)
+	          }, {
+	            id: 'hasAnyValue',
+	            text: main_core.Loc.getMessage('MAIN_UI_FILTER__ADDITIONAL_FILTER_MENU_HAS_ANY_VALUE'),
+	            onclick: _this2.onAdditionalFilterMenuItemClick.bind(_this2, AdditionalFilter.Type.HAS_ANY_VALUE)
+	          }, {
+	            id: 'delimiter',
+	            delimiter: true
+	          }, {
+	            id: 'helper',
+	            html: main_core.Loc.getMessage('MAIN_UI_FILTER__ADDITIONAL_FILTER_PLACEHOLDER_HOW') + '<span class="ui-hint"><span class="ui-hint-icon"></span></span>',
+	            onclick: function onclick() {
+	              if (top.BX.Helper) {
+	                top.BX.Helper.show("redirect=detail&code=14006190");
+	                event.preventDefault();
+	              }
+	            }
+	          }]
+	        });
+	      });
+	    }
+	  }, {
+	    key: "onAdditionalFilterMenuItemClick",
+	    value: function onAdditionalFilterMenuItemClick(typeId) {
+	      var node = this.getCurrentFieldNode();
+	      this.initAdditionalFilter(node, typeId);
+	    }
+	  }, {
+	    key: "onDocumentClick",
+	    value: function onDocumentClick() {
+	      this.getAdditionalFilterMenu().close();
+	    }
+	  }, {
+	    key: "setCurrentFieldId",
+	    value: function setCurrentFieldId(fieldId) {
+	      this.cache.set('currentFieldId', fieldId);
+	    }
+	  }, {
+	    key: "getCurrentFieldId",
+	    value: function getCurrentFieldId() {
+	      return this.cache.get('currentFieldId', '');
+	    }
+	  }, {
+	    key: "setCurrentFieldNode",
+	    value: function setCurrentFieldNode(node) {
+	      this.cache.set('currentFieldNode', node);
+	    }
+	  }, {
+	    key: "getCurrentFieldNode",
+	    value: function getCurrentFieldNode() {
+	      return this.cache.get('currentFieldNode');
+	    }
+	  }, {
+	    key: "onAdditionalFilterButtonClick",
+	    value: function onAdditionalFilterButtonClick(fieldId, event) {
+	      event.stopPropagation();
+	      var currentTarget = event.currentTarget;
+	      this.setCurrentFieldId(fieldId);
+	      this.setCurrentFieldNode(currentTarget.parentElement);
+	      var menu = this.getAdditionalFilterMenu();
+	      var allowedItems = String(main_core.Dom.attr(currentTarget, 'data-allowed-types')).split(',');
+	      menu.getMenuItems().forEach(function (menuItem) {
+	        var menuItemId = menuItem.getId();
+
+	        if (allowedItems.includes(menuItemId) || menuItemId === 'helper' || menuItemId === 'delimiter') {
+	          main_core.Dom.removeClass(menuItem.layout.item, 'main-ui-disable');
+	        } else {
+	          main_core.Dom.addClass(menuItem.layout.item, 'main-ui-disable');
+	        }
+	      });
+
+	      if (menu.getPopupWindow().isShown()) {
+	        if (menu.getPopupWindow().bindElement !== currentTarget) {
+	          menu.getPopupWindow().setBindElement(currentTarget);
+	          menu.getPopupWindow().adjustPosition();
+	        } else {
+	          menu.close();
+	        }
+	      } else {
+	        menu.getPopupWindow().setBindElement(currentTarget);
+	        menu.show();
+	      }
+	    }
+	  }, {
+	    key: "getAdditionalFilterButton",
+	    value: function getAdditionalFilterButton(_ref) {
+	      var _this3 = this;
+
+	      var fieldId = _ref.fieldId,
+	          enabled = _ref.enabled;
+	      return this.cache.remember("field_".concat(fieldId), function () {
+	        var disabled = !main_core.Type.isArrayFilled(enabled) && enabled !== true;
+
+	        var allowedTypes = function () {
+	          if (main_core.Type.isArrayFilled(enabled)) {
+	            return enabled.join(',');
+	          }
+
+	          if (!disabled) {
+	            return [AdditionalFilter.Type.IS_EMPTY, AdditionalFilter.Type.HAS_ANY_VALUE].join(',');
+	          }
+
+	          return '';
+	        }();
+
+	        return main_core.Tag.render(_templateObject$2 || (_templateObject$2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<span \n\t\t\t\t\tclass=\"ui-icon ui-icon-service-light-other main-ui-filter-additional-filters-button", "\"\n\t\t\t\t\tonclick=\"", "\"\n\t\t\t\t\tdata-allowed-types=\"", "\"\n\t\t\t\t>\n\t\t\t\t\t<i></i>\n\t\t\t\t</span>\n\t\t\t"])), disabled ? ' main-ui-disable' : '', _this3.onAdditionalFilterButtonClick.bind(_this3, fieldId), allowedTypes);
+	      });
+	    }
+	  }, {
+	    key: "initAdditionalFilter",
+	    value: function initAdditionalFilter(fieldNode, typeId) {
+	      var currentFieldId = this.getCurrentFieldId();
+
+	      if (currentFieldId === '') {
+	        currentFieldId = fieldNode.attributes[1].value;
+	      }
+
+	      var placeholder = this.getAdditionalFilterPlaceholderField(currentFieldId, typeId);
+	      main_core.Dom.addClass(fieldNode, 'main-ui-filter-field-with-additional-filter');
+	      var currentPlaceholder = fieldNode.querySelector('.main-ui-filter-additional-filter-placeholder');
+
+	      if (currentPlaceholder) {
+	        main_core.Dom.replace(currentPlaceholder, placeholder);
+	      } else {
+	        main_core.Dom.append(placeholder, fieldNode);
+	      }
+	    }
+	  }, {
+	    key: "restoreField",
+	    value: function restoreField(fieldNode) {
+	      if (main_core.Type.isDomNode(fieldNode)) {
+	        var placeholder = fieldNode.querySelector('.main-ui-filter-additional-filter-placeholder');
+
+	        if (placeholder) {
+	          main_core.Dom.remove(placeholder);
+	        }
+
+	        main_core.Dom.removeClass(fieldNode, 'main-ui-filter-field-with-additional-filter');
+	      }
+	    }
+	  }, {
+	    key: "getAdditionalFilterPlaceholderField",
+	    value: function getAdditionalFilterPlaceholderField(fieldId, typeId) {
+	      var _this4 = this;
+
+	      return this.cache.remember("placeholder_".concat(fieldId, "_").concat(typeId), function () {
+	        var message = function () {
+	          if (typeId === AdditionalFilter.Type.HAS_ANY_VALUE) {
+	            return main_core.Loc.getMessage('MAIN_UI_FILTER__ADDITIONAL_FILTER_PLACEHOLDER_HAS_ANY_VALUE');
+	          }
+
+	          return main_core.Loc.getMessage('MAIN_UI_FILTER__ADDITIONAL_FILTER_PLACEHOLDER_IS_EMPTY');
+	        }();
+
+	        var onRemoveClick = function onRemoveClick(event) {
+	          _this4.restoreField(event.currentTarget.closest('.main-ui-filter-field-with-additional-filter'));
+	        };
+
+	        return main_core.Tag.render(_templateObject2$1 || (_templateObject2$1 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"main-ui-control main-ui-filter-additional-filter-placeholder\" data-type=\"", "\">\n\t\t\t\t\t<div class=\"main-ui-square\">\n\t\t\t\t\t\t<div class=\"main-ui-square-item\">", "</div>\n\t\t\t\t\t\t<div class=\"main-ui-item-icon main-ui-square-delete\" onclick=\"", "\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"])), typeId, message, onRemoveClick);
+	      });
+	    }
+	  }, {
+	    key: "getFilter",
+	    value: function getFilter(fieldNode) {
+	      if (main_core.Type.isDomNode(fieldNode)) {
+	        var placeholder = fieldNode.querySelector('.main-ui-filter-additional-filter-placeholder');
+
+	        if (main_core.Type.isDomNode(placeholder)) {
+	          var type = main_core.Dom.attr(placeholder, 'data-type');
+	          var fieldId = main_core.Dom.attr(fieldNode, 'data-name');
+	          return babelHelpers.defineProperty({}, "".concat(fieldId, "_").concat(type), 'y');
+	        }
+	      }
+
+	      return null;
+	    }
+	  }]);
+	  return AdditionalFilter;
+	}(main_core_events.EventEmitter);
+	babelHelpers.defineProperty(AdditionalFilter, "Type", {
+	  IS_EMPTY: 'isEmpty',
+	  HAS_ANY_VALUE: 'hasAnyValue'
+	});
+	babelHelpers.defineProperty(AdditionalFilter, "cache", new main_core.Cache.MemoryCache());
+
+	var _templateObject$3;
+
+	function ownKeys$4(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+	function _objectSpread$4(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$4(Object(source), !0).forEach(function (key) { babelHelpers.defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$4(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 	var errorMessages = new WeakMap();
 	var errorMessagesTypes = new WeakMap();
 	var values = new WeakMap();
@@ -6120,6 +7192,7 @@ this.BX = this.BX || {};
 	        name: fieldData.NAME,
 	        type: fieldData.TYPE,
 	        label: this.parent.getParam('ENABLE_LABEL') ? fieldData.LABEL : '',
+	        icon: this.parent.getParam('ENABLE_LABEL') && fieldData.ICON ? fieldData.ICON : null,
 	        dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
 	        deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
 	        content: [{
@@ -6134,7 +7207,7 @@ this.BX = this.BX || {};
 	      this.parent.getEmitter().emit('init', {
 	        field: new Field({
 	          parent: this.parent,
-	          options: babelHelpers.objectSpread({}, fieldData),
+	          options: _objectSpread$4({}, fieldData),
 	          node: renderedField
 	        })
 	      });
@@ -6151,6 +7224,7 @@ this.BX = this.BX || {};
 	        name: fieldData.NAME,
 	        type: fieldData.TYPE,
 	        label: this.parent.getParam('ENABLE_LABEL') ? fieldData.LABEL : '',
+	        icon: this.parent.getParam('ENABLE_LABEL') && fieldData.ICON ? fieldData.ICON : null,
 	        dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
 	        deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
 	        content: [{
@@ -6176,15 +7250,15 @@ this.BX = this.BX || {};
 	      this.parent.getEmitter().emit('init', {
 	        field: new Field({
 	          parent: this.parent,
-	          options: babelHelpers.objectSpread({}, fieldData),
+	          options: _objectSpread$4({}, fieldData),
 	          node: field
 	        })
 	      });
 	      return field;
 	    }
 	  }, {
-	    key: "createDestSelector",
-	    value: function createDestSelector(fieldData) {
+	    key: "createCustomEntityFieldLayout",
+	    value: function createCustomEntityFieldLayout(fieldData) {
 	      var field = {
 	        block: 'main-ui-control-field',
 	        mix: this.parent.getParam('ENABLE_LABEL') ? [this.parent.settings.classFieldWithLabel] : null,
@@ -6193,6 +7267,7 @@ this.BX = this.BX || {};
 	        name: fieldData.NAME,
 	        type: fieldData.TYPE,
 	        label: this.parent.getParam('ENABLE_LABEL') ? fieldData.LABEL : '',
+	        icon: this.parent.getParam('ENABLE_LABEL') && fieldData.ICON ? fieldData.ICON : null,
 	        dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
 	        deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
 	        content: {
@@ -6273,125 +7348,7 @@ this.BX = this.BX || {};
 	      field = BX.decl(field);
 	      var input = BX.Filter.Utils.getBySelector(field, '.main-ui-control-string[type="text"]');
 	      BX.addClass(input, 'main-ui-square-search-item');
-	      main_core.Event.bind(input, 'focus', function (event) {
-	        BX.fireEvent(event.currentTarget, 'click');
-	      });
-	      main_core.Event.bind(input, 'click', BX.proxy(this._onCustomEntityInputClick, this));
-
-	      if (!this.bindDocument) {
-	        main_core.Event.bind(document, 'click', BX.proxy(this._onCustomEntityBlur, this));
-	        document.addEventListener('focus', BX.proxy(this._onDocumentFocus, this), true);
-	        this.bindDocument = true;
-	      }
-
-	      main_core.Event.bind(input, 'keydown', BX.proxy(this._onCustomEntityKeydown, this));
-	      main_core.Event.bind(field, 'click', BX.proxy(this._onCustomEntityFieldClick, this));
-	      BX.ready(BX.proxy(function () {
-	        BX.Filter.DestinationSelector.create(fieldData.NAME, {
-	          filterId: this.parent.getParam('FILTER_ID'),
-	          fieldId: fieldData.NAME
-	        });
-	      }, this));
-	      this.parent.getEmitter().emit('init', {
-	        field: new Field({
-	          parent: this.parent,
-	          options: babelHelpers.objectSpread({}, fieldData),
-	          node: field
-	        })
-	      });
-	      return field;
-	    }
-	  }, {
-	    key: "createCustomEntity",
-	    value: function createCustomEntity(fieldData) {
-	      var field = {
-	        block: 'main-ui-control-field',
-	        mix: this.parent.getParam('ENABLE_LABEL') ? [this.parent.settings.classFieldWithLabel] : null,
-	        deleteButton: true,
-	        valueDelete: true,
-	        name: fieldData.NAME,
-	        type: fieldData.TYPE,
-	        label: this.parent.getParam('ENABLE_LABEL') ? fieldData.LABEL : '',
-	        dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
-	        deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
-	        content: {
-	          block: 'main-ui-control-entity',
-	          mix: 'main-ui-control',
-	          attrs: {
-	            'data-multiple': JSON.stringify(fieldData.MULTIPLE)
-	          },
-	          content: []
-	        }
-	      };
-
-	      if ('_label' in fieldData.VALUES && !!fieldData.VALUES._label) {
-	        if (fieldData.MULTIPLE) {
-	          var label = fieldData.VALUES._label ? fieldData.VALUES._label : [];
-
-	          if (main_core.Type.isPlainObject(label)) {
-	            label = Object.keys(label).map(function (key) {
-	              return label[key];
-	            });
-	          }
-
-	          if (!main_core.Type.isArray(label)) {
-	            label = [label];
-	          }
-
-	          var value = fieldData.VALUES._value ? fieldData.VALUES._value : [];
-
-	          if (main_core.Type.isPlainObject(value)) {
-	            value = Object.keys(value).map(function (key) {
-	              return value[key];
-	            });
-	          }
-
-	          if (!main_core.Type.isArray(value)) {
-	            value = [value];
-	          }
-
-	          label.forEach(function (currentLabel, index) {
-	            field.content.content.push({
-	              block: 'main-ui-square',
-	              tag: 'span',
-	              name: currentLabel,
-	              item: {
-	                _label: currentLabel,
-	                _value: value[index]
-	              }
-	            });
-	          });
-	        } else {
-	          field.content.content.push({
-	            block: 'main-ui-square',
-	            tag: 'span',
-	            name: '_label' in fieldData.VALUES ? fieldData.VALUES._label : '',
-	            item: fieldData.VALUES
-	          });
-	        }
-	      }
-
-	      field.content.content.push({
-	        block: 'main-ui-square-search',
-	        tag: 'span',
-	        content: {
-	          block: 'main-ui-control-string',
-	          name: "".concat(fieldData.NAME, "_label"),
-	          tabindex: fieldData.TABINDEX,
-	          type: 'text',
-	          placeholder: fieldData.PLACEHOLDER || ''
-	        }
-	      }, {
-	        block: 'main-ui-control-string',
-	        name: fieldData.NAME,
-	        type: 'hidden',
-	        placeholder: fieldData.PLACEHOLDER || '',
-	        value: '_value' in fieldData.VALUES ? fieldData.VALUES._value : '',
-	        tabindex: fieldData.TABINDEX
-	      });
-	      field = BX.decl(field);
-	      var input = BX.Filter.Utils.getBySelector(field, '.main-ui-control-string[type="text"]');
-	      BX.addClass(input, 'main-ui-square-search-item');
+	      input.autocomplete = 'off';
 	      main_core.Event.bind(input, 'focus', BX.proxy(this._onCustomEntityInputFocus, this));
 	      main_core.Event.bind(input, 'click', BX.proxy(this._onCustomEntityInputClick, this));
 
@@ -6403,10 +7360,55 @@ this.BX = this.BX || {};
 
 	      main_core.Event.bind(input, 'keydown', BX.proxy(this._onCustomEntityKeydown, this));
 	      main_core.Event.bind(field, 'click', BX.proxy(this._onCustomEntityFieldClick, this));
+	      return field;
+	    }
+	  }, {
+	    key: "createDestSelector",
+	    value: function createDestSelector(fieldData) {
+	      var field = this.createCustomEntityFieldLayout(fieldData);
+	      BX.ready(BX.proxy(function () {
+	        BX.Filter.DestinationSelector.create(fieldData.NAME, {
+	          filterId: this.parent.getParam('FILTER_ID'),
+	          fieldId: fieldData.NAME
+	        });
+	      }, this));
 	      this.parent.getEmitter().emit('init', {
 	        field: new Field({
 	          parent: this.parent,
-	          options: babelHelpers.objectSpread({}, fieldData),
+	          options: _objectSpread$4({}, fieldData),
+	          node: field
+	        })
+	      });
+	      return field;
+	    }
+	  }, {
+	    key: "createEntitySelector",
+	    value: function createEntitySelector(fieldData) {
+	      var field = this.createCustomEntityFieldLayout(fieldData);
+	      BX.Filter.EntitySelector.create(fieldData.NAME, {
+	        filter: this.parent,
+	        isMultiple: fieldData.MULTIPLE,
+	        addEntityIdToResult: fieldData.ADD_ENTITY_ID_TO_RESULT,
+	        showDialogOnEmptyInput: fieldData.SHOW_DIALOG_ON_EMPTY_INPUT,
+	        dialogOptions: fieldData.DIALOG_OPTIONS
+	      });
+	      this.parent.getEmitter().emit('init', {
+	        field: new Field({
+	          parent: this.parent,
+	          options: _objectSpread$4({}, fieldData),
+	          node: field
+	        })
+	      });
+	      return field;
+	    }
+	  }, {
+	    key: "createCustomEntity",
+	    value: function createCustomEntity(fieldData) {
+	      var field = this.createCustomEntityFieldLayout(fieldData);
+	      this.parent.getEmitter().emit('init', {
+	        field: new Field({
+	          parent: this.parent,
+	          options: _objectSpread$4({}, fieldData),
 	          node: field
 	        })
 	      });
@@ -6562,6 +7564,7 @@ this.BX = this.BX || {};
 	        type: fieldData.TYPE,
 	        deleteButton: true,
 	        label: this.parent.getParam('ENABLE_LABEL') ? fieldData.LABEL : '',
+	        icon: this.parent.getParam('ENABLE_LABEL') && fieldData.ICON ? fieldData.ICON : null,
 	        dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
 	        deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
 	        content: {
@@ -6591,7 +7594,7 @@ this.BX = this.BX || {};
 	      this.parent.getEmitter().emit('init', {
 	        field: new Field({
 	          parent: this.parent,
-	          options: babelHelpers.objectSpread({}, fieldData),
+	          options: _objectSpread$4({}, fieldData),
 	          node: field
 	        })
 	      });
@@ -6607,6 +7610,7 @@ this.BX = this.BX || {};
 	        type: fieldData.TYPE,
 	        deleteButton: true,
 	        label: this.parent.getParam('ENABLE_LABEL') ? fieldData.LABEL : '',
+	        icon: this.parent.getParam('ENABLE_LABEL') && fieldData.ICON ? fieldData.ICON : null,
 	        dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
 	        deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
 	        content: {
@@ -6622,7 +7626,7 @@ this.BX = this.BX || {};
 	      this.parent.getEmitter().emit('init', {
 	        field: new Field({
 	          parent: this.parent,
-	          options: babelHelpers.objectSpread({}, fieldData),
+	          options: _objectSpread$4({}, fieldData),
 	          node: field
 	        })
 	      });
@@ -6638,6 +7642,7 @@ this.BX = this.BX || {};
 	        type: fieldData.TYPE,
 	        deleteButton: true,
 	        label: this.parent.getParam('ENABLE_LABEL') ? fieldData.LABEL : '',
+	        icon: this.parent.getParam('ENABLE_LABEL') && fieldData.ICON ? fieldData.ICON : null,
 	        dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
 	        deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
 	        content: {
@@ -6656,7 +7661,7 @@ this.BX = this.BX || {};
 	      this.parent.getEmitter().emit('init', {
 	        field: new Field({
 	          parent: this.parent,
-	          options: babelHelpers.objectSpread({}, fieldData),
+	          options: _objectSpread$4({}, fieldData),
 	          node: field
 	        })
 	      });
@@ -6670,6 +7675,7 @@ this.BX = this.BX || {};
 	        type: fieldData.TYPE,
 	        mix: this.parent.getParam('ENABLE_LABEL') ? [this.parent.settings.classFieldWithLabel, 'main-ui-filter-date-group'] : ['main-ui-filter-date-group'],
 	        label: this.parent.getParam('ENABLE_LABEL') ? fieldData.LABEL : '',
+	        icon: this.parent.getParam('ENABLE_LABEL') && fieldData.ICON ? fieldData.ICON : null,
 	        dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
 	        deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
 	        tabindex: 'TABINDEX' in fieldData ? fieldData.TABINDEX : '',
@@ -6778,7 +7784,7 @@ this.BX = this.BX || {};
 	      this.parent.getEmitter().emit('init', {
 	        field: new Field({
 	          parent: this.parent,
-	          options: babelHelpers.objectSpread({}, fieldData),
+	          options: _objectSpread$4({}, fieldData),
 	          node: field
 	        })
 	      });
@@ -6868,6 +7874,14 @@ this.BX = this.BX || {};
 	              });
 	            }
 
+	            if (this.parent.getParam('ENABLE_ADDITIONAL_FILTERS')) {
+	              var button = AdditionalFilter.getInstance().getAdditionalFilterButton({
+	                fieldId: fieldData.NAME,
+	                enabled: fieldData.ADDITIONAL_FILTER_ALLOWED
+	              });
+	              main_core.Dom.append(button, dateGroup);
+	            }
+
 	            main_core.Dom.insertAfter(dateGroup, group);
 	            main_core.Dom.remove(group);
 	          }
@@ -6877,7 +7891,9 @@ this.BX = this.BX || {};
 	  }, {
 	    key: "createNumber",
 	    value: function createNumber(options) {
-	      var numberTypes = this.parent.numberTypes;
+	      var _this$parent = this.parent,
+	          numberTypes = _this$parent.numberTypes,
+	          additionalNumberTypes = _this$parent.additionalNumberTypes;
 	      var ENABLE_LABEL = this.parent.params.ENABLE_LABEL;
 	      var _options$SUB_TYPE = options.SUB_TYPE,
 	          SUB_TYPE = _options$SUB_TYPE === void 0 ? {} : _options$SUB_TYPE,
@@ -6892,6 +7908,8 @@ this.BX = this.BX || {};
 	      } : _options$VALUES,
 	          _options$LABEL = options.LABEL,
 	          LABEL = _options$LABEL === void 0 ? '' : _options$LABEL,
+	          _options$ICON = options.ICON,
+	          ICON = _options$ICON === void 0 ? null : _options$ICON,
 	          TYPE = options.TYPE;
 	      var subType = SUB_TYPE.VALUE || numberTypes.SINGLE;
 	      var placeholder = SUB_TYPE.PLACEHOLDER || '';
@@ -6910,6 +7928,7 @@ this.BX = this.BX || {};
 	        type: TYPE,
 	        mix: classes,
 	        label: ENABLE_LABEL ? LABEL : '',
+	        icon: ENABLE_LABEL ? ICON : null,
 	        dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
 	        deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
 	        tabindex: TABINDEX,
@@ -6920,7 +7939,7 @@ this.BX = this.BX || {};
 	        content: []
 	      };
 
-	      if (subType !== numberTypes.LESS) {
+	      if (subType !== numberTypes.LESS && subType !== additionalNumberTypes.BEFORE_N) {
 	        var from = {
 	          block: 'main-ui-control-field',
 	          type: TYPE,
@@ -6950,7 +7969,7 @@ this.BX = this.BX || {};
 	        fieldGroup.content.push(line);
 	      }
 
-	      if (subType === numberTypes.RANGE || subType === numberTypes.LESS) {
+	      if (subType === numberTypes.RANGE || subType === numberTypes.LESS || subType === additionalNumberTypes.BEFORE_N) {
 	        var to = {
 	          block: 'main-ui-control-field',
 	          type: TYPE,
@@ -6971,7 +7990,7 @@ this.BX = this.BX || {};
 	      this.parent.getEmitter().emit('init', {
 	        field: new Field({
 	          parent: this.parent,
-	          options: babelHelpers.objectSpread({}, options),
+	          options: _objectSpread$4({}, options),
 	          node: field
 	        })
 	      });
@@ -6982,9 +8001,9 @@ this.BX = this.BX || {};
 	    value: function createDate(options) {
 	      var _this2 = this;
 
-	      var _this$parent = this.parent,
-	          dateTypes = _this$parent.dateTypes,
-	          additionalDateTypes = _this$parent.additionalDateTypes;
+	      var _this$parent2 = this.parent,
+	          dateTypes = _this$parent2.dateTypes,
+	          additionalDateTypes = _this$parent2.additionalDateTypes;
 	      var _options$SUB_TYPE2 = options.SUB_TYPE,
 	          SUB_TYPE = _options$SUB_TYPE2 === void 0 ? {} : _options$SUB_TYPE2,
 	          _options$SUB_TYPES2 = options.SUB_TYPES,
@@ -7007,6 +8026,8 @@ this.BX = this.BX || {};
 	          ENABLE_TIME = _options$ENABLE_TIME === void 0 ? false : _options$ENABLE_TIME,
 	          _options$LABEL2 = options.LABEL,
 	          LABEL = _options$LABEL2 === void 0 ? '' : _options$LABEL2,
+	          _options$ICON2 = options.ICON,
+	          ICON = _options$ICON2 === void 0 ? null : _options$ICON2,
 	          TYPE = options.TYPE,
 	          _options$VALUE_REQUIR = options.VALUE_REQUIRED,
 	          VALUE_REQUIRED = _options$VALUE_REQUIR === void 0 ? false : _options$VALUE_REQUIR,
@@ -7029,6 +8050,7 @@ this.BX = this.BX || {};
 	        type: TYPE,
 	        mix: classes,
 	        label: ENABLE_LABEL ? LABEL : '',
+	        icon: ENABLE_LABEL ? ICON : null,
 	        dragTitle: this.parent.getParam('MAIN_UI_FILTER__DRAG_FIELD_TITLE'),
 	        deleteTitle: this.parent.getParam('MAIN_UI_FILTER__REMOVE_FIELD'),
 	        tabindex: TABINDEX,
@@ -7174,16 +8196,14 @@ this.BX = this.BX || {};
 	            customDateDecl.VALUE.years = VALUES._year;
 	          }
 
-	          customDateDecl.mix = customDateDecl.filter(function (item) {
-	            return item !== 'main-ui-filter-wield-with-label';
-	          });
 	          var renderedField = this.createCustomDate(customDateDecl);
+	          main_core.Dom.removeClass(renderedField, 'main-ui-filter-wield-with-label');
 	          var buttons = babelHelpers.toConsumableArray(renderedField.querySelectorAll('.main-ui-item-icon-container, .main-ui-filter-icon-grab'));
 	          buttons.forEach(function (button) {
 	            return main_core.Dom.remove(button);
 	          });
 	          fieldGroup.content.push(renderedField);
-	          fieldGroup.push('main-ui-filter-custom-date-group');
+	          fieldGroup.mix.push('main-ui-filter-custom-date-group');
 	        }
 	      }
 
@@ -7295,7 +8315,7 @@ this.BX = this.BX || {};
 	      this.parent.getEmitter().emit('init', {
 	        field: new Field({
 	          parent: this.parent,
-	          options: babelHelpers.objectSpread({}, options, {
+	          options: _objectSpread$4(_objectSpread$4({}, options), {}, {
 	            VALUES: currentValues
 	          }),
 	          node: renderedFieldGroup
@@ -7378,7 +8398,7 @@ this.BX = this.BX || {};
 	          MAIN_UI_FILTER__DATE_ERROR_TITLE = _this$parent$params.MAIN_UI_FILTER__DATE_ERROR_TITLE,
 	          MAIN_UI_FILTER__DATE_ERROR_LABEL = _this$parent$params.MAIN_UI_FILTER__DATE_ERROR_LABEL;
 	      var errorText = text || "".concat(MAIN_UI_FILTER__DATE_ERROR_LABEL, " ").concat(main_core.Loc.getMessage('FORMAT_DATE'));
-	      var dateErrorMessage = main_core.Tag.render(_templateObject$1(), MAIN_UI_FILTER__DATE_ERROR_TITLE, errorText);
+	      var dateErrorMessage = main_core.Tag.render(_templateObject$3 || (_templateObject$3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div \n\t\t\t\tclass=\"main-ui-filter-error-message\" \n\t\t\t\ttitle=\"", "\">\n\t\t\t\t", "\n\t\t\t</div>\n\t\t"])), MAIN_UI_FILTER__DATE_ERROR_TITLE, errorText);
 	      errorMessages.set(target, dateErrorMessage);
 	      errorMessagesTypes.set(target, id);
 	      main_core.Dom.insertAfter(dateErrorMessage, target);
@@ -7723,6 +8743,8 @@ this.BX = this.BX || {};
 	        promise = this.parent.applyFilter();
 	      } else if (!isPinned) {
 	        var pinnedPresetId = this.getPinnedPresetId();
+	        var presetData = this.getPreset(pinnedPresetId);
+	        presetData.ADDITIONAL = [];
 	        var pinnedPresetNode = this.getPinnedPresetNode();
 	        var clear = false;
 	        var applyPreset = true;
@@ -7776,7 +8798,7 @@ this.BX = this.BX || {};
 	    value: function enableEditPresetName(presetNode) {
 	      var input = this.getPresetInput(presetNode);
 	      BX.addClass(presetNode, this.parent.settings.classPresetNameEdit);
-	      input.focus(); // noinspection SillyAssignmentJS
+	      input.select(); // noinspection SillyAssignmentJS
 
 	      input.value = BX.util.htmlspecialcharsback(input.value);
 	      main_core.Event.bind(input, 'input', BX.delegate(this._onPresetNameInput, this));
@@ -7896,6 +8918,7 @@ this.BX = this.BX || {};
 
 	      this.parent.getSearch().updatePreset(preset);
 	      this.updatePresetFields(preset, noValues);
+	      BX.onCustomEvent('BX.Main.Filter:onApplyPreset', [presetId]);
 	    }
 	    /**
 	     * Extends preset
@@ -7945,6 +8968,10 @@ this.BX = this.BX || {};
 	    value: function isEmptyField(field) {
 	      var result = true;
 
+	      if (main_core.Type.isStringFilled(field.ADDITIONAL_FILTER)) {
+	        return false;
+	      }
+
 	      if (field.TYPE === this.parent.types.STRING) {
 	        if (field.VALUE && field.VALUE.length) {
 	          result = false;
@@ -7969,7 +8996,7 @@ this.BX = this.BX || {};
 	        }
 	      }
 
-	      if (field.TYPE === this.parent.types.CUSTOM_ENTITY || field.TYPE === this.parent.types.DEST_SELECTOR) {
+	      if (field.TYPE === this.parent.types.CUSTOM_ENTITY || field.TYPE === this.parent.types.DEST_SELECTOR || field.TYPE === this.parent.types.ENTITY_SELECTOR) {
 	        if (BX.type.isPlainObject(field.VALUES)) {
 	          if (BX.type.isNotEmptyString(field.VALUES._label) && BX.type.isNotEmptyString(field.VALUES._value)) {
 	            result = false;
@@ -8242,6 +9269,12 @@ this.BX = this.BX || {};
 	            break;
 	          }
 
+	        case this.parent.types.ENTITY_SELECTOR:
+	          {
+	            control = this.parent.getFields().createEntitySelector(fieldData);
+	            break;
+	          }
+
 	        case this.parent.types.CUSTOM:
 	          {
 	            control = this.parent.getFields().createCustom(fieldData);
@@ -8258,6 +9291,23 @@ this.BX = this.BX || {};
 	          {
 	            break;
 	          }
+	      }
+
+	      if (this.parent.getParam('ENABLE_ADDITIONAL_FILTERS')) {
+	        var additionalFilterInstance = AdditionalFilter.getInstance();
+	        var button = additionalFilterInstance.getAdditionalFilterButton({
+	          fieldId: fieldData.NAME,
+	          enabled: fieldData.ADDITIONAL_FILTER_ALLOWED
+	        });
+	        main_core.Dom.append(button, control);
+
+	        if (!fieldData.ADDITIONAL_FILTER_ALLOWED) {
+	          BX.Dom.addClass(control, 'main-ui-filter-additional-filters-hide');
+	        }
+
+	        if (main_core.Type.isStringFilled(fieldData.ADDITIONAL_FILTER)) {
+	          additionalFilterInstance.initAdditionalFilter(control, fieldData.ADDITIONAL_FILTER);
+	        }
 	      }
 
 	      if (BX.type.isDomNode(control)) {
@@ -8669,6 +9719,7 @@ this.BX = this.BX || {};
 	exports.Api = Api;
 	exports.Fields = Fields;
 	exports.Presets = Presets;
+	exports.AdditionalFilter = AdditionalFilter;
 
-}((this.BX.Filter = this.BX.Filter || {}),BX));
+}((this.BX.Filter = this.BX.Filter || {}),BX.UI.EntitySelector,BX.Event,BX.Main,BX));
 //# sourceMappingURL=script.js.map

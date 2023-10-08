@@ -41,7 +41,7 @@ class Theme extends Page
 			]),
 			'COLOR' => new Field\Text('COLOR', [
 				'title' => Loc::getMessage('LANDING_HOOK_THEME_CUSTOM_COLOR')
-			])
+			]),
 		];
 	}
 
@@ -51,14 +51,7 @@ class Theme extends Page
 	 */
 	public static function getColorCodes(): array
 	{
-		static $colors = [];
-
-		if (!empty($colors))
-		{
-			return $colors;
-		}
-
-		$colors = [
+		static $colors = [
 			'2business' => [
 				'color' => '#3949a0',
 				'main' => '#333333',
@@ -113,6 +106,9 @@ class Theme extends Page
 				'main' => '#a7a7a7',
 				'base' => true,
 			],
+			'twentyFourth' => [
+				'color' => '#AD8F47',
+			],
 			'travel' => [
 				'color' => '#ee4136',
 				'main' => '#333333',
@@ -164,11 +160,15 @@ class Theme extends Page
 				'main' => '#444444',
 				'colorTitle' => '#222222',
 			],
+			'twentyThird' => [
+				'color' => '#A861AB',
+			],
 			'photography' => [
 				'color' => '#333333',
 				'main' => '#444444',
 				'colorTitle' => '#333333',
 				'base' => true,
+				'baseInSettings' => false,
 			],
 		];
 
@@ -207,13 +207,50 @@ class Theme extends Page
 	}
 
 	/**
+	 * Get hex for all colors.
+	 * @return array
+	 */
+	public static function getAllColorCodes(): array
+	{
+		$colors = self::getColorCodes();
+		$allColors = [];
+		foreach ($colors as $colorItem)
+		{
+			if (isset($colorItem['color']))
+			{
+				$allColors[] = $colorItem['color'];
+			}
+		}
+		return $allColors;
+	}
+
+	/**
+	 * Get hex for start colors.
+	 * @return array
+	 */
+	public static function getStartColorCodes(): array
+	{
+		$colors = self::getColorCodes();
+		$startColors = [];
+		foreach ($colors as $colorItem)
+		{
+			if (isset($colorItem['base']) && $colorItem['base'] === true)
+			{
+				$startColors[] = $colorItem['color'];
+			}
+		}
+		return $startColors;
+	}
+
+	/**
 	 * Find theme name (old format) by hex color
 	 * @param string $hexColor (with lead #)
 	 * @return string|null
 	 */
 	protected static function getThemeCodeByColor(string $hexColor): ?string
 	{
-		foreach(self::getColorCodes() as $code => $color)
+		$colors = self::getColorCodes();
+		foreach($colors as $code => $color)
 		{
 			if($color['color'] === $hexColor)
 			{
@@ -357,27 +394,16 @@ class Theme extends Page
 			$colorHex = HtmlFilter::encode(trim($this->fields['COLOR']->getValue()));
 			if (!$colorHex)
 			{
-				$themeCode = HtmlFilter::encode(trim($this->fields['CODE']));
+				$themeCode = HtmlFilter::encode(trim($this->fields['CODE']->getValue()));
 				$colorHex = $themeCode ? $defaultColors[$themeCode]['color'] : self::DEFAULT_COLOR;
 			}
 		}
 
-		if ($colorHex[0] !== '#')
+		if (!is_string($colorHex))
 		{
-			$colorHex = '#'.$colorHex;
+			$colorHex = '';
 		}
-		if (strlen($colorHex) !== 7)
-		{
-			$colorHex = self::DEFAULT_COLOR;
-		}
-		else
-		{
-			$pattern = '/#[0-9a-f]{6}/i';
-			if (preg_match($pattern, $colorHex) !== 1)
-			{
-				$colorHex = self::DEFAULT_COLOR;
-			}
-		}
+		$colorHex = self::prepareColor($colorHex);
 
 		$restrictionCode = Restriction\Hook::getRestrictionCodeByHookCode('THEME');
 		if (
@@ -393,8 +419,10 @@ class Theme extends Page
 		$rgbTemplate = $rgbColor[0] . ', ' . $rgbColor[1] . ', ' . $rgbColor[2];
 		$hslColor = self::convertRgbToHsl($rgbColor[0], $rgbColor[1], $rgbColor[2]);
 
-		$themeCode = $themeCode ?? self::getThemeCodeByColor($colorHex);
-		if ($themeCode)
+		if (
+			isset($themeCode)
+			|| ($themeCode = self::getThemeCodeByColor($colorHex))
+		)
 		{
 			$colorMain = $defaultColors[$themeCode]['main'];
 			if ($defaultColors[$themeCode]['secondary'])
@@ -410,28 +438,76 @@ class Theme extends Page
 		$colorSecondary = $colorSecondary ?? 'hsl('.$hslColor[0].', 20%, 80%)';
 		$colorTitle = $colorTitle ?? $colorMain;
 
+		if ($hslColor[2] > 60)
+		{
+			$colorStrictInverseFromPrimary = '#000000';
+		}
+		else
+		{
+			$colorStrictInverseFromPrimary = '#ffffff';
+		}
+
 		Asset::getInstance()->addString(
 			'<style type="text/css">
 				:root {
-					--theme-color-primary: ' . $colorHex . ';
-					--theme-color-primary-darken-1: hsl(' . $hslColor[0] . ', ' . $hslColor[1] . '%, ' . min($hslColor[2] - 2, 100) . '%)' . ';
-					--theme-color-primary-darken-2: hsl(' . $hslColor[0] . ', ' . $hslColor[1] . '%, ' . min($hslColor[2] - 5, 100) . '%)' . ';
-					--theme-color-primary-darken-3: hsl(' . $hslColor[0] . ', ' . $hslColor[1] . '%, ' . min($hslColor[2] - 10, 100) . '%)' . ';
-					--theme-color-primary-lighten-1: hsl(' . $hslColor[0] . ', ' . $hslColor[1] . '%, ' . max($hslColor[2] + 10, 0) . '%)' . ';
-					--theme-color-primary-opacity-0_1: rgba('.$rgbTemplate.', 0.1);
-					--theme-color-primary-opacity-0_2: rgba('.$rgbTemplate.', 0.2);
-					--theme-color-primary-opacity-0_3: rgba('.$rgbTemplate.', 0.3);
-					--theme-color-primary-opacity-0_4: rgba('.$rgbTemplate.', 0.4);
-					--theme-color-primary-opacity-0_6: rgba('.$rgbTemplate.', 0.6);
-					--theme-color-primary-opacity-0_8: rgba('.$rgbTemplate.', 0.8);
-					--theme-color-primary-opacity-0_9: rgba('.$rgbTemplate.', 0.9);
+					--primary: ' . $colorHex . ' !important' .';
+					--primary-darken-1: hsl(' . $hslColor[0] . ', ' . $hslColor[1] . '%, ' . min($hslColor[2] - 2, 100) . '%)' . ';
+					--primary-darken-2: hsl(' . $hslColor[0] . ', ' . $hslColor[1] . '%, ' . min($hslColor[2] - 5, 100) . '%)' . ';
+					--primary-darken-3: hsl(' . $hslColor[0] . ', ' . $hslColor[1] . '%, ' . min($hslColor[2] - 10, 100) . '%)' . ';
+					--primary-lighten-1: hsl(' . $hslColor[0] . ', ' . $hslColor[1] . '%, ' . max($hslColor[2] + 10, 0) . '%)' . ';
+					--primary-opacity-0: rgba('.$rgbTemplate.', 0);
+					--primary-opacity-0_05: rgba('.$rgbTemplate.', 0.05);
+					--primary-opacity-0_1: rgba('.$rgbTemplate.', 0.1);
+					--primary-opacity-0_15: rgba('.$rgbTemplate.', 0.15);
+					--primary-opacity-0_2: rgba('.$rgbTemplate.', 0.2);
+					--primary-opacity-0_25: rgba('.$rgbTemplate.', 0.25);
+					--primary-opacity-0_3: rgba('.$rgbTemplate.', 0.3);
+					--primary-opacity-0_35: rgba('.$rgbTemplate.', 0.35);
+					--primary-opacity-0_4: rgba('.$rgbTemplate.', 0.4);
+					--primary-opacity-0_45: rgba('.$rgbTemplate.', 0.45);
+					--primary-opacity-0_5: rgba('.$rgbTemplate.', 0.5);
+					--primary-opacity-0_55: rgba('.$rgbTemplate.', 0.55);
+					--primary-opacity-0_6: rgba('.$rgbTemplate.', 0.6);
+					--primary-opacity-0_65: rgba('.$rgbTemplate.', 0.65);
+					--primary-opacity-0_7: rgba('.$rgbTemplate.', 0.7);
+					--primary-opacity-0_75: rgba('.$rgbTemplate.', 0.75);
+					--primary-opacity-0_8: rgba('.$rgbTemplate.', 0.8);
+					--primary-opacity-0_85: rgba('.$rgbTemplate.', 0.85);
+					--primary-opacity-0_9: rgba('.$rgbTemplate.', 0.9);
+					--primary-opacity-0_95: rgba('.$rgbTemplate.', 0.95);
 					--theme-color-main: ' . $colorMain . ';
 					--theme-color-secondary: ' . $colorSecondary . ';
 					--theme-color-title: ' . $colorTitle . ';
+					--theme-color-strict-inverse: ' . $colorStrictInverseFromPrimary . ';
 				}
 			</style>',
 			false,
 			AssetLocation::BEFORE_CSS
 		);
+	}
+
+	public static function prepareColor(string $color): string
+	{
+		$color = HtmlFilter::encode(trim($color));
+
+		if($color[0] !== '#')
+		{
+			$color = '#' . $color;
+		}
+		if(!self::isHex($color))
+		{
+			return self::DEFAULT_COLOR;
+		}
+		if(mb_strlen($color) === 4)
+		{
+			$color = $color[0] . $color[1] . $color[1] . $color[2] . $color[2] . $color[3] . $color[3];
+		}
+
+		return $color;
+	}
+
+	public static function isHex(string $color): bool
+	{
+		return (bool)preg_match('/^#([\da-f]{3}){1,2}$/i', $color);
 	}
 }

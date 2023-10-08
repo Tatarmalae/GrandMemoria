@@ -9,22 +9,42 @@ namespace Bitrix\Rest\Marketplace\Urls
 	class Templates
 	{
 		protected $directory = "marketplace/";
+		protected $directoryAdmin = '/bitrix/admin/';
 		protected $pages = [
 			"index" => "",
 			"list" => "list/",
 			"detail" => "detail/#ID#/",
-			"edit" => "edit/#ID#/"];
+			"edit" => "edit/#ID#/",
+		];
+		protected $pageListAdmin = [];
+		protected $adminSectionMode = false;
 		private static $localDir = null;
+		private static array $instance = [];
+
+		private function __construct()
+		{
+			if (defined('ADMIN_SECTION'))
+			{
+				$this->adminSectionMode = true;
+			}
+		}
+
+		protected function getPage(string $code): string
+		{
+			return $this->adminSectionMode && !empty($this->pageListAdmin[$code])
+				? $this->directoryAdmin . $this->pageListAdmin[$code]
+				: $this->getDir() . $this->pages[$code]
+			;
+		}
 
 		final public static function getInstance()
 		{
-			static $instance = null;
-
-			if (null === $instance)
+			if (!array_key_exists(static::class, static::$instance))
 			{
-				$instance = new static();
+				static::$instance[static::class] = new static();
 			}
-			return $instance;
+
+			return static::$instance[static::class];
 		}
 
 		/**
@@ -75,15 +95,16 @@ namespace Bitrix\Rest\Marketplace\Urls
 		{
 			if (null === self::$localDir)
 			{
-				$siteId = SITE_ID;
 				self::$localDir = \Bitrix\Main\IO\Path::DIRECTORY_SEPARATOR;
-				if (($site = \CSite::getById($siteId)->fetch()) && !empty($site["DIR"]))
+				$site = \Bitrix\Main\Context::getCurrent()->getSiteObject();
+				if ($site && $site->getDir() != '')
 				{
-					$path = [\Bitrix\Main\SiteTable::getDocumentRoot($siteId), $site["DIR"], $this->directory];
+					$siteId = $site->getLid();
+					$path = [\Bitrix\Main\SiteTable::getDocumentRoot($siteId), $site->getDir(), $this->directory];
 					$dir = new \Bitrix\Main\IO\Directory(\Bitrix\Main\IO\Path::combine($path), $siteId);
 					if ($dir->isExists())
 					{
-						self::$localDir = \Bitrix\Main\IO\Path::combine([self::$localDir, $site["DIR"]]);
+						self::$localDir = \Bitrix\Main\IO\Path::combine([self::$localDir, $site->getDir()]);
 					}
 				}
 			}
@@ -118,18 +139,31 @@ namespace Bitrix\Rest\Marketplace\Urls
 			"list" => "installed/",
 			"detail" => "detail/#ID#/",
 			"category" => "category/#ID#/",
+			"category_placement" => "?placement=#CODE#",
 			"placement_view" => "view/#APP#/",
 			"placement" => "placement/#PLACEMENT_ID#/",
 			"booklet" => "booklet/#CODE#/"
 		];
 
-		public function getCategoryUrl($id = null)
+		public function getCategoryUrl($id = null, $from = '')
 		{
 			if ($id === null)
 			{
-				return $this->getReplacedId($this->pages["index"]);
+				$url = $this->getReplacedId($this->pages['index']);
 			}
-			return $this->getReplacedId($this->pages["category"], $id);
+			else
+			{
+				$url = $this->getReplacedId($this->pages['category'], $id);
+			}
+
+			return $this->addUrlFrom($url, $from);
+		}
+
+		public function getCategoryByPlacement($code, $from = '')
+		{
+			$url = $this->getReplaced($this->pages['category_placement'], '#CODE#', $code);
+
+			return $this->addUrlFrom($url, $from);
 		}
 
 		public function getSubscriptionBuyUrl()
@@ -146,6 +180,14 @@ namespace Bitrix\Rest\Marketplace\Urls
 				if ($region === 'ru')
 				{
 					$result = 'https://www.1c-bitrix.ru/buy/products/b24.php?subscr=y';
+				}
+				elseif ($region === 'ua')
+				{
+					$result = 'https://www.bitrix.ua/buy/products/b24.php?subscr=y';
+				}
+				elseif ($region === 'by')
+				{
+					$result = 'https://www.1c-bitrix.by/buy/products/b24.php?subscr=y';
 				}
 			}
 
@@ -268,6 +310,10 @@ namespace Bitrix\Rest\Marketplace\Urls
 			'export_element' => 'export_#MANIFEST_CODE#/#ITEM_CODE#/'
 		];
 
+		protected $pageListAdmin = [
+			'import_zip' => 'rest_import_zip.php?id=#ZIP_ID#',
+		];
+
 		public function getPlacement($code = null, $context = null)
 		{
 			$replace = null;
@@ -281,7 +327,7 @@ namespace Bitrix\Rest\Marketplace\Urls
 					$code
 				];
 			}
-			$url = $this->getReplaced($this->pages["placement"], $replace, $subject);
+			$url = $this->getReplaced($this->getPage('placement'), $replace, $subject);
 
 			if(!is_null($context))
 			{
@@ -309,12 +355,12 @@ namespace Bitrix\Rest\Marketplace\Urls
 					$manifestCode
 				];
 			}
-			return $this->getReplaced($this->pages["section"], $replace, $subject);
+			return $this->getReplaced($this->getPage('section'), $replace, $subject);
 		}
 
 		public function getImport()
 		{
-			return $this->getReplaced($this->pages["import"]);
+			return $this->getReplaced($this->getPage('import'));
 		}
 
 		public function getImportManifest($manifestCode)
@@ -330,7 +376,7 @@ namespace Bitrix\Rest\Marketplace\Urls
 					$manifestCode
 				];
 			}
-			return $this->getReplaced($this->pages["import_manifest"], $replace, $subject);
+			return $this->getReplaced($this->getPage('import_manifest'), $replace, $subject);
 		}
 
 		public function getImportApp($code = null)
@@ -346,7 +392,7 @@ namespace Bitrix\Rest\Marketplace\Urls
 					$code
 				];
 			}
-			return $this->getReplaced($this->pages["import_app"], $replace, $subject);
+			return $this->getReplaced($this->getPage('import_app'), $replace, $subject);
 		}
 
 		public function getImportRollback($appCode)
@@ -358,10 +404,10 @@ namespace Bitrix\Rest\Marketplace\Urls
 				$appCode
 			];
 
-			return $this->getReplaced($this->pages["import_rollback"], $replace, $subject);
+			return $this->getReplaced($this->getPage('import_rollback'), $replace, $subject);
 		}
 
-		public function getImportZip($zipId)
+		public function getImportZip($zipId, $from)
 		{
 			$replace = [
 				'#ZIP_ID#'
@@ -369,8 +415,9 @@ namespace Bitrix\Rest\Marketplace\Urls
 			$subject = [
 				(int) $zipId
 			];
+			$url = $this->getReplaced($this->getPage('import_zip'), $replace, $subject);
 
-			return $this->getReplaced($this->pages["import_zip"], $replace, $subject);
+			return $this->addUrlFrom($url, $from);
 		}
 
 		public function getExport($manifestCode = null)
@@ -386,7 +433,7 @@ namespace Bitrix\Rest\Marketplace\Urls
 					$manifestCode
 				];
 			}
-			return $this->getReplaced($this->pages["export"], $replace, $subject);
+			return $this->getReplaced($this->getPage('export'), $replace, $subject);
 		}
 
 		public function getExportElement($manifestCode = null, $itemCode = null)
@@ -404,14 +451,16 @@ namespace Bitrix\Rest\Marketplace\Urls
 					$itemCode
 				];
 			}
-			return $this->getReplaced($this->pages["export_element"], $replace, $subject);
+			return $this->getReplaced($this->getPage('export_element'), $replace, $subject);
 		}
 
 		protected function getReplaced(string $url, $replace = null, $subject = null)
 		{
-			$url = $this->getDir().$url;
 			if (!is_null($replace) && !is_null($subject))
+			{
 				$url = str_replace($replace, $subject, $url);
+			}
+
 			return $url;
 		}
 	}
@@ -423,12 +472,18 @@ namespace Bitrix\Rest\Marketplace
 	use Bitrix\Rest\Marketplace\Urls\Application as ApplicationUrls;
 	use Bitrix\Rest\Marketplace\Urls\LocalApplication as LocalApplicationUrls;
 	use Bitrix\Rest\Marketplace\Urls\Configuration;
+	use Bitrix\Rest\Url\DevOps;
 
 	class Url
 	{
-		public static function getCategoryUrl($id = null)
+		public static function getCategoryUrl($id = null, $from = '')
 		{
-			return MarketplaceUrls::getInstance()->getCategoryUrl($id);
+			return MarketplaceUrls::getInstance()->getCategoryUrl($id, $from);
+		}
+
+		public static function getCategoryByPlacement($code, $from = '')
+		{
+			return MarketplaceUrls::getInstance()->getCategoryByPlacement($code, $from);
 		}
 
 		public static function getApplicationDetailUrl($id = null, $from = '')
@@ -453,9 +508,16 @@ namespace Bitrix\Rest\Marketplace
 			return "";
 		}
 
+		/**
+		 * @deprecated use \Bitrix\Rest\Url\DevOps->getPlacementUrl()
+		 *
+		 * @param null $placementId
+		 * @param null $params
+		 * @return string
+		 */
 		public static function getApplicationPlacementUrl($placementId = null, $params = null)
 		{
-			return MarketplaceUrls::getInstance()->getPlacementUrl($placementId, $params);
+			return DevOps::getInstance()->getPlacementUrl((int)$placementId, $params);
 		}
 
 		public static function getApplicationPlacementViewUrl($appCode = null, $params = null)
@@ -508,9 +570,9 @@ namespace Bitrix\Rest\Marketplace
 			return Configuration::getInstance()->getImportRollback($appCode);
 		}
 
-		public static function getConfigurationImportZipUrl($zipId)
+		public static function getConfigurationImportZipUrl($zipId, $from = '')
 		{
-			return Configuration::getInstance()->getImportZip($zipId);
+			return Configuration::getInstance()->getImportZip($zipId, $from);
 		}
 
 		public static function getConfigurationExportUrl($manifestCode = null)

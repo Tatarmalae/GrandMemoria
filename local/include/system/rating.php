@@ -24,7 +24,7 @@ try {
                     <div class="rating-item item">
                         <div class="rating-wrap">
                             <div class="rating-item__icon">
-                                <img src="<?= CFile::GetPath($item['UF_FILE']) ?>" alt="<?= $item['UF_NAME'] ?>">
+                                <img src="<?= CFile::GetPath($item['UF_FILE']) ?>" width="auto" height="32" alt="<?= $item['UF_NAME'] ?>">
                             </div>
                             <div class="rating-info">
                                 <?php if (!empty($item['UF_DESCRIPTION'])): ?>

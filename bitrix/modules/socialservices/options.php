@@ -2,6 +2,8 @@
 if(!$USER->CanDoOperation('edit_other_settings'))
 	$APPLICATION->AuthForm(GetMessage("ACCESS_DENIED"));
 
+use Bitrix\Main\Loader;
+use Bitrix\Main\ModuleManager;
 use Bitrix\Main\Text\Converter;
 
 IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/options.php");
@@ -14,7 +16,7 @@ $GLOBALS["APPLICATION"]->SetAdditionalCSS("/bitrix/js/socialservices/css/ss.css"
 
 $arSites = array();
 $arSiteList = array('');
-$dbSites = CSite::GetList($b = "sort", $o = "asc", array("ACTIVE" => "Y"));
+$dbSites = CSite::GetList("sort", "asc", array("ACTIVE" => "Y"));
 while ($arSite = $dbSites->Fetch())
 {
 	$arSites[] = $arSite;
@@ -266,7 +268,7 @@ $siteTabControl = new CAdminViewTabControl("siteTabControl", $aSiteTabs);
 
 $siteTabControl->Begin();
 
-$arUseOnSites = unserialize(COption::GetOptionString("socialservices", "use_on_sites", ""));
+$arUseOnSites = unserialize(COption::GetOptionString("socialservices", "use_on_sites", ""), ["allowed_classes" => false]);
 
 foreach($arSiteList as $site):
 	$suffix = ($site <> ''? '_bx_site_'.$site:'');
@@ -297,7 +299,7 @@ foreach($arSiteList as $site):
 		</tr>
 	<?endif;?>
 	<tr>
-		<td> <?=str_replace("#hash#", $twitHashInput, GetMessage("socserv_twit_to_buzz"))?> </td><td>
+		<td> <?=str_replace("#hash#", $twitHashInput, GetMessage("socserv_twit_to_buzz2"))?> </td><td>
 			<input type="checkbox" name="get_message_from_twitter" id="get_message_from_twitter" value="Y"
 				<?if(COption::GetOptionString("socialservices", "get_message_from_twitter", "N") == 'Y') echo " checked"; elseif(COption::GetOptionString("socialservices", "get_message_from_twitter", false) === false)  echo " checked";?>>
 
@@ -313,8 +315,27 @@ foreach($arSiteList as $site):
 		<td width="50%">
 			<table cellpadding="0" style="width:45%;" cellspacing="3" border="0" width="" class="padding-0">
 <?
+	$portalPrefix = '';
+	if (!ModuleManager::isModuleInstalled('bitrix24') && Loader::includeModule('intranet'))
+	{
+		$portalPrefix = \CIntranetUtils::getPortalZone();
+	}
+
+	$activeServices = $oAuthManager->GetActiveAuthServices([]);
 	$arServices = $oAuthManager->GetAuthServices($suffix);
-	foreach($arServices as $id=>$service):
+	$allowedServices = [];
+	foreach($arServices as $id=>$service)
+	{
+		if (empty($activeServices[$id]) && in_array($id, \CSocServAuthManager::listServicesBlockedByZone($portalPrefix), true))
+		{
+			continue;
+		}
+
+		$allowedServices[$id] = $service;
+	}
+
+
+	foreach($allowedServices as $id=>$service):
 ?>
 				<tr>
 					<td style="padding-top: 3px;">
@@ -322,8 +343,8 @@ foreach($arSiteList as $site):
 						<input type="checkbox" name="AUTH_SERVICES<?=$suffix?>[<?=htmlspecialcharsbx($id)?>]"
 							id="AUTH_SERVICES<?=$suffix?><?=htmlspecialcharsbx($id)?>"
 							value="Y"
-							<?if($service["__active"] == true) echo " checked"?>
-							<?if($service["DISABLED"] == true) echo " disabled"?>>
+							<?if(isset($service["__active"]) && $service["__active"] == true) echo " checked"?>
+							<?if(isset($service["DISABLED"]) && $service["DISABLED"] == true) echo " disabled"?>>
 					</td>
 					<td><div class="bx-ss-icon <?=htmlspecialcharsbx($service["ICON"])?>"></div></td>
 					<td><label for="AUTH_SERVICES<?=$suffix?><?=htmlspecialcharsbx($id)?>"><?=htmlspecialcharsbx($service["NAME"])?></label></td>
@@ -338,23 +359,33 @@ foreach($arSiteList as $site):
 		</td>
 	</tr>
 <?
-	foreach($arOptions as $option)
+	foreach($allowedServices as $id => $service)
 	{
-		if(!is_array($option))
+		$options = $oAuthManager->GetSettingByServiceId($service['ID']);
+		if (!$options)
 		{
-			$option = GetMessage("soc_serv_opt_settings_of", array("#SERVICE#" => $option));
-		}
-		else
-		{
-			$option[0] .= $suffix;
+			continue;
 		}
 
-		if (!empty($option['note']))
+		array_unshift($options, htmlspecialcharsbx($service['NAME']));
+		foreach ($options as $option)
 		{
-			$option['note'] = '<div style="text-align: left; ">' . $option['note'] . '</div>';
-		}
+			if(!is_array($option))
+			{
+				$option = GetMessage("soc_serv_opt_settings_of", array("#SERVICE#" => $option));
+			}
+			else
+			{
+				$option[0] .= $suffix;
+			}
 
-		__AdmSettingsDrawRow($module_id, $option);
+			if (!empty($option['note']))
+			{
+				$option['note'] = '<div style="text-align: left; ">' . $option['note'] . '</div>';
+			}
+
+			__AdmSettingsDrawRow($module_id, $option);
+		}
 	}
 ?>
 </table>
@@ -367,7 +398,7 @@ endforeach; //foreach($arSiteList as $site)
 $tabControl->BeginNextTab();
 
 $groups = array();
-$z = CGroup::GetList(($v1=""), ($v2=""), array("ACTIVE"=>"Y"/*, "ADMIN"=>"N", "ANONYMOUS"=>"N"*/));
+$z = CGroup::GetList('', '', array("ACTIVE"=>"Y"/*, "ADMIN"=>"N", "ANONYMOUS"=>"N"*/));
 while($zr = $z->Fetch())
 {
 	$ar = array();

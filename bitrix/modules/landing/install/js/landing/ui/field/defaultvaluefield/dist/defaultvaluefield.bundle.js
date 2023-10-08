@@ -4,17 +4,15 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 (function (exports,main_core,landing_ui_field_basefield,landing_ui_field_datetimefield,landing_ui_component_internal,ui_draganddrop_draggable,landing_loc,landing_ui_component_listitem,main_core_events,landing_ui_panel_fieldspanel,landing_ui_form_formsettingsform,landing_ui_component_actionpanel,landing_ui_field_variablesfield) {
 	'use strict';
 
-	function _templateObject() {
-	  var data = babelHelpers.taggedTemplateLiteral(["<div class=\"landing-ui-field-defaultvalue-list-container\"></div>"]);
-
-	  _templateObject = function _templateObject() {
-	    return data;
-	  };
-
-	  return data;
-	}
+	var _templateObject;
 	var DefaultValueField = /*#__PURE__*/function (_BaseField) {
 	  babelHelpers.inherits(DefaultValueField, _BaseField);
+	  babelHelpers.createClass(DefaultValueField, null, [{
+	    key: "isListField",
+	    value: function isListField(field) {
+	      return main_core.Type.isArray(field.items);
+	    }
+	  }]);
 
 	  function DefaultValueField(options) {
 	    var _this;
@@ -35,7 +33,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      renderTo: _this.layout,
 	      left: [{
 	        id: 'selectField',
-	        text: landing_loc.Loc.getMessage('LANDING_FIELDS_SELECT_FIELD_BUTTON_TITLE'),
+	        text: landing_loc.Loc.getMessage('LANDING_DEFAULT_VALUE_ADD_FIELD'),
 	        onClick: _this.onSelectFieldButtonClick
 	      }]
 	    });
@@ -75,14 +73,22 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 
 	      if (crmField) {
 	        var displayedValue = function () {
-	          if (crmField.type === 'list') {
-	            var item = crmField.items.find(function (currentItem) {
+	          if (DefaultValueField.isListField(crmField)) {
+	            var fieldItems = _this2.getFieldItems(crmField);
+
+	            var item = fieldItems.find(function (currentItem) {
 	              return currentItem.ID === options.value;
 	            });
 
 	            if (item) {
 	              return item.VALUE;
 	            }
+
+	            if (main_core.Type.isArrayFilled(fieldItems)) {
+	              return fieldItems[0].VALUE;
+	            }
+
+	            return landing_loc.Loc.getMessage('LANDING_DEFAULT_VALUE_FIELD_DEFAULT_VALUE');
 	          }
 
 	          if (crmField.type === 'checkbox') {
@@ -120,7 +126,7 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	    key: "getListContainer",
 	    value: function getListContainer() {
 	      return this.cache.remember('listContainer', function () {
-	        return main_core.Tag.render(_templateObject());
+	        return main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["<div class=\"landing-ui-field-defaultvalue-list-container\"></div>"])));
 	      });
 	    }
 	  }, {
@@ -243,6 +249,20 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	      });
 	    }
 	  }, {
+	    key: "getAllowedCategories",
+	    value: function getAllowedCategories() {
+	      var schemeId = this.options.formOptions.document.scheme;
+	      var scheme = this.options.dictionary.document.schemes.find(function (item) {
+	        return String(schemeId) === String(item.id);
+	      });
+
+	      if (main_core.Type.isPlainObject(scheme)) {
+	        return main_core.Runtime.clone(scheme.entities);
+	      }
+
+	      return [];
+	    }
+	  }, {
 	    key: "onSelectFieldButtonClick",
 	    value: function onSelectFieldButtonClick(event) {
 	      var _this6 = this;
@@ -252,22 +272,49 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	        isLeadEnabled: this.options.isLeadEnabled
 	      }).show({
 	        isLeadEnabled: this.options.isLeadEnabled,
-	        allowedTypes: ['string', 'list', 'checkbox', 'radio', 'text', 'integer', 'double', 'date', 'datetime', 'typed_string']
+	        allowedCategories: this.getAllowedCategories(),
+	        allowedTypes: ['string', 'list', 'enumeration', 'checkbox', 'boolean', 'radio', 'text', 'integer', 'double', 'date', 'datetime', 'typed_string']
 	      }).then(function (selectedFields) {
+	        _this6.options.crmFields = landing_ui_panel_fieldspanel.FieldsPanel.getInstance().getOriginalCrmFields();
+
 	        _this6.onFieldsSelect(selectedFields);
 	      });
+	    }
+	    /**
+	     * @private
+	     */
+
+	  }, {
+	    key: "getFieldItems",
+	    value: function getFieldItems(field) {
+	      if (field.entity_field_name === 'STAGE_ID') {
+	        if (main_core.Type.isPlainObject(this.options.formOptions.document) && main_core.Type.isPlainObject(this.options.formOptions.document.deal)) {
+	          var categoryId = main_core.Text.toNumber(this.options.formOptions.document.deal.category);
+
+	          if (categoryId > 0) {
+	            return field.itemsByCategory[categoryId];
+	          }
+	        }
+	      }
+
+	      return field.items;
 	    }
 	  }, {
 	    key: "createItemForm",
 	    value: function createItemForm() {
+	      var _this7 = this;
+
 	      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	      var form = new landing_ui_form_formsettingsform.FormSettingsForm({
 	        serializeModifier: function serializeModifier(value) {
 	          if (options.field.type === 'list' || options.field.type === 'checkbox' || options.field.type === 'bool') {
-	            var valueItem = form.fields[0].items.find(function (item) {
+	            var valueItem = _this7.getFieldItems(form.fields[0]).find(function (item) {
 	              return item.value === value.value;
 	            });
-	            value.label = valueItem.name;
+
+	            if (valueItem) {
+	              value.label = valueItem.name;
+	            }
 	          } else {
 	            value.label = value.value;
 	          }
@@ -276,12 +323,12 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	        }
 	      });
 
-	      if (options.field.type === 'list') {
+	      if (DefaultValueField.isListField(options.field)) {
 	        form.addField(new BX.Landing.UI.Field.Dropdown({
 	          selector: 'value',
 	          title: landing_loc.Loc.getMessage('LANDING_FORM_SETTINGS_DEFAULT_VALUE_VALUE_FIELD_TITLE'),
 	          content: options.value,
-	          items: options.field.items.map(function (item) {
+	          items: this.getFieldItems(options.field).map(function (item) {
 	            return {
 	              name: item.VALUE,
 	              value: item.ID
@@ -297,11 +344,11 @@ this.BX.Landing.UI = this.BX.Landing.UI || {};
 	          title: landing_loc.Loc.getMessage('LANDING_FORM_SETTINGS_DEFAULT_VALUE_VALUE_FIELD_TITLE'),
 	          content: options.value,
 	          items: [{
-	            name: landing_loc.Loc.getMessage('LANDING_DEFAULT_VALUE_FIELD_CHECKBOX_YES'),
-	            value: 'Y'
-	          }, {
 	            name: landing_loc.Loc.getMessage('LANDING_DEFAULT_VALUE_FIELD_CHECKBOX_NO'),
 	            value: 'N'
+	          }, {
+	            name: landing_loc.Loc.getMessage('LANDING_DEFAULT_VALUE_FIELD_CHECKBOX_YES'),
+	            value: 'Y'
 	          }]
 	        }));
 	        return form;

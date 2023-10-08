@@ -200,11 +200,34 @@
 							this.showNote([entityId, id], data['okMessage']);
 						}
 					}
-				}, this)
+				}, this),
+				OnUploadQueueError : function(params)
+				{
+					if (!repo["list"][params.entityId])
+					{
+						return;
+					}
+
+					var container = repo["list"][params.entityId].getCommentNode(document.getElementById(params.commentData.commentNodeId).getAttribute('bx-mpl-entity-id'));
+					if (container)
+					{
+						this.showError({
+							node: container,
+							attachments: [
+								{
+									fieldValue: 'do not bind click',
+								}
+							],
+						}, params.errorText);
+					}
+
+
+				}.bind(this),
 			};
 
 			BX.addCustomEvent(window, 'OnUCReply', this.windowEvents.OnUCReply);
 			BX.addCustomEvent(window, 'OnUCAfterRecordEdit', this.windowEvents.OnUCAfterRecordEdit);
+			BX.addCustomEvent(window, 'OnUploadQueueError', this.windowEvents.OnUploadQueueError);
 		},
 		reboot : function(id, oldObj, newObj) {
 			for (var ii in this.handlerEvents)
@@ -364,6 +387,18 @@
 					{
 						this.showError(comment, data['errorMessage']);
 					}
+					else if (data['warningCode'] && data['warningCode'] === 'COMMENT_DUPLICATED')
+					{
+						var container = repo["list"][data.messageId[0]].getCommentNode(data.messageId[1]);
+						if (container)
+						{
+							this.showError(comment, data['warningMessage']);
+						}
+						else
+						{
+							BX.onCustomEvent(window, 'OnUCAfterRecordAdd', [comment.id[0], data, comment]);
+						}
+					}
 					else
 					{
 						BX.onCustomEvent(window, 'OnUCAfterRecordAdd', [comment.id[0], data, comment]);
@@ -475,9 +510,10 @@
 			&& e.target
 			&& e.target.tagName
 			&& (
-				e.target.tagName.toUpperCase() == 'A'
+				e.target.tagName.toUpperCase() === 'A'
+				|| e.target.tagName.toUpperCase() === 'VIDEO'
 				|| (
-					e.target.tagName.toUpperCase() == 'IMG'
+					e.target.tagName.toUpperCase() === 'IMG'
 					&& (BX.type.isNotEmptyString(e.target.getAttribute('data-bx-image'))) // inline or attached image
 				)
 			)
@@ -571,6 +607,7 @@
 			BX.removeCustomEvent(window, 'OnUCFormBeforeShow', this.windowEvents['OnUCFormBeforeShow']);
 			BX.removeCustomEvent(window, 'OnUCFormAfterShow', this.windowEvents['OnUCFormAfterShow']);
 			BX.removeCustomEvent(window, 'OnUCFormAfterHide', this.windowEvents['OnUCFormAfterHide']);
+			BX.removeCustomEvent(window, 'OnUCFormBeforeHide', this.windowEvents['OnUCFormBeforeHide']);
 
 			this.windowEvents['OnUCFormBeforeSubmit'] = function(ENTITY_XML_ID, ENTITY_ID, comment, obj, text, attachments) {
 				if (this.ENTITY_XML_ID === ENTITY_XML_ID)
@@ -634,7 +671,7 @@
 				container = BX.create("DIV", {
 					attrs : {
 						id : ("record-" + id.join('-') + '-cover'),
-						className : "feed-com-block-cover",
+						className : "feed-com-block-cover post-comment-active-progress",
 						"bx-mpl-xml-id" : this.getXmlId(),
 						"bx-mpl-entity-id" : id[1],
 						"bx-mpl-read-status" : "old"
@@ -912,6 +949,33 @@
 						});
 					}
 				});
+			}
+
+			if (
+				commentNode.getAttribute('bx-mpl-edit-show') == 'Y'
+				&& BX.Tasks
+				&& BX.Tasks.ResultAction
+				&& entityXmlId.indexOf('TASK_') === 0
+				&& BX.Tasks.ResultAction.getInstance().canCreateResult(+/\d+/.exec(entityXmlId))
+			)
+			{
+				var taskId = +/\d+/.exec(entityXmlId);
+				var result = BX.Tasks.ResultManager.getInstance().getResult(taskId);
+
+				if (
+					result
+					&& result.context === 'task'
+					&& result.canSetAsResult
+					&& result.canSetAsResult(id)
+				)
+				{
+					menuItems.push({
+						title: BX.message('BPC_MES_RESULT'),
+						callback: function() {
+							BX.Tasks.ResultAction.getInstance().createFromComment(id);
+						}
+					});
+				}
 			}
 		};
 

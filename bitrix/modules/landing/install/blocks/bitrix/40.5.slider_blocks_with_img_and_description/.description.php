@@ -22,6 +22,7 @@ return [
 			'name' => Loc::getMessage('LANDING_BLOCK_40_5_IMG'),
 			'type' => 'img',
 			'dimensions' => ['width' => 1110],
+			'create2xByDefault' => false,
 		],
 		'.landing-block-card-text' => [
 			'name' => Loc::getMessage('LANDING_BLOCK_40_5_TEXT'),
@@ -44,6 +45,14 @@ return [
 		'.landing-block-card-img' => [
 			'name' => Loc::getMessage('LANDING_BLOCK_40_5_IMG'),
 			'type' => ['background-size'],
+		],
+		'.landing-block-node-container' => [
+			'name' => Loc::getMessage('LANDING_BLOCK_40_5_ELEMENT'),
+			'type' => ['container', 'padding-top', 'padding-bottom'],
+			'additional' => [
+				'name' => Loc::getMessage('LANDING_BLOCK_40_5_SLIDER'),
+				'attrsType' => ['autoplay', 'autoplay-speed', 'animation', 'pause-hover', 'slides-show', 'arrows', 'dots'],
+			]
 		],
 	],
 	'assets' => [

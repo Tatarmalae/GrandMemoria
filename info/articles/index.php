@@ -130,10 +130,10 @@ if ($request->isAjaxRequest()) {
             24 => "TIMESTAMP_X",
             25 => "MODIFIED_BY",
             26 => "USER_NAME",
-            27 => "",
+            27 => "STOCK_SLIDER",
         ],
         "DETAIL_PROPERTY_CODE" => [
-            0 => "",
+            0 => "STOCK_SLIDER",
             1 => "",
         ],
         "DETAIL_DISPLAY_TOP_PAGER" => "N",

@@ -2,25 +2,17 @@
 
 return [
 	'newBlockStyle' => [
-
 		'titleBig' => [
-			'g-color-black',
-			'g-font-size-48',
-			'g-font-weight-700',
-			'g-line-height-1_2',
-			'g-letter-spacing-0',
-			'g-text-transform-none',
+			//not used in blocks
 		],
-
 		'titleMedium' => [
 			'g-color-black',
-			'g-font-size-38',
+			'g-font-size-30',
 			'g-font-weight-700',
 			'g-line-height-1_2',
 			'g-letter-spacing-0',
 			'g-text-transform-none',
 		],
-
 		'titleSmall' => [
 			'g-color-black',
 			'g-font-size-30',
@@ -38,16 +30,14 @@ return [
 			'g-letter-spacing-0',
 			'g-text-transform-none',
 		],
-
 		'subtitleMedium' => [
 			'g-color-black',
-			'g-font-size-20',
+			'g-font-size-18',
 			'g-font-weight-700',
 			'g-line-height-1_2',
 			'g-letter-spacing-0',
 			'g-text-transform-none',
 		],
-
 		'subtitleSmall' => [
 			'g-color-black',
 			'g-font-size-18',
@@ -65,16 +55,14 @@ return [
 			'g-letter-spacing-0',
 			'g-text-transform-none',
 		],
-
 		'subtitleMediumPrimary' => [
 			'g-color-primary',
-			'g-font-size-20',
+			'g-font-size-18',
 			'g-font-weight-700',
 			'g-line-height-1_2',
 			'g-letter-spacing-0',
 			'g-text-transform-none',
 		],
-
 		'subtitleSmallPrimary' => [
 			'g-color-primary',
 			'g-font-size-18',
@@ -85,19 +73,14 @@ return [
 		],
 
 		'textBig' => [
-			'g-color-black',
-			'g-font-size-24',
-			'g-line-height-1_2',
-			'g-letter-spacing-0',
+			//not used in blocks
 		],
-
 		'textMedium' => [
 			'g-color-black',
-			'g-font-size-16',
+			'g-font-size-14',
 			'g-line-height-1_2',
 			'g-letter-spacing-0',
 		],
-
 		'textSmall' => [
 			'g-color-black',
 			'g-font-size-14',
@@ -112,15 +95,13 @@ return [
 			'g-letter-spacing-0',
 			'g-text-transform-none',
 		],
-
 		'titleImageMedium' => [
-			'g-font-size-38',
+			'g-font-size-30',
 			'g-font-weight-700',
 			'g-line-height-1_2',
 			'g-letter-spacing-0',
 			'g-text-transform-none',
 		],
-
 		'titleImageSmall' => [
 			'g-font-size-30',
 			'g-font-weight-700',
@@ -136,15 +117,13 @@ return [
 			'g-letter-spacing-0',
 			'g-text-transform-none',
 		],
-
 		'subtitleImageMedium' => [
-			'g-font-size-20',
+			'g-font-size-18',
 			'g-font-weight-700',
 			'g-line-height-1_2',
 			'g-letter-spacing-0',
 			'g-text-transform-none',
 		],
-
 		'subtitleImageSmall' => [
 			'g-font-size-18',
 			'g-font-weight-700',
@@ -158,13 +137,11 @@ return [
 			'g-line-height-1_2',
 			'g-letter-spacing-0',
 		],
-
 		'textImageMedium' => [
-			'g-font-size-16',
+			'g-font-size-14',
 			'g-line-height-1_2',
 			'g-letter-spacing-0',
 		],
-
 		'textImageSmall' => [
 			'g-font-size-14',
 			'g-line-height-1_2',

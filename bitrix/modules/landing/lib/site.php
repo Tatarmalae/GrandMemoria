@@ -16,13 +16,24 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 	public static $internalClass = 'SiteTable';
 
 	/**
-	 * Return true if site exists and available.
+	 * Site's ids that was pinged.
+	 * @var array
+	 */
+	protected static $pings = [];
+
+	/**
+	 * Returns true if site exists and available.
 	 * @param int $id Site id.
 	 * @param bool $deleted And from recycle bin.
 	 * @return bool
 	 */
-	public static function ping($id, $deleted = false)
+	public static function ping(int $id, bool $deleted = false): bool
 	{
+		if (array_key_exists($id, self::$pings))
+		{
+			return self::$pings[$id];
+		}
+
 		$filter = [
 			'ID' => $id
 		];
@@ -30,22 +41,40 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 		{
 			$filter['=DELETED'] = ['Y', 'N'];
 		}
+
 		$check = Site::getList([
 			'select' => [
 				'ID'
 			],
 			'filter' => $filter
 		]);
-		return (boolean) $check->fetch();
+		self::$pings[$id] = (boolean) $check->fetch();
+
+		return self::$pings[$id];
+	}
+
+	/**
+	 * Removes sites id that was pinged.
+	 * @param int $id Site id.
+	 * @return void
+	 */
+	protected static function clearPing(int $id): void
+	{
+		if (array_key_exists($id, self::$pings))
+		{
+			unset(self::$pings[$id]);
+		}
 	}
 
 	/**
 	 * Get public url for site.
 	 * @param int[]|int $id Site id or array of ids.
 	 * @param boolean $full Return full site url with relative path.
+	 * @param boolean $hostInclude Include host name in full path.
+	 * @param boolean $previewForNotActive If true and site is not active, url will be with preview hash.
 	 * @return string|array
 	 */
-	public static function getPublicUrl($id, $full = true)
+	public static function getPublicUrl($id, bool $full = true, bool $hostInclude = true, bool $previewForNotActive = false)
 	{
 		$paths = [];
 		$isB24 = Manager::isB24();
@@ -62,6 +91,8 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 				'SMN_SITE_ID',
 				'CODE',
 				'TYPE',
+				'ACTIVE',
+				'DELETED',
 				'ID'
 			),
 			'filter' => array(
@@ -102,7 +133,7 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 
 			if ($row['DOMAIN_ID'])
 			{
-				$paths[$row['ID']] = ($disableCloud ? $hostUrl : $row['DOMAIN_PROTOCOL'] . '://' . $row['DOMAIN_NAME']) . $pubPath;
+				$paths[$row['ID']] = ($hostInclude ? ($disableCloud ? $hostUrl : $row['DOMAIN_PROTOCOL'] . '://' . $row['DOMAIN_NAME']) : '') . $pubPath;
 				if ($full)
 				{
 					if ($disableCloud && $isB24localVar)
@@ -117,12 +148,13 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 			}
 			else
 			{
-				$paths[$row['ID']] = $hostUrl . $defaultPubPath . ($full ? $row['CODE'] : '');
+				$paths[$row['ID']] = ($hostInclude ? $hostUrl : '') . $defaultPubPath . ($full ? $row['CODE'] : '');
 			}
-
-			unset($pubPath);
+			if ($previewForNotActive && ($row['ACTIVE'] === 'N' || $row['DELETED'] === 'Y'))
+			{
+				$paths[$row['ID']] .= 'preview/' . self::getPublicHash($row['ID'], $row['DOMAIN_NAME']) . '/';
+			}
 		}
-		unset($res, $row);
 
 		if (is_array($id))
 		{
@@ -132,6 +164,32 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 		{
 			return isset($paths[$id]) ? $paths[$id] : '';
 		}
+	}
+
+	/**
+	 * Get preview picture of the site's main page.
+	 * @param int $siteId Site id.
+	 * @return string
+	 */
+	public static function getPreview(int $siteId): string
+	{
+		$res = self::getList([
+			'select' => [
+				'LANDING_ID_INDEX'
+			],
+			'filter' => [
+				'ID' => $siteId
+			],
+		]);
+		if ($row = $res->fetch())
+		{
+			if ($row['LANDING_ID_INDEX'])
+			{
+				return Landing::createInstance(0)->getPreview($row['LANDING_ID_INDEX']);
+			}
+		}
+
+		return Manager::getUrlFromFile('/bitrix/images/landing/nopreview.jpg');
 	}
 
 	/**
@@ -147,6 +205,40 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 		}
 
 		return Hook::getForSite($id);
+	}
+
+	/**
+	 * Get version of site for updater
+	 * @param $siteId
+	 * @return int
+	 */
+	public static function getVersion($siteId): int
+	{
+		static $versions;
+
+		if (isset($versions[$siteId]))
+		{
+			return $versions[$siteId];
+		}
+
+		$resSite = self::getList([
+			'select' => [
+				'VERSION'
+			],
+			'filter' => [
+				'=ID' => $siteId
+			]
+		]);
+		if ($site = $resSite->fetch())
+		{
+			$versions[$siteId] = (int)$site['VERSION'];
+		}
+		else
+		{
+			$versions[$siteId] = 0;
+		}
+
+		return $versions[$siteId];
 	}
 
 
@@ -248,14 +340,17 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 				}
 			}
 		}
+
 		// delete site
 		$result = parent::delete($id);
+		self::clearPing($id);
+
 		return $result;
 	}
 
 	/**
-	 * Mark entity as deleted.
-	 * @param int $id Entity id.
+	 * Mark site as deleted.
+	 * @param int $id Site id.
 	 * @return \Bitrix\Main\Result
 	 */
 	public static function markDelete($id)
@@ -286,14 +381,17 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 			Agent::addUniqueAgent('clearRecycleScope', [$currentScope]);
 		}
 
-		return parent::update($id, array(
+		$res = parent::update($id, array(
 			'DELETED' => 'Y'
 		));
+		self::clearPing($id);
+
+		return $res;
 	}
 
 	/**
-	 * Mark entity as restored.
-	 * @param int $id Entity id.
+	 * Mark site as restored.
+	 * @param int $id Site id.
 	 * @return \Bitrix\Main\Result
 	 */
 	public static function markUnDelete($id)
@@ -319,9 +417,12 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 			}
 		}
 
-		return parent::update($id, array(
+		$res = parent::update($id, array(
 			'DELETED' => 'N'
 		));
+		self::clearPing($id);
+
+		return $res;
 	}
 
 	/**
@@ -473,7 +574,6 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 				'TITLE',
 				'DESCRIPTION',
 				'TPL_ID',
-				'FOLDER',
 				'FOLDER_ID',
 				'SITE_ID',
 				'SITE_CODE' => 'SITE.CODE',
@@ -692,14 +792,7 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 			}
 			unset($hookFields);
 			// folders
-			if ($row['FOLDER'] == 'Y')
-			{
-				if (!isset($export['folders'][$row['ID']]))
-				{
-					$export['folders'][$row['ID']] = array();
-				}
-			}
-			elseif ($row['FOLDER_ID'])
+			if ($row['FOLDER_ID'])
 			{
 				if (!isset($export['folders'][$row['FOLDER_ID']]))
 				{
@@ -742,7 +835,13 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 						'cards' => $exportBlock['cards'],
 						'nodes' => $exportBlock['nodes'],
 						'menu' => $exportBlock['menu'],
-						'style' => $exportBlock['style'],
+						'style' => array_map(static function ($style){
+							if (is_array($style) && isset($style['classList']))
+							{
+								$style = $style['classList'];
+							}
+							return $style;
+						}, $exportBlock['style']),
 						'attrs' => $exportBlock['attrs'],
 						'dynamic' => $exportBlock['dynamic']
 					);
@@ -781,21 +880,24 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 			unset($lid);
 		}
 		// ... folders
-		$newFolders = array();
-		foreach ($export['folders'] as $lid => $infolder)
+		$nCount = 0;
+		foreach ($export['folders'] as $folderId => $folderPages)
 		{
-			if (isset($pages[$lid]))
+			$export['folders']['n' . $nCount] = [];
+			foreach ($folderPages as $pageId)
 			{
-				$export['folders'][$pages[$lid]['code']] = array();
-				foreach ($infolder as $flid)
+				if (isset($pages[$pageId]))
 				{
-					if (isset($pages[$flid]))
-					{
-						$export['folders'][$pages[$lid]['code']][] = $pages[$flid]['code'];
-					}
+					$export['folders']['n' . $nCount][] = $pages[$pageId]['code'];
 				}
 			}
-			unset($export['folders'][$lid]);
+			unset($export['folders'][$folderId]);
+			$nCount++;
+		}
+		foreach ($export['folders'] as $folderId => $folderPages)
+		{
+			$export['folders'][$folderPages[0]] = $folderPages;
+			unset($export['folders'][$folderId]);
 		}
 		// ... syspages
 		foreach ($export['syspages'] as &$lid)
@@ -911,6 +1013,513 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 	}
 
 	/**
+	 * Creates site by template code.
+	 * @param string $code Template code.
+	 * @param string $type Site type.
+	 * @param mixed $additional Data for landing.demo select.
+	 * @return \Bitrix\Main\Entity\AddResult
+	 */
+	public static function addByTemplate(string $code, string $type, $additional = null): \Bitrix\Main\Entity\AddResult
+	{
+		$result = new \Bitrix\Main\Entity\AddResult;
+
+		$componentName = 'bitrix:landing.demo';
+		$className = \CBitrixComponent::includeComponentClass($componentName);
+		/** @var \LandingSiteDemoComponent $demoCmp */
+		$demoCmp = new $className;
+		$demoCmp->initComponent($componentName);
+		$demoCmp->arParams = [
+			'TYPE' => $type,
+			'DISABLE_REDIRECT' => 'Y'
+		];
+		$res = $demoCmp->actionSelect($code, $additional);
+
+		if ($res)
+		{
+			$resSite = self::getList([
+				'select' => [
+					'ID'
+				],
+				'filter' => [
+					'=TYPE' => $type
+				],
+				'order' => [
+					'ID' => 'desc'
+				]
+			]);
+			if ($rowSite = $resSite->fetch())
+			{
+				$result->setId($rowSite['ID']);
+			}
+		}
+		else
+		{
+			foreach ($demoCmp->getErrors() as $code => $title)
+			{
+				$result->addError(new \Bitrix\Main\Error($title, $code));
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Copies folders from one site to another without pages.
+	 * @param int $fromSite Source site id.
+	 * @param int $toSite Destination site id.
+	 * @param array $folderMap External references old<>new ids.
+	 * @return \Bitrix\Main\Result
+	 */
+	public static function copyFolders(int $fromSite, int $toSite, array &$folderMap = []): \Bitrix\Main\Result
+	{
+		$result = new \Bitrix\Main\Result();
+		$fromSiteAccess = Site::ping($fromSite) && Rights::hasAccessForSite($fromSite, Rights::ACCESS_TYPES['read']);
+		$toSiteAccess = Site::ping($toSite) && Rights::hasAccessForSite($toSite, Rights::ACCESS_TYPES['edit']);
+
+		if ($fromSiteAccess && $toSiteAccess)
+		{
+			Landing::disableCheckUniqueAddress();
+
+			$childrenExist = false;
+			$res = Folder::getList([
+				'filter' => [
+					'SITE_ID' => $fromSite
+				]
+			]);
+			while ($row = $res->fetch())
+			{
+				$oldId = $row['ID'];
+				unset($row['ID']);
+
+				if ($row['PARENT_ID'])
+				{
+					$childrenExist = true;
+				}
+				else
+				{
+					unset($row['PARENT_ID']);
+				}
+
+				if ($row['INDEX_ID'])
+				{
+					unset($row['INDEX_ID']);
+				}
+
+				$row['SITE_ID'] = $toSite;
+				$resAdd = Folder::add($row);
+				$folderMap[$oldId] = $resAdd->isSuccess() ? $resAdd->getId() : null;
+			}
+
+			// update child-parent
+			if ($childrenExist)
+			{
+				$res = Folder::getList([
+					'select' => [
+						'ID', 'PARENT_ID'
+					],
+					'filter' => [
+						'SITE_ID' => $toSite,
+						'!PARENT_ID' => false
+					]
+				]);
+				while ($row = $res->fetch())
+				{
+					Folder::update($row['ID'], [
+						'PARENT_ID' => $folderMap[$row['PARENT_ID']] ?: null
+					]);
+				}
+			}
+
+			Landing::enableCheckUniqueAddress();
+		}
+		else
+		{
+			$result->addError(new \Bitrix\Main\Error(
+				Loc::getMessage('LANDING_COPY_ERROR_SITE_NOT_FOUND'),
+				'ACCESS_DENIED'
+			));
+		}
+		return $result;
+	}
+
+	/**
+	 * Creates folder into the site.
+	 * @param int $siteId Site id.
+	 * @param array $fields Folder's fields.
+	 * @return \Bitrix\Main\Entity\AddResult
+	 */
+	public static function addFolder(int $siteId, array $fields): \Bitrix\Main\Entity\AddResult
+	{
+		if (self::ping($siteId) && Rights::hasAccessForSite($siteId, Rights::ACCESS_TYPES['edit']))
+		{
+			$fields['SITE_ID'] = $siteId;
+			$result = Folder::add($fields);
+		}
+		else
+		{
+			$result = new \Bitrix\Main\Entity\AddResult;
+			$result->addError(new \Bitrix\Main\Error(
+				Loc::getMessage('LANDING_COPY_ERROR_SITE_NOT_FOUND'),
+				'ACCESS_DENIED'
+			));
+		}
+		return $result;
+	}
+
+	/**
+	 * Updates folder of the site.
+	 * @param int $siteId Site id.
+	 * @param int $folderId Folder id.
+	 * @param array $fields Folder's fields.
+	 * @return \Bitrix\Main\Entity\UpdateResult
+	 */
+	public static function updateFolder(int $siteId, int $folderId, array $fields): \Bitrix\Main\Entity\UpdateResult
+	{
+		if (self::ping($siteId) && Rights::hasAccessForSite($siteId, Rights::ACCESS_TYPES['edit']))
+		{
+			$fields['SITE_ID'] = $siteId;
+			$result = Folder::update($folderId, $fields);
+		}
+		else
+		{
+			$result = new \Bitrix\Main\Entity\UpdateResult;
+			$result->addError(new \Bitrix\Main\Error(
+				Loc::getMessage('LANDING_COPY_ERROR_SITE_NOT_FOUND'),
+				'ACCESS_DENIED'
+			));
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Public all folder's breadcrumb.
+	 * @param int $folderId Folder id.
+	 * @param bool $mark Publication / depublication.
+	 * @return \Bitrix\Main\Result
+	 */
+	public static function publicationFolder(int $folderId, bool $mark = true): \Bitrix\Main\Result
+	{
+		$wasPublic = false;
+		$result = new \Bitrix\Main\Result;
+		$siteId = self::getFolder($folderId)['SITE_ID'] ?? null;
+
+		if ($siteId && self::ping($siteId) && Rights::hasAccessForSite($siteId, Rights::ACCESS_TYPES['public']))
+		{
+			$wasPublic = true;
+			$breadCrumbs = Folder::getBreadCrumbs($folderId);
+			if (!$breadCrumbs)
+			{
+				$wasPublic = false;
+			}
+			$char = $mark ? 'Y' : 'N';
+			foreach ($breadCrumbs as $folder)
+			{
+				if ($folder['ACTIVE'] === $char)
+				{
+					continue;
+				}
+				if ($folder['DELETED'] === 'Y')
+				{
+					$result->addError(new \Bitrix\Main\Error(
+						Loc::getMessage('LANDING_COPY_ERROR_FOLDER_NOT_FOUND'),
+						'ACCESS_DENIED'
+					));
+					return $result;
+				}
+				$res = Folder::update($folder['ID'], [
+					'ACTIVE' => $char
+				]);
+				if (!$res->isSuccess())
+				{
+					$wasPublic = false;
+				}
+			}
+		}
+
+		if (!$wasPublic)
+		{
+			$result->addError(new \Bitrix\Main\Error(
+				Loc::getMessage('LANDING_COPY_ERROR_FOLDER_NOT_FOUND'),
+				'ACCESS_DENIED'
+			));
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Moves folder.
+	 * @param int $folderId Current folder id.
+	 * @param int|null $toFolderId Destination folder id (or null for root folder of current folder's site).
+	 * @param int|null $toSiteId Destination site id (if different from current).
+	 * @return \Bitrix\Main\Result
+	 */
+	public static function moveFolder(int $folderId, ?int $toFolderId, ?int $toSiteId = null): \Bitrix\Main\Result
+	{
+		$returnError = function()
+		{
+			$result = new \Bitrix\Main\Result;
+			$result->addError(new \Bitrix\Main\Error(
+				Loc::getMessage('LANDING_COPY_ERROR_FOLDER_NOT_FOUND'),
+				'ACCESS_DENIED'
+			));
+			return $result;
+		};
+
+		$folder = Folder::getList([
+			'filter' => [
+				'ID' => $folderId
+			]
+		])->fetch();
+		if ($folder)
+		{
+			// move to another site
+			if ($toSiteId && (int)$folder['SITE_ID'] !== $toSiteId)
+			{
+				// check access to another site
+				$hasRightFrom = Rights::hasAccessForSite($folder['SITE_ID'], Rights::ACCESS_TYPES['delete']);
+				$hasRightTo = Rights::hasAccessForSite($toSiteId, Rights::ACCESS_TYPES['edit']);
+				if (!$hasRightFrom || !$hasRightTo)
+				{
+					return $returnError();
+				}
+
+				// check another site folder if specified
+				$toFolder = null;
+				if ($toFolderId)
+				{
+					$toFolder = Folder::getList([
+						'filter' => [
+							'ID' => $toFolderId,
+							'SITE_ID' => $toSiteId
+						]
+					])->fetch();
+					if (!$toFolder)
+					{
+						return $returnError();
+					}
+				}
+
+				// move folder
+				$res = Folder::update($folderId, [
+					'SITE_ID' => $toSiteId,
+					'PARENT_ID' => $toFolder['ID'] ?? null
+				]);
+				if ($res->isSuccess())
+				{
+					Folder::changeSiteIdRecursive($folderId, $toSiteId);
+				}
+
+				return $res;
+			}
+
+			$willBeRoot = !$toFolderId;
+
+			// check destination folder
+			$toFolder = null;
+			if ($toFolderId)
+			{
+				$toFolder = Folder::getList([
+					'filter' => [
+						'ID' => $toFolderId
+					]
+				])->fetch();
+				if (!$toFolder)
+				{
+					return $returnError();
+				}
+			}
+			if (!$toFolder)
+			{
+				$toFolder = $folder;
+			}
+			// check restriction to move to itself
+			if (!$willBeRoot)
+			{
+				$breadCrumbs = Folder::getBreadCrumbs($toFolder['ID'], $toFolder['SITE_ID']);
+				for ($i = 0, $c = count($breadCrumbs); $i < $c; $i++)
+				{
+					if ($breadCrumbs[$i]['ID'] === $folder['ID'])
+					{
+						$result = new \Bitrix\Main\Result;
+						$result->addError(new \Bitrix\Main\Error(
+							Loc::getMessage('LANDING_COPY_ERROR_MOVE_RESTRICTION'),
+							'MOVE_RESTRICTION'
+						));
+						return $result;
+					}
+				}
+			}
+			// check access and update then
+			$hasRightFrom = Rights::hasAccessForSite($folder['SITE_ID'], Rights::ACCESS_TYPES['delete']);
+			$hasRightTo = Rights::hasAccessForSite($toFolder['SITE_ID'], Rights::ACCESS_TYPES['edit']);
+			if ($hasRightFrom && $hasRightTo)
+			{
+				return Folder::update($folderId, [
+					'SITE_ID' => $toFolder['SITE_ID'],
+					'PARENT_ID' => !$willBeRoot ? $toFolder['ID'] : null
+				]);
+			}
+		}
+
+		return $returnError();
+	}
+
+	/**
+	 * Returns folder's list of site.
+	 * @param int $siteId Site id.
+	 * @param array $filter Folder's filter.
+	 * @return array
+	 */
+	public static function getFolders(int $siteId, array $filter = []): array
+	{
+		if (!Rights::hasAccessForSite($siteId, Rights::ACCESS_TYPES['read']))
+		{
+			return [];
+		}
+
+		if (!isset($filter['DELETED']) && !isset($filter['=DELETED']))
+		{
+			$filter['=DELETED'] = 'N';
+		}
+
+		$folders = [];
+		$filter['SITE_ID'] = $siteId;
+		$res = Folder::getList([
+			'filter' => $filter,
+			'order' => [
+				'DATE_MODIFY' => 'desc'
+			]
+		]);
+		while ($row = $res->fetch())
+		{
+			$folders[$row['ID']] = $row;
+		}
+		return $folders;
+	}
+
+	/**
+	 * Returns folder's info.
+	 * @param int $folderId Folder id.
+	 * @param string $accessLevel Access level to folder.
+	 * @return array|null
+	 */
+	public static function getFolder(int $folderId, string $accessLevel = Rights::ACCESS_TYPES['read']): ?array
+	{
+		$folder = Folder::getList([
+			'filter' => [
+				'ID' => $folderId
+			]
+		])->fetch();
+
+		if ($folder)
+		{
+			if (!Rights::hasAccessForSite($folder['SITE_ID'], $accessLevel))
+			{
+				return null;
+			}
+		}
+
+		return is_array($folder) ? $folder : null;
+	}
+
+	/**
+	 * Mark folder as deleted.
+	 * @param int $id Folder id.
+	 * @return \Bitrix\Main\Result
+	 */
+	public static function markFolderDelete(int $id): \Bitrix\Main\Result
+	{
+		$folder = self::getFolder($id);
+
+		if (!$folder || !Rights::hasAccessForSite($folder['SITE_ID'], Rights::ACCESS_TYPES['delete']))
+		{
+			$result = new \Bitrix\Main\Entity\AddResult;
+			$result->addError(new \Bitrix\Main\Error(
+				Loc::getMessage('LANDING_COPY_ERROR_FOLDER_NOT_FOUND'),
+				'ACCESS_DENIED'
+			));
+			return $result;
+		}
+
+		$event = new Event('landing', 'onBeforeFolderRecycle', [
+			'id' => $id,
+			'delete' => 'Y'
+		]);
+		$event->send();
+
+		foreach ($event->getResults() as $result)
+		{
+			if ($result->getType() == EventResult::ERROR)
+			{
+				$return = new \Bitrix\Main\Result;
+				foreach ($result->getErrors() as $error)
+				{
+					$return->addError(
+						$error
+					);
+				}
+				return $return;
+			}
+		}
+
+		if (($currentScope = Site\Type::getCurrentScopeId()))
+		{
+			Agent::addUniqueAgent('clearRecycleScope', [$currentScope]);
+		}
+
+		return Folder::update($id, [
+			'DELETED' => 'Y'
+		]);
+	}
+
+	/**
+	 * Mark folder as restored.
+	 * @param int $id Folder id.
+	 * @return \Bitrix\Main\Result
+	 */
+	public static function markFolderUnDelete(int $id): \Bitrix\Main\Result
+	{
+		$folder = self::getFolder($id);
+
+		if (!$folder || !Rights::hasAccessForSite($folder['SITE_ID'], Rights::ACCESS_TYPES['delete']))
+		{
+			$result = new \Bitrix\Main\Entity\AddResult;
+			$result->addError(new \Bitrix\Main\Error(
+				Loc::getMessage('LANDING_COPY_ERROR_FOLDER_NOT_FOUND'),
+				'ACCESS_DENIED'
+			));
+			return $result;
+		}
+
+		$event = new Event('landing', 'onBeforeFolderRecycle', array(
+			'id' => $id,
+			'delete' => 'N'
+		));
+		$event->send();
+
+		foreach ($event->getResults() as $result)
+		{
+			if ($result->getType() == EventResult::ERROR)
+			{
+				$return = new \Bitrix\Main\Result;
+				foreach ($result->getErrors() as $error)
+				{
+					$return->addError(
+						$error
+					);
+				}
+				return $return;
+			}
+		}
+
+		return Folder::update($id, array(
+			'DELETED' => 'N'
+		));
+	}
+
+	/**
 	 * Tries to add page to the all menu on the site.
 	 * Detects blocks with menu-manifests only.
 	 * @param int $siteId Site id.
@@ -950,6 +1559,7 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 								]
 							], ['appendMenu' => true]);
 							$block->save();
+							break 2;
 						}
 					}
 				}
@@ -964,9 +1574,133 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 	 */
 	public static function touch(int $id): void
 	{
+		static $touched = [];
+
+		if (isset($touched[$id]))
+		{
+			return;
+		}
+
+		$touched[$id] = true;
+
 		self::update($id, [
 			'TOUCH' => 'Y'
 		]);
+	}
+
+	/**
+	 * Makes site public.
+	 * @param int $id Site id.
+	 * @param bool $mark Mark.
+	 * @return \Bitrix\Main\Result
+	 */
+	public static function publication(int $id, bool $mark = true): \Bitrix\Main\Result
+	{
+		$return = new \Bitrix\Main\Result;
+
+		// work with pages
+		$res = Landing::getList([
+			'select' => [
+				'ID', 'ACTIVE', 'PUBLIC'
+			],
+			'filter' => [
+				'SITE_ID' => $id,
+				[
+					'LOGIC' => 'OR',
+					['FOLDER_ID' => null],
+					['!FOLDER_ID' => Folder::getFolderIdsForSite($id, ['=DELETED' => 'Y']) ?: [-1]]
+				]
+			]
+		]);
+		while ($row = $res->fetch())
+		{
+			if ($row['ACTIVE'] != 'Y')
+			{
+				$row['PUBLIC'] = 'N';
+			}
+			if ($row['PUBLIC'] == 'Y')
+			{
+				continue;
+			}
+			$landing = Landing::createInstance($row['ID'], [
+				'skip_blocks' => true
+			]);
+
+			if ($mark)
+			{
+				$resPublication = $landing->publication();
+			}
+			else
+			{
+				$resPublication = $landing->unpublic();
+			}
+
+			if (!$resPublication)
+			{
+				if (!$landing->getError()->isEmpty())
+				{
+					$error = $landing->getError()->getFirstError();
+					$return->addError(new \Bitrix\Main\Error(
+						$error->getMessage(),
+						$error->getCode()
+					));
+					return $return;
+				}
+			}
+		}
+
+		$res = Folder::getList([
+			'select' => [
+				'ID'
+			],
+			'filter' => [
+				'SITE_ID' => $id,
+				'=ACTIVE' => $mark ? 'N' : 'Y',
+				'=DELETED' => 'N'
+			]
+		]);
+		while ($row = $res->fetch())
+		{
+			Folder::update($row['ID'], [
+				'ACTIVE' => $mark ? 'Y' : 'N'
+			]);
+		}
+
+		return parent::update($id, [
+			'ACTIVE' => $mark ? 'Y' : 'N'
+		]);
+	}
+
+	/**
+	 * Marks site unpublic.
+	 * @param int $id Site id.
+	 * @return \Bitrix\Main\Result
+	 */
+	public static function unpublic(int $id): \Bitrix\Main\Result
+	{
+		return self::publication($id, false);
+	}
+
+	/**
+	 * Returns site id by template code.
+	 * @param string $tplCode Template code.
+	 * @return int|null
+	 */
+	public static function getSiteIdByTemplate(string $tplCode): ?int
+	{
+		$site = \Bitrix\Landing\Site::getList([
+			'select' => [
+				'ID'
+			],
+			'filter' => [
+				'=TPL_CODE' => $tplCode
+			],
+			'order' => [
+				'ID' => 'desc'
+			]
+		])->fetch();
+
+		return $site['ID'] ?? null;
 	}
 
 	/**

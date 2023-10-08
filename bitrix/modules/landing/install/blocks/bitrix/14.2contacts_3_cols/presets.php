@@ -14,11 +14,14 @@ return [
 					   data-card-preset="contact-link">
 				<a class="landing-block-node-linkcontact-link g-text-decoration-none--hover" href="tel:1-800-643-4500" target="_blank">
 					<span class="landing-block-node-contact-icon-container d-block g-color-primary g-font-size-50 g-line-height-1 g-mb-20">
-						<i class="landing-block-node-linkcontact-icon icon-call-in"></i>
+						<i class="landing-block-node-contact-icon icon-call-in"></i>
 					</span>
-					<span class="landing-block-node-linkcontact-title d-block text-uppercase g-font-size-14 g-color-main g-mb-5">
+					<span class="landing-block-node-linkcontact-title landing-semantic-subtitle-medium d-block text-uppercase g-font-size-14
+					 
+					 
+					 g-mb-5">
 						Phone number</span>
-					<span class="landing-block-node-linkcontact-text g-text-decoration-none g-text-underline--hover g-font-size-14 g-font-weight-700">
+					<span class="landing-block-node-linkcontact-text landing-semantic-subtitle-small-primary g-text-decoration-none g-text-underline--hover g-font-size-14 g-font-weight-700">
 						1-800-643-4500
 					</span>
 				</a>
@@ -28,7 +31,7 @@ return [
 				'href' => 'tel:1-800-643-4500',
 			],
 			'.landing-block-node-linkcontact-text' => '1-800-643-4500',
-			'.landing-block-node-linkcontact-icon' => [
+			'.landing-block-node-contact-icon' => [
 				'type' => 'icon',
 				'classList' => ['icon-call-in'],
 			],
@@ -45,9 +48,9 @@ return [
 					<span class="landing-block-node-contact-icon-container d-block g-color-primary g-font-size-50 g-line-height-1 g-mb-20">
 						<i class="landing-block-node-contact-icon icon-earphones-alt"></i>
 					</span>
-					<span class="landing-block-node-contact-title d-block text-uppercase g-font-size-14 g-color-main g-mb-5">
+					<span class="landing-block-node-contact-title landing-semantic-subtitle-medium d-block text-uppercase g-font-size-14 g-mb-5">
 						Toll free</span>
-					<span class="landing-block-node-contact-text g-font-size-14 g-font-weight-700">
+					<span class="landing-block-node-contact-text landing-semantic-subtitle-small-primary g-text-decoration-none g-text-underline--hover g-font-size-14 g-font-weight-700 g-color-primary">
 						@company24
 					</span>
 				</div>

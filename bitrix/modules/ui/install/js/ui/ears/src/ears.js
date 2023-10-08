@@ -1,12 +1,16 @@
 import {Tag, Dom, Cache} from 'main.core';
+import {EventEmitter} from 'main.core.events';
 
-export class Ears
+export class Ears extends EventEmitter
 {
 	constructor(options)
 	{
+		super(...arguments);
+		this.setEventNamespace('BX.UI.Ears');
 		this.container = options.container;
 		this.smallSize = options.smallSize || null;
 		this.noScrollbar = options.noScrollbar ? options.noScrollbar : false;
+		this.className = options.className ? options.className : null;
 		this.wrapper = null;
 		this.leftEar = null;
 		this.rightEar = null;
@@ -18,7 +22,7 @@ export class Ears
 
 	bindEvents() {
 		this.container.addEventListener('scroll', this.toggleEars.bind(this));
-		this.container.addEventListener("wheel", this.onWheel.bind(this));
+		this.container.addEventListener('wheel', this.onWheel.bind(this));
 
 		this.getLeftEar().addEventListener('mouseenter', this.scrollLeft.bind(this));
 		this.getLeftEar().addEventListener('mouseleave', this.stopScroll.bind(this));
@@ -31,16 +35,37 @@ export class Ears
 		this.getRightEar().addEventListener('mouseup', this.scrollRight.bind(this));
 	}
 
-	init() {
+	init(): this
+	{
 		this.setWrapper();
 		this.bindEvents();
 
-		setTimeout(function() {
+		setTimeout(() => {
 			if (this.container.scrollWidth > this.container.offsetWidth)
 			{
 				this.toggleRightEar();
+
+				let activeItem = this.container.querySelector('[data-role="ui-ears-active"]');
+
+				activeItem ? this.scrollToActiveItem(activeItem) : null;
 			}
-		}.bind(this), 600);
+		}, 600);
+		return this;
+	}
+
+	scrollToActiveItem(activeItem)
+	{
+		let scrollToPoint = activeItem.offsetLeft - (this.container.offsetWidth / 2 - activeItem.offsetWidth / 2);
+		let scrollWidth = 0;
+		let interval = setInterval(() => {
+			if( scrollWidth >= scrollToPoint ||
+				scrollWidth + this.container.offsetWidth >= this.container.scrollWidth)
+			{
+				clearInterval(interval);
+			}
+
+			this.container.scrollLeft = scrollWidth += 10;
+		},10)
 	}
 
 	onWheel(event)
@@ -55,16 +80,14 @@ export class Ears
 		}
 
 		clearTimeout(this.scrollTimeout);
-		this.scrollTimeout = setTimeout(function() {
-			this.stopScroll();
-		}.bind(this), 150);
+		this.scrollTimeout = setTimeout(() => this.stopScroll(), 150);
 	}
 
 	setWrapper() {
-		this.container.classList.add("ui-ear-container");
+		this.container.classList.add('ui-ear-container');
 		if (this.noScrollbar)
 		{
-			this.container.classList.add("ui-ear-container-no-scrollbar");
+			this.container.classList.add('ui-ear-container-no-scrollbar');
 		}
 		Dom.append(this.getWrapper(), this.parentContainer);
 	}
@@ -73,7 +96,7 @@ export class Ears
 	{
 		return this.cache.remember('wrapper', () => {
 			return Tag.render`
-					<div class="ui-ears-wrapper ${this.smallSize ? ' ui-ears-wrapper-sm' : ''}">
+					<div class='ui-ears-wrapper ${this.smallSize ? ' ui-ears-wrapper-sm' : ''} ${this.className ? this.className : ''}'>
 						${this.getLeftEar()}
 						${this.getRightEar()}
 						${this.container}
@@ -86,7 +109,7 @@ export class Ears
 	{
 		return this.cache.remember('leftEar', () => {
 			return Tag.render`
-					<div class="ui-ear ui-ear-left"></div>
+					<div class='ui-ear ui-ear-left'></div>
 				`;
 		});
 	}
@@ -95,7 +118,7 @@ export class Ears
 	{
 		return this.cache.remember('rightEar', () => {
 			return Tag.render`
-					<div class="ui-ear ui-ear-right"></div>
+					<div class='ui-ear ui-ear-right'></div>
 				`;
 		});
 	}
@@ -109,29 +132,36 @@ export class Ears
 		if (this.container.scrollWidth > this.container.offsetWidth
 			&& (this.container.offsetWidth + this.container.scrollLeft) < this.container.scrollWidth)
 		{
-			this.getRightEar().classList.add("ui-ear-show");
+			this.getRightEar().classList.add('ui-ear-show');
 		}
 		else
 		{
-			this.getRightEar().classList.remove("ui-ear-show");
+			this.getRightEar().classList.remove('ui-ear-show');
 		}
 	}
 
 	toggleLeftEar() {
 		if (this.container.scrollLeft > 0)
 		{
-			this.getLeftEar().classList.add("ui-ear-show");
+			this.getLeftEar().classList.add('ui-ear-show');
 		}
 		else
 		{
-			this.getLeftEar().classList.remove("ui-ear-show");
+			this.getLeftEar().classList.remove('ui-ear-show');
 		}
 	}
 
 	scrollLeft() {
 		this.stopScroll('right');
 
+		let previous = this.container.scrollLeft;
 		this.container.scrollLeft -= 10;
+		this.emit('onEarsAreMoved');
+		if (this.container.scrollLeft <= 0 && previous > 0)
+		{
+			this.emit('onEarsAreHidden');
+		}
+
 		this.setDelay();
 		this.scrollInterval = setInterval(
 			this.scrollLeft.bind(this),
@@ -144,6 +174,12 @@ export class Ears
 		this.stopScroll('left');
 
 		this.container.scrollLeft += 10;
+		this.emit('onEarsAreMoved');
+		if (this.container.scrollLeft <= 10)
+		{
+			this.emit('onEarsAreShown');
+		}
+
 		this.setDelay();
 		this.scrollInterval = setInterval(
 			this.scrollRight.bind(this),

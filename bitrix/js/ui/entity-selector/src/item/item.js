@@ -1,37 +1,46 @@
 import { Type, Loc, Text } from 'main.core';
-import { EventEmitter, BaseEvent } from 'main.core.events';
+import { BaseEvent } from 'main.core.events';
 
 import ItemNode from './item-node';
 import SearchIndex from '../search/search-index';
 import Entity from '../entity/entity';
+import ItemBadge from './item-badge';
+import TextNode from '../common/text-node';
+import TypeUtils from '../common/type-utils';
 
 import type Dialog from '../dialog/dialog';
 import type { ItemOptions } from './item-options';
 import type { ItemNodeOptions } from './item-node-options';
 import type { ItemBadgeOptions } from './item-badge-options';
-import ItemBadge from './item-badge';
 import type { TagItemOptions } from '../tag-selector/tag-item-options';
+import type { TextNodeOptions } from '../common/text-node-options';
+import type { CaptionOptions } from './caption-options';
+import type { BadgesOptions } from './badges-options';
+import type { AvatarOptions } from './avatar-options';
 
 /**
  * @memberof BX.UI.EntitySelector
  * @package ui.entity-selector
  */
-export default class Item extends EventEmitter
+export default class Item
 {
 	id: string | number = null;
 	entityId: string = null;
 	entityType: string = null;
 
-	title: string = '';
-	subtitle: ?string = null;
-	caption: ?string = null;
-	supertitle: ?string = null;
+	title: ?TextNode = null;
+	subtitle: ?TextNode = null;
+	supertitle: ?TextNode = null;
+	caption: ?TextNode = null;
+	captionOptions: CaptionOptions = {};
 	avatar: ?string = null;
+	avatarOptions: ?AvatarOptions = null;
 	textColor: ?string = null;
 	link: ?string = null;
-	linkTitle: ?string = null;
+	linkTitle: ?TextNode = null;
 	tagOptions: Map<string, any> = null;
 	badges: ItemBadgeOptions[] = null;
+	badgesOptions: BadgesOptions = {};
 
 	dialog: Dialog = null;
 	nodes: Set<ItemNode> = new Set();
@@ -49,9 +58,6 @@ export default class Item extends EventEmitter
 
 	constructor(itemOptions: ItemOptions)
 	{
-		super();
-		this.setEventNamespace('BX.UI.EntitySelector.Item');
-
 		const options: ItemOptions = Type.isPlainObject(itemOptions) ? itemOptions : {};
 		if (!Type.isStringFilled(options.id) && !Type.isNumber(options.id))
 		{
@@ -64,26 +70,25 @@ export default class Item extends EventEmitter
 		}
 
 		this.id = options.id;
-		this.entityId = options.entityId;
+		this.entityId = options.entityId.toLowerCase();
 		this.entityType = Type.isStringFilled(options.entityType) ? options.entityType : 'default';
 		this.selected = Type.isBoolean(options.selected) ? options.selected : false;
-		this.customData =
-			Type.isPlainObject(options.customData) ? new Map(Object.entries(options.customData)) : new Map()
-		;
 
-		this.tagOptions =
-			Type.isPlainObject(options.tagOptions) ? new Map(Object.entries(options.tagOptions)) : new Map()
-		;
+		this.customData = TypeUtils.createMapFromOptions(options.customData);
+		this.tagOptions = TypeUtils.createMapFromOptions(options.tagOptions);
 
 		this.setTitle(options.title);
 		this.setSubtitle(options.subtitle);
 		this.setSupertitle(options.supertitle);
 		this.setCaption(options.caption);
+		this.setCaptionOptions(options.captionOptions);
 		this.setAvatar(options.avatar);
+		this.setAvatarOptions(options.avatarOptions);
 		this.setTextColor(options.textColor);
 		this.setLink(options.link);
 		this.setLinkTitle(options.linkTitle);
 		this.setBadges(options.badges);
+		this.setBadgesOptions(options.badgesOptions);
 
 		this.setSearchable(options.searchable);
 		this.setSaveable(options.saveable);
@@ -104,7 +109,7 @@ export default class Item extends EventEmitter
 		return this.entityId;
 	}
 
-	getEntity(): ?Entity
+	getEntity(): Entity
 	{
 		let entity = this.getDialog().getEntity(this.getEntityId());
 		if (entity === null)
@@ -123,64 +128,128 @@ export default class Item extends EventEmitter
 
 	getTitle(): string
 	{
+		const titleNode = this.getTitleNode();
+
+		return titleNode !== null && !titleNode.isNullable() ? titleNode.getText() : '';
+	}
+
+	getTitleNode(): ?TextNode
+	{
 		return this.title;
 	}
 
-	setTitle(title: string): void
+	setTitle(title: ?string | TextNodeOptions): void
 	{
-		if (Type.isStringFilled(title))
+		if (Type.isStringFilled(title) || Type.isPlainObject(title) || title === null)
 		{
-			this.title = title;
+			this.title = title === null ? null : new TextNode(title);
 
-			if (this.isRendered())
-			{
-				for (const node of this.getNodes())
-				{
-					node.render();
-				}
-			}
+			this.resetSearchIndex();
+			this.#renderNodes();
 		}
 	}
 
 	getSubtitle(): ?string
 	{
-		return this.subtitle !== null ? this.subtitle : this.getEntityItemOption('subtitle');
+		const subtitleNode = this.getSubtitleNode();
+
+		return subtitleNode !== null ? subtitleNode.getText() : null;
 	}
 
-	setSubtitle(subtitle: string): void
+	getSubtitleNode(): ?TextNode
 	{
-		if (Type.isString(subtitle) || subtitle === null)
-		{
-			this.subtitle = subtitle;
+		return this.subtitle !== null ? this.subtitle : this.getEntityTextNode('subtitle');
+	}
 
-			if (this.isRendered())
-			{
-				for (const node of this.getNodes())
-				{
-					node.render();
-				}
-			}
+	setSubtitle(subtitle: ?string | TextNodeOptions): void
+	{
+		if (Type.isString(subtitle) || Type.isPlainObject(subtitle) || subtitle === null)
+		{
+			this.subtitle = subtitle === null ? null : new TextNode(subtitle);
+
+			this.resetSearchIndex();
+			this.#renderNodes();
 		}
 	}
 
 	getSupertitle(): ?string
 	{
-		return this.supertitle !== null ? this.supertitle : this.getEntityItemOption('supertitle');
+		const supertitleNode = this.getSupertitleNode();
+
+		return supertitleNode !== null ? supertitleNode.getText() : null;
 	}
 
-	setSupertitle(supertitle: string): void
+	getSupertitleNode(): ?TextNode
 	{
-		if (Type.isString(supertitle) || supertitle === null)
-		{
-			this.supertitle = supertitle;
+		return this.supertitle !== null ? this.supertitle : this.getEntityTextNode('supertitle');
+	}
 
-			if (this.isRendered())
-			{
-				for (const node of this.getNodes())
-				{
-					node.render();
-				}
-			}
+	setSupertitle(supertitle: ?string | TextNodeOptions): void
+	{
+		if (Type.isString(supertitle) || Type.isPlainObject(supertitle) || supertitle === null)
+		{
+			this.supertitle = supertitle === null ? null : new TextNode(supertitle);
+
+			this.resetSearchIndex();
+			this.#renderNodes();
+		}
+	}
+
+	getCaption(): ?string
+	{
+		const captionNode = this.getCaptionNode();
+
+		return captionNode !== null ? captionNode.getText() : null;
+	}
+
+	getCaptionNode(): ?TextNode
+	{
+		return this.caption !== null ? this.caption : this.getEntityTextNode('caption');
+	}
+
+	setCaption(caption: ?string | TextNodeOptions): void
+	{
+		if (Type.isString(caption) || Type.isPlainObject(caption) || caption === null)
+		{
+			this.caption = caption === null ? null : new TextNode(caption);
+
+			this.resetSearchIndex();
+			this.#renderNodes();
+		}
+	}
+
+	getCaptionOption(option: string): string | boolean | number | null
+	{
+		if (!Type.isUndefined(this.captionOptions[option]))
+		{
+			return this.captionOptions[option];
+		}
+
+		const captionOptions = this.getEntityItemOption('captionOptions');
+		if (Type.isPlainObject(captionOptions) && !Type.isUndefined(captionOptions[option]))
+		{
+			return captionOptions[option];
+		}
+
+		return null;
+	}
+
+	setCaptionOption(option: string, value: string | boolean | number | null): void
+	{
+		if (Type.isStringFilled(option) && !Type.isUndefined(value))
+		{
+			this.captionOptions[option] = value;
+			this.#renderNodes();
+		}
+	}
+
+	setCaptionOptions(options: {[key: string]: any }): void
+	{
+		if (Type.isPlainObject(options))
+		{
+			Object.keys(options).forEach((option: string) => {
+				this.setCaptionOption(option, options[option]);
+			});
 		}
 	}
 
@@ -194,14 +263,47 @@ export default class Item extends EventEmitter
 		if (Type.isString(avatar) || avatar === null)
 		{
 			this.avatar = avatar;
+			this.#renderNodes();
+		}
+	}
 
-			if (this.isRendered())
+	getAvatarOption(option: $Keys<AvatarOptions>): string | boolean | number | null
+	{
+		if (this.avatarOptions !== null && !Type.isUndefined(this.avatarOptions[option]))
+		{
+			return this.avatarOptions[option];
+		}
+
+		const avatarOptions = this.getEntityItemOption('avatarOptions');
+		if (Type.isPlainObject(avatarOptions) && !Type.isUndefined(avatarOptions[option]))
+		{
+			return avatarOptions[option];
+		}
+
+		return null;
+	}
+
+	setAvatarOption(option: $Keys<AvatarOptions>, value: string | boolean | number | null): void
+	{
+		if (Type.isStringFilled(option) && !Type.isUndefined(value))
+		{
+			if (this.avatarOptions === null)
 			{
-				for (const node of this.getNodes())
-				{
-					node.render();
-				}
+				this.avatarOptions = {};
 			}
+
+			this.avatarOptions[option] = value;
+			this.#renderNodes();
+		}
+	}
+
+	setAvatarOptions(options: AvatarOptions): void
+	{
+		if (Type.isPlainObject(options))
+		{
+			Object.keys(options).forEach((option: string) => {
+				this.setAvatarOption(option, options[option]);
+			});
 		}
 	}
 
@@ -215,35 +317,7 @@ export default class Item extends EventEmitter
 		if (Type.isString(textColor) || textColor === null)
 		{
 			this.textColor = textColor;
-
-			if (this.isRendered())
-			{
-				for (const node of this.getNodes())
-				{
-					node.render();
-				}
-			}
-		}
-	}
-
-	getCaption(): ?string
-	{
-		return this.caption !== null ? this.caption : this.getEntityItemOption('caption');
-	}
-
-	setCaption(caption: ?string): void
-	{
-		if (Type.isString(caption) || caption === null)
-		{
-			this.caption = caption;
-
-			if (this.isRendered())
-			{
-				for (const node of this.getNodes())
-				{
-					node.render();
-				}
-			}
+			this.#renderNodes();
 		}
 	}
 
@@ -259,26 +333,28 @@ export default class Item extends EventEmitter
 		if (Type.isString(link) || link === null)
 		{
 			this.link = link;
+			this.#renderNodes();
 		}
 	}
 
 	getLinkTitle(): ?string
 	{
-		if (this.linkTitle !== null)
-		{
-			return this.linkTitle;
-		}
+		const linkTitleNode = this.getLinkTitleNode();
 
-		const linkTitle = this.getEntityItemOption('linkTitle');
-
-		return linkTitle !== null ? linkTitle : Loc.getMessage('UI_SELECTOR_ITEM_LINK_TITLE');
+		return linkTitleNode !== null ? linkTitleNode.getText() : Loc.getMessage('UI_SELECTOR_ITEM_LINK_TITLE');
 	}
 
-	setLinkTitle(linkTitle: ?string): void
+	getLinkTitleNode(): ?TextNode
 	{
-		if (Type.isString(linkTitle) || linkTitle === null)
+		return this.linkTitle !== null ? this.linkTitle : this.getEntityTextNode('linkTitle');
+	}
+
+	setLinkTitle(linkTitle: ?string | TextNodeOptions): void
+	{
+		if (Type.isString(linkTitle) || Type.isPlainObject(linkTitle) || linkTitle === null)
 		{
-			this.linkTitle = linkTitle;
+			this.linkTitle = linkTitle === null ? null : new TextNode(linkTitle);
+			this.#renderNodes();
 		}
 	}
 
@@ -310,10 +386,48 @@ export default class Item extends EventEmitter
 			badges.forEach(badge => {
 				this.badges.push(new ItemBadge(badge));
 			});
+
+			this.#renderNodes();
 		}
 		else if (badges === null)
 		{
 			this.badges = null;
+			this.#renderNodes();
+		}
+	}
+
+	getBadgesOption(option: string): string | boolean | number | null
+	{
+		if (!Type.isUndefined(this.badgesOptions[option]))
+		{
+			return this.badgesOptions[option];
+		}
+
+		const badgesOptions = this.getEntityItemOption('badgesOptions');
+		if (Type.isPlainObject(badgesOptions) && !Type.isUndefined(badgesOptions[option]))
+		{
+			return badgesOptions[option];
+		}
+
+		return null;
+	}
+
+	setBadgesOption(option: string, value: string | boolean | number | null): void
+	{
+		if (Type.isStringFilled(option) && !Type.isUndefined(value))
+		{
+			this.badgesOptions[option] = value;
+			this.#renderNodes();
+		}
+	}
+
+	setBadgesOptions(options: {[key: string]: any }): void
+	{
+		if (Type.isPlainObject(options))
+		{
+			Object.keys(options).forEach((option: string) => {
+				this.setBadgesOption(option, options[option]);
+			});
 		}
 	}
 
@@ -391,7 +505,7 @@ export default class Item extends EventEmitter
 
 	deselect(): void
 	{
-		if (!this.selected || !this.isDeselectable())
+		if (!this.selected)
 		{
 			return;
 		}
@@ -408,10 +522,6 @@ export default class Item extends EventEmitter
 		}
 
 		this.selected = false;
-		if (dialog)
-		{
-			dialog.handleItemDeselect(this);
-		}
 
 		if (this.isRendered())
 		{
@@ -422,15 +532,8 @@ export default class Item extends EventEmitter
 
 		if (dialog)
 		{
+			dialog.handleItemDeselect(this);
 			dialog.emit('Item:onDeselect', { item: this });
-
-			if (dialog.getTagSelector())
-			{
-				dialog.getTagSelector().removeTag({
-					id: this.getId(),
-					entityId: this.getEntityId()
-				});
-			}
 		}
 	}
 
@@ -496,6 +599,13 @@ export default class Item extends EventEmitter
 		if (Type.isBoolean(flag))
 		{
 			this.hidden = flag;
+
+			if (this.isRendered())
+			{
+				this.getNodes().forEach((node: ItemNode) => {
+					node.setHidden(flag);
+				});
+			}
 		}
 	}
 
@@ -568,6 +678,16 @@ export default class Item extends EventEmitter
 		return this.getDialog() && this.getDialog().isRendered();
 	}
 
+	#renderNodes(): void
+	{
+		if (this.isRendered())
+		{
+			this.getNodes().forEach((node: ItemNode) => {
+				node.render();
+			});
+		}
+	}
+
 	getEntityItemOption(option): any
 	{
 		return this.getEntity().getItemOption(option, this.getEntityType());
@@ -576,6 +696,11 @@ export default class Item extends EventEmitter
 	getEntityTagOption(option): any
 	{
 		return this.getEntity().getTagOption(option, this.getEntityType());
+	}
+
+	getEntityTextNode(option): any
+	{
+		return this.getEntity().getOptionTextNode(option, this.getEntityType());
 	}
 
 	getTagOptions(): Map<string, any>
@@ -656,11 +781,19 @@ export default class Item extends EventEmitter
 		return this.getTagGlobalOption('avatar', true);
 	}
 
+	getTagAvatarOptions(): ?AvatarOptions
+	{
+		return this.getTagGlobalOption('avatarOptions', true);
+	}
+
 	getTagLink(): ?string
 	{
 		return this.replaceMacros(this.getTagGlobalOption('link', true));
 	}
 
+	/**
+	 * @internal
+	 */
 	replaceMacros(str: string): string
 	{
 		if (!Type.isStringFilled(str))
@@ -675,19 +808,20 @@ export default class Item extends EventEmitter
 		);
 	}
 
+	/**
+	 * @internal
+	 */
 	createTag(): TagItemOptions
 	{
 		return {
 			id: this.getId(),
 			entityId: this.getEntityId(),
 			entityType: this.getEntityType(),
-			title: this.getTagOption('title') || this.getTitle(),
+			title: this.getTagOption('title') || (this.getTitleNode() && this.getTitleNode().toJSON()) || '',
 			deselectable: this.isDeselectable(),
-			customData: this.getCustomData(),
-
 			avatar: this.getTagAvatar(),
+			avatarOptions: this.getTagAvatarOptions(),
 			link: this.getTagLink(),
-
 			maxWidth: this.getTagMaxWidth(),
 			textColor: this.getTagTextColor(),
 			bgColor: this.getTagBgColor(),
@@ -695,7 +829,12 @@ export default class Item extends EventEmitter
 		};
 	}
 
-	toJSON()
+	getAjaxJson(): { [key: string]: any }
+	{
+		return this.toJSON();
+	}
+
+	toJSON(): { [key: string]: any }
 	{
 		return {
 			id: this.getId(),
@@ -703,15 +842,23 @@ export default class Item extends EventEmitter
 			entityType: this.getEntityType(),
 			selected: this.isSelected(),
 			deselectable: this.isDeselectable(),
+			searchable: this.isSearchable(),
+			saveable: this.isSaveable(),
 			hidden: this.isHidden(),
-			title: this.getTitle(),
+			title: this.getTitleNode(),
 			link: this.getLink(),
-			linkTitle: this.getLinkTitle(),
-			subtitle: this.getSubtitle(),
-			supertitle: this.getSupertitle(),
-			caption: this.getCaption(),
+			linkTitle: this.getLinkTitleNode(),
+			subtitle: this.getSubtitleNode(),
+			supertitle: this.getSupertitleNode(),
+			caption: this.getCaptionNode(),
 			avatar: this.getAvatar(),
-			customData: this.getCustomData(),
+			textColor: this.getTextColor(),
+			sort: this.getSort(),
+			contextSort: this.getContextSort(),
+			globalSort: this.getGlobalSort(),
+			customData: TypeUtils.convertMapToObject(this.getCustomData()),
+			tagOptions: TypeUtils.convertMapToObject(this.getTagOptions()),
+			badges: this.getBadges()
 		};
 	}
 }

@@ -56,7 +56,7 @@ class ItemAttributes
 	{
 		$this
 			->setAttribute('data-viewer')
-			->setAttribute('data-viewer-type', static::getViewerTypeByFile($this->fileData))
+			->setViewerType(static::getViewerTypeByFile($this->fileData))
 			->setAttribute('data-src', $this->sourceUri)
 		;
 	}
@@ -155,6 +155,21 @@ class ItemAttributes
 		return $this->setAttribute('data-title', htmlspecialcharsbx($title));
 	}
 
+	public function setTypeClass(string $class)
+	{
+		return $this->setAttribute('data-viewer-type-class', htmlspecialcharsbx($class));
+	}
+
+	public function setViewerType(string $type): self
+	{
+		return $this->setAttribute('data-viewer-type', $type);
+	}
+
+	public function getTypeClass()
+	{
+		return $this->getAttribute('data-viewer-type-class');
+	}
+
 	/**
 	 * @param $id
 	 *
@@ -193,6 +208,13 @@ class ItemAttributes
 		return $this;
 	}
 
+	public function clearActions(): self
+	{
+		$this->actions = [];
+
+		return $this;
+	}
+
 	/**
 	 * @return array
 	 */
@@ -225,7 +247,7 @@ class ItemAttributes
 	{
 		if (!$this->issetAttribute('data-viewer-type'))
 		{
-			$this->setAttribute('data-viewer-type', static::getViewerTypeByFile($this->fileData));
+			$this->setViewerType(static::getViewerTypeByFile($this->fileData));
 		}
 
 		return $this->getAttribute('data-viewer-type');

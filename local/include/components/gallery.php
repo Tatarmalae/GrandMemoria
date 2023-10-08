@@ -31,7 +31,7 @@ if (count($arResult['ITEMS']) == 0) return;
                 <div class="slider-wrap swiper-wrapper">
                     <?php foreach ($arResult['ITEMS'] as $key => $item): ?>
                         <div class="slider-slide swiper-slide">
-                            <a class="gallery-item item" href="#" data-toggle="modal" data-target="#modalGallery_<?= $key ?>">
+                            <a class="gallery-item item modal-ajax" href="#" data-toggle="modal" data-target="#modalGalleryAbout" data-key="<?= $key ?>">
                                 <div class="gallery-item__img img img-16by9">
                                     <div class="gallery__zoom">
                                         <div class="gallery__zoom-inner">
@@ -67,9 +67,9 @@ if (count($arResult['ITEMS']) == 0) return;
         </div>
     </div>
 </section>
-<?php foreach ($arResult['ITEMS'] as $key => $item): ?>
-    <div class="modal fade" id="modalGallery_<?= $key ?>" tabindex="-1" role="dialog" aria-labelledby="modalGalleryLabel">
-        <div class="modal-dialog" role="document">
+<div style="display: none; opacity: 0;">
+    <?php foreach ($arResult['ITEMS'] as $key => $item): ?>
+        <div class="modal-dialog_<?= $key ?>" role="document">
             <div class="modal-content">
                 <button class="modal-close" type="button" data-dismiss="modal" aria-label="Close">
                     <svg class="icon__close-modal" width="48" height="48">
@@ -100,5 +100,5 @@ if (count($arResult['ITEMS']) == 0) return;
                 </div>
             </div>
         </div>
-    </div>
-<?php endforeach ?>
+    <?php endforeach ?>
+</div>

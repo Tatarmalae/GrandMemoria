@@ -8,7 +8,7 @@
 ##############################################
 */
 
-require_once(dirname(__FILE__)."/../include/prolog_admin_before.php");
+require_once(__DIR__."/../include/prolog_admin_before.php");
 require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/prolog.php");
 define("HELP_FILE", "users/group_admin.php");
 if (!$USER->CanDoOperation('view_groups'))
@@ -114,7 +114,7 @@ if(($arID = $lAdmin->GroupAction()) && $USER->CanDoOperation('edit_groups'))
 	if($_REQUEST['action_target']=='selected')
 	{
 		$arID = Array();
-		$rsData = CGroup::GetList($by, $order, Array());
+		$rsData = CGroup::GetList();
 		while($arRes = $rsData->Fetch())
 			$arID[] = $arRes['ID'];
 	}
@@ -172,6 +172,8 @@ $lAdmin->AddHeaders(array(
 $showUserCount = in_array("USERS", $lAdmin->GetVisibleHeaderColumns());
 
 // инициализация списка - выборка данных
+global $by, $order;
+
 $rsData = CGroup::GetList($by, $order, $arFilter, ($showUserCount? "Y" : "N"));
 $rsData = new CAdminResult($rsData, $sTableID);
 $rsData->NavStart();

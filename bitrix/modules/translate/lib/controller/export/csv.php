@@ -24,6 +24,7 @@ class Csv
 	const ACTION_PURGE = 'purge';
 	const ACTION_CANCEL = 'cancel';
 	const ACTION_DOWNLOAD = 'download';
+	const ACTION_CLEAR = 'clear';
 
 	/** @var int Session tab counter. */
 	private $tabId = 0;
@@ -100,6 +101,12 @@ class Csv
 				$permission
 			),
 		);
+		$configureActions[self::ACTION_CLEAR] = array(
+			'+prefilters' => array(
+				$permission
+			),
+		);
+
 		$configureActions[self::ACTION_DOWNLOAD] = array(
 			'-prefilters' => array(
 				Main\Engine\ActionFilter\Csrf::class,
@@ -143,30 +150,23 @@ class Csv
 		// languages
 		$enabledLanguages = Translate\Config::getEnabledLanguages();
 		$languages = $this->request->get('languages');
-		if (empty($languages) || $languages === 'all')
+		if (\is_array($languages) && !\in_array('all', $languages))
 		{
-			$languages = $enabledLanguages;
+			$languages = \array_intersect($languages, $enabledLanguages);
+			$sortLang = \array_flip($enabledLanguages);
+			\usort(
+				$languages,
+				function ($a, $b) use ($sortLang)
+				{
+					$a = $sortLang[$a];
+					$b = $sortLang[$b];
+					return (($a == $b) ? 1 : ($a < $b ? -1 : 1));
+				}
+			);
 		}
 		else
 		{
-			if (is_string($languages))
-			{
-				$languages = explode(',', $languages);
-			}
-			if (is_array($languages))
-			{
-				$languages = array_intersect($languages, $enabledLanguages);
-				$sortLang = array_flip($enabledLanguages);
-				usort(
-					$languages,
-					function ($a, $b) use ($sortLang)
-					{
-						$a = $sortLang[$a];
-						$b = $sortLang[$b];
-						return (($a == $b) ? 1 : ($a < $b ? -1 : 1));
-					}
-				);
-			}
+			$languages = $enabledLanguages;
 		}
 		$this->languages = $languages;
 	}
@@ -196,7 +196,7 @@ class Csv
 
 		$result = $action->run($path, true);
 
-		if (count($action->getErrors()) > 0)
+		if (\count($action->getErrors()) > 0)
 		{
 			$this->addErrors($action->getErrors());
 		}
@@ -213,7 +213,7 @@ class Csv
 
 				$messagePlaceholders = array(
 					'#TOTAL_PHRASES#' => $result['TOTAL_PHRASES'],
-					'#FILE_SIZE_FORMAT#' => \CFile::FormatSize($fileProperties['fileSize']),
+					'#FILE_SIZE_FORMAT#' => \CFile::formatSize($fileProperties['fileSize']),
 				);
 
 				if ($action->hasProcessCompleted())
@@ -237,7 +237,7 @@ class Csv
 
 			$messagePlaceholders = array(
 				'#TOTAL_PHRASES#' => $result['TOTAL_PHRASES'],
-				'#FILE_SIZE_FORMAT#' => \CFile::FormatSize($fileProperties['fileSize']),
+				'#FILE_SIZE_FORMAT#' => \CFile::formatSize($fileProperties['fileSize']),
 			);
 
 			$result['SUMMARY'] =
@@ -306,7 +306,7 @@ class Csv
 		}
 
 		// VI. Single file
-		if (preg_match("/\.php$/", $path))
+		if (\preg_match("/\.php$/", $path))
 		{
 			$nextAction = self::ACTION_EXPORT_FILE;
 			$exporterClass = ExportFile::class;
@@ -328,6 +328,19 @@ class Csv
 		);
 
 		return $action;
+	}
+
+
+	/**
+	 * Deletes generated file.
+	 *
+	 * @param int $tabId Id of session storage.
+	 *
+	 * @return array
+	 */
+	public function clearAction($tabId)
+	{
+		return $this->purgeAction($tabId);
 	}
 
 

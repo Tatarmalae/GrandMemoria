@@ -22,6 +22,7 @@ return array(
 			'name' => Loc::getMessage('LANDING_BLOCK_7_FOUR_COLS_BIG_BGIMG_TITLE_TEXT_BUTTON_NODES_LANDINGBLOCKNODEIMG'),
 			'type' => 'img',
 			'dimensions' => array('width' => 960),
+			'create2xByDefault' => false,
 		),
 		'.landing-block-node-title' => array(
 			'name' => Loc::getMessage('LANDING_BLOCK_7_FOUR_COLS_BIG_BGIMG_TITLE_TEXT_BUTTON_NODES_LANDINGBLOCKNODETITLE'),
@@ -47,7 +48,7 @@ return array(
 			),
 			'.landing-block-node-title' => array(
 				'name' => Loc::getMessage('LANDING_BLOCK_7_FOUR_COLS_BIG_BGIMG_TITLE_TEXT_BUTTON_STYLE_LANDINGBLOCKNODETITLE'),
-				'type' => array('typo', 'animation'),
+				'type' => ['typo', 'animation', 'heading'],
 			),
 			'.landing-block-node-text' => array(
 				'name' => Loc::getMessage('LANDING_BLOCK_7_FOUR_COLS_BIG_BGIMG_TITLE_TEXT_BUTTON_STYLE_LANDINGBLOCKNODETEXT'),

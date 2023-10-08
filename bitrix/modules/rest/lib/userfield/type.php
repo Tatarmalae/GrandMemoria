@@ -18,7 +18,7 @@ class Type extends TypeBase
 {
 	const USER_TYPE_ID = 'rest';
 
-	function getDBColumnType()
+	public static function getDBColumnType()
 	{
 		return "text";
 	}
@@ -166,7 +166,7 @@ class Type extends TypeBase
 	}
 
 	function prepareSettings($arUserField){}
-	function getSettingsHTML($arUserField = false, $arHtmlControl, $bVarsFromForm){}
+	function getSettingsHTML($arUserField, $arHtmlControl, $bVarsFromForm){}
 	function getFilterHTML($arUserField, $arHtmlControl){}
 	function getFilterData($arUserField, $arHtmlControl){}
 	function getAdminListViewHTML($arUserField, $arHtmlControl){}

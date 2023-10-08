@@ -609,9 +609,7 @@ if (isset($arCurrentValues['DETAIL_USE_COMMENTS']) && 'Y' == $arCurrentValues['D
 	}
 
 	$boolRus = false;
-	$langBy = "id";
-	$langOrder = "asc";
-	$rsLangs = CLanguage::GetList($langBy, $langOrder, array('ID' => 'ru',"ACTIVE" => "Y"));
+	$rsLangs = CLanguage::GetList('id', 'asc', array('ID' => 'ru',"ACTIVE" => "Y"));
 	if ($arLang = $rsLangs->Fetch())
 	{
 		$boolRus = true;
@@ -997,21 +995,26 @@ $arTemplateParameters['LAZY_LOAD'] = array(
 	'DEFAULT' => 'N'
 );
 
-if (isset($arCurrentValues['LAZY_LOAD']) && $arCurrentValues['LAZY_LOAD'] === 'Y')
-{
-	$arTemplateParameters['MESS_BTN_LAZY_LOAD'] = array(
-		'PARENT' => 'PAGER_SETTINGS',
-		'NAME' => GetMessage('CP_BC_TPL_MESS_BTN_LAZY_LOAD'),
-		'TYPE' => 'TEXT',
-		'DEFAULT' => GetMessage('CP_BC_TPL_MESS_BTN_LAZY_LOAD_DEFAULT')
-	);
-}
+$arTemplateParameters['MESS_BTN_LAZY_LOAD'] = array(
+	'PARENT' => 'PAGER_SETTINGS',
+	'NAME' => GetMessage('CP_BC_TPL_MESS_BTN_LAZY_LOAD'),
+	'TYPE' => 'TEXT',
+	'DEFAULT' => GetMessage('CP_BC_TPL_MESS_BTN_LAZY_LOAD_DEFAULT'),
+	'HIDDEN' => (isset($arCurrentValues['LAZY_LOAD']) && $arCurrentValues['LAZY_LOAD'] === 'Y' ? 'N' : 'Y')
+);
 
 $arTemplateParameters['LOAD_ON_SCROLL'] = array(
 	'PARENT' => 'PAGER_SETTINGS',
 	'NAME' => GetMessage('CP_BC_TPL_LOAD_ON_SCROLL'),
 	'TYPE' => 'CHECKBOX',
-	'DEFAULT' => 'N'
+	'DEFAULT' => 'N',
+	'HIDDEN' => (
+		(isset($arCurrentValues['LAZY_LOAD']) && $arCurrentValues['LAZY_LOAD'] === 'Y')
+		|| (isset($arCurrentValues['DISPLAY_TOP_PAGER']) && $arCurrentValues['DISPLAY_TOP_PAGER'] === 'Y')
+		|| (!isset($arCurrentValues['DISPLAY_BOTTOM_PAGER']) || $arCurrentValues['DISPLAY_BOTTOM_PAGER'] !== 'N')
+		? 'N'
+		: 'Y'
+	)
 );
 
 $arTemplateParameters['MESS_BTN_BUY'] = array(
@@ -1044,6 +1047,13 @@ $arTemplateParameters['MESS_NOT_AVAILABLE'] = array(
 	'TYPE' => 'STRING',
 	'DEFAULT' => GetMessage('CP_BC_TPL_MESS_NOT_AVAILABLE_DEFAULT')
 );
+$arTemplateParameters['MESS_NOT_AVAILABLE_SERVICE'] = [
+	'PARENT' => 'VISUAL',
+	'NAME' => GetMessage('CP_BC_TPL_MESS_NOT_AVAILABLE_SERVICE'),
+	'TYPE' => 'STRING',
+	'DEFAULT' => GetMessage('CP_BC_TPL_MESS_NOT_AVAILABLE_SERVICE_DEFAULT'),
+];
+
 $arTemplateParameters['MESS_BTN_SUBSCRIBE'] = array(
 	'PARENT' => 'VISUAL',
 	'NAME' => GetMessage('CP_BC_TPL_MESS_BTN_SUBSCRIBE'),
@@ -1346,4 +1356,3 @@ $arTemplateParameters['DETAIL_SHOW_VIEWED'] = array(
 
 // hack to hide component parameters by templates
 $arTemplateParameters['HIDE_USE_ALSO_BUY'] = array();
-?>

@@ -10,11 +10,6 @@ Loc::loadMessages(__FILE__);
 class Rights
 {
 	/**
-	 * Option for debug, set full access for admin.
-	 */
-	const MODE_ADMIN_FULL_ACCESS = true;
-
-	/**
 	 * Site entity type.
 	 */
 	const ENTITY_TYPE_SITE = 'S';
@@ -36,11 +31,29 @@ class Rights
 	 */
 	const ADDITIONAL_RIGHTS = [
 		'menu24' => 'menu24',//show in main menu of Bitrix24
+		'admin' => 'admin',//admin rights
 		'create' => 'create',//can create new sites
+		'unexportable' => 'unexportable',
 		'knowledge_menu24' => 'knowledge_menu24',// show Knowledge in main menu of Bitrix24
+		'knowledge_admin' => 'knowledge_admin',//admin rights
 		'knowledge_create' => 'knowledge_create',//can create new Knowledge base
+		'knowledge_unexportable' => 'knowledge_unexportable',
+		'knowledge_extension' => 'knowledge_extension',
 		'group_create' => 'group_create',//can create new social network group base
+		'group_admin' => 'group_admin',//admin rights
 		'group_menu24' => 'group_menu24',// show group in main menu of Bitrix24
+		'group_unexportable' => 'group_unexportable',
+	];
+
+	const SET_PREFIX = [
+		'knowledge',
+		'group',
+	];
+
+	const REVERSE_RIGHTS = [
+		'unexportable',
+		'knowledge_unexportable',
+		'group_unexportable',
 	];
 
 	/**
@@ -129,11 +142,11 @@ class Rights
 	 */
 	public static function isAdmin()
 	{
-		if (self::MODE_ADMIN_FULL_ACCESS)
+		if (self::hasAdditionalRight(self::ADDITIONAL_RIGHTS['admin'], null, false, true))
 		{
-			return Manager::isAdmin();
+			return true;
 		}
-		return false;
+		return Manager::isAdmin();
 	}
 
 	/**
@@ -726,19 +739,22 @@ class Rights
 			}
 			else
 			{
-				$filter[] = [
-					'LOGIC' => 'OR',
-					[
-						'!RIGHTS.TASK_ID' => $tasks[Rights::ACCESS_TYPES['denied']],
-						'RIGHTS.USER_ACCESS.USER_ID' => $uid
-					],
-					[
-						'=RIGHTS.TASK_ID' => null,
-						'!RIGHTS_COMMON.TASK_ID' => $tasks[Rights::ACCESS_TYPES['denied']],
-						'RIGHTS_COMMON.USER_ACCESS.USER_ID' => $uid
-					],
-					$additionalFilterOr
-				];
+				if ($additionalFilterOr)
+				{
+					$filter[] = [
+						'LOGIC' => 'OR',
+						[
+							'!RIGHTS.TASK_ID' => $tasks[Rights::ACCESS_TYPES['denied']],
+							'RIGHTS.USER_ACCESS.USER_ID' => $uid
+						],
+						$additionalFilterOr
+					];
+				}
+				else
+				{
+					$filter['RIGHTS.USER_ACCESS.USER_ID'] = $uid;
+					$filter['!RIGHTS.TASK_ID'] = $tasks[Rights::ACCESS_TYPES['denied']];
+				}
 			}
 		}
 
@@ -817,7 +833,7 @@ class Rights
 		{
 			// gets current from option
 			$option = Manager::getOption('access_codes_' . $code, '');
-			$option = unserialize($option);
+			$option = unserialize($option, ['allowed_classes' => false]);
 			if (isset($option[0]))
 			{
 				$right[0] = $option[0];
@@ -893,7 +909,7 @@ class Rights
 		}
 
 		$option = Manager::getOption('access_codes_' . $code, '');
-		$option = unserialize($option);
+		$option = unserialize($option, ['allowed_classes' => false]);
 		$accessCodes = isset($option[0]) ? (array)$option[0] : [];
 		$codesNames  = $access->getNames($accessCodes);
 
@@ -970,10 +986,7 @@ class Rights
 						'ID'
 					],
 					'filter' => [
-						'=CODE' => [
-							'/' . Site\Type::PSEUDO_SCOPE_CODE_FORMS . '/',
-							'/' . Site\Type::PSEUDO_SCOPE_CODE_FORMS . '2/'// :(
-						],
+						'CODE' => '/' . Site\Type::PSEUDO_SCOPE_CODE_FORMS . '%',
 						'=SPECIAL' => 'Y',
 						'CHECK_PERMISSIONS' => 'N'
 					]
@@ -996,7 +1009,7 @@ class Rights
 	 * @param bool $checkExtraRights Check extra rights.
 	 * @return bool
 	 */
-	public static function hasAdditionalRight($code, $type = null, bool $checkExtraRights = false)
+	public static function hasAdditionalRight($code, $type = null, bool $checkExtraRights = false, bool $strict = false)
 	{
 		static $options = [];
 
@@ -1037,8 +1050,12 @@ class Rights
 				return false;
 			}
 
-			if (self::isAdmin())
+			if (Manager::isAdmin())
 			{
+				if (in_array($code, self::REVERSE_RIGHTS))
+				{
+					return false;
+				}
 				return true;
 			}
 
@@ -1046,11 +1063,11 @@ class Rights
 			if (!isset($options[$code]))
 			{
 				$options[$code] = Manager::getOption('access_codes_' . $code, '');
-				$options[$code] = unserialize($options[$code]);
+				$options[$code] = unserialize($options[$code], ['allowed_classes' => false]);
 			}
 			$option = $options[$code];
 
-			if (!is_array($option))
+			if (!is_array($option) && !$strict)
 			{
 				return true;
 			}
@@ -1082,6 +1099,16 @@ class Rights
 
 			if ($accessCodes)
 			{
+				static $accessCodesStatic = [];
+
+				sort($accessCodes);
+				$accessCodesStr = implode('|', $accessCodes);
+
+				if (array_key_exists($accessCodesStr, $accessCodesStatic))
+				{
+					return $accessCodesStatic[$accessCodesStr];
+				}
+
 				$res = UserAccessTable::getList([
 					'select' => [
 						'USER_ID'
@@ -1091,8 +1118,8 @@ class Rights
 						'USER_ID' => self::getContextUserId()
 					]
 				]);
-
-				return (boolean)$res->fetch();
+				$accessCodesStatic[$accessCodesStr] = (boolean)$res->fetch();
+				return $accessCodesStatic[$accessCodesStr];
 			}
 
 			return false;
