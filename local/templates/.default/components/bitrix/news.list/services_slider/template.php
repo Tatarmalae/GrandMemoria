@@ -33,7 +33,8 @@ $this->setFrameMode(true);
                             <a class="services-item item link-item" href="<?= $arItem['DETAIL_PAGE_URL'] ?>">
                                 <div class="services-item__img img">
                                     <div class="img__inner object-fit">
-                                        <img class="lazy" data-src="<?= $arItem['PREVIEW_PICTURE']['SRC'] ?>" alt="<?= $arItem['NAME'] ?>" src="">
+                                        <img class="lazy"
+                                             data-src="<?= !empty($arItem['PREVIEW_PICTURE']['SRC']) ? $arItem['PREVIEW_PICTURE']['SRC'] : $arItem['PREVIEW_PICTURE'] ?>" alt="<?= $arItem['NAME'] ?>" src="">
                                     </div>
                                 </div>
                                 <div class="services-item__content">

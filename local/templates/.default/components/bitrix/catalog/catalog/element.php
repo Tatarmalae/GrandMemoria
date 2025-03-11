@@ -206,9 +206,26 @@ try {
 <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/whatsapp.php", [], ["SHOW_BORDER" => true]); ?>
 
 <?php
+/**
+ * Зададим фильтр по ID раздела И св-ву "Принадлежность".
+ *
+ * OWN - Принадлежность
+ * FORM_MONUMENTS - Форма
+ * ORIENTATION - Ориентация
+ *
+ */
+$elementProps = Catalog::getElement($elementId);
 global $arrFilterSimilar;
 $arrFilterSimilar = [
+    '!ID' => $elementId,
     'SECTION_ID' => $section['ID'],
+    'PROPERTY_OWN_VALUE' => $elementProps['PROPERTIES']['OWN'][0]['VALUE_ENUM'],
+    /*[
+        'LOGIC' => 'OR',
+        ['DATE_ACTIVE_TO' => false],
+        ['>DATE_ACTIVE_TO' => ConvertTimeStamp(time(), 'FULL')],
+
+    ],*/
 ];
 $APPLICATION->IncludeComponent(
     "bitrix:news.list",
@@ -304,7 +321,7 @@ $APPLICATION->IncludeComponent(
     ],
     false
 );
-unset($arrFilterSimilar);
+unset($arrFilterSimilar, $elementProps);
 ?>
 
 <?php if (!empty($sectionProps['UF_STOCK_SLIDER'])): ?>

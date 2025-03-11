@@ -104,6 +104,7 @@ try {
                                                                 </div>
                                                             </li>
                                                             <?php foreach ($element['PROPERTIES']['DROPDOWN'] as $propKey => $dropdown): ?>
+                                                                <?php $dropdown['DESCRIPTION'] = str_replace(" ", '', $dropdown['DESCRIPTION']);?>
                                                                 <li data-value="<?= $dropdown['VALUE'] ?>" data-sum="<?= $dropdown['DESCRIPTION'] ?>">
                                                                     <div class="dropdown-wrap">
                                                                         <div class="dropdown-wrap__column">

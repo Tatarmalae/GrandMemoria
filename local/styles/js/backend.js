@@ -7,6 +7,7 @@ $(document).ready(function () {
   ajaxPagination();
   forms();
   ajaxModals();
+  readMore();
   $(window).on('popstate', function (event) {
     let url = '';
     let anim = true;
@@ -20,6 +21,32 @@ $(document).ready(function () {
     loadPage(url, anim);
   });
 });
+
+// Кнопка "Посмотреть полностью"
+function readMore() {
+  if (!$('article.truncate').length) {
+    return;
+  }
+
+  let body = $('body');
+  let truncate = $('article.truncate');
+  let read_more = $('a.read-more');
+
+  if (truncate.height() < truncate[0].scrollHeight) {
+    read_more.css({'width': 'fit-content'}).show();
+  }
+
+  body.on('click', '.read-more', function (event) {
+    event.preventDefault();
+    truncate.toggleClass('expanded');
+    read_more.hide();
+    // if (truncate.hasClass('expanded')) {
+    //   read_more.text('Скрыть');
+    // } else {
+    //   read_more.text('Посмотреть полностью');
+    // }
+  });
+}
 
 //Модалки в циклах
 function ajaxModals() {
@@ -387,6 +414,7 @@ function catalogFilter() {
         $('.catalog-items').replaceWith(content);
         $('.filter-count').replaceWith($(data).find('.filter-count'));
         $('.ajax-count').replaceWith($(data).find('.ajax-count'));
+        $('.filter-column_count .filter-fixed__clear').css('display', 'inline');// При выборе любого фильтра - показать кнопку сброса
 
         let pagination = $(data).filter('.filter-bottom');
         $('.filter-bottom').remove();
@@ -522,6 +550,7 @@ function catalogFilter() {
           $('.catalog-items').replaceWith(content);
           $('.filter-count').replaceWith($(data).find('.filter-count'));
           $('.ajax-count').replaceWith($(data).find('.ajax-count'));
+          $('.filter-column_count .filter-fixed__clear').css('display', 'inline');// При выборе любого фильтра - показать кнопку сброса
 
           let pagination = $(data).filter('.filter-bottom');
           $('.filter-bottom').remove();
@@ -547,8 +576,18 @@ function catalogFilter() {
 
     let props = {};
     inputs.each(function (index, element) {
-      $(element).find('[type=hidden]').val('');
+      //$(element).find('[type=hidden]').val('');
+
+      // Костыль для сброса выпадашек в десктопе в исходные положения. Было как выше - 1 строчка закомментированная
+      let defaultVal = $(element).find('.filter-fixed__label span').html();
+      let defList = $(element).find('[type=hidden]').val()
+      $(element).find('[type=hidden]').val(defaultVal);
+      $(element).find('.dropdown-value').attr('data-value', defaultVal).html(defaultVal);
+      $(element).find('.ajax__filter li[data-value="' + defaultVal + '"]').attr('data-value', defList).html(defList);
     });
+
+    setTimeout(1000);// Костыль. Т.к. происходят клики ниже - аякс моргал в каталоге
+
     inputsMob.each(function (index, element) {
       $(element).is(':checked') ? $(element).trigger('click') : '';
     });
@@ -559,7 +598,11 @@ function catalogFilter() {
     const stepsSlider = document.getElementById('slider');
     if (!stepsSlider) return false;
     let inputsPrice = [document.getElementById("input-with-keypress-0"), document.getElementById("input-with-keypress-1")];
-    stepsSlider.noUiSlider.set([$(inputsPrice[0]).data('default'), $(inputsPrice[1]).data('default')])
+    /**
+     * 3й параметр - fire the set event (default true)
+     * 4й - fire the set event (default true)
+     */
+    stepsSlider.noUiSlider.set([$(inputsPrice[0]).data('default'), $(inputsPrice[1]).data('default')], false, true);
 
     let sort = {};
     let elSort = $('.ajax__sort');
@@ -580,6 +623,7 @@ function catalogFilter() {
         $('.catalog-items').replaceWith(content);
         $('.filter-count').replaceWith($(data).find('.filter-count'));
         $('.ajax-count').replaceWith($(data).find('.ajax-count'));
+        $('.filter-column_count .filter-fixed__clear').css('display', 'none');// При сбросе фильтра - скрыть кнопку сброса
 
         let pagination = $(data).filter('.filter-bottom');
         $('.filter-bottom').remove();

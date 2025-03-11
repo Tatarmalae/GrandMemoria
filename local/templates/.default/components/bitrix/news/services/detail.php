@@ -96,7 +96,7 @@ while ($ob = $dbProperty->GetNext()) {
             "COMPONENT_TEMPLATE" => "product",
             "IBLOCK_TYPE" => "catalog",
             "IBLOCK_ID" => "12",
-            "NEWS_COUNT" => "10",
+            "NEWS_COUNT" => "50",
             "SORT_BY1" => "ID",
             "SORT_ORDER1" => "DESC",
             "SORT_ORDER_USER" => $arPropsIDS,
@@ -198,7 +198,7 @@ $APPLICATION->IncludeComponent(
         "COMPONENT_TEMPLATE" => "stock_list",
         "IBLOCK_TYPE" => "content",
         "IBLOCK_ID" => "14",
-        "NEWS_COUNT" => "5",
+        "NEWS_COUNT" => "20",
         "SORT_BY1" => "SORT",
         "SORT_ORDER1" => "ASC",
         "SORT_BY2" => "SORT",
@@ -475,7 +475,7 @@ $APPLICATION->IncludeComponent(
         "COMPONENT_TEMPLATE" => "reviews_list",
         "IBLOCK_TYPE" => "content",
         "IBLOCK_ID" => "13",
-        "NEWS_COUNT" => "10",
+        "NEWS_COUNT" => "20",
         "SORT_BY1" => "ACTIVE_FROM",
         "SORT_ORDER1" => "DESC",
         "SORT_BY2" => "SORT",
@@ -581,7 +581,7 @@ $APPLICATION->IncludeComponent(
         "COMPONENT_TEMPLATE" => "faq_list",
         "IBLOCK_TYPE" => "info",
         "IBLOCK_ID" => "3",
-        "NEWS_COUNT" => "3",
+        "NEWS_COUNT" => "9",
         "SORT_BY1" => "SORT",
         "SORT_ORDER1" => "ASC",
         "SORT_BY2" => "SORT",
@@ -686,9 +686,10 @@ try {
 <?php if (!empty($seo['VALUE']['TEXT'])): ?>
     <section class="article">
         <div class="content">
-            <article>
+            <article class="truncate">
                 <?= $seo['VALUE']['TEXT'] ?>
             </article>
+            <a href="javascript:void(0);" class="more__link read-more" style="display: none;">Посмотреть полностью</a>
         </div>
     </section>
 <?php endif ?>

@@ -67,6 +67,7 @@ $this->setFrameMode(true);
                             <img class="lazy" data-src="<?= CFile::GetPath($arItem) ?>" alt="<?= $arResult['PROPERTIES']['PHOTO']['DESCRIPTION'][$key] ?>">
                         </div>
                     </div>
+					<p style="font-size:18px; text-align:center"><?= $arResult['PROPERTIES']['PHOTO']['DESCRIPTION'][$key] ?></p>
                 </a>
             <?php endforeach ?>
         </div>

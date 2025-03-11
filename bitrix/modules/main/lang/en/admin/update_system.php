@@ -14,8 +14,8 @@ $MESS["SUP_CHECK_UPDATES_PARTNER"] = "Partner Module Updates";
 $MESS["SUP_CONFLICT_MODULE_MESSAGE"] = "The following updates are required to install #MODULE#: #REQUIRES#";
 $MESS["SUP_CONFLICT_NOTHING_SELECTED"] = "Nothing selected";
 $MESS["SUP_CONFLICT_POPUP_TITLE"] = "Dependency conflicts";
-$MESS["SUP_CURRENT_NUMBER_OF_USERS"] = "; current user count: <a href=\"/bitrix/admin/user_admin.php?lang=en&INTRANET_USERS=Y&apply_filter=Y\">#NUM#</a>";
-$MESS["SUP_CURRENT_NUMBER_OF_USERS1"] = "Active users: <a href=\"/bitrix/admin/user_admin.php?lang=en&INTRANET_USERS=Y&apply_filter=Y\">#NUM#</a>.";
+$MESS["SUP_CURRENT_NUMBER_OF_USERS"] = "; current user count: #NUM#";
+$MESS["SUP_CURRENT_NUMBER_OF_USERS1"] = "Active users: #NUM#.";
 $MESS["SUP_DEVSRV_MESS"] = "A development installation is not intended as a publicly available resource.";
 $MESS["SUP_EDITION"] = "Edition:";
 $MESS["SUP_ERROR"] = "Error";
@@ -48,6 +48,7 @@ $MESS["SUP_PHP_L710"] = "As of June 30, 2019 only limited support will be provid
 $MESS["SUP_PHP_LERR_F"] = "You are using PHP version #VERS#, but the system requires version #REQ# or higher. Please update your PHP installation or contact the technical support.";
 $MESS["SUP_PHP_LERR_F_NEW"] = "Your current PHP version is #VERS#. This version is outdated and may contain security vulterabilities. The system requires version #REQ# or higher. The latest stable build of PHP is recommended. <br>Please follow these steps:  <br>(1) if the page shows MySQL version warning, update MySQL to the latest stable version, <br>(2) update your Bitrix24, <br>(3) update PHP or contact your hosting service provider's helpdesk.";
 $MESS["SUP_PHP_LWARN_F"] = "As of #DATE# only limited support will be provided for our products running on PHP versions below #REQ#. PHP #BEST_VERS# or higher is recommended. You are currently using PHP #VERS#. Please update your PHP installation or contact your hosting service provider for assistance.";
+$MESS["SUP_PHP_LWARN_PHP8"] = "You can read more about upgrading to PHP 8 <a href=\"https://helpdesk.bitrix24.com/open/17347208/\">in this Helpdesk article</a>.";
 $MESS["SUP_REGISTERED"] = "Registered for:";
 $MESS["SUP_RESERVED_KEY_HINT"] = "You must activate your license key before using the update system.";
 $MESS["SUP_SALE_1500_HINT"] = "To continue installing updates you should perform <a href=\"#ADDR#\">the e-store module conversion</a>.";
@@ -221,3 +222,7 @@ $MESS["SUP_WRONG_CHARSET_ERROR_HINT2"] = "Single-byte encoding configuration is 
 $MESS["SUP_WRONG_GD"] = "GD image processing library version 2 or higher is required to update the system. Please fix the issue or contact your hosting provider's technical support.";
 $MESS["SUP_WRONG_INTERNAL_ENCODING_ERROR"] = "The current value of the mbstring.internal_encoding option is outdated and in conflict with the default_charset value. Please fix the issue or contact your hosting service provider's helpdesk.";
 $MESS["SUP_WRONG_MBSTRING_OVERLOAD"] = "The <b>mbstring.func_overload</b> parameter has to be removed to update the system. Please fix the issue or contact your hosting provider's technical support.";
+$MESS["UPDATE_SYS_CLASS_NAME"] = "Change database connection settings in the file /bitrix/.settings.php. Set the value of \"className\" to \"\\\\Bitrix\\\\Main\\\\DB\\\\MysqliConnection\".";
+$MESS["UPDATE_SYS_MYSQLI_REQ"] = "The system requires PHP extension \"MySQL Improved Extension\" (mysqli).";
+$MESS["UPDATE_SYS_NEED_UTF"] = "Single-byte encoding support will soon be dropped. Please convert your system instance to UTF-8. Learn more about conversion <a href=\"https://training.bitrix24.com/support/training/course/index.php?COURSE_ID=68&LESSON_ID=26450\">on this page</a>.";
+$MESS["UPDATE_SYS_OPENSSL_REQ"] = "PHP openssl extension to handle encoding is not installed. Please install the extension or contact your hosting service provider's helpdesk.";

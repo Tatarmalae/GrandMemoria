@@ -49,7 +49,10 @@ class CASDiblockTools {
 					if (in_array($k, self::$arNotExport)) {
 						continue;
 					}
-					if (in_array($k, $arCData) && trim($v) !== '') {
+					if (in_array($k, $arCData) && !empty($v)) {
+						if (is_array($v)) {
+							$v = 'json#'.json_encode($v);
+						}
 						$v = '<![CDATA['.$v.']]>';
 					}
 					$xml .= "\t\t\t".'<'.mb_strtolower($k).'>'.$v.'</'.mb_strtolower($k).'>'."\n";
@@ -140,7 +143,15 @@ class CASDiblockTools {
 						$arProp = array_pop($childData);
 						$arFields = array('IBLOCK_ID' => $BID);
 						foreach ($arProp as $code => $v) {
-							$arFields[mb_strtoupper($code)] = isset($v[0]['#']['cdata-section']) && is_array($v[0]['#']['cdata-section']) ? $v[0]['#']['cdata-section'][0]['#'] : $v[0]['#'];
+							if (isset($v[0]['#']['cdata-section']) && is_array($v[0]['#']['cdata-section'])) {
+								$value = $v[0]['#']['cdata-section'][0]['#'];
+								if (str_starts_with($value, 'json#')) {
+									$value = json_decode($value);
+								}
+							} else {
+								$value = $v[0]['#'];
+							}
+							$arFields[mb_strtoupper($code)] = $value;
 						}
 						if (isset($arExistProps[$arFields['CODE']])) {
 							$arOldNewID[$arFields['OLD_ID']] = $arExistProps[$arFields['CODE']]['ID'];

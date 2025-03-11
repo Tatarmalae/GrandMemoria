@@ -1,0 +1,14 @@
+<?php
+
+$MESS['RIM_MODULE_SETTING_ALLOWED'] = 'Automatic conversion to WEBP';
+$MESS['RIM_MODULE_SETTING_CONVERT_FIELDS'] = 'Convert information blocks fields';
+$MESS['RIM_MODULE_SETTING_CONVERT_PROPS'] = 'Convert information blocks properties';
+$MESS['RIM_MODULE_SETTING_CONVERT_SECTION_FIELDS'] = 'Convert information blocks section fields';
+$MESS['RIM_MODULE_SETTINGS_TITLE'] = 'Settings';
+$MESS['RIM_MODULE_SETTINGS_GROUP_COMMON'] = 'General parameters';
+$MESS['RIM_MODULE_SETTINGS_GROUP_CONVERT'] = 'Coding quality';
+$MESS['RIM_MODULE_SETTINGS_OPTION_QUALITY_JPEG'] = 'JPG / JPEG';
+$MESS['RIM_MODULE_SETTINGS_OPTION_QUALITY_PNG'] = 'PNG';
+$MESS['RIM_MODULE_SETTINGS_OPTION_QUALITY_INVALID_PARAM'] = 'Invalid parameter [#OPTION_KEY#] value: #OPTION_VALUE#';
+$MESS['RIM_MODULE_SETTINGS_OPTION_QUALITY_INVALID_INTERVAL'] = 'The parameter [#OPTION_KEY#] value can only be from 1 to 100';
+?>

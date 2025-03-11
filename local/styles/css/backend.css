@@ -19,3 +19,14 @@
     align-items: center;
     justify-content: center;
 }
+
+article.truncate {
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    display: -webkit-box;
+}
+
+article.truncate.expanded {
+    -webkit-line-clamp: unset;
+}

@@ -57,9 +57,10 @@ try {
 <?php if (!empty($seo['DESCRIPTION'])): ?>
     <section class="article">
         <div class="content">
-            <article>
+            <article class="truncate">
                 <?= $seo['DESCRIPTION'] ?>
             </article>
+            <a href="javascript:void(0);" class="more__link read-more" style="display: none;">Посмотреть полностью</a>
         </div>
     </section>
 <?php endif ?>

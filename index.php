@@ -1,4 +1,13 @@
-<?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
+<?php 
+// ini_set ('xdebug.collect_return', 1);
+// ini_set ('xdebug.collect_params', 4);
+// if ($_SERVER['REMOTE_ADDR'] == "217.197.229.110") {
+//     xdebug_start_trace('xlog'.rand().'.log');
+//     }
+
+
+
+require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
 $APPLICATION->SetPageProperty("description", "Официальный сайт агентства ГрандМемориа Казань");
 /**
  * @var $APPLICATION

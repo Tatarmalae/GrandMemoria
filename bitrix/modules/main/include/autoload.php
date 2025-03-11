@@ -176,5 +176,6 @@ Loader::registerAutoLoadClasses(
 
 Loader::registerHandler([\Bitrix\Main\ORM\Loader::class, 'autoLoad']);
 
+
 // old class names compatibility
 require_once __DIR__.'/compatibility.php';

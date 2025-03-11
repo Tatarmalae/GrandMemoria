@@ -128,6 +128,8 @@ class Catalog
             'DETAIL_TEXT',
             'PREVIEW_PICTURE',
             'ACTIVE_FROM',
+            'IBLOCK_SECTION_ID',
+            'SHOW_COUNTER',
             'DETAIL_PAGE_URL' => 'IBLOCK.DETAIL_PAGE_URL',
         ]);
         $query->registerRuntimeField(
@@ -461,6 +463,7 @@ class Catalog
                 'ID',
                 'NAME',
                 'IBLOCK_SECTION_ID',
+                'DESCRIPTION',
             ],
         ]);
         return current($rsSection->fetchAll());

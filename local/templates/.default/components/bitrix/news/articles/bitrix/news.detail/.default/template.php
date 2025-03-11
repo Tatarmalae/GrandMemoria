@@ -33,7 +33,12 @@ $this->EndViewTarget();
 <?php if (!empty($arResult['PROPERTIES']['STOCK_SLIDER']['VALUE'])): ?>
     <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/components/stock_slider.php", ['STOCK_SLIDER' => $arResult['PROPERTIES']['STOCK_SLIDER']['VALUE'], 'SLIDER_CATALOG' => 'Y'], ['SHOW_BORDER' => true]); ?>
 <?php endif ?>
-<?php if ($arParams["USE_SHARE"] == "Y"): ?>
+<?php if (!empty($arResult['PROPERTIES']['DETAIL_SECOND']['VALUE']['TEXT'])): ?>
+    <article>
+        <?= $arResult['PROPERTIES']['DETAIL_SECOND']['~VALUE']['TEXT'] ?>
+    </article>
+<?php endif ?>
+<?php /* if ($arParams["USE_SHARE"] == "Y"): ?>
     <div class="article-socials">
         <span class="h4">Поделиться в соц. сетях:</span>
         <noindex>
@@ -56,4 +61,4 @@ $this->EndViewTarget();
             </div>
         </noindex>
     </div>
-<?php endif ?>
+<?php endif */?>

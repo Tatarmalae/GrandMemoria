@@ -193,6 +193,26 @@ class Utilities
     }
 
     /**
+     * Проверяет наличие файла с помощью Curl
+     * @param string $url Ссылка для проверки
+     * @return bool
+     */
+    public static function ifFileExistCurl(string $url): bool
+    {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        if ($httpCode != 200) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Преобразует первый символ в верхний регистр
      * @param string $str - строка
      * @param string $encoding - кодировка, по-умолчанию UTF-8

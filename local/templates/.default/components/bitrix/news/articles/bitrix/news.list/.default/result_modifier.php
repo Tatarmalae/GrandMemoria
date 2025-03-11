@@ -15,6 +15,7 @@ try {
 }
 
 foreach ($arResult["ITEMS"] as $key => $arItem) {
+    if (empty($arItem['IBLOCK_SECTION_ID'])) continue;
     try {
         $arResult["ITEMS"][$key]['IBLOCK_SECTION'] = Catalog::getSectionByID($arItem['IBLOCK_SECTION_ID']);
     } catch (Throwable $e) {

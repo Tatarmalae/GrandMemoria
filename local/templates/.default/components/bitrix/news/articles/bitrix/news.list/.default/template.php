@@ -25,6 +25,8 @@ $this->setFrameMode(true);
             <?php endforeach ?>
         </div>
     </div>
+<?php else: ?>
+    <div class="ajax__tabs" data-iblock="<?= $arParams['IBLOCK_ID'] ?>"></div>
 <?php endif ?>
 <div class="articles-items items ajax__items">
     <?php foreach ($arResult["ITEMS"] as $key => $arItem): ?>
