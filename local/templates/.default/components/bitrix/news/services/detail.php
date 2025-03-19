@@ -408,11 +408,11 @@ unset($arrFilterGallery);
             }
             $APPLICATION->IncludeComponent(
                 "bitrix:news.list",
-                "",
+                "services_slider_second",
                 [
                     "IBLOCK_TYPE" => $arParams["IBLOCK_TYPE"],
                     "IBLOCK_ID" => $arParams["IBLOCK_ID"],
-                    "NEWS_COUNT" => 4,
+                    "NEWS_COUNT" => 20,
                     "SORT_BY1" => $arParams["SORT_BY1"],
                     "SORT_ORDER1" => $arParams["SORT_ORDER1"],
                     "SORT_BY2" => $arParams["SORT_BY2"],
@@ -686,10 +686,10 @@ try {
 <?php if (!empty($seo['VALUE']['TEXT'])): ?>
     <section class="article">
         <div class="content">
-            <article class="truncate">
+            <article>
                 <?= $seo['VALUE']['TEXT'] ?>
             </article>
-            <a href="javascript:void(0);" class="more__link read-more" style="display: none;">Посмотреть полностью</a>
+          
         </div>
     </section>
 <?php endif ?>

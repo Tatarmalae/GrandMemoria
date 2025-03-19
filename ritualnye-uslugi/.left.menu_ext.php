@@ -11,7 +11,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
  */
 
 try {
-    $arResult = Catalog::getElementList('15', '', [], null, ['!ID' => CREMATION]);
+    $arResult = Catalog::getElementList('15', '', [], null, ['!ID' => CREMATION], ['PROPERTY_SORT_MENU_VALUE' => 'ASC']);
 } catch (Throwable $e) {
     Debug::dumpToFile($e->getMessage());
 }
@@ -21,10 +21,9 @@ foreach ($arResult as $item) {
     $aMenuLinksExt[] = [
         $item['NAME'],
         $item['DETAIL_PAGE_URL'],
-        [],
+        ["IBLOCK_SECTION_ID" => $item["IBLOCK_SECTION_ID"]],
         [],
         "",
     ];
 }
-
 $aMenuLinks = array_merge($aMenuLinksExt, $aMenuLinks);

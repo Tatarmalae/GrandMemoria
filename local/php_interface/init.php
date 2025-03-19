@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__.'/user_class/uf_iblock_element.php';
 use Bitrix\Main\EventManager;
 use Bitrix\Main\Loader;
 use Bitrix\Main\LoaderException;

@@ -54,7 +54,7 @@
                             ]
                         ); ?>
                     <?php endif ?>
-                    <h1><?php $APPLICATION->ShowTitle() ?></h1>
+                    <h1><?php $APPLICATION->ShowTitle(false) ?></h1>
                     <?php $APPLICATION->ShowViewContent('after_title'); ?>
                 </div>
             </div>

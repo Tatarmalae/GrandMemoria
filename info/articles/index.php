@@ -26,7 +26,7 @@ if ($request->isAjaxRequest()) {
 		"COMPONENT_TEMPLATE" => "articles",
 		"IBLOCK_TYPE" => "info",
 		"IBLOCK_ID" => "11",
-		"NEWS_COUNT" => "32",
+		"NEWS_COUNT" => "50",
 		"USE_SEARCH" => "N",
 		"USE_RSS" => "N",
 		"USE_RATING" => "N",

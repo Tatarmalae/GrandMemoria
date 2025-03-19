@@ -26,9 +26,11 @@ try {
     $section = Catalog::getSectionByCode($arParams['IBLOCK_ID'], $arResult['VARIABLES']['SECTION_CODE']);
     $sectionName = $section['IBLOCK_SECTION_ID'] ? Catalog::getSectionByID($section['IBLOCK_SECTION_ID'])['NAME'] : $section['NAME'];
     $sectionProps = Catalog::getSectionProps($arParams['IBLOCK_ID'], $section['IBLOCK_SECTION_ID'] ?: $section['ID']);
-    if ($sectionProps['UF_ALSO_ORDER']) {
-        $elementAlsoIDs = Catalog::getOneElementIDBySections($arParams['IBLOCK_ID'], $sectionProps['UF_ALSO_ORDER']);
+
+	if ($sectionProps['UF_ID_PRODUCT_TO_BUYS']) {
+        $elementAlsoIDs = $sectionProps['UF_ID_PRODUCT_TO_BUYS'];
     }
+
     if ($sectionProps['UF_BENEFITS']) {
         $elementBenefits = Catalog::getElementList(37, '', [], 2, ['ID' => $sectionProps['UF_BENEFITS']]);
     }
@@ -329,6 +331,7 @@ unset($arrFilterSimilar, $elementProps);
 <?php endif ?>
 
 <?php
+	if(!empty($elementAlsoIDs)){
 global $arrFilterAlso;
 $arrFilterAlso = [
     'ID' => $elementAlsoIDs,
@@ -428,6 +431,7 @@ $APPLICATION->IncludeComponent(
     false
 );
 unset($arrFilterAlso);
+}
 ?>
 
 <?php
@@ -539,6 +543,24 @@ if ($elementServices) {
 <?php $APPLICATION->IncludeFile(SITE_INCLUDE_PATH . "/system/installment_banner.php", [], ["SHOW_BORDER" => true]); ?>
 
 <?php
+$arSelect = Array("ID", "NAME", "PROPERTY_SEO_TEXT");
+$arFilter = Array("IBLOCK_ID"=>$arParam["IBLOCK_ID"],"ID" => $elementId, "ACTIVE_DATE"=>"Y", "ACTIVE"=>"Y");
+$res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+if($ob = $res->GetNextElement())
+{
+	$arFields = $ob->GetFields();
+}
+
+?>
+<section class="article">
+    <div class="content">
+        <article>
+		<?echo htmlspecialcharsback($arFields["PROPERTY_SEO_TEXT_VALUE"]["TEXT"])?>
+       </article>
+    </div>
+</section>
+<?
+
 $galleryElementIDs = '';
 try {
     $sectionGalleryCode = Catalog::getSectionByName(4, $sectionName);

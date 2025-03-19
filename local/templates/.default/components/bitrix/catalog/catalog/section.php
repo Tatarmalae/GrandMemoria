@@ -623,10 +623,10 @@ $APPLICATION->IncludeComponent(
     <?php if (!empty($section['DESCRIPTION'])): ?>
         <section class="article">
             <div class="content">
-                <article class="truncate">
+                <article>
                     <?= $section['DESCRIPTION'] ?>
                 </article>
-                <a href="javascript:void(0);" class="more__link read-more" style="display: none;">Посмотреть полностью</a>
+
             </div>
         </section>
     <?php endif ?>

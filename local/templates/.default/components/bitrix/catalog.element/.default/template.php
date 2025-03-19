@@ -17,6 +17,7 @@ $this->setFrameMode(true);
 $this->SetViewTarget('no_bg');
 echo ' title_not-bg';
 $this->EndViewTarget();
+$APPLICATION->SetTitle('Какой-то заголовок (старый)');
 ?>
 
 <?php $this->SetViewTarget('after_title'); ?>
